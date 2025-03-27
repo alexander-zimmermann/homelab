@@ -6,3 +6,4 @@ resources:
 - ../../base
 - ../../../02-components/argocd-projects
 - ../../../02-components/argocd-application-sets
+- enable-helm.yaml
