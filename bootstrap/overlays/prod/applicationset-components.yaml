@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+
+metadata:
+  name: prod-components
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: 'https://github.com/alexander-zimmermann/homelab.git'
+      revision: main
+      directories:
+      - path: 'components/*/overlays/prod'
+  template:
+    metadata:
+      name: '{{appName}'
+#     name: '{{appName}}-prod'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/alexander-zimmermann/homelab.git'
+        targetRevision: main
+        path: 'components/{{appName}}/overlays/prod'
+      destination:
+        server: https://kubernetes.default.svc
+#       namespace: '{{appName}}-prod'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          limit: 15
+          backoff:
+            duration: 15s
+            factor: 2
+            maxDuration: 5m
+      info:
+        - name: environment
+          value: prod
+
