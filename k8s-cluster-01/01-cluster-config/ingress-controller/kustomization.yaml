@@ -8,7 +8,7 @@ labels:
 resources:
 - 00-role.yaml
 - 00-account.yaml
-- 01-role-binding.yaml
-- 02-traefik.yaml
-- 02-traefik-services.yaml
+#- 01-role-binding.yaml
+#- 02-traefik.yaml
+#- 02-traefik-services.yaml
 
