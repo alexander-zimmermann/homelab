@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: cluster
+  name: applications
   namespace: argocd
 spec:
   generators:
@@ -9,7 +9,7 @@ spec:
       repoURL: https://github.com/alexander-zimmermann/homelab
       revision: main
       directories:
-      - path: k8s-cluster-01/01-cluster-config/*
+      - path: k8s-cluster-01/applications/*
   template:
     metadata:
       name: '{{path.basename}}'
