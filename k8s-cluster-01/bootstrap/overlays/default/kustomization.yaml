@@ -6,3 +6,4 @@ resources:
 - ../../base
 - ../../../components/argocd-projects
 - ../../../components/argocd-application-sets
+
