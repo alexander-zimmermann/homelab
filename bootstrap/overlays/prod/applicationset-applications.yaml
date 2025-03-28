@@ -15,7 +15,7 @@ spec:
       - path: 'applications/*/overlays/prod'
   template:
     metadata:
-      name: '{{index .path.segments 1}-prod'
+      name: '{{index .path.segments 1}}-prod'
     spec:
       project: default
       source:
