@@ -5,18 +5,18 @@ namespace: argocd
 resources:
 - namespace.yaml
 - appproject.yaml
+- https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-helmCharts:
-- name: argo-cd
-  repo: https://argoproj.github.io/argo-helm
-  version: 7.8.14
-  releaseName: argocd
-  namespace: argocd
-  includeCRDs: true
-  valuesFile: values.yaml
+#helmCharts:
+#- name: argo-cd
+#  repo: https://argoproj.github.io/argo-helm
+#  version: 7.8.14
+#  releaseName: argocd
+#  namespace: argocd
+#  includeCRDs: true
+#  valuesFile: values.yaml
 
 patches:
 - path: configmap.yaml
 
-#- https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
