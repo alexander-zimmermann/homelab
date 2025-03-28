@@ -13,7 +13,7 @@ spec:
       - path: 'components/*/overlays/prod'
   template:
     metadata:
-      name: '{{appName}'
+      name: '{{appName}}'
 #     name: '{{appName}}-prod'
     spec:
       project: default
