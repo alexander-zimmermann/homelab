@@ -24,7 +24,6 @@ spec:
         path: 'components/{{index .path.segments 1}}/overlays/prod'
       destination:
         server: https://kubernetes.default.svc
-#       namespace: '{{appName}}-prod'
       syncPolicy:
         automated:
           prune: true
