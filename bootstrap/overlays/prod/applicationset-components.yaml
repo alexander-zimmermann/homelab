@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 
 metadata:
-  name: prod-components
+  name: omponents-prod
   namespace: argocd
 spec:
   generators:
@@ -13,8 +13,7 @@ spec:
       - path: 'components/*/overlays/prod'
   template:
     metadata:
-      name: '{{appName}}'
-#     name: '{{appName}}-prod'
+      name: '{{appName}}-prod'
     spec:
       project: default
       source:
