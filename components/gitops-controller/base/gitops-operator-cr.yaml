@@ -1,9 +1,8 @@
-apiVersion: argoproj.io/v1beta1
-kind: ArgoCD
-
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: argocd
-spec:
-  kustomizeBuildOptions: "--enable-helm"
-  controller:
-    logLevel: debug
+  name: argocd-cm
+  namespace: argocd
+data:
+  kustomize.buildOptions: --enable-helm
+
