@@ -5,6 +5,8 @@ metadata:
   name: applications-prod
   namespace: argocd
 spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
   generators:
   - git:
       repoURL: 'https://github.com/alexander-zimmermann/homelab.git'
@@ -13,13 +15,13 @@ spec:
       - path: 'applications/*/overlays/prod'
   template:
     metadata:
-      name: '{{appName}}-prod'
+      name: '{{index .path.segments 1}-prod'
     spec:
       project: default
       source:
         repoURL: 'https://github.com/alexander-zimmermann/homelab.git'
         targetRevision: main
-        path: 'applications/{{appName}}/overlays/prod'
+        path: 'applications/{{index .path.segments 1}}/overlays/prod'
       destination:
         server: https://kubernetes.default.svc
 #       namespace: '{{appName}}-prod'

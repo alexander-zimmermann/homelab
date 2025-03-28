@@ -13,13 +13,13 @@ spec:
       - path: 'components/*/overlays/dev'
   template:
     metadata:
-      name: '{{appName}}-dev'
+      name: '{{index .path.segments 1}}-dev'
     spec:
       project: default
       source:
         repoURL: 'https://github.com/alexander-zimmermann/homelab.git'
         targetRevision: main
-        path: 'components/{{appName}}/overlays/prdevod'
+        path: 'components/{{index .path.segments 1}}/overlays/prdevod'
       destination:
         server: https://kubernetes.default.svc
 #       namespace: '{{appName}}-dev'
