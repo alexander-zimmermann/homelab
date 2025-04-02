@@ -1,0 +1,38 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+
+metadata:
+  name: applications
+  namespace: gitops-controller
+spec:
+  generators:
+    - git:
+        repoURL: 'https://github.com/alexander-zimmermann/homelab'
+        revision: HEAD
+        directories:
+          - path: 'cluster/applications/*/overlays/prod'
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  template:
+    metadata:
+      name: '{{index .path.segments 2}}-{{.path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/alexander-zimmermann/homelab'
+        targetRevision: HEAD
+        path: '{{.path.path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{index .path.segments 2}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          limit: 15
+          backoff:
+            duration: 15s
+            factor: 2
+            maxDuration: 5m

@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: mosquitto
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mosquitto
+  replicas: 1
+  template:
+    spec:
+      volumes:
+        - name: mosquitto-storage
+          persistentVolumeClaim:
+            claimName: mosquitto-pvc
+      containers:
+        - name: mosquitto
+          image: docker.io/library/eclipse-mosquitto:2.0.21
+          # https://hub.docker.com/_/eclipse-mosquitto/tags
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: "Australia/Sydney"
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "10m"
+            limits:
+              memory: "750Mi"
+              cpu: "200m"
+          ports:
+            - name: "web"
+              containerPort: 9001
+            - name: "mqtt"
+              containerPort: 1883
+          readinessProbe:
+            tcpSocket:
+              port: mqtt
+            initialDelaySeconds: 10
+            periodSeconds: 20
+            failureThreshold: 5
+          livenessProbe:
+            tcpSocket:
+              port: mqtt
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            failureThreshold: 5
+          volumeMounts:
+            - name: mosquitto-storage
+              subPath: config/mosquitto.conf
+              mountPath: "/mosquitto/config/mosquitto.conf"
+            - name: mosquitto-storage
+              subPath: data
+              mountPath: "/mosquitto/data"
