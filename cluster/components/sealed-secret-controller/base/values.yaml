@@ -11,7 +11,7 @@ nameOverride: ""
 fullnameOverride: ""
 ## @param namespace Namespace where to deploy the Sealed Secrets controller
 ##
-namespace: "sealed-secret-controller"
+namespace: "sealed-secrets-controller"
 
 ## @param extraDeploy [array] Array of extra objects to deploy with the release
 ##
