@@ -5,6 +5,7 @@ kind: Kustomization
 namespace: gitops-controller
 resources:
   - ./namespace.yaml
+  - ./sealedsecret.yaml
   - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 patches:
