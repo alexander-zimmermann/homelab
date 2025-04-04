@@ -10,7 +10,7 @@ patches:
       - op: add
         path: /spec/generators/0/git/directories
         value:
-          - path: 'cluster/applications/*/overlays/prod'
+          - path: 'cluster/applications/*/overlays/dev'
     target:
       kind: ApplicationSet
       name: applications
@@ -19,7 +19,7 @@ patches:
       - op: add
         path: /spec/generators/0/git/directories
         value:
-          - path: 'cluster/components/*/overlays/prod'
+          - path: 'cluster/components/*/overlays/dev'
     target:
       kind: ApplicationSet
       name: cluster
