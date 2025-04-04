@@ -7,7 +7,7 @@ resources:
 
 helmCharts:
 - name: traefik
-  repo: https://helm.traefik.io/traefik
+  repo: 'https://helm.traefik.io/traefik'
   releaseName: traefik
   version: 34.4.1
   valuesFile: values.yaml
