@@ -5,7 +5,21 @@ kind: Kustomization
 resources:
   - ../../base
 
-patchesStrategicMerge:
-  - ./appset-applications.yaml
-  - ./appset-components.yaml
-  
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/generators/0/git/directories
+        value:
+          - path: 'cluster/applications/*/overlays/prod'
+    target:
+      kind: ApplicationSet
+      name: applications
+
+  - patch: |-
+      - op: add
+        path: /spec/generators/0/git/directories
+        value:
+          - path: 'cluster/components/*/overlays/prod'
+    target:
+      kind: ApplicationSet
+      name: cluster
