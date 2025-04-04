@@ -8,3 +8,4 @@ resources:
 patchesStrategicMerge:
   - ./appset-applications.yaml
   - ./appset-components.yaml
+  

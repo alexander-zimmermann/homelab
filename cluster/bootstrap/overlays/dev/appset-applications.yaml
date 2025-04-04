@@ -4,9 +4,9 @@ kind: ApplicationSet
 
 metadata:
   name: applications
-  namespace: gitops-controller
 spec:
   generators:
     - git:
         directories:
-          - path: 'cluster/applications/*/overlays/prod'
+          - path: 'cluster/applications/*/overlays/dev'
+

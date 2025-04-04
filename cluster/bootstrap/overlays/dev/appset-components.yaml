@@ -3,10 +3,10 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 
 metadata:
-  name: applications
-  namespace: gitops-controller
+  name: cluster
 spec:
   generators:
     - git:
         directories:
-          - path: 'cluster/applications/*/overlays/prod'
+          - path: 'cluster/components/*/overlays/dev'
+
