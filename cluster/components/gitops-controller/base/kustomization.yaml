@@ -4,3 +4,4 @@ kind: Kustomization
 
 resources:
 - ../../../bootstrap/overlays/prod/
+- ./sealedsecret.yaml

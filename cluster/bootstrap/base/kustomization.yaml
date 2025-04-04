@@ -6,7 +6,6 @@ namespace: gitops-controller
 resources:
   - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
   - ./namespace.yaml
-  - ./sealedsecret.yaml
   - ./appset-applications.yaml
   - ./appset-components.yaml
   - ./appproject.yaml
