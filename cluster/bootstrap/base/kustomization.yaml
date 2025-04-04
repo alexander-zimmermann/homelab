@@ -12,7 +12,14 @@ resources:
   - ./appproject.yaml
 
 patches:
-  - path: ./configmap.yaml
+  - patch: |-
+      - op: add
+        path: /data/kustomize.buildOptions
+        value: --enable-helm
+    target:
+      kind: ConfigMap
+      name: argocd-cm
+
   - patch: |-
       - op: replace
         path: /subjects/0/namespace
