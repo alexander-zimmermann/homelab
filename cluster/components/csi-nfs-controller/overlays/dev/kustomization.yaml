@@ -1,0 +1,21 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+patches:
+  - patch: |-
+      - op: add
+        path: /parameters
+        value:
+          server: 192.168.1.212
+          share: /alexander/Development/cluster-pvs
+      - op: add
+        path: /mountOptions
+        value:
+          - nfsvers=3
+    target:
+      kind: StorageClass
+      name: nfs-csi
