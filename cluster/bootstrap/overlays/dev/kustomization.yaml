@@ -8,10 +8,9 @@ resources:
 patches:
   - patch: |-
       - op: add
-        path: /spec/generators/0/git/paths/-
+        path: /spec/generators/0/git/directories
         value:
-          directories:
-            - path: 'cluster/applications/*/overlays/dev'
+          - path: 'cluster/applications/*/overlays/dev'
     target:
       kind: ApplicationSet
       name: applications
