@@ -4,4 +4,4 @@ kind: Kustomization
 
 resources:
   - ../../base
-  - ../../../bootstrap/overlays/dev/
+  - ../../../../bootstrap/overlays/dev/
