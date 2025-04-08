@@ -11,7 +11,7 @@ patches:
         path: /parameters
         value:
           server: 192.168.1.212
-          share: /alexander/Development/cluster-pvs
+          share: /System/Volumes/Data/Users/alexander/Development/cluster-pvs
       - op: add
         path: /mountOptions
         value:
