@@ -14,7 +14,7 @@ spec:
       volumes:
         - name: persistent-storage
           persistentVolumeClaim:
-            claimName: pvc-nfs-dynamic
+            claimName: pvc-nfs-static
       containers:
         - name: mosquitto
           image: docker.io/library/eclipse-mosquitto:2.0.21
