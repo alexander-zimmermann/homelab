@@ -6,6 +6,7 @@ metadata:
   name: pvc-nfs-dynamic
 spec:
   storageClassName: nfs-csi
+  volumeName: pvc-mosquitto
   accessModes:
     - ReadWriteMany
   resources:
