@@ -4,6 +4,7 @@ kind: Kustomization
 
 resources:
   - ./namespace.yaml
+  - ./storageclass.yaml
 
 helmCharts:
 - name: csi-driver-nfs
