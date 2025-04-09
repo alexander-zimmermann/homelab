@@ -9,8 +9,7 @@ patches:
   - patch: |-
       - op: add
         path: /spec/csi/volumeHandle
-        value:
-          server: linux.zimmermann.eu.com#/srv/k8s#mosquitto
+        value: linux.zimmermann.eu.com#/srv/k8s#mosquitto
       - op: add
         path: /spec/csi/volumeAttributes
         value:
