@@ -4,3 +4,18 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/csi/volumeHandle
+        value:
+          server: storage.zimmermann.eu.com#/k8s#mosquitto
+      - op: add
+        path: /spec/csi/volumeAttributes
+        value:
+          server: storage.zimmermann.eu.com
+          share: /k8s/mosquitto
+    target:
+      kind: PersistentVolume
+      name: pv-nfs-mosquitto

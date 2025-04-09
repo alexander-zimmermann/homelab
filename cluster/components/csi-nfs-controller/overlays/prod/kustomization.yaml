@@ -11,7 +11,7 @@ patches:
         path: /parameters
         value:
           server: storage.zimmermann.eu.com
-          share: /export
+          share: /k8s
       - op: add
         path: /mountOptions
         value:

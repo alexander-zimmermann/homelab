@@ -10,7 +10,7 @@ patches:
       - op: add
         path: /parameters
         value:
-          server: 192.168.1.10
+          server: linux.zimmermann.eu.com
           share: /srv/k8s
       - op: add
         path: /mountOptions

@@ -16,10 +16,6 @@ spec:
     - nfsvers=3
   csi:
     driver: nfs.csi.k8s.io
-    volumeHandle: 192.168.1.10#/srv/k8s
-    volumeAttributes: 
-      server: 192.168.1.10
-      share: /srv/k8s
 
 --- 
 apiVersion: v1
