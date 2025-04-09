@@ -4,3 +4,4 @@ kind: Kustomization
 
 resources:
   - ./sealedsecret.yaml
+  - ./ingressroute.yaml
