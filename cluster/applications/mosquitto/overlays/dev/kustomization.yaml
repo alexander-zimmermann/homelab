@@ -14,7 +14,7 @@ patches:
       - op: add
         path: /spec/csi/volumeAttributes
         value:
-          server: linux.zimmermann.eu.com
+          server: 192.168.1.10
           share: /srv/k8s/mosquitto
     target:
       kind: PersistentVolume
