@@ -9,7 +9,7 @@ spec:
     - web
   routes:
     - kind: Rule
-      match: Host(`grafana-test`)
+      match: Host(`grafana-test.zimmermann.eu.com`)
       priority: 10
       services:
         - kind: Service
