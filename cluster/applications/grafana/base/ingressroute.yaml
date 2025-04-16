@@ -14,6 +14,6 @@ spec:
       services:
         - kind: Service
           name: grafana
-          port: 3000
+          port: 80
   tls:
     certResolver: default
