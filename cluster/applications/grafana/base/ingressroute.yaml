@@ -6,10 +6,10 @@ metadata:
   namespace: grafana
 spec:
   entryPoints:
-    - websecure
+    - web
   routes:
     - kind: Rule
-      match: Host(`grafana.zimmermann.sh`)
+      match: Host(`grafana.zimmermann.phd`)
       priority: 10
       services:
         - kind: Service
