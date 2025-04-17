@@ -10,7 +10,7 @@ patches:
       - op: replace
         path: /spec/entryPoints
         value:
-          - web
+          - websecure
       - op: replace
         path: /spec/routes/0/match
         value:
