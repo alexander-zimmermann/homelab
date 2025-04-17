@@ -6,7 +6,7 @@ metadata:
   namespace: grafana
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
     - kind: Rule
       match: Host(`grafana.zimmermann.phd`)
