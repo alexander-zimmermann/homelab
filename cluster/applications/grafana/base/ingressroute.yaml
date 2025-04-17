@@ -6,12 +6,14 @@ metadata:
   namespace: grafana
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
     - kind: Rule
-      match: Host(`grafana-test.zimmermann.eu.com`)
+      match: Host(`grafana.zimmermann.sh`)
       priority: 10
       services:
         - kind: Service
           name: grafana
           port: 80
+  tls:
+    certResolver: cloudflare

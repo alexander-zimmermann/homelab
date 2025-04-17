@@ -4,3 +4,19 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/entryPoints
+        value:
+          - web
+      - op: replace
+        path: /spec/routes/0/match
+        value:
+          Host(`grafana.zimmermann.phd`)
+      - op: remove
+        path: /spec/tls
+    target:
+      kind: IngressRoute
+      name: grafana

@@ -5,3 +5,23 @@ kind: Kustomization
 resources:
   - ../../base
   - ../../../../bootstrap/overlays/dev/
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/entryPoints
+        value:
+          - web
+      - op: replace
+        path: /spec/routes/0/match
+        value:
+          Host(`argocd.zimmermann.phd`)
+      - op: replace
+        path: /spec/routes/1/match
+        value:
+          Host(`argocd.zimmermann.phd`) && Header(`Content-Type`, `application/grpc`)
+      - op: remove
+        path: /spec/tls
+    target:
+      kind: IngressRoute
+      name: argocd-server

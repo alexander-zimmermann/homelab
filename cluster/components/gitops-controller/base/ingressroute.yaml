@@ -9,17 +9,19 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`argocd-test.zimmermann.eu.com`)
+      match: Host(`argocd.zimmermann.sh`)
       priority: 10
       services:
-        - name: argocd-server
+        - kind: Service
+          name: argocd-server
           port: 80
     - kind: Rule
-      match: Host(`argocd-test.zimmermann.eu.com`) && Header(`Content-Type`, `application/grpc`)
+      match: Host(`argocd.zimmermann.sh`) && Header(`Content-Type`, `application/grpc`)
       priority: 11
       services:
-        - name: argocd-server
+        - kind: Service
+          name: argocd-server
           port: 80
           scheme: h2c
   tls:
-    certResolver: default
+    certResolver: cloudflare
