@@ -14,7 +14,8 @@ patches:
   - patch: |-
       - op: add
         path: /data
-        value: kustomize.buildOptions: --enable-helm
+        value:
+          kustomize.buildOptions: --enable-helm
     target:
       kind: ConfigMap
       name: argocd-cm
