@@ -7,15 +7,11 @@ resources:
 
 patches:
   - patch: |-
-      - op: add
+      - op: replace
         path: /parameters
         value:
           server: linux.zimmermann.eu.com
           share: /srv/k8s
-      - op: add
-        path: /mountOptions
-        value:
-          - nfsvers=3
     target:
       kind: StorageClass
       name: nfs-csi

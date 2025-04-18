@@ -4,18 +4,3 @@ kind: Kustomization
 
 resources:
   - ../../base
-
-patches:
-  - patch: |-
-      - op: add
-        path: /parameters
-        value:
-          server: storage.zimmermann.eu.com
-          share: /k8s
-      - op: add
-        path: /mountOptions
-        value:
-          - nfsvers=4.1
-    target:
-      kind: StorageClass
-      name: nfs-csi

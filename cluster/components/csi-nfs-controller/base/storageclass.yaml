@@ -7,3 +7,8 @@ metadata:
 provisioner: nfs.csi.k8s.io
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
+parameters:
+  server: storage.zimmermann.eu.com
+  share: /k8s
+mountOptions:
+  - nfsvers=3
