@@ -4,22 +4,3 @@ kind: Kustomization
 
 resources:
   - ../../base
-
-patches:
-  - patch: |-
-      - op: add
-        path: /spec/generators/0/git/directories
-        value:
-          - path: 'cluster/applications/*/overlays/prod'
-    target:
-      kind: ApplicationSet
-      name: applications
-
-  - patch: |-
-      - op: add
-        path: /spec/generators/0/git/directories
-        value:
-          - path: 'cluster/components/*/overlays/prod'
-    target:
-      kind: ApplicationSet
-      name: cluster

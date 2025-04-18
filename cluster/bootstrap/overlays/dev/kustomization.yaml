@@ -7,7 +7,7 @@ resources:
 
 patches:
   - patch: |-
-      - op: add
+      - op: replace
         path: /spec/generators/0/git/directories
         value:
           - path: 'cluster/applications/*/overlays/dev'
@@ -16,7 +16,7 @@ patches:
       name: applications
 
   - patch: |-
-      - op: add
+      - op: replace
         path: /spec/generators/0/git/directories
         value:
           - path: 'cluster/components/*/overlays/dev'

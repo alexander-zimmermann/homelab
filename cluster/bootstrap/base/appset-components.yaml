@@ -8,8 +8,10 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: 'https://github.com/alexander-zimmermann/homelab'
+        repoURL: https://github.com/alexander-zimmermann/homelab
         revision: HEAD
+        directories:
+          - path: cluster/components/*/overlays/prod
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   template:
@@ -18,7 +20,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/alexander-zimmermann/homelab'
+        repoURL: https://github.com/alexander-zimmermann/homelab
         targetRevision: HEAD
         path: '{{.path.path}}'
       destination:
