@@ -4,6 +4,7 @@ kind: Kustomization
 
 resources:
   - ./namespace.yaml
+  - ./sealedsecret.yaml
 
 helmCharts:
 - name: cert-manager
