@@ -5,7 +5,15 @@ kind: Kustomization
 resources:
   - ../../base
 
-patches:    
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/routes/0/match
+        value: Host(`grafana.zimmermann.phd`)
+    target:
+      kind: IngressRoute
+      name: traefik-dashboard
+
   - patch: |-
       - op: replace
         path: /spec/dnsNames/0
