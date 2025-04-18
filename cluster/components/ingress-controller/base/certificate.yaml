@@ -1,0 +1,12 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: traefik-tls-cert
+spec:
+  secretName: traefik-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - traefik.zimmermann.sh

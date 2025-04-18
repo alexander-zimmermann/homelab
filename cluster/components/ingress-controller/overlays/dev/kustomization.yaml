@@ -4,3 +4,12 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+patches:    
+  - patch: |-
+      - op: replace
+        path: /spec/dnsNames/0
+        value: traefik.zimmermann.phd
+    target:
+      kind: Certificate
+      name: traefik-tls-cert
