@@ -9,11 +9,11 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`grafana.zimmermann.phd`)
+      match: Host(`grafana.zimmermann.sh`)
       priority: 10
       services:
         - kind: Service
           name: grafana
           port: 80
   tls:
-    certResolver: cloudflare
+    secretName: grafana-tls-cert

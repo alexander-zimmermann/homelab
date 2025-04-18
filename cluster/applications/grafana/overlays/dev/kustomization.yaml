@@ -8,15 +8,17 @@ resources:
 patches:
   - patch: |-
       - op: replace
-        path: /spec/entryPoints
-        value:
-          - websecure
-      - op: replace
         path: /spec/routes/0/match
         value:
           Host(`grafana.zimmermann.phd`)
-      - op: remove
-        path: /spec/tls
     target:
       kind: IngressRoute
       name: grafana
+  - patch: |-
+      - op: replace
+        path: /spec/dnsNames/0
+        value:
+          grafana.zimmermann.phd
+    target:
+      kind: Certificate
+      name: grafana-tls-cert
