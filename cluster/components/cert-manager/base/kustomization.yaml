@@ -8,10 +8,10 @@ resources:
   - ./clusterissuer.yaml
 
 helmCharts:
-- name: cert-manager
-  repo: https://charts.jetstack.io
-  releaseName: cert-manager
-  version: v1.17.1
-  valuesFile: values.yaml
-  includeCRDs: true
-  namespace: cert-manager
+  - name: cert-manager
+    repo: https://charts.jetstack.io
+    releaseName: cert-manager
+    version: v1.17.1
+    valuesFile: values.yaml
+    includeCRDs: true
+    namespace: cert-manager
