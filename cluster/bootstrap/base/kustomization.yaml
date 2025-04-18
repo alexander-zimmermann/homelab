@@ -23,7 +23,8 @@ patches:
   - patch: |-
       - op: add
         path: /data
-        value: server.insecure: "true"
+        value:
+          server.insecure: "true"
     target:
       kind: ConfigMap
       name: argocd-cmd-params-cm
