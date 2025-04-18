@@ -13,3 +13,4 @@ helmCharts:
     version: 4.11.0
     valuesFile: values.yaml
     includeCRDs: true
+    namespace: csi-nfs-controller
