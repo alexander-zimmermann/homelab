@@ -24,4 +24,4 @@ spec:
           port: 80
           scheme: h2c
   tls:
-    certResolver: cloudflare
+    secretName: argocd-tls-cert
