@@ -9,7 +9,7 @@ helmCharts:
   - name: cillium
     repo: https://helm.cilium.io
     releaseName: cillium
-    version: 1.17.3
+    version: v1.17.3
     valuesFile: values.yaml
     includeCRDs: true
     namespace: cillium
