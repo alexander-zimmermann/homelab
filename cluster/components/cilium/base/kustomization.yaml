@@ -4,6 +4,8 @@ kind: Kustomization
 
 resources:
   - ./namespace.yaml
+  - ./certificate.yaml
+  - ./ingressroute.yaml
 
 helmCharts:
   - name: cilium
