@@ -1,0 +1,19 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: hubble
+  namespace: hubble
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`hubble.zimmermann.sh`)
+      priority: 10
+      services:
+        - kind: Service
+          name: hubble-ui
+          port: 80
+  tls:
+    secretName: hubble-tls-cert
