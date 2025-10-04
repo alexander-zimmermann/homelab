@@ -1,0 +1,63 @@
+---
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - task --list
+
+  setup:
+    desc: Initialize homelab project on a macOS
+    cmds:
+      - brew install {{.DEPS}} {{.CLI_ARGS}}
+    preconditions:
+      - sh: command -v brew
+        msg: |
+          Homebrew is not installed.
+    vars:
+      DEPS: >-
+        go-task/tap/go-task
+        kubectl
+        kustomize
+        helm
+        opentofum
+        talosctl
+
+  diff:
+    desc: Showing diff to the current infrastructure
+    cmds:
+      - tofu plan
+
+  create:
+    desc: Bootstrap Proxmox infrastructure
+    cmds:
+      - tofu apply -auto-approve ./infrastructure
+
+  destroy:
+    desc: Destroy Proxmox infrastructure
+    cmds:
+      - tofu destroy -auto-approve ./infrastructure
+
+  recreate:
+    desc: Recreate Proxmox infrastructure
+    cmds:
+      - tofu destroy -auto-approve ./infrastructure
+      - tofu create -auto-approve ./infrastructure
+
+  prod:
+    desc: Initialize ArgoCD on K8s Prod cluster
+    cmds:
+      - kubectl apply -k cluster/bootstrap/overlays/prod
+      - sleep 8
+      #- kubectl apply -f cluster/secrets/sealed-secrets-key.yaml
+      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo)"
+
+  dev:
+    desc: Initialize ArgoCD on K8s Dev cluster
+    cmds:
+      - kubectl apply -k cluster/bootstrap/overlays/dev
+      - sleep 8
+      #- kubectl apply -f cluster/secrets/sealed-secrets-key.yaml
+      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo)"
+
+
