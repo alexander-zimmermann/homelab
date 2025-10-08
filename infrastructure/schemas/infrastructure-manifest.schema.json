@@ -1,0 +1,674 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://homelab.local/schemas/infrastructure-manifest.schema.json",
+  "title": "Infrastructure Manifest Schema",
+  "description": "Schema for validating Homelab Infrastructure Manifest YAML files",
+  "type": "object",
+
+  "properties": {
+    "manifest_version": {
+      "type": "number",
+      "description": "Schema version for compatibility checking",
+      "minimum": 0.1
+    },
+
+    "pve_default_target_node": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Default Proxmox node name"
+    },
+
+    "pve_file_storage": {
+      "type": "string",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
+      "description": "File-based storage for ISOs, templates, snippets, backups (e.g., 'local')"
+    },
+
+    "pve_block_storage": {
+      "type": "string",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
+      "description": "Block-based storage for VM disks and container volumes (e.g., 'local-zfs', 'local-lvm')"
+    },
+
+    "images": {
+      "type": "object",
+      "description": "Container and VM image definitions",
+      "patternProperties": {
+        "^(vm|lxc)_[a-z0-9]+_[a-z0-9_]+$": {
+          "$ref": "#/$defs/image"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "ci_user_configs": {
+      "type": "object",
+      "description": "Cloud-init user data configurations",
+      "patternProperties": {
+        "^ci_user_[a-z0-9_]+$": {
+          "$ref": "#/$defs/ci_user_config"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "ci_vendor_configs": {
+      "type": "object",
+      "description": "Cloud-init vendor data configurations",
+      "patternProperties": {
+        "^ci_vendor_[a-z0-9_]+$": {
+          "$ref": "#/$defs/ci_vendor_config"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "ci_network_configs": {
+      "type": "object",
+      "description": "Cloud-init network configurations",
+      "patternProperties": {
+        "^ci_(net|network)_[a-z0-9_]+$": {
+          "$ref": "#/$defs/ci_network_config"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "ci_meta_configs": {
+      "type": "object",
+      "description": "Cloud-init meta data configurations",
+      "patternProperties": {
+        "^ci_meta_[a-z0-9_]+$": {
+          "$ref": "#/$defs/ci_meta_config"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "vm_cloud_init_profiles": {
+      "type": "object",
+      "description": "Cloud-init profile compositions",
+      "patternProperties": {
+        "^ci_profile_[a-z0-9_]+$": {
+          "$ref": "#/$defs/ci_profile"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "resource_policies": {
+      "type": "object",
+      "description": "Resource allocation policies",
+      "patternProperties": {
+        "^(vm|lxc)_[a-z0-9_]+$": {
+          "$ref": "#/$defs/resource_policy"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "vm_templates": {
+      "type": "object",
+      "description": "Virtual machine template definitions",
+      "patternProperties": {
+        "^vm_[a-z0-9]+_[a-z0-9_]+$": {
+          "$ref": "#/$defs/vm_template"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "container_templates": {
+      "type": "object",
+      "description": "Container template definitions",
+      "patternProperties": {
+        "^lxc_[a-z0-9]+_[a-z0-9_]+$": {
+          "$ref": "#/$defs/container_template"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "virtual_machines": {
+      "type": "object",
+      "description": "Virtual machine cloning definitions",
+      "properties": {
+        "singles": {
+          "type": "object",
+          "description": "Single VM clones",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "$ref": "#/$defs/vm_single"
+            }
+          },
+          "additionalProperties": false
+        },
+        "batches": {
+          "type": "object",
+          "description": "Batch VM clones",
+          "patternProperties": {
+            "^[a-z0-9]+_[a-z0-9]+$": {
+              "$ref": "#/$defs/vm_batch"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "containers": {
+      "type": "object",
+      "description": "Container cloning definitions",
+      "properties": {
+        "singles": {
+          "type": "object",
+          "description": "Single container clones",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "$ref": "#/$defs/container_single"
+            }
+          },
+          "additionalProperties": false
+        },
+        "batches": {
+          "type": "object",
+          "description": "Batch container clones",
+          "patternProperties": {
+            "^[a-z0-9]+_[a-z0-9_]+$": {
+              "$ref": "#/$defs/container_batch"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "talos_configuration": {
+      "type": "object",
+      "description": "Talos Kubernetes cluster configuration",
+      "properties": {
+        "cluster_name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$",
+          "description": "Kubernetes cluster name"
+        },
+        "kubernetes_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Kubernetes version (e.g., 1.30.0)"
+        }
+      },
+      "required": ["cluster_name", "kubernetes_version"],
+      "additionalProperties": false
+    }
+  },
+
+  "required": [
+    "manifest_version",
+    "pve_default_target_node",
+    "pve_file_storage",
+    "pve_block_storage",
+    "images",
+    "vm_templates",
+    "container_templates",
+    "virtual_machines",
+    "talos_configuration"
+  ],
+
+  "additionalProperties": false,
+
+  "$defs": {
+    "image": {
+      "type": "object",
+      "properties": {
+        "distro": {
+          "type": "string",
+          "enum": [
+            "debian",
+            "ubuntu",
+            "fedora",
+            "centos",
+            "rhel",
+            "alpine",
+            "opensuse",
+            "talos",
+            "windows"
+          ],
+          "description": "Operating system distribution"
+        },
+        "release": {
+          "type": ["string", "number"],
+          "description": "OS release version or codename"
+        },
+        "arch": {
+          "type": "string",
+          "enum": ["amd64", "arm64", "i386"],
+          "description": "CPU architecture"
+        },
+        "extension": {
+          "type": "string",
+          "enum": [
+            "iso",
+            "img",
+            "qcow2",
+            "raw",
+            "vmdk",
+            "tar.xz",
+            "tar.gz",
+            "tar.zst"
+          ],
+          "description": "Image file extension"
+        },
+        "target_node": {
+          "type": "string",
+          "description": "Override default target node"
+        },
+        "build_date": {
+          "type": "string",
+          "pattern": "^[0-9]{8}_[0-9]{2}:[0-9]{2}$",
+          "description": "Build timestamp for Ubuntu LXC images (YYYYMMDD_HH:MM)"
+        },
+        "schematic": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Talos schematic ID (64-char hex)"
+        },
+        "variant": {
+          "type": "string",
+          "enum": ["nocloud", "vmware", "kvm"],
+          "description": "Image variant type"
+        }
+      },
+      "required": ["distro", "release", "arch", "extension"],
+      "additionalProperties": false,
+
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "distro": { "const": "ubuntu" }
+            }
+          },
+          "then": {
+            "if": {
+              "properties": {
+                "extension": { "enum": ["tar.xz", "tar.gz", "tar.zst"] }
+              }
+            },
+            "then": {
+              "required": ["build_date"],
+              "properties": {
+                "build_date": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "distro": { "const": "talos" }
+            }
+          },
+          "then": {
+            "required": ["schematic"],
+            "properties": {
+              "schematic": true,
+              "variant": true
+            }
+          }
+        }
+      ]
+    },
+
+    "ci_user_config": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "description": "Default username"
+        },
+        "ssh_public_key": {
+          "type": "string",
+          "description": "SSH public key path or content"
+        },
+        "set_password": {
+          "type": "boolean",
+          "description": "Whether to set password"
+        },
+        "password": {
+          "type": "string",
+          "description": "User password (if set_password is true)"
+        }
+      },
+      "required": ["username"],
+      "additionalProperties": false
+    },
+
+    "ci_vendor_config": {
+      "type": "object",
+      "properties": {
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9+._-]*$"
+          },
+          "description": "List of packages to install"
+        },
+        "runcmd": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Commands to run during cloud-init"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "ci_network_config": {
+      "type": "object",
+      "properties": {
+        "interface_name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*$",
+          "description": "Network interface name"
+        },
+        "dhcp4": {
+          "type": "boolean",
+          "description": "Enable DHCPv4"
+        },
+        "dhcp6": {
+          "type": "boolean",
+          "description": "Enable DHCPv6"
+        },
+        "accept_ra": {
+          "type": "boolean",
+          "description": "Accept router advertisements"
+        },
+        "dns_search_domain": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "hostname"
+          },
+          "description": "DNS search domains"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "ci_meta_config": {
+      "type": "object",
+      "properties": {
+        "hostname": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$",
+          "description": "System hostname"
+        },
+        "instance_id": {
+          "type": "string",
+          "description": "Cloud instance identifier"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "ci_profile": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Profile description"
+        },
+        "ci_user_data_id": {
+          "type": "string",
+          "pattern": "^ci_user_[a-z0-9_]+$",
+          "description": "Reference to ci_user_configs key"
+        },
+        "ci_vendor_data_id": {
+          "type": "string",
+          "pattern": "^ci_vendor_[a-z0-9_]+$",
+          "description": "Reference to ci_vendor_configs key"
+        },
+        "ci_network_data_id": {
+          "type": "string",
+          "pattern": "^ci_(net|network)_[a-z0-9_]+$",
+          "description": "Reference to ci_network_configs key"
+        },
+        "ci_meta_data_id": {
+          "type": "string",
+          "pattern": "^ci_meta_[a-z0-9_]+$",
+          "description": "Reference to ci_meta_configs key"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "resource_policy": {
+      "type": "object",
+      "properties": {
+        "memory": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 131072,
+          "description": "Memory in MB"
+        },
+        "cores": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 128,
+          "description": "CPU cores"
+        },
+        "disk": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Disk size in GB (e.g., 10, 20)"
+        },
+        "network_bridge": {
+          "type": "string",
+          "pattern": "^vmbr[0-9]+$",
+          "description": "Proxmox network bridge"
+        }
+      },
+      "required": ["memory", "cores", "disk", "network_bridge"],
+      "additionalProperties": false
+    },
+
+    "vm_template": {
+      "type": "object",
+      "properties": {
+        "vm_id": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 999999999,
+          "description": "Proxmox VM ID"
+        },
+        "image": {
+          "type": "string",
+          "pattern": "^vm_[a-z0-9]+_[a-z0-9_]+$",
+          "description": "Reference to images key"
+        },
+        "os_type": {
+          "type": "string",
+          "enum": ["l24", "l26", "win10", "win11", "win2k19", "win2k22"],
+          "description": "Proxmox OS type"
+        },
+        "resource_policy": {
+          "type": "string",
+          "pattern": "^vm_[a-z0-9_]+$",
+          "description": "Reference to resource_policies key"
+        },
+        "cloud_init_profile": {
+          "type": "string",
+          "pattern": "^ci_profile_[a-z0-9_]+$",
+          "description": "Reference to vm_cloud_init_profiles key"
+        },
+        "description": {
+          "type": "string",
+          "description": "Template description"
+        },
+        "bios": {
+          "type": "string",
+          "enum": ["seabios", "ovmf"],
+          "description": "BIOS type (seabios for legacy, ovmf for UEFI)"
+        },
+        "enable_tpm": {
+          "type": "boolean",
+          "description": "Enable TPM 2.0 device"
+        },
+        "secure_boot": {
+          "type": "boolean",
+          "description": "Enable Secure Boot (requires UEFI)"
+        }
+      },
+      "required": ["vm_id", "image", "os_type", "resource_policy"],
+      "additionalProperties": false
+    },
+
+    "container_template": {
+      "type": "object",
+      "properties": {
+        "lxc_id": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 999999999,
+          "description": "Proxmox container ID"
+        },
+        "image": {
+          "type": "string",
+          "pattern": "^lxc_[a-z0-9]+_[a-z0-9_]+$",
+          "description": "Reference to images key"
+        },
+        "os_type": {
+          "type": "string",
+          "enum": ["ubuntu", "debian", "fedora", "centos", "alpine"],
+          "description": "Container OS type"
+        },
+        "resource_policy": {
+          "type": "string",
+          "pattern": "^lxc_[a-z0-9_]+$",
+          "description": "Reference to resource_policies key"
+        },
+        "description": {
+          "type": "string",
+          "description": "Template description"
+        }
+      },
+      "required": ["lxc_id", "image", "os_type", "resource_policy"],
+      "additionalProperties": false
+    },
+
+    "vm_single": {
+      "type": "object",
+      "properties": {
+        "template_id": {
+          "type": "string",
+          "pattern": "^vm_[a-z0-9]+_[a-z0-9_]+$",
+          "description": "Reference to vm_templates key"
+        },
+        "vm_id": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 999999999,
+          "description": "Proxmox VM ID for clone"
+        },
+        "target_node": {
+          "type": "string",
+          "description": "Override target node"
+        },
+        "wait_for_agent": {
+          "type": "boolean",
+          "description": "Wait for QEMU guest agent (default: true). Set to false for VMs without agent (e.g., during OS installation)",
+          "default": true
+        }
+      },
+      "required": ["template_id", "vm_id"],
+      "additionalProperties": false
+    },
+
+    "vm_batch": {
+      "type": "object",
+      "properties": {
+        "template_id": {
+          "type": "string",
+          "pattern": "^vm_[a-z0-9]+_[a-z0-9_]+$",
+          "description": "Reference to vm_templates key"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of VMs to create"
+        },
+        "vm_id_start": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 999999999,
+          "description": "Starting VM ID for batch"
+        },
+        "target_node": {
+          "type": "string",
+          "description": "Override target node"
+        }
+      },
+      "required": ["template_id", "count", "vm_id_start"],
+      "additionalProperties": false
+    },
+
+    "container_single": {
+      "type": "object",
+      "properties": {
+        "template_id": {
+          "type": "string",
+          "pattern": "^lxc_[a-z0-9]+_[a-z0-9_]+$",
+          "description": "Reference to container_templates key"
+        },
+        "lxc_id": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 999999999,
+          "description": "Proxmox container ID for clone"
+        },
+        "target_node": {
+          "type": "string",
+          "description": "Override target node"
+        }
+      },
+      "required": ["template_id", "lxc_id"],
+      "additionalProperties": false
+    },
+
+    "container_batch": {
+      "type": "object",
+      "properties": {
+        "template_id": {
+          "type": "string",
+          "pattern": "^lxc_[a-z0-9]+_[a-z0-9_]+$",
+          "description": "Reference to container_templates key"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of containers to create"
+        },
+        "lxc_id_start": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 999999999,
+          "description": "Starting container ID for batch"
+        },
+        "target_node": {
+          "type": "string",
+          "description": "Override target node"
+        }
+      },
+      "required": ["template_id", "count", "lxc_id_start"],
+      "additionalProperties": false
+    }
+  }
+}

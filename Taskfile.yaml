@@ -1,63 +1,123 @@
 ---
 version: "3"
 
+vars:
+  PYTHON: "{{.TASKFILE_DIR}}/.venv/bin/python"
+  PIP: "{{.TASKFILE_DIR}}/.venv/bin/pip"
+
 tasks:
   default:
     cmds:
       - task --list
 
-  setup:
-    desc: Initialize homelab project on a macOS
+  initialize:
+    desc: Initialize homelab project on macOS (Homebrew, virtualenv, base Python deps)
     cmds:
-      - brew install {{.DEPS}} {{.CLI_ARGS}}
+      - for:
+          var: FORMULAS
+          as: FORMULA
+        cmd: "brew list {{.FORMULA}} >/dev/null 2>&1 || brew install {{.FORMULA}} >/dev/null 2>&1"
+      - test -d .venv || python3 -m venv .venv
+      - "{{.PIP}} install --upgrade pip >/dev/null 2>&1"
+      - for:
+          var: PACKAGES
+          as: PACKAGE
+        cmd: "{{.PIP}} install {{.PACKAGE}} >/dev/null 2>&1"
+      - pre-commit install >/dev/null 2>&1
     preconditions:
       - sh: command -v brew
         msg: |
-          Homebrew is not installed.
+          Homebrew is not installed. Please install Homebrew using the following command:
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - sh: command -v python3
+        msg: |
+          Python3 is not installed. Please install Python3 using Homebrew:
+          brew install python3
     vars:
-      DEPS: >-
-        go-task/tap/go-task
-        kubectl
+      FORMULAS: >-
+        kubernetes-cli
         kustomize
         helm
-        opentofum
+        opentofu
         talosctl
+        cilium-cli
+        argocd
+      PACKAGES: >-
+        pyyaml
+        jsonschema
+        jinja2
+        pre-commit
 
-  diff:
-    desc: Showing diff to the current infrastructure
+  tofu-prepare:
+    desc: "Prepare Terraform/OpenTofu environment and generate configuration"
+    dir: infrastructure
+    env:
+      PATH: "{{.TASKFILE_DIR}}/.venv/bin:{{.PATH}}"
+      PYTHONPATH: scripts
+    sources:
+      - infrastructure-manifest.yaml
+      - schemas/infrastructure-manifest.schema.json
+      - templates/*.j2
+      - scripts/generate_checksums.py
+      - scripts/generate_tfvars.py
+      - scripts/validate_infrastructure.py
+    generates:
+      - generated.auto.tfvars
+      - build/checksums.yaml
+    preconditions:
+      - sh: test -x ../.venv/bin/python
+        msg: "Python virtual environment missing or not executable. Run 'task initialize' first."
     cmds:
-      - tofu plan
+      # Phase 1: Pre-validation (fail-fast)
+      - "{{.PYTHON}} scripts/validate_infrastructure.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}} pre"
+      # Phase 2: Build directory setup
+      - mkdir -p build
+      - 'test -f build/checksums.yaml || echo "checksums: {}" > build/checksums.yaml'
+      # Phase 3: Generation tfvars
+      - "{{.PYTHON}} scripts/generate_tfvars.py"
+      # Phase 4: Checksum update
+      - "{{.PYTHON}} scripts/generate_checksums.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}"
+      - "{{.PYTHON}} scripts/generate_tfvars.py {{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}"
+      # Phase 5: Post-validation (consistency)
+      - "{{.PYTHON}} scripts/validate_infrastructure.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}} post"
+      # Phase 6: Initialization of OpenTofu working directory
+      - tofu init
 
-  create:
-    desc: Bootstrap Proxmox infrastructure
+  tofu-plan:
+    desc: "Generate plan for infrastructure deployment"
+    dir: infrastructure
+    deps: [tofu-prepare]
+    preconditions:
+      - sh: test -f generated.auto.tfvars
+        msg: "generated.auto.tfvars is missing – run 'task tofu-prepare' first."
     cmds:
-      - tofu apply -auto-approve ./infrastructure
+      - tofu plan -out tfplan
 
-  destroy:
-    desc: Destroy Proxmox infrastructure
+  tofu-apply:
+    desc: Apply planned infrastructure changes to Proxmox (OpenTofu apply)
+    dir: infrastructure
+    deps: [tofu-plan]
     cmds:
-      - tofu destroy -auto-approve ./infrastructure
+      - tofu apply -auto-approve
 
-  recreate:
-    desc: Recreate Proxmox infrastructure
+  tofu-destroy:
+    desc: Destroy (tear down) all managed Proxmox infrastructure
+    dir: infrastructure
     cmds:
-      - tofu destroy -auto-approve ./infrastructure
-      - tofu create -auto-approve ./infrastructure
+      - tofu destroy -auto-approve
 
-  prod:
-    desc: Initialize ArgoCD on K8s Prod cluster
+  k8s-bootstrap-prod:
+    desc: Bootstrap ArgoCD on the production Kubernetes cluster
     cmds:
       - kubectl apply -k cluster/bootstrap/overlays/prod
       - sleep 8
       #- kubectl apply -f cluster/secrets/sealed-secrets-key.yaml
       - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo)"
 
-  dev:
-    desc: Initialize ArgoCD on K8s Dev cluster
+  k8s-bootstrap-dev:
+    desc: Bootstrap ArgoCD on the development Kubernetes cluster
     cmds:
       - kubectl apply -k cluster/bootstrap/overlays/dev
       - sleep 8
       #- kubectl apply -f cluster/secrets/sealed-secrets-key.yaml
       - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo)"
-
-

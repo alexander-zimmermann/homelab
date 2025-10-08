@@ -1,0 +1,215 @@
+###############################################################################
+## Global Settings
+###############################################################################
+## Infrastructure Manifest Schema Version
+manifest_version: 0.2
+
+## Name of the Proxmox node where resources will be stored by default
+pve_default_target_node: pve-1
+
+## File-based storage: ISOs, templates, snippets, backups (must support iso/vztmpl/snippets content types)
+pve_file_storage: local
+## Block-based storage: VM disks, container volumes (ZFS/LVM for performance and snapshots)
+pve_block_storage: local-zfs
+
+###############################################################################
+## Virtual machine & container images
+###############################################################################
+## Naming convention for map: (vm | lxc)_<distro>_<release>
+images:
+  ## Debian Cloud Image
+  vm_debian_trixie:
+    distro: debian
+    release: trixie # 13
+    arch: amd64
+    extension: qcow2
+
+  ## Ubuntu Cloud Image
+  vm_ubuntu_noble:
+    distro: ubuntu
+    release: noble # 24.04
+    arch: amd64
+    extension: qcow2
+
+  ## Talos nocloud Image (Factory build)
+  vm_talos_1_11_5:
+    distro: talos
+    release: "1.11.5"
+    arch: amd64
+    variant: nocloud
+    schematic: b553b4a25d76e938fd7a9aaa7f887c06ea4ef75275e64f4630e6f8f739cf07df
+    extension: raw
+
+  ## Ubuntu LXC Container Template
+  lxc_ubuntu_plucky:
+    distro: ubuntu
+    release: plucky
+    arch: amd64
+    build_date: "20251120_09:26"
+    extension: tar.xz
+
+  ## Windows 11 Installation ISO
+  vm_windows_11_25h2:
+    distro: windows
+    release: "11-25H2"
+    arch: amd64
+    extension: iso
+
+  ## Windows Virtio Driver ISO
+  vm_windows_stable_virtio:
+    distro: windows
+    release: stable-virtio
+    arch: amd64
+    extension: iso
+
+###############################################################################
+##  VM cloud-init configuration
+###############################################################################
+## Naming convention for map: ci_(user | vendor | net | meta)_[<distro>_<release> | <profile>]
+ci_user_configs:
+  ci_user_std_linux:
+    username: alexander
+    ssh_public_key: ~/.ssh/id_rsa.pub
+    ## Password authentication disabled by default - use SSH keys
+    ## To enable for debugging: set_password: true and provide hashed password
+    ## Generate hash: openssl passwd -6 'your-password'
+    set_password: false
+    password: ""
+
+ci_vendor_configs:
+  ci_vendor_std_linux:
+    packages:
+      - htop
+      - vim
+      - qemu-guest-agent
+
+ci_network_configs:
+  ci_net_std_linux:
+    dhcp4: true
+    dhcp6: false
+    accept_ra: true
+    dns_search_domain: ["zimmermann.eu.com"]
+
+ci_meta_configs:
+  ci_meta_std_linux:
+    hostname: proxmox-vm
+
+## Naming convention for map: ci_profile_[<distro>_<release> | <profile>]
+vm_cloud_init_profiles:
+  ci_profile_std_linux:
+    description: "Standard Linux configuration for development/staging"
+    ci_user_data_id: ci_user_std_linux
+    ci_vendor_data_id: ci_vendor_std_linux
+    ci_network_data_id: ci_net_std_linux
+    ci_meta_data_id: ci_meta_std_linux
+
+###############################################################################
+##  Virtual machine & container templates
+###############################################################################
+## Naming convention for map: (vm | lxc)_<profile>
+resource_policies:
+  vm_small:
+    memory: 1024
+    cores: 1
+    disk: 10
+    network_bridge: vmbr0
+
+  vm_medium:
+    memory: 2048
+    cores: 2
+    disk: 20
+    network_bridge: vmbr0
+
+  vm_large:
+    memory: 4096
+    cores: 4
+    disk: 40
+    network_bridge: vmbr0
+
+  lxc_small:
+    memory: 512
+    cores: 1
+    disk: 8
+    network_bridge: vmbr0
+
+  lxc_medium:
+    memory: 1024
+    cores: 2
+    disk: 16
+    network_bridge: vmbr0
+
+## Naming convention for map: (vm | lxc)_<distro>_<release>
+vm_templates:
+  vm_debian_trixie:
+    vm_id: 10000
+    image: vm_debian_trixie
+    os_type: l26
+    resource_policy: vm_small
+    cloud_init_profile: ci_profile_std_linux
+
+  vm_ubuntu_noble:
+    vm_id: 10001
+    image: vm_ubuntu_noble
+    os_type: l26
+    resource_policy: vm_small
+    cloud_init_profile: ci_profile_std_linux
+
+  vm_talos_1_11_5:
+    vm_id: 10002
+    image: vm_talos_1_11_5
+    os_type: l26
+    resource_policy: vm_medium
+
+  vm_windows_11_25h2:
+    vm_id: 10003
+    image: vm_windows_11_25h2
+    os_type: win11
+    resource_policy: vm_large
+    bios: ovmf
+    enable_tpm: true
+    secure_boot: true
+
+container_templates:
+  lxc_ubuntu_plucky:
+    lxc_id: 15000
+    image: lxc_ubuntu_plucky
+    os_type: ubuntu
+    resource_policy: lxc_small
+
+###############################################################################
+##  Virtual machine & container clonings
+###############################################################################
+virtual_machines:
+  singles:
+    debian_01:
+      template_id: vm_debian_trixie
+      vm_id: 1000
+    ubuntu_01:
+      template_id: vm_ubuntu_noble
+      vm_id: 1001
+    windows_01:
+      template_id: vm_windows_11_25h2
+      vm_id: 1100
+      wait_for_agent: false  # Windows installation requires manual intervention (VirtIO drivers, product key)
+  batches:
+    talos_cp:
+      template_id: vm_talos_1_11_5
+      count: 1
+      vm_id_start: 2000
+    talos_dp:
+      template_id: vm_talos_1_11_5
+      count: 1
+      vm_id_start: 2100
+
+containers:
+  singles:
+    ubuntu_ct_01:
+      template_id: lxc_ubuntu_plucky
+      lxc_id: 5000
+
+###############################################################################
+## Talos configuration
+###############################################################################
+talos_configuration:
+  cluster_name: "homelab"
+  kubernetes_version: "1.30.0"

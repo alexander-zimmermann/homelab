@@ -1,0 +1,130 @@
+###############################################################################
+## Provider packages
+###############################################################################
+terraform {
+  required_providers {
+    proxmox = {
+      source  = "bpg/proxmox"
+      version = "~> 0.87.0"
+    }
+  }
+}
+
+
+###############################################################################
+##  VM cloud-init configuration
+###############################################################################
+resource "proxmox_virtual_environment_file" "user_config" {
+  count        = var.create_user_config ? 1 : 0
+  content_type = "snippets"
+  datastore_id = var.datastore
+  node_name    = var.node
+
+  source_raw {
+    data = <<-EOF
+      #cloud-config
+      users:
+        - default
+        - name: ${var.username}
+          groups: [sudo]
+          shell: /bin/bash
+          ssh-authorized-keys:
+            - ${trimspace(file(pathexpand(var.ssh_public_key)))}
+          sudo: ALL=(ALL) NOPASSWD:ALL
+%{if var.set_password~}
+      chpasswd:
+        list: |
+          ${var.username}:${var.password}
+        expire: false
+%{endif~}
+    EOF
+
+    file_name = var.filename
+  }
+}
+
+resource "proxmox_virtual_environment_file" "vendor_config" {
+  count        = var.create_vendor_config ? 1 : 0
+  content_type = "snippets"
+  datastore_id = var.datastore
+  node_name    = var.node
+
+  source_raw {
+    data = <<-EOF
+      #cloud-config
+      timezone: Europe/Berlin
+      packages:
+        - qemu-guest-agent
+%{for p in var.packages~}
+        - ${p}
+%{endfor~}
+      package_update: ${var.package_update}
+      runcmd:
+        - systemctl enable --now qemu-guest-agent
+%{for cmd in var.runcmd~}
+        - ${cmd}
+%{endfor~}
+    EOF
+
+    file_name = var.filename
+  }
+}
+
+resource "proxmox_virtual_environment_file" "network_config" {
+  count        = var.create_network_config ? 1 : 0
+  content_type = "snippets"
+  datastore_id = var.datastore
+  node_name    = var.node
+
+  source_raw {
+    data = <<-EOF
+      #cloud-config
+      version: 2
+      ethernets:
+        match-all:
+          match:
+            name: "en*"
+          dhcp4: ${var.dhcp4}
+          dhcp6: ${var.dhcp6}
+          accept-ra: ${var.accept_ra}
+%{if length(var.ipv4_address) > 0 || length(var.ipv6_address) > 0~}
+          addresses:
+%{if length(var.ipv4_address) > 0~}
+            - ${var.ipv4_address}
+%{endif~}
+%{if length(var.ipv6_address) > 0~}
+            - ${var.ipv6_address}
+%{endif~}
+%{endif~}
+%{if length(var.gateway4) > 0~}
+          gateway4: ${var.gateway4}
+%{endif~}
+%{if length(var.gateway6) > 0~}
+          gateway6: ${var.gateway6}
+%{endif~}
+          nameservers:
+            addresses: ${jsonencode(var.dns_servers)}
+%{if length(var.dns_search_domain) > 0~}
+            search: ${jsonencode(var.dns_search_domain)}
+%{endif~}
+    EOF
+
+    file_name = var.filename
+  }
+}
+
+resource "proxmox_virtual_environment_file" "meta_config" {
+  count        = var.create_meta_config ? 1 : 0
+  content_type = "snippets"
+  datastore_id = var.datastore
+  node_name    = var.node
+
+  source_raw {
+    data = <<-EOF
+      #cloud-config
+      local-hostname: ${var.hostname}
+    EOF
+
+    file_name = var.filename
+  }
+}

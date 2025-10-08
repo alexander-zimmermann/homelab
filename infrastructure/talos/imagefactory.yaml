@@ -1,0 +1,12 @@
+# https://www.talos.dev/latest/talos-guides/install/boot-assets/#image-factory
+customization:
+  extraKernelArgs:
+    - talos.platform=nocloud # https://www.talos.dev/latest/reference/kernel/#talosplatform
+  systemExtensions:
+    officialExtensions: # talosctl get extensionstatuses.runtime.talos.dev
+      - siderolabs/qemu-guest-agent # QEMU guest agent for better VM integration
+      - siderolabs/util-linux-tools # Additional Linux utilities
+      - siderolabs/i915-ucode # Intel igpu
+      - siderolabs/nvidia-open-gpu-kernel-modules
+      - siderolabs/iscsi-tools # iSCSI initiator support for network storage
+      - siderolabs/zfs # ZFS filesystem support

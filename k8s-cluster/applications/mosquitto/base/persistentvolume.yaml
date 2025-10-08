@@ -6,12 +6,12 @@ metadata:
   name: pv-nfs-mosquitto
 spec:
   capacity:
-    storage: 100Mi 
-  accessModes: 
+    storage: 100Mi
+  accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: nfs-csi
-  mountOptions: 
+  mountOptions:
     - nolock
     - nfsvers=3
   csi:
@@ -21,7 +21,7 @@ spec:
       server: storage.zimmermann.eu.com
       share: /k8s/mosquitto
 
---- 
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 

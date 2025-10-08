@@ -13,7 +13,7 @@ patches:
     target:
       kind: IngressRoute
       name: grafana
-      
+
   - patch: |-
       - op: replace
         path: /spec/dnsNames/0

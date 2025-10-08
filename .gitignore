@@ -1,16 +1,29 @@
 ###############################################################################
-## General files to ignore
+## Go task
 ###############################################################################
-# notes & todos
-notes.txt
-todos.txt
+.task/
 
 
 ###############################################################################
-## Terraform files to ignore
+## Python files
+###############################################################################
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# virtualenv
+venv/
+ENV/
+env/
+.venv/
+
+
+###############################################################################
+## Terraform / opentofu files
 ###############################################################################
 # Local .terraform directories
-**/.terraform/*
+**/.terraform/
 .terraform.lock.hcl
 
 # .tfstate files
@@ -20,9 +33,7 @@ todos.txt
 # Crash log files
 crash.log
 
-# Ignore any .tfvars files that are generated automatically for each Terraform run. Most
-# .tfvars files are managed as part of configuration and so should be included in
-# version control.
+# Ignore any .tfvars files that are generated automatically for each Terraform run
 *.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
@@ -42,9 +53,14 @@ override.tf.json
 # Terragrunt Configs
 terragrunt.hcl
 
-###############################################################################
-## K8S files to ignore
-###############################################################################
 
-# Secrets
+###############################################################################
+## Build files
+###############################################################################
+infrastructure/build
+
+
+###############################################################################
+## Sensitive files
+###############################################################################
 k8s-cluster/secrets

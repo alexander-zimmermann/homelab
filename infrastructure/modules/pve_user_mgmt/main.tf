@@ -1,0 +1,54 @@
+###############################################################################
+## Provider Packages
+###############################################################################
+terraform {
+  required_providers {
+    proxmox = {
+      source  = "bpg/proxmox"
+      version = "~> 0.87.0"
+    }
+  }
+}
+
+
+###############################################################################
+## User management
+###############################################################################
+resource "proxmox_virtual_environment_role" "this" {
+  count      = var.create_role ? 1 : 0
+  role_id    = var.role_id
+  privileges = var.role_privileges
+}
+
+resource "proxmox_virtual_environment_user" "this" {
+  user_id    = "${var.username}@${var.realm}"
+  password   = var.password
+  enabled    = var.enabled
+  first_name = var.first_name
+  last_name  = var.last_name
+  email      = var.email
+  comment    = var.comment
+
+  lifecycle {
+    ## Avoid perpetual diffs
+    ## acl: managed separately via proxmox_virtual_environment_acl resource
+    ## password: can only be set with ticket (not API token) - ignore updates after creation
+    ignore_changes = [acl, password]
+  }
+}
+
+resource "proxmox_virtual_environment_user_token" "this" {
+  count                 = var.create_token ? 1 : 0
+  token_name            = var.token_name
+  user_id               = proxmox_virtual_environment_user.this.user_id
+  privileges_separation = var.privileges_separation
+  comment               = var.comment
+}
+
+resource "proxmox_virtual_environment_acl" "this" {
+  user_id   = proxmox_virtual_environment_user.this.user_id
+  role_id   = var.create_role ? proxmox_virtual_environment_role.this[0].role_id : var.role_id
+  token_id  = var.create_token ? proxmox_virtual_environment_user_token.this[0].id : null
+  path      = var.path
+  propagate = var.propagate
+}
