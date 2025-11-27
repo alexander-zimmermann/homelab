@@ -151,7 +151,7 @@ vm_templates:
     vm_id: 10001
     image: vm_ubuntu_noble
     os_type: l26
-    resource_policy: vm_small
+    resource_policy: vm_large
     cloud_init_profile: ci_profile_std_linux
 
   vm_talos_1_11_5:
