@@ -190,7 +190,7 @@ virtual_machines:
     windows_01:
       template_id: vm_windows_11_25h2
       vm_id: 1100
-      wait_for_agent: false  # Windows installation requires manual intervention (VirtIO drivers, product key)
+      wait_for_agent: false # Windows installation requires manual intervention (VirtIO drivers, product key)
   batches:
     talos_cp:
       template_id: vm_talos_1_11_5
