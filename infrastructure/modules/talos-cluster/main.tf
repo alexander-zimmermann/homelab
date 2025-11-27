@@ -93,6 +93,10 @@ resource "talos_machine_bootstrap" "this" {
   node                 = var.cluster_head
   endpoint             = var.cluster_head
   client_configuration = talos_machine_secrets.this.client_configuration
+
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 
