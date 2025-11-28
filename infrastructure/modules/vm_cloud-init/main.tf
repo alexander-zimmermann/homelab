@@ -102,10 +102,14 @@ resource "proxmox_virtual_environment_file" "network_config" {
 %{if length(var.gateway6) > 0~}
           gateway6: ${var.gateway6}
 %{endif~}
+%{if length(var.ipv4_address) > 0 || length(var.ipv6_address) > 0 || length(var.dns_search_domain) > 0~}
           nameservers:
+%{if length(var.ipv4_address) > 0 || length(var.ipv6_address) > 0~}
             addresses: ${jsonencode(var.dns_servers)}
+%{endif~}
 %{if length(var.dns_search_domain) > 0~}
             search: ${jsonencode(var.dns_search_domain)}
+%{endif~}
 %{endif~}
     EOF
 
