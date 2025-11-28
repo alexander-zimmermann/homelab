@@ -251,14 +251,16 @@ variable "gateway6" {
 variable "dns_servers" {
   description = <<EOT
     List of DNS server IP addresses (IPv4 or IPv6) to configure for the VM.
-    Defaults to Cloudflare resolvers (1.1.1.1 and 2606:4700:4700::1111).
+    Only used when static IP addresses are configured. When using DHCP,
+    DNS servers will be obtained from DHCP. Defaults to Cloudflare DNS
+    servers: `1.1.1.1` and `2606:4700:4700::1111`.
   EOT
   type        = list(string)
   default     = ["1.1.1.1", "2606:4700:4700::1111"]
 
   validation {
     condition     = length(var.dns_servers) > 0
-    error_message = "dns_servers must contain at least one DNS server address."
+    error_message = "At least one DNS server must be provided."
   }
 }
 
