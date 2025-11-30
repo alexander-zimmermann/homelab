@@ -39,6 +39,11 @@ module "pve_user_mgmt" {
   create_role     = each.value.create_role
   role_privileges = each.value.role_privileges
 
+  ## Token configuration
+  create_token          = each.value.create_token
+  token_name            = each.value.token_name
+  privileges_separation = each.value.privileges_separation
+
   ## ACL configuration
   path      = each.value.path
   propagate = each.value.propagate

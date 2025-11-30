@@ -237,8 +237,9 @@ variable "users" {
     propagate = optional(bool, true)
 
     ## API token
-    create_token = optional(bool, false)
-    token_name   = optional(string, "")
+    create_token          = optional(bool, false)
+    token_name            = optional(string, "")
+    privileges_separation = optional(bool, false)
   }))
 
   default = {}
