@@ -33,7 +33,7 @@ resource "proxmox_virtual_environment_vm" "vm_template" {
   tablet_device = var.tablet
 
   ## Boot order for UEFI systems with Secure Boot
-  boot_order = (var.bios == "ovmf" && var.secure_boot) ? ["scsi0", "ide2", "net0"] : []
+  boot_order = (var.bios == "ovmf" && var.secure_boot) ? ["scsi0", "ide2", "net0"] : null
 
   agent {
     enabled = var.qemu_guest_agent
