@@ -5,7 +5,7 @@ terraform {
     proxmox = {
       ## https://search.opentofu.org/provider/bpg/proxmox/latest
       source  = "bpg/proxmox"
-      version = "=0.87.0"
+      version = "=0.89.0"
     }
     talos = {
       ## https://search.opentofu.org/provider/siderolabs/talos/latest
