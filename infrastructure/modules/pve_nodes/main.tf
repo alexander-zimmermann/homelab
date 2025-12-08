@@ -38,7 +38,7 @@ resource "proxmox_virtual_environment_apt_standard_repository" "no_subscription"
 resource "proxmox_virtual_environment_apt_repository" "enable_no_subscription" {
   enabled   = true
   node      = proxmox_virtual_environment_apt_standard_repository.no_subscription.node
-  file_path = "/etc/apt/sources.list.d/proxmox.sources" #proxmox_virtual_environment_apt_standard_repository.no_subscription.file_path
+  file_path = proxmox_virtual_environment_apt_standard_repository.no_subscription.file_path
   index     = proxmox_virtual_environment_apt_standard_repository.no_subscription.index
 }
 
@@ -51,7 +51,7 @@ data "proxmox_virtual_environment_apt_standard_repository" "enterprise" {
 
 resource "proxmox_virtual_environment_apt_repository" "disable_enterprise" {
   node      = data.proxmox_virtual_environment_apt_standard_repository.enterprise.node
-  file_path = "/etc/apt/sources.list.d/pve-enterprise.sources" #data.proxmox_virtual_environment_apt_standard_repository.enterprise.file_path
+  file_path = data.proxmox_virtual_environment_apt_standard_repository.enterprise.file_path
   index     = data.proxmox_virtual_environment_apt_standard_repository.enterprise.index
   enabled   = false
 }
@@ -64,8 +64,8 @@ data "proxmox_virtual_environment_apt_standard_repository" "ceph" {
 
 resource "proxmox_virtual_environment_apt_repository" "disable_ceph" {
   node      = data.proxmox_virtual_environment_apt_standard_repository.ceph.node
-  file_path = "/etc/apt/sources.list.d/ceph.sources" #data.proxmox_virtual_environment_apt_standard_repository.ceph.file_path
-  index     = 0                                      #data.proxmox_virtual_environment_apt_standard_repository.ceph.index
+  file_path = data.proxmox_virtual_environment_apt_standard_repository.ceph.file_path
+  index     = data.proxmox_virtual_environment_apt_standard_repository.ceph.index
   enabled   = false
 }
 
