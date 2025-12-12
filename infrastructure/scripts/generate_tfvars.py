@@ -299,6 +299,36 @@ class VirtualMachineGenerator:
 
     logger = logging.getLogger(__name__)
 
+    @staticmethod
+    def _prepare_disks(disks_spec: list, manifest: Dict[str, Any]) -> list:
+        """Prepare disks configuration with default fallbacks.
+
+        Args:
+            disks_spec: List of disk specifications from manifest
+            manifest: Full manifest dictionary for default lookups
+
+        Returns:
+            List of prepared disk configurations with defaults applied
+        """
+        disks = []
+        default_datastore = manifest.get('pve_block_storage', 'local-lvm')
+
+        for disk in disks_spec:
+            disk_config = {}
+
+            # Handle disk_datastore with default fallback to pve_block_storage
+            disk_config['disk_datastore'] = disk.get('disk_datastore', default_datastore)
+
+            # Handle other properties (pass through only if explicitly set)
+            for prop_key in ['disk_interface', 'disk_size', 'disk_format',
+                           'disk_cache', 'disk_iothread', 'disk_ssd', 'disk_discard']:
+                if prop_key in disk:
+                    disk_config[prop_key] = disk[prop_key]
+
+            disks.append(disk_config)
+
+        return disks
+
     @classmethod
     def prepare_virtual_machines(cls, manifest: Dict[str, Any]) -> Dict[str, Any]:
         """Prepare all virtual machines (singles and batches).
@@ -320,6 +350,11 @@ class VirtualMachineGenerator:
                 'wait_for_agent': single.get('wait_for_agent', True),
                 'is_batch': False
             }
+
+            # Add disks configuration if present
+            if 'disks' in single:
+                vm_config['disks'] = cls._prepare_disks(single['disks'], manifest)
+
             prepared[key] = vm_config
 
         # Process batches
@@ -332,6 +367,11 @@ class VirtualMachineGenerator:
                 'wait_for_agent': batch.get('wait_for_agent', True),
                 'is_batch': True
             }
+
+            # Add disks configuration if present
+            if 'disks' in batch:
+                vm_config['disks'] = cls._prepare_disks(batch['disks'], manifest)
+
             prepared[key] = vm_config
 
         return prepared

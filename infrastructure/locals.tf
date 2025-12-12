@@ -11,8 +11,8 @@ locals {
       target_node    = spec.target_node
       vm_id          = spec.vm_id
       wait_for_agent = spec.wait_for_agent
-      ## No vm_name field in spec -> use key as name
-      vm_name = k
+      vm_name        = k ## No vm_name field in spec -> use key as name
+      disks          = try(spec.disks, [])
     } if try(spec.count, 0) == 0 },
 
     ## Batch objects: count > 0
@@ -24,6 +24,7 @@ locals {
           vm_id          = spec.vm_id_start + i - 1
           wait_for_agent = try(spec.wait_for_agent, true)
           vm_name        = format("%s_%d", group_key, i)
+          disks          = try(spec.disks, [])
         }
       } if try(spec.count, 0) > 0
     ]...)
@@ -37,8 +38,7 @@ locals {
       target_node      = spec.target_node
       target_datastore = spec.target_datastore
       lxc_id           = spec.lxc_id
-      ## No container_name field in spec -> use key as name
-      container_name = k
+      container_name   = k ## No container_name field in spec -> use key as name
     } if try(spec.count, 0) == 0 },
 
     ## Batch objects: count > 0

@@ -74,6 +74,38 @@ virtual_machines = {
     count          = {{ vm.count }}
     vm_id_start    = {{ vm.vm_id_start }}
     wait_for_agent = {{ vm.wait_for_agent | lower }}
+{% if vm.disks is defined %}
+    disks = [
+{% for disk in vm.disks %}
+      {
+{% if 'disk_datastore' in disk %}
+        disk_datastore = "{{ disk.disk_datastore }}"
+{% endif %}
+{% if 'disk_interface' in disk %}
+        disk_interface = "{{ disk.disk_interface }}"
+{% endif %}
+{% if 'disk_size' in disk %}
+        disk_size      = {{ disk.disk_size }}
+{% endif %}
+{% if 'disk_format' in disk %}
+        disk_format    = "{{ disk.disk_format }}"
+{% endif %}
+{% if 'disk_cache' in disk %}
+        disk_cache     = "{{ disk.disk_cache }}"
+{% endif %}
+{% if 'disk_iothread' in disk %}
+        disk_iothread  = {{ "true" if disk.disk_iothread else "false" }}
+{% endif %}
+{% if 'disk_ssd' in disk %}
+        disk_ssd       = {{ "true" if disk.disk_ssd else "false" }}
+{% endif %}
+{% if 'disk_discard' in disk %}
+        disk_discard   = "{{ disk.disk_discard }}"
+{% endif %}
+      }{{ "," if not loop.last else "" }}
+{% endfor %}
+    ]
+{% endif %}
 {% else %}
     vm_id          = {{ vm.vm_id }}
     wait_for_agent = {{ vm.wait_for_agent | lower }}

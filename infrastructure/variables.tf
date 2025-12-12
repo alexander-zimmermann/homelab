@@ -1203,13 +1203,27 @@ variable "virtual_machines" {
       - template_id (required): Key in `var.vm_templates`.
       - target_node (required): Key in `var.pve_nodes`.
       - vm_id (optional): Explicit VMID (>0). When null, provider allocates.
+      - wait_for_agent (optional): Wait for QEMU guest agent. Default: true.
+      - disks (optional): List of additional disks to attach (beyond template disk).
 
     Batch instance object (count > 0): Expands into multiple instances whose
-    generated keys follow: <map key> + "-" + index (1..count). Fields:
+    generated keys follow: <map key> + "_" + index (1..count). Fields:
       - template_id (required): Key in `var.vm_templates`.
       - target_node (required): Key in `var.pve_nodes`.
       - count (required >0): Number of instances to create.
       - vm_id_start (required >0): First VMID; subsequent = vm_id_start + index - 1
+      - wait_for_agent (optional): Wait for QEMU guest agent. Default: true.
+      - disks (optional): List of additional disks to attach to ALL VMs in batch.
+
+    Additional disks configuration (optional for both single and batch):
+      - disk_datastore: Storage location (default: "local-lvm").
+      - disk_interface: Device interface (e.g., "scsi0", "virtio0", default: "scsi0").
+      - disk_size: Disk size in GiB (default: 8, minimum: 1).
+      - disk_format: Disk format ("raw" or "qcow2", default: "raw").
+      - disk_cache: Cache mode ("writeback", "none", "directsync", default: "writeback").
+      - disk_iothread: Enable IO threading (default: false).
+      - disk_ssd: Enable SSD emulation (default: true).
+      - disk_discard: TRIM/Discard setting ("on", "ignore", "unmap", default: "on").
 
     Mutually exclusive sets: Single objects MUST NOT define count/vm_id_start.
     Batch objects MUST define count & vm_id_start and MUST NOT define vm_id.
@@ -1229,13 +1243,25 @@ variable "virtual_machines" {
     ## Batch VM deployment
     count       = optional(number, 0)
     vm_id_start = optional(number)
+
+    ## Additional disks (optional for both single and batch)
+    disks = optional(list(object({
+      disk_datastore = optional(string)
+      disk_interface = optional(string)
+      disk_size      = optional(number)
+      disk_format    = optional(string)
+      disk_cache     = optional(string)
+      disk_iothread  = optional(bool)
+      disk_ssd       = optional(bool)
+      disk_discard   = optional(string)
+    })), [])
   }))
 
   validation {
     condition = alltrue([
       for k, spec in var.virtual_machines : (
         ## VM naming validation based on deployment type:
-        ## - Batch deployments: <group>_<distro> pattern (e.g., "web_apache", "db_mysql")
+        ## - Batch deployments: <group>_<distro> pattern (e.g., "web_apache", "db_mysql", "talos_dp")
         ## - Single deployments: <hostname> pattern (e.g., "debian_01", "ubuntu_01", "windows_01")
         ##   Names use lowercase alphanumeric and underscores, representing the actual hostname
         (
@@ -1267,7 +1293,19 @@ variable "virtual_machines" {
         (spec.vm_id_start == null || spec.vm_id_start > 0) &&
 
         ## Count validation: if specified, must be reasonable (1-50 VMs per batch)
-        (try(spec.count, 0) == 0 || (spec.count >= 1 && spec.count <= 50))
+        (try(spec.count, 0) == 0 || (spec.count >= 1 && spec.count <= 50)) &&
+
+        ## Disks validation: validate each disk configuration if disks are specified
+        alltrue([
+          for d in try(spec.disks, []) : (
+            (d.disk_datastore == null || length(trimspace(d.disk_datastore)) > 0) &&
+            (d.disk_interface == null || length(trimspace(d.disk_interface)) > 0) &&
+            (d.disk_size == null || d.disk_size >= 1) &&
+            (d.disk_format == null || contains(["raw", "qcow2"], lower(d.disk_format))) &&
+            (d.disk_cache == null || contains(["writeback", "none", "directsync"], lower(d.disk_cache))) &&
+            (d.disk_discard == null || contains(["on", "ignore", "unmap"], lower(d.disk_discard)))
+          )
+        ])
       )
     ])
     error_message = <<EOT
@@ -1275,7 +1313,7 @@ variable "virtual_machines" {
 
       VM Naming:
       - Single deployment: "<hostname>" (e.g., "debian_01", "ubuntu_01", "windows_01").
-      - Batch deployment: "<group>_<distro>" (e.g., "web_apache", "db_mysql", "worker_ubuntu").
+      - Batch deployment: "<group>_<distro>" (e.g., "web_apache", "db_mysql", "talos_dp").
       - Names must use lowercase alphanumeric characters and underscores only.
       - Single deployment names are used as the actual VM hostname.
 
@@ -1296,11 +1334,20 @@ variable "virtual_machines" {
       - Must specify both count (1-50) and vm_id_start (positive integer).
       - Must NOT specify explicit vm_id parameter.
       - Creates multiple VMs with sequential VMIDs: vm_id_start, vm_id_start+1, etc.
-      - Generated VM names follow pattern: "<map_key>-<index>" where index = 1..count.
+      - Generated VM names follow pattern: "<map_key>_<index>" where index = 1..count.
 
       Resource Limits:
       - count must be between 1 and 50 VMs per batch deployment (reasonable cluster limit).
       - vm_id and vm_id_start must be positive integers (Proxmox VMID range: 1-999999999).
+
+      Additional Disks (optional):
+      - disk_datastore must be non-empty string if specified.
+      - disk_interface must be non-empty string if specified (e.g., "scsi0", "virtio0").
+      - disk_size must be >= 1 GiB if specified.
+      - disk_format must be "raw" or "qcow2" if specified.
+      - disk_cache must be "writeback", "none", or "directsync" if specified.
+      - disk_discard must be "on", "ignore", or "unmap" if specified.
+      - All disk properties are optional; defaults from vm_clone module apply when omitted.
     EOT
   }
 }

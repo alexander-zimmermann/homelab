@@ -613,6 +613,52 @@
         "target_node": {
           "type": "string",
           "description": "Override target node"
+        },
+        "disks": {
+          "type": "array",
+          "description": "Additional disks to attach to each VM in the batch",
+          "items": {
+            "type": "object",
+            "properties": {
+              "disk_datastore": {
+                "type": "string",
+                "description": "Storage location for the disk"
+              },
+              "disk_interface": {
+                "type": "string",
+                "description": "Device interface name (e.g., scsi1, virtio1)"
+              },
+              "disk_size": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Disk size in GiB"
+              },
+              "disk_format": {
+                "type": "string",
+                "enum": ["raw", "qcow2"],
+                "description": "Disk format"
+              },
+              "disk_cache": {
+                "type": "string",
+                "enum": ["writeback", "none", "directsync"],
+                "description": "Cache mode"
+              },
+              "disk_iothread": {
+                "type": "boolean",
+                "description": "Enable IO threading"
+              },
+              "disk_ssd": {
+                "type": "boolean",
+                "description": "Enable SSD emulation"
+              },
+              "disk_discard": {
+                "type": "string",
+                "enum": ["on", "ignore", "unmap"],
+                "description": "TRIM/Discard setting"
+              }
+            },
+            "additionalProperties": false
+          }
         }
       },
       "required": ["template_id", "count", "vm_id_start"],

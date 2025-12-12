@@ -360,7 +360,7 @@ class PostValidation:
         ]
     }
 
-    KEY_PATTERN = re.compile(r'^\s*([a-zA-Z0-9_.-]+)\s*= \{')
+    KEY_PATTERN = re.compile(r'^  ([a-zA-Z0-9_.-]+)\s*=\s*\{', re.MULTILINE)
 
     def __init__(self, manifest: Dict[str, Any], generated_content: str):
         """Initialize with JSON Schema."""
@@ -393,10 +393,8 @@ class PostValidation:
             match = pattern.search(content)
             if match:
                 keys = set()
-                for line in match.group(1).splitlines():
-                    key_match = self.KEY_PATTERN.match(line)
-                    if key_match:
-                        keys.add(key_match.group(1))
+                for key_match in self.KEY_PATTERN.finditer(match.group(1)):
+                    keys.add(key_match.group(1))
                 components[component_type] = keys
             else:
                 components[component_type] = set()

@@ -346,6 +346,7 @@ module "virtual_machines" {
   template_id    = module.vm_template[each.value.template_id].vmid
   template_node  = module.vm_template[each.value.template_id].node
   wait_for_agent = each.value.wait_for_agent
+  disks          = try(each.value.disks, [])
 }
 
 module "containers" {
