@@ -111,19 +111,31 @@ resource_policies:
   vm_small:
     memory: 1024
     cores: 1
-    disk: 10
+    disk: 8
     network_bridge: vmbr0
 
   vm_medium:
     memory: 2048
     cores: 2
-    disk: 20
+    disk: 16
     network_bridge: vmbr0
 
   vm_large:
     memory: 4096
     cores: 4
-    disk: 40
+    disk: 32
+    network_bridge: vmbr0
+
+  vm_xlarge:
+    memory: 8192
+    cores: 6
+    disk: 48
+    network_bridge: vmbr0
+
+  vm_2xlarge:
+    memory: 16384
+    cores: 8
+    disk: 64
     network_bridge: vmbr0
 
   lxc_small:
@@ -154,11 +166,17 @@ vm_templates:
     resource_policy: vm_large
     cloud_init_profile: ci_profile_std_linux
 
-  vm_talos_1_11_5:
+  vm_talos_1_11_5_cp:
     vm_id: 10002
     image: vm_talos_1_11_5
     os_type: l26
-    resource_policy: vm_medium
+    resource_policy: vm_large
+
+  vm_talos_1_11_5_dp:
+    vm_id: 10003
+    image: vm_talos_1_11_5
+    os_type: l26
+    resource_policy: vm_xlarge
 
   vm_windows_11_25h2:
     vm_id: 10003
@@ -181,9 +199,6 @@ container_templates:
 ###############################################################################
 virtual_machines:
   singles:
-    debian_01:
-      template_id: vm_debian_trixie
-      vm_id: 1000
     ubuntu_01:
       template_id: vm_ubuntu_noble
       vm_id: 1001
@@ -193,23 +208,22 @@ virtual_machines:
       wait_for_agent: false # Windows installation requires manual intervention (VirtIO drivers, product key)
   batches:
     talos_cp:
-      template_id: vm_talos_1_11_5
+      template_id: vm_talos_1_11_5_cp
       count: 1
       vm_id_start: 2000
     talos_dp:
-      template_id: vm_talos_1_11_5
-      count: 1
-      vm_id_start: 2100
+      template_id: vm_talos_1_11_5_dp
+      count: 3
+      vm_id_start: 2001
+      disks:
+        - disk_size: 100
 
 containers:
-  singles:
-    ubuntu_ct_01:
-      template_id: lxc_ubuntu_plucky
-      lxc_id: 5000
+  singles: {}
 
 ###############################################################################
 ## Talos configuration
 ###############################################################################
 talos_configuration:
   cluster_name: "homelab"
-  kubernetes_version: "1.30.0"
+  kubernetes_version: "1.34.0"
