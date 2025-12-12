@@ -109,15 +109,15 @@ tasks:
   k8s-bootstrap-prod:
     desc: Bootstrap ArgoCD on the production Kubernetes cluster
     cmds:
-      - kubectl apply -k cluster/bootstrap/overlays/prod
+      - kubectl apply -k k8s-cluster/bootstrap/overlays/prod
       - sleep 8
-      #- kubectl apply -f cluster/secrets/sealed-secrets-key.yaml
+      #- kubectl apply -f k8s-cluster/secrets/sealed-secrets-key.yaml
       - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo)"
 
   k8s-bootstrap-dev:
     desc: Bootstrap ArgoCD on the development Kubernetes cluster
     cmds:
-      - kubectl apply -k cluster/bootstrap/overlays/dev
+      - kubectl apply -k k8s-cluster/bootstrap/overlays/dev
       - sleep 8
-      #- kubectl apply -f cluster/secrets/sealed-secrets-key.yaml
+      #- kubectl apply -f k8s-cluster/secrets/sealed-secrets-key.yaml
       - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo)"
