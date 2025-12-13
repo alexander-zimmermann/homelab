@@ -45,7 +45,7 @@ images:
     distro: ubuntu
     release: plucky
     arch: amd64
-    build_date: "20251120_09:26"
+    build_date: "20251210_07:42"
     extension: tar.xz
 
   ## Windows 11 Installation ISO
@@ -111,76 +111,76 @@ resource_policies:
   vm_small:
     memory: 1024
     cores: 1
-    disk: 8
-    network_bridge: vmbr0
+    disk_size: 8
+    vnic_bridge: vmbr0
 
   vm_medium:
     memory: 2048
     cores: 2
-    disk: 16
-    network_bridge: vmbr0
+    disk_size: 16
+    vnic_bridge: vmbr0
 
   vm_large:
     memory: 4096
     cores: 4
-    disk: 32
-    network_bridge: vmbr0
+    disk_size: 32
+    vnic_bridge: vmbr0
 
   vm_xlarge:
     memory: 8192
     cores: 6
-    disk: 48
-    network_bridge: vmbr0
+    disk_size: 48
+    vnic_bridge: vmbr0
 
   vm_2xlarge:
     memory: 16384
     cores: 8
-    disk: 64
-    network_bridge: vmbr0
+    disk_size: 64
+    vnic_bridge: vmbr0
 
   lxc_small:
     memory: 512
     cores: 1
-    disk: 8
-    network_bridge: vmbr0
+    disk_size: 8
+    vnic_bridge: vmbr0
 
   lxc_medium:
     memory: 1024
     cores: 2
-    disk: 16
-    network_bridge: vmbr0
+    disk_size: 16
+    vnic_bridge: vmbr0
 
 ## Naming convention for map: (vm | lxc)_<distro>_<release>
 vm_templates:
   vm_debian_trixie:
     vm_id: 10000
-    image: vm_debian_trixie
+    image_id: vm_debian_trixie
     os_type: l26
     resource_policy: vm_small
     cloud_init_profile: ci_profile_std_linux
 
   vm_ubuntu_noble:
     vm_id: 10001
-    image: vm_ubuntu_noble
+    image_id: vm_ubuntu_noble
     os_type: l26
     resource_policy: vm_large
     cloud_init_profile: ci_profile_std_linux
 
   vm_talos_1_11_5_cp:
     vm_id: 10002
-    image: vm_talos_1_11_5
+    image_id: vm_talos_1_11_5
     os_type: l26
     resource_policy: vm_large
 
   vm_talos_1_11_5_dp:
     vm_id: 10003
-    image: vm_talos_1_11_5
+    image_id: vm_talos_1_11_5
     os_type: l26
     resource_policy: vm_xlarge
 
   vm_windows_11_25h2:
     vm_id: 10003
-    image: vm_windows_11_25h2
+    image_id: vm_windows_11_25h2
     os_type: win11
     resource_policy: vm_large
     bios: ovmf
@@ -190,7 +190,7 @@ vm_templates:
 container_templates:
   lxc_ubuntu_plucky:
     lxc_id: 15000
-    image: lxc_ubuntu_plucky
+    image_id: lxc_ubuntu_plucky
     os_type: ubuntu
     resource_policy: lxc_small
 
@@ -216,7 +216,8 @@ virtual_machines:
       count: 3
       vm_id_start: 2001
       disks:
-        - disk_size: 100
+        - disk_interface: scsi1 # Additional Longhorn storage disk
+          disk_size: 96
 
 containers:
   singles: {}
