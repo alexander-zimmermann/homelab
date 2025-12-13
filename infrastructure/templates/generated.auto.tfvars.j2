@@ -29,10 +29,18 @@ vm_templates = {
     tags                 = [{% for tag in tmpl.tags %}"{{ tag }}"{% if not loop.last %}, {% endif %}{% endfor %}]
     image_id             = "{{ tmpl.image_id }}"
     os_type              = "{{ tmpl.os_type }}"
+{% if tmpl.bios is defined and tmpl.bios %}
     bios                 = "{{ tmpl.bios }}"
+{% endif %}
+{% if tmpl.machine_type is defined %}
     machine_type         = {{ '"%s"' % tmpl.machine_type if tmpl.machine_type else 'null' }}
+{% endif %}
+{% if tmpl.enable_tpm is defined %}
     enable_tpm           = {{ tmpl.enable_tpm | lower }}
+{% endif %}
+{% if tmpl.secure_boot is defined %}
     secure_boot          = {{ tmpl.secure_boot | lower }}
+{% endif %}
     memory               = {{ tmpl.memory }}
     cores                = {{ tmpl.cores }}
     disk_size            = {{ tmpl.disk_size }}
@@ -73,7 +81,9 @@ virtual_machines = {
 {% if vm.is_batch %}
     count          = {{ vm.count }}
     vm_id_start    = {{ vm.vm_id_start }}
+{% if vm.wait_for_agent is defined %}
     wait_for_agent = {{ vm.wait_for_agent | lower }}
+{% endif %}
 {% if vm.disks is defined %}
     disks = [
 {% for disk in vm.disks %}
@@ -107,8 +117,12 @@ virtual_machines = {
     ]
 {% endif %}
 {% else %}
+{% if vm.vm_id is defined %}
     vm_id          = {{ vm.vm_id }}
+{% endif %}
+{% if vm.wait_for_agent is defined %}
     wait_for_agent = {{ vm.wait_for_agent | lower }}
+{% endif %}
 {% endif %}
   }
 {% if not loop.last %}

@@ -18,7 +18,7 @@ import sys
 import yaml
 
 from pathlib import Path
-from typing import Dict, Any, Generator
+from typing import Any, Generator
 from dataclasses import dataclass
 from contextlib import contextmanager
 
@@ -178,8 +178,8 @@ def handle_application_errors() -> Generator[None, None, None]:
 @dataclass
 class GenerationContext:
     """Context for template generation."""
-    manifest: Dict[str, Any]
-    checksums: Dict[str, Any]
+    manifest: dict[str, Any]
+    checksums: dict[str, Any]
     manifest_path: Path
     checksums_path: Path
     template_path: Path
@@ -192,7 +192,7 @@ class VMTemplateGenerator:
     logger = logging.getLogger(__name__)
 
     @classmethod
-    def prepare_vm_templates(cls, manifest: Dict[str, Any]) -> Dict[str, Any]:
+    def prepare_vm_templates(cls, manifest: dict[str, Any]) -> dict[str, Any]:
         """Prepare all VM templates with resolved policies and profiles.
 
         Args:
@@ -202,53 +202,46 @@ class VMTemplateGenerator:
             Dictionary of prepared VM templates with all fields resolved
         """
         prepared = {}
-        for key, tmpl in manifest.get('vm_templates', {}).items():
-            prepared[key] = cls._prepare_single(key, tmpl, manifest)
+
+        for key, item in manifest.get('vm_templates', {}).items():
+            # Resolve policy and profile
+            policy = manifest.get('resource_policies', {}).get(item.get('resource_policy', ''), {})
+            raw_profile = manifest.get('vm_cloud_init_profiles', {}).get(item.get('cloud_init_profile', ''), {})
+
+            # Filter profile to only non-null cloud-init fields
+            profile = {
+                ci_field: raw_profile[ci_field]
+                for ci_field in ['ci_user_data_id', 'ci_vendor_data_id', 'ci_network_data_id', 'ci_meta_data_id']
+                if ci_field in raw_profile and raw_profile[ci_field]
+            }
+
+            # Start with copy of all template fields
+            result = dict(item)
+
+            # Add all policy fields (resource_policy reference not needed in output)
+            result.update(policy)
+            if 'resource_policy' in result:
+                del result['resource_policy']
+
+            # Add cloud-init profile fields (profile reference not needed)
+            result.update(profile)
+            if 'cloud_init_profile' in result:
+                del result['cloud_init_profile']
+
+            # Apply defaults if not already set
+            result.setdefault('target_node', manifest.get('pve_default_target_node', 'pve'))
+            result.setdefault('target_datastore', manifest.get('pve_block_storage', 'local-lvm'))
+            result.setdefault('description', f'{key} template')
+            result.setdefault('tags', ['opentofu', 'template', 'vm'])
+            result.setdefault('os_type', 'l26')
+
+            # Derived field: machine_type from bios (only if bios is OVMF and not already set)
+            if result.get('bios') == 'ovmf' and 'machine_type' not in result:
+                result['machine_type'] = 'q35'
+
+            prepared[key] = result
+
         return prepared
-
-    @staticmethod
-    def _prepare_single(key: str, tmpl: Dict[str, Any], manifest: Dict[str, Any]) -> Dict[str, Any]:
-        """Prepare single VM template with resolved dependencies.
-
-        Args:
-            key: Template key
-            tmpl: Template specification
-            manifest: Full manifest dictionary
-
-        Returns:
-            Prepared template with all fields and defaults
-        """
-        # Resolve policy and profile
-        policy_key = tmpl.get('resource_policy', '')
-        profile_key = tmpl.get('cloud_init_profile', '')
-        policy = manifest.get('resource_policies', {}).get(policy_key, {})
-        profile = manifest.get('vm_cloud_init_profiles', {}).get(profile_key, {})
-
-        # Determine machine type based on BIOS setting
-        bios = tmpl.get('bios', 'seabios')
-        machine_type = 'q35' if bios == 'ovmf' else None
-
-        return {
-            'target_node': tmpl.get('target_node', manifest.get('pve_default_target_node', 'pve')),
-            'target_datastore': tmpl.get('target_datastore', manifest.get('pve_block_storage', 'local-lvm')),
-            'vm_id': tmpl.get('vm_id', 0),
-            'description': tmpl.get('description', f"{key} template"),
-            'tags': ['opentofu', 'template', 'vm'],
-            'image_id': tmpl.get('image', ''),
-            'os_type': tmpl.get('os_type', 'l26'),
-            'bios': bios,
-            'machine_type': machine_type,
-            'enable_tpm': tmpl.get('enable_tpm', False),
-            'secure_boot': tmpl.get('secure_boot', False),
-            'memory': policy.get('memory', 2048),
-            'cores': policy.get('cores', 2),
-            'disk_size': policy.get('disk', 20),
-            'vnic_bridge': policy.get('network_bridge', 'vmbr0'),
-            'ci_user_data_id': profile.get('ci_user_data_id') or None,
-            'ci_vendor_data_id': profile.get('ci_vendor_data_id') or None,
-            'ci_network_data_id': profile.get('ci_network_data_id') or None,
-            'ci_meta_data_id': profile.get('ci_meta_data_id') or None,
-        }
 
 
 class ContainerTemplateGenerator:
@@ -257,7 +250,7 @@ class ContainerTemplateGenerator:
     logger = logging.getLogger(__name__)
 
     @classmethod
-    def prepare_container_templates(cls, manifest: Dict[str, Any]) -> Dict[str, Any]:
+    def prepare_container_templates(cls, manifest: dict[str, Any]) -> dict[str, Any]:
         """Prepare all container templates.
 
         Args:
@@ -267,31 +260,17 @@ class ContainerTemplateGenerator:
             Dictionary of prepared container templates
         """
         prepared = {}
-        for key, ct in manifest.get('container_templates', {}).items():
-            prepared[key] = cls._prepare_single(key, ct, manifest)
+
+        for key, item in manifest.get('container_templates', {}).items():
+            result = dict(item)
+            result.setdefault('target_node', manifest.get('pve_default_target_node', 'pve'))
+            result.setdefault('target_datastore', manifest.get('pve_block_storage', 'local-lvm'))
+            result.setdefault('description', f'{key} container template')
+            result.setdefault('tags', ['opentofu', 'template', 'lxc'])
+            result.setdefault('os_type', 'linux')
+            prepared[key] = result
+
         return prepared
-
-    @staticmethod
-    def _prepare_single(key: str, ct: Dict[str, Any], manifest: Dict[str, Any]) -> Dict[str, Any]:
-        """Prepare single container template.
-
-        Args:
-            key: Template key
-            ct: Container template specification
-            manifest: Full manifest dictionary
-
-        Returns:
-            Prepared container template with all fields
-        """
-        return {
-            'target_node': ct.get('target_node', manifest.get('pve_default_target_node', 'pve')),
-            'target_datastore': ct.get('target_datastore', manifest.get('pve_block_storage', 'local-lvm')),
-            'lxc_id': ct.get('lxc_id', 0),
-            'description': ct.get('description', f"{key} template"),
-            'tags': ['opentofu', 'template', 'lxc'],
-            'image_id': ct.get('image', ''),
-            'os_type': ct.get('os_type', 'linux')
-        }
 
 
 class VirtualMachineGenerator:
@@ -300,37 +279,28 @@ class VirtualMachineGenerator:
     logger = logging.getLogger(__name__)
 
     @staticmethod
-    def _prepare_disks(disks_spec: list, manifest: Dict[str, Any]) -> list:
-        """Prepare disks configuration with default fallbacks.
+    def _prepare_disks(disks_spec: list, manifest: dict[str, Any]) -> list:
+        """Prepare disks configuration - extract fields and apply global datastore.
 
         Args:
             disks_spec: List of disk specifications from manifest
-            manifest: Full manifest dictionary for default lookups
+            manifest: Full manifest dictionary for global pve_block_storage
 
         Returns:
-            List of prepared disk configurations with defaults applied
+            List of prepared disk configurations
         """
         disks = []
-        default_datastore = manifest.get('pve_block_storage', 'local-lvm')
 
         for disk in disks_spec:
-            disk_config = {}
+            result = dict(disk)
+            result.setdefault('disk_datastore', manifest.get('pve_block_storage', 'local-lvm'))
 
-            # Handle disk_datastore with default fallback to pve_block_storage
-            disk_config['disk_datastore'] = disk.get('disk_datastore', default_datastore)
-
-            # Handle other properties (pass through only if explicitly set)
-            for prop_key in ['disk_interface', 'disk_size', 'disk_format',
-                           'disk_cache', 'disk_iothread', 'disk_ssd', 'disk_discard']:
-                if prop_key in disk:
-                    disk_config[prop_key] = disk[prop_key]
-
-            disks.append(disk_config)
+            disks.append(result)
 
         return disks
 
     @classmethod
-    def prepare_virtual_machines(cls, manifest: Dict[str, Any]) -> Dict[str, Any]:
+    def prepare_virtual_machines(cls, manifest: dict[str, Any]) -> dict[str, Any]:
         """Prepare all virtual machines (singles and batches).
 
         Args:
@@ -342,37 +312,20 @@ class VirtualMachineGenerator:
         prepared = {}
 
         # Process singles
-        for key, single in manifest.get('virtual_machines', {}).get('singles', {}).items():
-            vm_config = {
-                'template_id': single.get('template_id', ''),
-                'target_node': single.get('target_node', manifest.get('pve_default_target_node', 'pve')),
-                'vm_id': single.get('vm_id', 0),
-                'wait_for_agent': single.get('wait_for_agent', True),
-                'is_batch': False
-            }
-
-            # Add disks configuration if present
-            if 'disks' in single:
-                vm_config['disks'] = cls._prepare_disks(single['disks'], manifest)
-
-            prepared[key] = vm_config
+        for key, item in manifest.get('virtual_machines', {}).get('singles', {}).items():
+            result = dict(item)
+            result['is_batch'] = False
+            result.setdefault('target_node', manifest.get('pve_default_target_node', 'pve'))
+            result['disks'] = cls._prepare_disks(result['disks'], manifest) if 'disks' in result else []
+            prepared[key] = result
 
         # Process batches
-        for key, batch in manifest.get('virtual_machines', {}).get('batches', {}).items():
-            vm_config = {
-                'template_id': batch.get('template_id', ''),
-                'target_node': batch.get('target_node', manifest.get('pve_default_target_node', 'pve')),
-                'count': batch.get('count', 1),
-                'vm_id_start': batch.get('vm_id_start', 0),
-                'wait_for_agent': batch.get('wait_for_agent', True),
-                'is_batch': True
-            }
-
-            # Add disks configuration if present
-            if 'disks' in batch:
-                vm_config['disks'] = cls._prepare_disks(batch['disks'], manifest)
-
-            prepared[key] = vm_config
+        for key, item in manifest.get('virtual_machines', {}).get('batches', {}).items():
+            result = dict(item)
+            result['is_batch'] = True
+            result.setdefault('target_node', manifest.get('pve_default_target_node', 'pve'))
+            result['disks'] = cls._prepare_disks(result['disks'], manifest) if 'disks' in result else []
+            prepared[key] = result
 
         return prepared
 
@@ -383,7 +336,7 @@ class ContainerGenerator:
     logger = logging.getLogger(__name__)
 
     @classmethod
-    def prepare_containers(cls, manifest: Dict[str, Any]) -> Dict[str, Any]:
+    def prepare_containers(cls, manifest: dict[str, Any]) -> dict[str, Any]:
         """Prepare all containers (singles and batches).
 
         Args:
@@ -395,25 +348,20 @@ class ContainerGenerator:
         prepared = {}
 
         # Process singles
-        for key, single in manifest.get('containers', {}).get('singles', {}).items():
-            prepared[key] = {
-                'template_id': single.get('template_id', ''),
-                'target_node': single.get('target_node', manifest.get('pve_default_target_node', 'pve')),
-                'target_datastore': single.get('target_datastore', manifest.get('pve_block_storage', 'local-lvm')),
-                'lxc_id': single.get('lxc_id', 0),
-                'is_batch': False
-            }
+        for key, item in manifest.get('containers', {}).get('singles', {}).items():
+            result = dict(item)
+            result['is_batch'] = False
+            result.setdefault('target_node', manifest.get('pve_default_target_node', 'pve'))
+            result.setdefault('target_datastore', manifest.get('pve_block_storage', 'local-lvm'))
+            prepared[key] = result
 
         # Process batches
-        for key, batch in manifest.get('containers', {}).get('batches', {}).items():
-            prepared[key] = {
-                'template_id': batch.get('template_id', ''),
-                'target_node': batch.get('target_node', manifest.get('pve_default_target_node', 'pve')),
-                'target_datastore': batch.get('target_datastore', manifest.get('pve_block_storage', 'local-lvm')),
-                'count': batch.get('count', 1),
-                'lxc_id_start': batch.get('lxc_id_start', 0),
-                'is_batch': True
-            }
+        for key, item in manifest.get('containers', {}).get('batches', {}).items():
+            result = dict(item)
+            result['is_batch'] = True
+            result.setdefault('target_node', manifest.get('pve_default_target_node', 'pve'))
+            result.setdefault('target_datastore', manifest.get('pve_block_storage', 'local-lvm'))
+            prepared[key] = result
 
         return prepared
 
@@ -423,103 +371,46 @@ class CloudInitGenerator:
 
     logger = logging.getLogger(__name__)
 
-    @classmethod
-    def prepare_user_configs(cls, manifest: Dict[str, Any]) -> Dict[str, Any]:
-        """Prepare Cloud-Init user configs.
+    @staticmethod
+    def _prepare_configs(manifest: dict[str, Any], config_key: str) -> dict[str, Any]:
+        """Prepare Cloud-Init configs with defaults.
 
         Args:
             manifest: Full manifest dictionary
+            config_key: Manifest key for config section (e.g., 'ci_user_configs')
 
         Returns:
-            Dictionary of prepared user configs
+            Dictionary of prepared configs
         """
         prepared = {}
-        default_node = manifest.get('pve_default_target_node', 'pve')
-        default_storage = manifest.get('pve_file_storage', 'local')
 
-        for key, cfg in manifest.get('ci_user_configs', {}).items():
-            prepared[key] = {
-                'target_node': cfg.get('target_node', default_node),
-                'target_datastore': cfg.get('target_datastore', default_storage),
-                'username': cfg.get('username', 'debian'),
-                'ssh_public_key': cfg.get('ssh_public_key', ''),
-                'set_password': cfg.get('set_password', False),
-                'password': cfg.get('password', '')
-            }
+        for key, item in manifest.get(config_key, {}).items():
+            result = dict(item)
+            result.setdefault('target_node', manifest.get('pve_default_target_node', 'pve'))
+            result.setdefault('target_datastore', manifest.get('pve_file_storage', 'local'))
+            prepared[key] = result
 
         return prepared
 
     @classmethod
-    def prepare_vendor_configs(cls, manifest: Dict[str, Any]) -> Dict[str, Any]:
-        """Prepare Cloud-Init vendor configs.
-
-        Args:
-            manifest: Full manifest dictionary
-
-        Returns:
-            Dictionary of prepared vendor configs
-        """
-        prepared = {}
-        default_node = manifest.get('pve_default_target_node', 'pve')
-        default_storage = manifest.get('pve_file_storage', 'local')
-
-        for key, cfg in manifest.get('ci_vendor_configs', {}).items():
-            prepared[key] = {
-                'target_node': cfg.get('target_node', default_node),
-                'target_datastore': cfg.get('target_datastore', default_storage),
-                'packages': cfg.get('packages', [])
-            }
-
-        return prepared
+    def prepare_user_configs(cls, manifest: dict[str, Any]) -> dict[str, Any]:
+        """Prepare Cloud-Init user configs."""
+        return cls._prepare_configs(manifest, 'ci_user_configs')
 
     @classmethod
-    def prepare_network_configs(cls, manifest: Dict[str, Any]) -> Dict[str, Any]:
-        """Prepare Cloud-Init network configs.
-
-        Args:
-            manifest: Full manifest dictionary
-
-        Returns:
-            Dictionary of prepared network configs
-        """
-        prepared = {}
-        default_node = manifest.get('pve_default_target_node', 'pve')
-        default_storage = manifest.get('pve_file_storage', 'local')
-
-        for key, cfg in manifest.get('ci_network_configs', {}).items():
-            prepared[key] = {
-                'target_node': cfg.get('target_node', default_node),
-                'target_datastore': cfg.get('target_datastore', default_storage),
-                'dhcp4': cfg.get('dhcp4', True),
-                'dhcp6': cfg.get('dhcp6', False),
-                'accept_ra': cfg.get('accept_ra', True),
-                'dns_search_domain': cfg.get('dns_search_domain', [])
-            }
-
-        return prepared
+    def prepare_vendor_configs(cls, manifest: dict[str, Any]) -> dict[str, Any]:
+        """Prepare Cloud-Init vendor configs."""
+        return cls._prepare_configs(manifest, 'ci_vendor_configs')
 
     @classmethod
-    def prepare_meta_configs(cls, manifest: Dict[str, Any]) -> Dict[str, Any]:
-        """Prepare Cloud-Init meta configs.
+    def prepare_network_configs(cls, manifest: dict[str, Any]) -> dict[str, Any]:
+        """Prepare Cloud-Init network configs."""
+        return cls._prepare_configs(manifest, 'ci_network_configs')
 
-        Args:
-            manifest: Full manifest dictionary
-
-        Returns:
-            Dictionary of prepared meta configs
-        """
-        prepared = {}
-        default_node = manifest.get('pve_default_target_node', 'pve')
-        default_storage = manifest.get('pve_file_storage', 'local')
-
-        for key, cfg in manifest.get('ci_meta_configs', {}).items():
-            prepared[key] = {
-                'target_node': cfg.get('target_node', default_node),
-                'target_datastore': cfg.get('target_datastore', default_storage),
-                'hostname': cfg.get('hostname', 'proxmox-vm')
-            }
-
-        return prepared
+    @classmethod
+    def prepare_meta_configs(cls, manifest: dict[str, Any]) -> dict[str, Any]:
+        """Prepare Cloud-Init meta configs."""
+        return cls._prepare_configs(manifest, 'ci_meta_configs')
 
 
 class TalosGenerator:
@@ -528,32 +419,36 @@ class TalosGenerator:
     logger = logging.getLogger(__name__)
 
     @classmethod
-    def prepare_talos_config(cls, manifest: Dict[str, Any]) -> Dict[str, str]:
+    def prepare_talos_config(cls, manifest: dict[str, Any]) -> dict[str, Any]:
         """Prepare Talos cluster configuration.
 
         Args:
             manifest: Full manifest dictionary
 
         Returns:
-            Dictionary with Talos configuration values
+            Dictionary with Talos configuration fields
         """
-        # Extract Talos version from images
-        talos_version = ''
-        for key, spec in manifest.get('images', {}).items():
-            if spec.get('distro') == 'talos':
-                talos_version = cls._resolve_version(spec.get('release', ''), manifest)
-                break
-
         talos_config = manifest.get('talos_configuration', {})
 
-        return {
-            'cluster_name': talos_config.get('cluster_name', 'talos-cluster'),
-            'talos_version': talos_version,
-            'kubernetes_version': talos_config.get('kubernetes_version', '1.31.1')
-        }
+        # Start with copy of all config fields
+        result = dict(talos_config)
+
+        # Resolve talos_version: Try explicit version, fallback to derive from images
+        if 'talos_version' not in result or not result['talos_version']:
+            for key, item in manifest.get('images', {}).items():
+                if item.get('distro') == 'talos':
+                    result['talos_version'] = cls._resolve_version(item.get('release', ''), manifest)
+                    break
+
+        # Apply defaults if not already set
+        result.setdefault('cluster_name', '')
+        result.setdefault('talos_version', '')
+        result.setdefault('kubernetes_version', '')
+
+        return result
 
     @staticmethod
-    def _resolve_version(release_raw: Any, manifest: Dict[str, Any]) -> str:
+    def _resolve_version(release_raw: Any, manifest: dict[str, Any]) -> str:
         """Resolve version from manifest.versions if needed.
 
         Args:
@@ -575,7 +470,7 @@ class ImageGenerator:
     logger = logging.getLogger(__name__)
 
     @classmethod
-    def prepare_images(cls, manifest: Dict[str, Any], checksums: Dict[str, Any]) -> Dict[str, Any]:
+    def prepare_images(cls, manifest: dict[str, Any], checksums: dict[str, Any]) -> dict[str, Any]:
         """Prepare all images with URLs, filenames, and checksums.
 
         Args:
@@ -588,7 +483,7 @@ class ImageGenerator:
         prepared = {}
         checksums_data = checksums.get('checksums', {})
 
-        for key, spec in manifest.get('images', {}).items():
+        for key, item in manifest.get('images', {}).items():
             checksum_entry = checksums_data.get(key, {})
 
             # Windows 11 manual ISO has no URL or checksum
@@ -600,11 +495,11 @@ class ImageGenerator:
                 algorithm = checksum_entry.get('algorithm', 'sha256')
 
             prepared[key] = {
-                'target_node': spec.get('target_node', manifest.get('pve_default_target_node', 'pve')),
-                'target_datastore': spec.get('target_datastore', manifest.get('pve_file_storage', 'local')),
-                'image_type': cls.get_image_type(spec.get('extension', '')),
-                'image_filename': cls.generate_image_filename(key, spec, manifest),
-                'image_url': cls.generate_image_url(key, spec, manifest),
+                'target_node': item.get('target_node', manifest.get('pve_default_target_node', 'pve')),
+                'target_datastore': item.get('target_datastore', manifest.get('pve_file_storage', 'local')),
+                'image_type': cls.get_image_type(item.get('extension', '')),
+                'image_filename': cls.generate_image_filename(key, item, manifest),
+                'image_url': cls.generate_image_url(key, item, manifest),
                 'image_checksum': image_checksum,
                 'image_checksum_algorithm': algorithm
             }
@@ -636,7 +531,7 @@ class ImageGenerator:
         return DEBIAN_VERSIONS.get(codename, codename)
 
     @staticmethod
-    def _resolve_version(release_raw: Any, manifest: Dict[str, Any]) -> str:
+    def _resolve_version(release_raw: Any, manifest: dict[str, Any]) -> str:
         """Resolve version from manifest.versions if needed.
 
         Args:
@@ -652,7 +547,7 @@ class ImageGenerator:
         return str(release_raw)
 
     @classmethod
-    def generate_image_url(cls, key: str, spec: Dict[str, Any], manifest: Dict[str, Any]) -> str:
+    def generate_image_url(cls, key: str, spec: dict[str, Any], manifest: dict[str, Any]) -> str:
         """Generate download URL for an image based on its specification.
 
         Args:
@@ -713,7 +608,7 @@ class ImageGenerator:
         return ""
 
     @classmethod
-    def generate_image_filename(cls, key: str, spec: Dict[str, Any], manifest: Dict[str, Any]) -> str:
+    def generate_image_filename(cls, key: str, spec: dict[str, Any], manifest: dict[str, Any]) -> str:
         """Generate appropriate filename for an image.
 
         Args:
@@ -763,47 +658,6 @@ class ImageGenerator:
         return f"{distro}-{version}-{arch}.{extension}"
 
 
-class TemplateRenderer:
-    """Handles Jinja2 template rendering."""
-
-    logger = logging.getLogger(__name__)
-
-    def __init__(self, template_dir: Path):
-        """Initialize Jinja2 environment.
-
-        Args:
-            template_dir: Directory containing Jinja2 templates
-        """
-        self.env = Environment(
-            loader=FileSystemLoader(str(template_dir)),
-            autoescape=select_autoescape(),
-            trim_blocks=True,
-            lstrip_blocks=True
-        )
-
-    def render(self, template_name: str, context: Dict[str, Any]) -> str:
-        """Render template with prepared context data.
-
-        Args:
-            template_name: Name of the template file
-            context: Context dictionary with all prepared data
-
-        Returns:
-            Rendered template content
-
-        Raises:
-            TemplateLoadError: If template cannot be loaded
-            TemplateRenderError: If template rendering fails
-        """
-        with handle_template_errors(f"Error loading template {template_name}", TemplateLoadError):
-            template = self.env.get_template(template_name)
-
-        with handle_template_errors(f"Error rendering template {template_name}", TemplateRenderError):
-            output = template.render(**context)
-
-        return output
-
-
 class TFVarsGenerator:
     """Orchestrates the tfvars generation process."""
 
@@ -826,13 +680,21 @@ class TFVarsGenerator:
         # Prepare all data using generator classes
         prepared_context = self._prepare_context()
 
-        # Setup template renderer
+        # Setup Jinja2 environment and render template
         template_dir = self.context.template_path.parent
-        renderer = TemplateRenderer(template_dir)
-
-        # Render template
         template_name = self.context.template_path.name
-        output = renderer.render(template_name, prepared_context)
+
+        with handle_template_errors(f"Error loading template {template_name}", TemplateLoadError):
+            env = Environment(
+                loader=FileSystemLoader(str(template_dir)),
+                autoescape=select_autoescape(),
+                trim_blocks=True,
+                lstrip_blocks=True
+            )
+            template = env.get_template(template_name)
+
+        with handle_template_errors(f"Error rendering template {template_name}", TemplateRenderError):
+            output = template.render(**prepared_context)
 
         # Write output
         with handle_generation_errors(f"Error writing output to {self.context.output_path}"):
@@ -841,7 +703,7 @@ class TFVarsGenerator:
         # Log statistics
         self._log_statistics(prepared_context)
 
-    def _prepare_context(self) -> Dict[str, Any]:
+    def _prepare_context(self) -> dict[str, Any]:
         """Prepare complete template context using all generator classes.
 
         Returns:
@@ -864,7 +726,7 @@ class TFVarsGenerator:
             'talos_config': TalosGenerator.prepare_talos_config(manifest)
         }
 
-    def _log_statistics(self, prepared_context: Dict[str, Any]) -> None:
+    def _log_statistics(self, prepared_context: dict[str, Any]) -> None:
         """Log generation statistics.
 
         Args:
@@ -876,7 +738,7 @@ class TFVarsGenerator:
         self.logger.info(f"   Processed {len(prepared_context['container_templates'])} container templates")
 
 
-def load_manifest(manifest_path: Path) -> Dict[str, Any]:
+def load_manifest(manifest_path: Path) -> dict[str, Any]:
     """Load and parse YAML manifest file.
 
     Args:
@@ -893,7 +755,7 @@ def load_manifest(manifest_path: Path) -> Dict[str, Any]:
         return yaml.load(f, Loader=yaml.SafeLoader)
 
 
-def load_checksums(checksums_path: Path) -> Dict[str, Any]:
+def load_checksums(checksums_path: Path) -> dict[str, Any]:
     """Load checksums file (optional).
 
     Args:
