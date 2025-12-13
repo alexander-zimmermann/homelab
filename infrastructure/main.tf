@@ -5,10 +5,12 @@ module "pve_nodes" {
   source   = "./modules/pve_nodes"
   for_each = var.pve_nodes
 
+  ## SSH connection (required for local content type changes)
   ssh_hostname    = var.pve_nodes[each.key].address
   ssh_username    = var.pve_ssh_username
   ssh_private_key = var.pve_ssh_private_key
 
+  ## PVE node configuration
   node                = each.key
   local_content_types = var.local_content_types
   timezone            = var.timezone
@@ -56,15 +58,17 @@ module "pve_user_mgmt" {
 module "pve_acme" {
   source = "./modules/pve_acme"
 
-  # Pass the aliased provider to satisfy the state reference
+  ## Pass the aliased provider to satisfy the state reference
   providers = {
     proxmox.root = proxmox.root
   }
 
+  ## SSH connection (required for acme changes)
   ssh_hostname    = var.pve_nodes[var.acme_target_node].address
   ssh_username    = var.pve_ssh_username
   ssh_private_key = var.pve_ssh_private_key
 
+  ## ACME account configuration
   cert_domains  = var.acme_cert_domains
   contact_email = var.acme_contact_email
   cf_token      = var.cf_token
@@ -340,23 +344,33 @@ module "virtual_machines" {
   source   = "./modules/vm_clone"
   for_each = local.virtual_machines
 
-  node           = each.value.target_node
-  vm_id          = each.value.vm_id
-  name           = each.value.vm_name
-  template_id    = module.vm_template[each.value.template_id].vmid
-  template_node  = module.vm_template[each.value.template_id].node
+  ## VM placement and identification
+  node  = each.value.target_node
+  vm_id = each.value.vm_id
+  name  = each.value.vm_name
+
+  ## Used VM template
+  template_id   = module.vm_template[each.value.template_id].vmid
+  template_node = module.vm_template[each.value.template_id].node
+
+  ## Startup variables
   wait_for_agent = each.value.wait_for_agent
-  disks          = try(each.value.disks, [])
+
+  ## Additional disks
+  disks = try(each.value.disks, [])
 }
 
 module "containers" {
   source   = "./modules/container_clone"
   for_each = local.containers
 
-  node          = each.value.target_node
-  lxc_id        = each.value.lxc_id
-  name          = each.value.container_name
-  datastore     = each.value.target_datastore
+  ## Container placement and identification
+  node      = each.value.target_node
+  datastore = each.value.target_datastore
+  lxc_id    = each.value.lxc_id
+  name      = each.value.container_name
+
+  ## Used vontainer template
   template_id   = module.container_template[each.value.template_id].lxc_id
   template_node = module.container_template[each.value.template_id].node
 }
@@ -368,11 +382,24 @@ module "containers" {
 module "talos_cluster" {
   source = "./modules/talos-cluster"
 
-  cluster_name       = var.talos_cluster_name
+  ## Cluster identity
+  cluster_name = var.talos_cluster_name
+
+  ## Talos/Kubernetes versions
   talos_version      = var.talos_version
   kubernetes_version = var.kubernetes_version
 
+  ## Node topology
   cluster_head  = module.virtual_machines[local.control_plane_node_ids[0]].ipv4[0]
   control_plane = [for id in local.control_plane_node_ids : module.virtual_machines[id].ipv4[0]]
   data_plane    = [for id in local.data_plane_node_ids : module.virtual_machines[id].ipv4[0]]
+
+  ## Network configuration
+  dns_servers = var.talos_dns_servers
+  ntp_servers = var.talos_ntp_servers
+
+  ## Dataplane storage
+  longhorn_disk_selector_match = var.talos_longhorn.disk_selector_match
+  longhorn_mount_path          = var.talos_longhorn.mount_path
+  longhorn_filesystem          = var.talos_longhorn.filesystem
 }

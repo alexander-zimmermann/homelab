@@ -36,9 +36,24 @@ data "talos_client_configuration" "this" {
 ## Talos machine configurations
 ###############################################################################
 locals {
-  ## Default talos_machine_configuration values
-  talos_mc_defaults = {
+  talos_inline_manifests = []
+
+  ## Default talos_machine_configuration values passed into templatefile() patches
+  talos_baseline_defaults = {
     talos_version = var.talos_version
+    dns_servers   = var.dns_servers
+    ntp_servers   = var.ntp_servers
+  }
+
+  talos_controlplane_defaults = {
+    inline_manifests = jsonencode(local.talos_inline_manifests)
+  }
+
+  talos_dataplane_defaults = {
+    longhorn_disk_selector_match_json = jsonencode(var.longhorn_disk_selector_match)
+    longhorn_mount_path               = var.longhorn_mount_path
+    longhorn_filesystem               = var.longhorn_filesystem
+    longhorn_volume_name              = trimprefix(var.longhorn_mount_path, "/var/mnt/")
   }
 }
 
@@ -51,7 +66,8 @@ data "talos_machine_configuration" "controlplane" {
   kubernetes_version = var.kubernetes_version
 
   config_patches = [
-    templatefile("${path.root}/talos/baseline.yaml.tpl", local.talos_mc_defaults)
+    templatefile("${path.root}/talos/config/baseline.yaml.tpl", local.talos_baseline_defaults),
+    templatefile("${path.root}/talos/config/controlplane.yaml.tpl", local.talos_controlplane_defaults)
   ]
 }
 
@@ -64,7 +80,8 @@ data "talos_machine_configuration" "dataplane" {
   kubernetes_version = var.kubernetes_version
 
   config_patches = [
-    templatefile("${path.root}/talos/baseline.yaml.tpl", local.talos_mc_defaults)
+    templatefile("${path.root}/talos/config/baseline.yaml.tpl", local.talos_baseline_defaults),
+    templatefile("${path.root}/talos/config/dataplane.yaml.tpl", local.talos_dataplane_defaults)
   ]
 }
 
@@ -101,29 +118,10 @@ resource "talos_machine_bootstrap" "this" {
 
 
 ###############################################################################
-## Wait for cluster ready before generating kubeconfig
-###############################################################################
-data "talos_cluster_health" "this" {
-  depends_on = [talos_machine_bootstrap.this]
-
-  client_configuration = data.talos_client_configuration.this.client_configuration
-  control_plane_nodes  = var.control_plane
-  worker_nodes         = var.data_plane
-  endpoints            = data.talos_client_configuration.this.endpoints
-
-  ## Wait up to 10 minutes for cluster to become healthy
-  ## This allows time for all Kubernetes components to start
-  timeouts = {
-    read = "10m"
-  }
-}
-
-
-###############################################################################
-## Retrieve Kubeconfig (resource replaces deprecated data source)
+## Retrieve Kubeconfig & Talos config files
 ###############################################################################
 resource "talos_cluster_kubeconfig" "this" {
-  depends_on           = [data.talos_cluster_health.this]
+  depends_on           = [talos_machine_bootstrap.this]
   client_configuration = talos_machine_secrets.this.client_configuration
   endpoint             = var.cluster_head
   node                 = var.cluster_head

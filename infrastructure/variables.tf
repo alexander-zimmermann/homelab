@@ -1237,12 +1237,14 @@ variable "virtual_machines" {
     target_node = string
 
     ## Single VM deployment
-    vm_id          = optional(number)
-    wait_for_agent = optional(bool, true)
+    vm_id = optional(number)
 
     ## Batch VM deployment
     count       = optional(number, 0)
     vm_id_start = optional(number)
+
+    ## Startup variables
+    wait_for_agent = optional(bool, true)
 
     ## Additional disks (optional for both single and batch)
     disks = optional(list(object({
@@ -1494,4 +1496,69 @@ variable "kubernetes_version" {
     are compatible before bumping this value.
   EOT
   type        = string
+}
+
+variable "talos_dns_servers" {
+  description = <<EOT
+    List of DNS servers configured on Talos nodes. These are used by Talos for
+    name resolution. Default: Cloudflare IPv4 and IPv6 DNS.
+  EOT
+  type        = list(string)
+  default     = ["1.1.1.1", "2606:4700:4700::1111"]
+}
+
+variable "talos_ntp_servers" {
+  description = <<EOT
+    List of NTP servers used for time synchronization on Talos nodes.
+    Default: Cloudflare Time and pool.ntp.org.
+  EOT
+  type        = list(string)
+  default     = ["time.cloudflare.com", "pool.ntp.org"]
+}
+
+variable "talos_longhorn" {
+  description = <<EOT
+    Longhorn dataplane storage settings for Talos worker nodes.
+
+    These values are used to generate Talos block storage configuration
+    (UserVolumeConfig) and kubelet mount propagation for CSI/Longhorn.
+
+    Fields:
+      - disk_selector_match: CEL expression used as UserVolumeConfig.provisioning.diskSelector.match.
+        Examples: !system_disk | disk.transport == "nvme" | disk.model.contains("Samsung")
+      - mount_path: Must be /var/mnt/<name> for Talos user volumes.
+      - filesystem: Filesystem type for the provisioned volume (ext4 or xfs).
+  EOT
+
+  type = object({
+    ## Disk selection
+    disk_selector_match = optional(string, "!system_disk")
+
+    ## Volume mount (Talos user volume mount path)
+    mount_path = optional(string, "/var/mnt/longhorn")
+
+    ## Filesystem type used to format the volume
+    filesystem = optional(string, "ext4")
+  })
+
+  default = {}
+
+  validation {
+    condition = alltrue([
+      ## disk_selector_match must be non-empty (CEL expression)
+      length(trimspace(var.talos_longhorn.disk_selector_match)) > 0,
+
+      ## mount_path must be /var/mnt/<name>
+      can(regex("^/var/mnt/[A-Za-z0-9-]{1,34}$", var.talos_longhorn.mount_path)),
+
+      ## filesystem must be one of the supported types
+      contains(["ext4", "xfs"], var.talos_longhorn.filesystem),
+    ])
+    error_message = <<EOT
+      Invalid talos_longhorn configuration. Requirements:
+      - disk_selector_match must be a non-empty CEL expression string (e.g. !system_disk)
+      - mount_path must be /var/mnt/<name> where <name> is 1-34 chars of letters/digits/hyphens (e.g. /var/mnt/longhorn)
+      - filesystem must be one of: ext4, xfs
+    EOT
+  }
 }
