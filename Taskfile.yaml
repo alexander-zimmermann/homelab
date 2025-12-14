@@ -109,6 +109,7 @@ tasks:
   k8s-bootstrap-prod:
     desc: Bootstrap ArgoCD on the production Kubernetes cluster
     cmds:
+      - until kubectl get --raw /healthz >/dev/null 2>&1; do echo "Waiting for API..." && sleep 5; done
       - kubectl apply -k k8s-cluster/bootstrap/overlays/prod
       - sleep 8
       #- kubectl apply -f k8s-cluster/secrets/sealed-secrets-key.yaml
