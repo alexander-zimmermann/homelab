@@ -359,7 +359,6 @@ module "virtual_machines" {
 
   ## Additional disks
   disks = try(each.value.disks, [])
-
 }
 
 module "containers" {
