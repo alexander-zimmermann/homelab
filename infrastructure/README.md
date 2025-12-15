@@ -23,7 +23,7 @@ using OpenTofu (Terraform fork). It provides:
 
 - **OpenTofu 1.10.6**: Infrastructure orchestration engine
 - **Proxmox VE 9.0**: Virtualization platform
-- **Talos 1.11.5**: Kubernetes-focused OS for container workloads
+- **Talos Linux**: Kubernetes-focused OS for container workloads
 - **Ubuntu 24.04 Noble**: General-purpose VM workloads
 - **Debian Trixie (13)**: Alternative Linux distribution option
 - **Windows 11 25H2**: Windows workloads with modern security features
@@ -63,9 +63,12 @@ infrastructure/
 │   └── infrastructure-manifest.schema.json
 ├── build/                          # Build artifacts
 │   └── checksums.yaml              # Downloaded image checksums
-└── talos/                          # Talos cluster artifacts
-    ├── talosconfig                 # Talos cluster configuration
-    └── kubeconfig                  # Kubernetes configuration
+└── talos/                          # Talos-related files
+  └── config/                     # Talos machine config patches + image factory schematic
+      ├── baseline.yaml.tpl        # Applied to all nodes (control plane + workers)
+      ├── dataplane.yaml.tpl       # Data plane only patch
+      ├── controlplane.yaml.tpl    # Control plane only patch
+      └── imagefactory.yaml        # Image Factory schematic (extensions/kernel args)
 ```
 
 ## Infrastructure Workflow
@@ -124,6 +127,19 @@ task tofu-plan
 task tofu-apply
 ```
 
+#### `task k8s-bootstrap-prod`
+
+**Critical Step**: Use this to finalize the Cluster deployment after `tofu-apply`.
+
+- Connects to the new cluster API.
+- Installs ArgoCD.
+- Deploys Core Components via GitOps (Cilium CNI, Talos Cloud Controller Manager).
+- Approves Node CSRs automatically via CCM.
+
+```bash
+task k8s-bootstrap-prod
+```
+
 #### `task tofu-destroy`
 
 - Tears down all managed infrastructure
@@ -137,7 +153,7 @@ task tofu-destroy
 ### 2. Infrastructure Definition
 
 Infrastructure is defined in `infrastructure-manifest.yaml` using a structured
-YAML format:
+YAML format.
 
 #### Image Specifications
 
@@ -158,117 +174,25 @@ images:
     schematic: b553b4a25d76e938fd7a9aaa7f887c06ea4ef75275e64f4630e6f8f739cf07df
     extension: raw
 
+  # Note on Talos images:
+  # - The Image Factory schematic is tracked in `talos/config/imagefactory.yaml`.
+  # - OpenTofu downloads the actual Talos image to Proxmox via `image_url` (factory URL).
+
   # Windows 11 ISO (manually provided)
   vm_windows_11_25h2:
     distro: windows
     release: "11-25H2"
     arch: amd64
     extension: iso
-
-  # Ubuntu LXC Container Template
-  lxc_ubuntu_plucky:
-    distro: ubuntu
-    release: plucky
-    arch: amd64
-    build_date: "20251120_09:26"
-    extension: tar.xz
 ```
 
-#### VM Templates
+#### VM Templates and Deployment
 
-#### VM Templates
+Defined in `vm_templates` and `virtual_machines` sections of the manifest. Supports:
 
-```yaml
-resource_policies:
-  vm_small:
-    memory: 1024
-    cores: 1
-    disk: 10
-    network_bridge: vmbr0
-
-  vm_large:
-    memory: 4096
-    cores: 4
-    disk: 40
-    network_bridge: vmbr0
-
-vm_templates:
-  # Linux template with cloud-init
-  vm_debian_trixie:
-    vm_id: 10000
-    image: vm_debian_trixie
-    os_type: l26
-    resource_policy: vm_small
-    cloud_init_profile: ci_profile_std_linux
-
-  # Talos template (no cloud-init)
-  vm_talos_1_11_5:
-    vm_id: 10002
-    image: vm_talos_1_11_5
-    os_type: l26
-    resource_policy: vm_medium
-
-  # Windows 11 with UEFI, TPM 2.0, and Secure Boot
-  vm_windows_11_25h2:
-    vm_id: 10003
-    image: vm_windows_11_25h2
-    os_type: win11
-    resource_policy: vm_large
-    bios: ovmf # UEFI boot
-    enable_tpm: true # TPM 2.0 support
-    secure_boot: true # Secure Boot enabled
-```
-
-#### Container Templates
-
-```yaml
-container_templates:
-  lxc_ubuntu_plucky:
-    lxc_id: 15000
-    image: lxc_ubuntu_plucky
-    os_type: ubuntu
-    resource_policy: lxc_small
-```
-
-#### Virtual Machine Deployment
-
-```yaml
-virtual_machines:
-  singles:
-    # Single VM instances
-    debian_01:
-      template_id: vm_debian_trixie
-      vm_id: 1000
-
-    windows_01:
-      template_id: vm_windows_11_25h2
-      vm_id: 1100
-      wait_for_agent: false # Manual setup required
-
-  batches:
-    # Batch deployment for Talos cluster
-    talos_cp:
-      template_id: vm_talos_1_11_5
-      count: 1
-      vm_id_start: 2000
-
-    talos_dp:
-      template_id: vm_talos_1_11_5
-      count: 1
-      vm_id_start: 2100
-```
-
-#### Container Deployment
-
-```yaml
-containers:
-  singles:
-    ubuntu_ct_01:
-      template_id: lxc_ubuntu_plucky
-      lxc_id: 5000
-```
-
-### 3. Cloud-Init Configuration System
+- **Resource Policies**: Predefined sizes (small, medium, large)
+- **Batches**: create N identical VMs (e.g., Talos workers)
+- **Singles**: Individual bespoke VMs (e.g., Windows Gaming VM)
 
 ### 3. Cloud-Init Configuration System
 
@@ -279,47 +203,17 @@ Modular cloud-init configuration supporting:
 - **Network Configuration**: Static/DHCP networking, DNS settings
 - **Meta Configuration**: Hostname and metadata
 
-```yaml
-ci_user_configs:
-  ci_user_std_linux:
-    username: alexander
-    ssh_public_key: ~/.ssh/id_rsa.pub
-    set_password: false
-
-ci_vendor_configs:
-  ci_vendor_std_linux:
-    packages:
-      - htop
-      - vim
-      - qemu-guest-agent
-
-vm_cloud_init_profiles:
-  ci_profile_std_linux:
-    description: "Standard Linux configuration"
-    ci_user_data_id: ci_user_std_linux
-    ci_vendor_data_id: ci_vendor_std_linux
-    ci_network_data_id: ci_net_std_linux
-    ci_meta_data_id: ci_meta_std_linux
-```
-
 ### 4. Talos Kubernetes Cluster
 
-### 4. Talos Kubernetes Cluster
+The project includes automated Talos Kubernetes cluster deployment.
 
-The project includes automated Talos Kubernetes cluster deployment:
+**Architecture Change (Dec 2025):**
+The cluster deployment is now split into two phases to avoid cyclic dependencies:
 
-```yaml
-talos_configuration:
-  cluster_name: "homelab"
-  kubernetes_version: "1.30.0"
-```
+1.  **Infrastructure (OpenTofu)**: Provisions VMs and bootstraps Talos OS.
+2.  **GitOps (ArgoCD)**: Deploys the CNI (Cilium) and Cloud Controller Manager (Talos CCM).
 
-Features:
-
-- **Automated bootstrapping**: Zero-touch cluster initialization
-- **Control plane nodes**: Deployed from `talos_cp` batch
-- **Data plane nodes**: Deployed from `talos_dp` batch
-- **Deterministic networking**: MAC address generation for stable DHCP assignments
+**Note**: The Talos CCM is responsible for approving kubelet serving certificates. Until `task k8s-bootstrap-prod` runs, nodes may appear as `NotReady`.
 
 ### 5. Advanced Features
 
@@ -343,27 +237,15 @@ Full support for modern Windows VMs:
 
 ## Provider Configuration
 
-### Proxmox Provider (bpg/proxmox v0.87.0)
+### Proxmox Provider (bpg/proxmox)
 
 - **Primary Management**: VM/container lifecycle management
 - **API Communication**: RESTful API integration with Proxmox VE
-- **Template Support**: VM/container template creation and cloning
-- **Cloud-Init Integration**: Automated guest configuration
-- **Image Management**: ISO and disk image handling
 
-### Talos Provider (siderolabs/talos v0.9.0)
+### Talos Provider (siderolabs/talos)
 
 - **Kubernetes Cluster Management**: Specialized cluster orchestration
 - **Automated Bootstrapping**: Zero-touch cluster initialization
-- **Node Configuration**: Control plane and data plane node setup
-- **Machine Configuration**: Talos-specific system configuration
-
-### Supporting Providers
-
-- **Local**: Local file and data management for cloud-init snippets
-- **TLS**: Certificate and key generation for secure communications
-- **Random**: ID and password generation for security
-- **Null**: Resource lifecycle hooks and triggers
 
 ## Prerequisites
 
@@ -371,9 +253,6 @@ Full support for modern Windows VMs:
 
 - **Proxmox VE 9.0+**: Accessible via API (port 8006)
 - **Network**: DHCP server for VM/container IP assignment
-- **Storage**: Sufficient storage for VM images, containers, and disks
-  - File storage: local (for ISOs, templates, snippets)
-  - Block storage: local-zfs (for VM/container disks)
 
 ### Development Environment
 
@@ -390,165 +269,26 @@ Configure Proxmox credentials in `terraform.tfvars`:
 pve_endpoint = "https://192.168.1.100:8006"
 pve_username = "root@pam"
 pve_password = "your-password"
-
-# SSH Configuration for Network Management
-pve_ssh_username = "root"
-pve_ssh_private_key = "/path/to/private/key"
-pve_ssh_use_agent = false
-
-# Node Configuration
-pve_nodes = {
-  "pve-1" = {
-    address = "192.168.1.100"
-    port    = 22
-  }
-  "pve-2" = {
-    address = "192.168.1.101"
-    port    = 22
-  }
-}
-```
-
-## Getting Started
-
-1. **Clone Repository**:
-
-   ```bash
-   git clone <repository-url>
-   cd homelab/infrastructure
-   ```
-
-2. **Configure Credentials**:
-
-   Create `terraform.tfvars`:
-
-   ```hcl
-   pve_endpoint = "https://your-proxmox-server:8006"
-   pve_username = "root@pam"
-   pve_password = "your-password"
-   ```
-
-3. **Configure Infrastructure**:
-
-   Edit `infrastructure-manifest.yaml` to define your desired infrastructure
-
-4. **Generate Variables**:
-
-   ```bash
-   python3 scripts/generate_tfvars.py
-   ```
-
-5. **Initialize OpenTofu**:
-
-   ```bash
-   tofu init
-   ```
-
-6. **Plan Deployment**:
-
-   ```bash
-   tofu plan
-   ```
-
-7. **Apply Infrastructure**:
-
-   ```bash
-   tofu apply
-   ```
-
-## Current Deployment
-
-The current configuration deploys:
-
-- **2 Linux VMs**: Debian Trixie and Ubuntu Noble (VMID 1000-1001)
-- **1 Windows VM**: Windows 11 25H2 with UEFI/TPM/SecureBoot (VMID 1100)
-- **2 Talos VMs**: Control plane and data plane nodes (VMID 2000, 2100)
-- **1 Ubuntu Container**: LXC container (CTID 5000)
-- **Talos Kubernetes Cluster**: Single control plane + single data plane
-
-All resources use:
-
-- DHCP for IP assignment
-- Deterministic MAC addresses for stable IPs
-- Cloud-init for automated Linux VM configuration
-- QEMU Guest Agent for VM management
-
-## Advanced Topics
-
-### MAC Address Format
-
-VMs and containers receive predictable MAC addresses:
-
-```
-VMs:        02:01:00:XX:XX:XX  (XX:XX:XX from VM ID)
-Containers: 02:02:00:XX:XX:XX  (XX:XX:XX from Container ID)
-```
-
-Example:
-
-- VM 1000 → `02:01:00:00:03:e8`
-- Container 5000 → `02:02:00:00:13:88`
-
-### Windows VM Installation
-
-Windows VMs require manual installation steps:
-
-1. VM is created with ISO attached
-2. Boot from ISO and follow Windows installation
-3. Install VirtIO drivers during setup (from virtio-win.iso)
-4. Complete Windows installation
-5. QEMU Guest Agent will report IP after installation
-
-### Talos Cluster Access
-
-After deployment, access your Talos cluster:
-
-```bash
-# Get talosconfig
-export TALOSCONFIG=./talosconfig
-
-# Check cluster status
-talosctl health --nodes <control-plane-ip>
-
-# Get kubeconfig
-talosctl kubeconfig
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-**Issue**: VM fails to start after cloning
+**Issue**: Talos nodes are `NotReady` after `tofu-apply`.
 
-- **Solution**: Check disk storage availability on target node
+- **Solution**: Run `task k8s-bootstrap-prod` to deploy the CNI and CCM via ArgoCD.
 
-**Issue**: Cloud-init not applying configuration
+**Issue**: Proxmox Console shows white screen.
 
-- **Solution**: Verify cloud-init snippets are in Proxmox file storage
+- **Solution**:
+  - If accessing via Cloudflare, disable **Rocket Loader** in Cloudflare settings.
+  - Check if Cloudflare is injecting `X-Frame-Options: DENY`.
+  - Try accessing Proxmox via local IP to verify VM health.
 
-**Issue**: Talos cluster not bootstrapping
+**Issue**: Talos Nodes have random names (e.g. `talos-xyz-123`).
 
-- **Solution**: Ensure VMs have network connectivity and DHCP assigns IPs
-
-**Issue**: Windows VM not showing IP
-
-- **Solution**: Complete Windows installation and install QEMU Guest Agent
-
-### Useful Commands
-
-```bash
-# Refresh Terraform state
-tofu refresh
-
-# Destroy specific resource
-tofu destroy -target='module.vm_clone["debian_01"]'
-
-# View current state
-tofu show
-
-# Validate configuration
-tofu validate
-```
+- **Solution**: Ensure your DHCP server is assigning hostnames correctly, or verify that the `talos-cluster` module is receiving the correct hostname map (currently relies on DHCP).
 
 ## License
 
