@@ -1,0 +1,10 @@
+---
+args:
+  - --kubelet-insecure-tls
+  - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+
+# Replicas can be adjusted for HA
+replicas: 1
+
+apiService:
+  create: true
