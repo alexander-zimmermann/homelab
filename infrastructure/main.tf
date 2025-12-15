@@ -355,9 +355,11 @@ module "virtual_machines" {
 
   ## Startup variables
   wait_for_agent = each.value.wait_for_agent
+  protection     = each.value.protection
 
   ## Additional disks
   disks = try(each.value.disks, [])
+
 }
 
 module "containers" {
@@ -373,6 +375,9 @@ module "containers" {
   ## Used vontainer template
   template_id   = module.container_template[each.value.template_id].lxc_id
   template_node = module.container_template[each.value.template_id].node
+
+  ## Startup variables
+  protection = each.value.protection
 }
 
 

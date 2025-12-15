@@ -374,6 +374,12 @@ variable "password" {
 ###############################################################################
 ## Startup variables
 ###############################################################################
+variable "protection" {
+  description = "Enable protection against container removal."
+  type        = bool
+  default     = true
+}
+
 variable "start_on_boot" {
   description = "Start container on PVE boot."
   type        = bool

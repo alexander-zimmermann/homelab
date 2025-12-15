@@ -68,6 +68,7 @@ variable "pve_insecure" {
 }
 
 
+
 ###############################################################################
 ## PVE SSH across all cluster nodes
 ##############################################################################
@@ -1204,6 +1205,7 @@ variable "virtual_machines" {
       - target_node (required): Key in `var.pve_nodes`.
       - vm_id (optional): Explicit VMID (>0). When null, provider allocates.
       - wait_for_agent (optional): Wait for QEMU guest agent. Default: true.
+      - protection (optional): Enable deletion protection. Default: true.
       - disks (optional): List of additional disks to attach (beyond template disk).
 
     Batch instance object (count > 0): Expands into multiple instances whose
@@ -1213,6 +1215,7 @@ variable "virtual_machines" {
       - count (required >0): Number of instances to create.
       - vm_id_start (required >0): First VMID; subsequent = vm_id_start + index - 1
       - wait_for_agent (optional): Wait for QEMU guest agent. Default: true.
+      - protection (optional): Enable deletion protection. Default: true.
       - disks (optional): List of additional disks to attach to ALL VMs in batch.
 
     Additional disks configuration (optional for both single and batch):
@@ -1245,6 +1248,7 @@ variable "virtual_machines" {
 
     ## Startup variables
     wait_for_agent = optional(bool, true)
+    protection     = optional(bool, true)
 
     ## Additional disks (optional for both single and batch)
     disks = optional(list(object({
@@ -1365,6 +1369,7 @@ variable "containers" {
       - target_node (required): Key in `var.pve_nodes`.
       - target_datastore (optional): Storage for rootfs. Default: "local-zfs".
       - lxc_id (optional): Explicit LXC ID (>0). When null, provider allocates.
+      - protection (optional): Enable deletion protection. Default: true.
 
     Batch instance object (count > 0): Expands into multiple instances whose
     generated keys follow: <map key> + "-" + index (1..count). Fields:
@@ -1373,6 +1378,7 @@ variable "containers" {
       - target_datastore (optional): Storage for rootfs. Default: "local-zfs".
       - count (required >0): Number of instances to create.
       - lxc_id_start (required >0): First LXC ID; subsequent = lxc_id_start + index - 1
+      - protection (optional): Enable deletion protection. Default: true.
 
     Mutually exclusive sets: Single objects MUST NOT define count/lxc_id_start.
     Batch objects MUST define count & lxc_id_start and MUST NOT define lxc_id.
@@ -1392,6 +1398,9 @@ variable "containers" {
     ## Batch container deployment
     count        = optional(number, 0)
     lxc_id_start = optional(number)
+
+    ## Startup variables
+    protection = optional(bool, true)
   }))
 
   validation {

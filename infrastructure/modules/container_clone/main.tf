@@ -46,6 +46,7 @@ resource "proxmox_virtual_environment_container" "lxc" {
 
   description = var.description
   tags        = var.tags
+  protection  = var.protection
 
   clone {
     datastore_id = var.datastore

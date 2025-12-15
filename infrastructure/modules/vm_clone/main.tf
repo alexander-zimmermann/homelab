@@ -44,6 +44,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
   description = var.description
   tags        = var.tags
+  protection  = var.protection
 
   bios          = var.bios
   machine       = var.machine_type

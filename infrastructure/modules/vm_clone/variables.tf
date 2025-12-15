@@ -543,6 +543,12 @@ variable "wait_for_agent" {
   default     = true
 }
 
+variable "protection" {
+  description = "Enable protection against VM removal."
+  type        = bool
+  default     = true
+}
+
 variable "start_on_boot" {
   description = "Start VM on PVE boot."
   type        = bool
