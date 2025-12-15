@@ -179,10 +179,10 @@ vm_templates:
     resource_policy: vm_xlarge
 
   vm_windows_11_25h2:
-    vm_id: 10003
+    vm_id: 10004
     image_id: vm_windows_11_25h2
     os_type: win11
-    resource_policy: vm_large
+    resource_policy: vm_2xlarge
     bios: ovmf
     enable_tpm: true
     secure_boot: true
