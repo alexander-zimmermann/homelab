@@ -10,13 +10,15 @@ spec:
     - git:
         repoURL: https://github.com/alexander-zimmermann/homelab
         revision: HEAD
-        directories:
-          - path: k8s-cluster/components/*/overlays/prod
+        files:
+          - path: k8s-cluster/components/*/overlays/prod/kustomization.yaml
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   template:
     metadata:
-      name: "{{index .path.segments 2}}-{{.path.basename}}"
+      name: "{{index .path.segments 2}}-{{index .path.segments 4}}" # segment 2 is component name, 4 is prod/dev
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{ index .commonAnnotations "argocd.argoproj.io/sync-wave" | default "0" }}'
     spec:
       project: default
       source:

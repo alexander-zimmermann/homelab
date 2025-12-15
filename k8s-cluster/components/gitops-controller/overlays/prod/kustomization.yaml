@@ -5,3 +5,6 @@ kind: Kustomization
 resources:
   - ../../base
   - ../../../../bootstrap/overlays/prod/
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "0"
