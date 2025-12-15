@@ -1,0 +1,25 @@
+---
+enabled: true
+image:
+  repository: ghcr.io/siderolabs/talos-cloud-controller-manager
+  # tag: v1.11.0 # Managed by chart version usually, or override here if needed to match Talos version. Chart default is best.
+  pullPolicy: IfNotPresent
+
+# Matches the arguments seen in manifests.yaml
+extraArgs:
+  # - --cloud-provider=talos # Implied by chart
+  # - --cloud-config=/etc/talos/ccm-config.yaml # Implied by chart
+  - --controllers=cloud-node,node-csr-approval
+  - --v=2
+
+# The manifest showed this secret mount. The generic chart usually handles this if `enabled: true`.
+# We need to ensure the ServiceAccount and Secret bindings are correct.
+nodeSelector:
+  node-role.kubernetes.io/control-plane: ""
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
+    operator: Exists
+  - effect: NoSchedule
+    key: node.cloudprovider.kubernetes.io/uninitialized
+    operator: Exists
