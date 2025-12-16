@@ -9,7 +9,7 @@ helmCharts:
   - name: sealed-secrets
     repo: https://bitnami-labs.github.io/sealed-secrets
     releaseName: sealed-secrets
-    version: 2.17.2
+    version: 2.17.9
     valuesFile: values.yaml
     includeCRDs: true
     namespace: sealed-secrets-controller
