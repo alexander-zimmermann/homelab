@@ -1,4 +1,5 @@
 ## @section Common parameters
+replicaCount: 2
 
 ## @param kubeVersion Override Kubernetes version
 ##

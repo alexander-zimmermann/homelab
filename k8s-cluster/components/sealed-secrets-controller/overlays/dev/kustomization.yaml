@@ -7,3 +7,12 @@ resources:
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-4"
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: sealed-secrets-controller

@@ -1,5 +1,6 @@
 ---
 enabled: true
+replicaCount: 2
 image:
   repository: ghcr.io/siderolabs/talos-cloud-controller-manager
   # tag: v1.11.0 # Managed by chart version usually, or override here if needed to match Talos version. Chart default is best.

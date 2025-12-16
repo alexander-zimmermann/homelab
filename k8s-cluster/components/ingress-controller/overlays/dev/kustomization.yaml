@@ -24,3 +24,11 @@ patches:
     target:
       kind: Certificate
       name: traefik-tls-cert
+
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: traefik

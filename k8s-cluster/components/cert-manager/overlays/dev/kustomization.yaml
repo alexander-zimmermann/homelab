@@ -7,3 +7,26 @@ resources:
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-3"
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: cert-manager
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: cert-manager-cainjector
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: cert-manager-webhook
