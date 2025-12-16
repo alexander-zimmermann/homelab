@@ -1,0 +1,13 @@
+defaultSettings:
+  defaultDataPath: /var/mnt/longhorn
+  createDefaultDiskLabeledNodes: true
+
+persistence:
+  defaultClassReplicaCount: 2 # Prod default (User requested 2). Dev will patch this to 1.
+
+service:
+  ui:
+    type: ClusterIP
+
+ingress:
+  enabled: false # We will handle Ingress separately or later
