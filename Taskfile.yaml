@@ -127,6 +127,16 @@ tasks:
       - cmd: printf "{{.GREEN}}✅ Infrastructure applied!{{.RESET}}\n"
         silent: true
 
+  infra:refresh:
+    desc: "Refresh infrastructure state (OpenTofu refresh)"
+    dir: infrastructure
+    cmds:
+      - cmd: printf "{{.BLUE}}🔄 Refreshing infrastructure state...{{.RESET}}\n"
+        silent: true
+      - tofu refresh
+      - cmd: printf "{{.GREEN}}✅ Infrastructure state refreshed!{{.RESET}}\n"
+        silent: true
+
   infra:destroy:
     desc: "Destroy (tear down) all managed Proxmox infrastructure"
     dir: infrastructure
@@ -180,5 +190,11 @@ tasks:
       - kubectl get nodes
       - kubectl get pods -A
       - kubectl -n kube-system exec ds/cilium -- cilium status
+      - cmd: printf "{{.BLUE}}💾 Verifying Storage...{{.RESET}}\n"
+        silent: true
+      - kubectl get storageclass
+      - cmd: printf "{{.BLUE}}🤖 Verifying ArgoCD Applications...{{.RESET}}\n"
+        silent: true
+      - kubectl -n gitops-controller get applications
       - cmd: printf "{{.GREEN}}✅ Cluster verification complete!{{.RESET}}\n"
         silent: true
