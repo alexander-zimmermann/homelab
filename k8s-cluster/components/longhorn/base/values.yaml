@@ -1,9 +1,33 @@
 defaultSettings:
   defaultDataPath: /var/mnt/longhorn
   createDefaultDiskLabeledNodes: true
+  defaultReplicaCount: 3
+  defaultDataLocality: best-effort
+  replicaAutoBalance: best-effort
+  storageMinimalAvailablePercentage: 15
 
 persistence:
-  defaultClassReplicaCount: 2 # Prod default (User requested 2). Dev will patch this to 1.
+  defaultClass: true
+  defaultClassReplicaCount: 3
+  reclaimPolicy: Retain
+
+longhornManager:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+
+longhornDriver:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
 
 service:
   ui:
