@@ -4,6 +4,14 @@ version: "3"
 vars:
   PYTHON: "{{.TASKFILE_DIR}}/.venv/bin/python"
   PIP: "{{.TASKFILE_DIR}}/.venv/bin/pip"
+  TIMEOUT_CILIUM: "300s"
+  TIMEOUT_ARGOCD: "300s"
+  # Colors
+  BLUE: '\033[0;34m'
+  GREEN: '\033[0;32m'
+  YELLOW: '\033[0;33m'
+  RED: '\033[0;31m'
+  RESET: '\033[0m'
 
 tasks:
   default:
@@ -11,8 +19,10 @@ tasks:
       - task --list
 
   initialize:
-    desc: Initialize homelab project on macOS (Homebrew, virtualenv, base Python deps)
+    desc: "Initialize homelab project on macOS (Homebrew, virtualenv, base Python deps)"
     cmds:
+      - cmd: printf "{{.BLUE}}🚀 Initializing homelab environment...{{.RESET}}\n"
+        silent: true
       - for:
           var: FORMULAS
           as: FORMULA
@@ -24,6 +34,8 @@ tasks:
           as: PACKAGE
         cmd: "{{.PIP}} install {{.PACKAGE}} >/dev/null 2>&1"
       - pre-commit install >/dev/null 2>&1
+      - cmd: printf "{{.GREEN}}✅ Initialization complete!{{.RESET}}\n"
+        silent: true
     preconditions:
       - sh: command -v brew
         msg: |
@@ -48,7 +60,7 @@ tasks:
         jinja2
         pre-commit
 
-  tofu-prepare:
+  infra:prepare:
     desc: "Prepare Terraform/OpenTofu environment and generate configuration"
     dir: infrastructure
     env:
@@ -68,6 +80,8 @@ tasks:
       - sh: test -x ../.venv/bin/python
         msg: "Python virtual environment missing or not executable. Run 'task initialize' first."
     cmds:
+      - cmd: printf "{{.BLUE}}🏗️  Preparing OpenTofu environment...{{.RESET}}\n"
+        silent: true
       # Phase 1: Pre-validation (fail-fast)
       - "{{.PYTHON}} scripts/validate_infrastructure.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}} pre"
       # Phase 2: Build directory setup
@@ -82,43 +96,89 @@ tasks:
       - "{{.PYTHON}} scripts/validate_infrastructure.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}} post"
       # Phase 6: Initialization of OpenTofu working directory
       - tofu init
+      - cmd: printf "{{.GREEN}}✅ OpenTofu prepared!{{.RESET}}\n"
+        silent: true
 
-  tofu-plan:
+  infra:plan:
     desc: "Generate plan for infrastructure deployment"
     dir: infrastructure
-    deps: [tofu-prepare]
+    deps: [infra:prepare]
     preconditions:
       - sh: test -f generated.auto.tfvars
-        msg: "generated.auto.tfvars is missing – run 'task tofu-prepare' first."
+        msg: "generated.auto.tfvars is missing – run 'task infra:prepare' first."
     cmds:
+      - cmd: printf "{{.BLUE}}🕵️  Generating infrastructure plan...{{.RESET}}\n"
+        silent: true
       - tofu plan -out tfplan
+      - cmd: printf "{{.GREEN}}✅ Plan generated (tfplan){{.RESET}}\n"
+        silent: true
 
-  tofu-apply:
-    desc: Apply planned infrastructure changes to Proxmox (OpenTofu apply)
+  infra:apply:
+    desc: "Apply planned infrastructure changes to Proxmox (OpenTofu apply)"
     dir: infrastructure
-    deps: [tofu-plan]
+    deps: [infra:plan]
+    preconditions:
+      - sh: test -f tfplan
+        msg: "tfplan is missing – run 'task infra:plan' first."
     cmds:
-      - tofu apply -auto-approve
+      - cmd: printf "{{.BLUE}}🚀 Applying infrastructure changes...{{.RESET}}\n"
+        silent: true
+      - tofu apply tfplan
+      - cmd: printf "{{.GREEN}}✅ Infrastructure applied!{{.RESET}}\n"
+        silent: true
 
-  tofu-destroy:
-    desc: Destroy (tear down) all managed Proxmox infrastructure
+  infra:destroy:
+    desc: "Destroy (tear down) all managed Proxmox infrastructure"
     dir: infrastructure
     cmds:
+      - cmd: printf "{{.RED}}💥 Destroying infrastructure...{{.RESET}}\n"
+        silent: true
       - tofu destroy -auto-approve
+      - cmd: printf "{{.GREEN}}✅ Infrastructure destroyed.{{.RESET}}\n"
+        silent: true
 
-  k8s-bootstrap-prod:
-    desc: Bootstrap ArgoCD on the production Kubernetes cluster
+  cluster:bootstrap:
+    desc: "Bootstrap ArgoCD on the Kubernetes cluster (usage: task cluster:bootstrap ENV=dev|prod)"
+    vars:
+      ENV: '{{.ENV | default "dev"}}'
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
     cmds:
-      - until kubectl get --raw /healthz >/dev/null 2>&1; do echo "Waiting for API..." && sleep 5; done
-      - kubectl apply -k k8s-cluster/bootstrap/overlays/prod
-      - sleep 8
-      #- kubectl apply -f k8s-cluster/secrets/sealed-secrets-key.yaml
+      - cmd: printf "{{.BLUE}}⏳ Waiting for Kubernetes API...{{.RESET}}\n"
+        silent: true
+      - until kubectl get --raw /healthz >/dev/null 2>&1; sleep 5; done
+      - cmd: printf "{{.GREEN}}✅ API is ready!{{.RESET}}\n"
+        silent: true
+      - cmd: printf "{{.BLUE}}🌐 Installing Cilium + ArgoCD ({{.ENV}})...{{.RESET}}\n"
+        silent: true
+      - kubectl apply -k k8s-cluster/bootstrap/overlays/{{.ENV}}
+      - cmd: printf "{{.BLUE}}⏳ Waiting for Cilium...{{.RESET}}\n"
+        silent: true
+      - kubectl -n kube-system wait --for=condition=ready pod -l app.kubernetes.io/name=cilium --timeout={{.TIMEOUT_CILIUM}}
+      - cmd: printf "{{.GREEN}}✅ Cilium is ready!{{.RESET}}\n"
+        silent: true
+      - cmd: printf "{{.BLUE}}⏳ Waiting for ArgoCD...{{.RESET}}\n"
+        silent: true
+      - kubectl -n gitops-controller wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server --timeout={{.TIMEOUT_ARGOCD}}
+      - cmd: printf "{{.GREEN}}✅ ArgoCD is ready!{{.RESET}}\n"
+        silent: true
+      - cmd: printf "{{.BLUE}}🌐 Installing Sealed Secrets...{{.RESET}}\n"
+        silent: true
+      - kubectl apply -f k8s-cluster/secrets/sealed-secrets-key.yaml
       - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo)"
+      - task: cluster:verify
 
-  k8s-bootstrap-dev:
-    desc: Bootstrap ArgoCD on the development Kubernetes cluster
+  cluster:verify:
+    desc: "Verify cluster health"
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
     cmds:
-      - kubectl apply -k k8s-cluster/bootstrap/overlays/dev
-      - sleep 8
-      #- kubectl apply -f k8s-cluster/secrets/sealed-secrets-key.yaml
-      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo)"
+      - cmd: printf "{{.BLUE}}🔍 Verifying cluster health...{{.RESET}}\n"
+        silent: true
+      - kubectl get nodes
+      - kubectl get pods -A
+      - kubectl -n kube-system exec ds/cilium -- cilium status
+      - cmd: printf "{{.GREEN}}✅ Cluster verification complete!{{.RESET}}\n"
+        silent: true
