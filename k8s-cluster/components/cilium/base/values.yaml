@@ -3051,7 +3051,7 @@ clustermesh:
       #  - "Never" Never enable session affinity. Useful in environments where
       #            session affinity is not supported, but may lead to slightly
       #            degraded performance due to more frequent reconnections.
-      enableSessionAffinity: "HAOnly"
+      enableSessionAffinity: "Never"
       # @schema
       # type: [null, string]
       # @schema
