@@ -6,3 +6,5 @@ resources:
   - ./sealedsecret.yaml
   - ./ingressroute.yaml
   - ./certificate.yaml
+
+namespace: gitops-controller
