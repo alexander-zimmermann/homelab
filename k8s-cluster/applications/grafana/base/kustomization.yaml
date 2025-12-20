@@ -16,3 +16,6 @@ helmCharts:
     valuesFile: values.yaml
     includeCRDs: true
     namespace: grafana
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "10"
