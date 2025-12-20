@@ -23,17 +23,24 @@ tasks:
     cmds:
       - cmd: printf "{{.BLUE}}🚀 Initializing homelab environment...{{.RESET}}\n"
         silent: true
+      # Phase 1: Install System Packages
       - for:
           var: FORMULAS
           as: FORMULA
         cmd: "brew list {{.FORMULA}} >/dev/null 2>&1 || brew install {{.FORMULA}} >/dev/null 2>&1"
+
+      # Phase 2: Setup Python Environment
       - test -d .venv || python3 -m venv .venv
       - "{{.PIP}} install --upgrade pip >/dev/null 2>&1"
+
+      # Phase 3: Install Python Dependencies
       - for:
           var: PACKAGES
           as: PACKAGE
         cmd: "{{.PIP}} install {{.PACKAGE}} >/dev/null 2>&1"
       - pre-commit install >/dev/null 2>&1
+
+      # All phases complete
       - cmd: printf "{{.GREEN}}✅ Initialization complete!{{.RESET}}\n"
         silent: true
     preconditions:
@@ -84,16 +91,21 @@ tasks:
         silent: true
       # Phase 1: Pre-validation (fail-fast)
       - "{{.PYTHON}} scripts/validate_infrastructure.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}} pre"
+
       # Phase 2: Build directory setup
       - mkdir -p build
       - 'test -f build/checksums.yaml || echo "checksums: {}" > build/checksums.yaml'
+
       # Phase 3: Generation tfvars
       - "{{.PYTHON}} scripts/generate_tfvars.py"
+
       # Phase 4: Checksum update
       - "{{.PYTHON}} scripts/generate_checksums.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}"
       - "{{.PYTHON}} scripts/generate_tfvars.py {{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}"
+
       # Phase 5: Post-validation (consistency)
       - "{{.PYTHON}} scripts/validate_infrastructure.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}} post"
+
       # Phase 6: Initialization of OpenTofu working directory
       - tofu init
       - cmd: printf "{{.GREEN}}✅ OpenTofu prepared!{{.RESET}}\n"
@@ -155,29 +167,48 @@ tasks:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
     cmds:
+      # Phase 1: Wait for Kubernetes API
       - cmd: printf "{{.BLUE}}⏳ Waiting for Kubernetes API...{{.RESET}}\n"
         silent: true
-      - until kubectl get --raw /healthz >/dev/null 2>&1; sleep 5; done
+      - until kubectl get --raw /healthz >/dev/null 2>&1; do sleep 5; done
       - cmd: printf "{{.GREEN}}✅ API is ready!{{.RESET}}\n"
         silent: true
-      - cmd: printf "{{.BLUE}}🌐 Installing Cilium + ArgoCD ({{.ENV}})...{{.RESET}}\n"
+
+      # Phase 2: Seed Cilium (Network)
+      - cmd: printf "{{.BLUE}} Seeding Cilium CNI (Bootstrapping Network)...{{.RESET}}\n"
+        silent: true
+      - kustomize build --enable-helm --helm-command /opt/homebrew/opt/helm@3/bin/helm k8s-cluster/components/cilium/overlays/{{.ENV}} | kubectl apply -f - || true
+      - kubectl rollout restart ds/cilium -n cilium && kubectl rollout restart deploy/cilium-operator -n cilium
+
+      # Phase 3: Wait for Cilium Readiness
+      - cmd: printf "{{.BLUE}}⏳ Waiting for Cilium CNI...{{.RESET}}\n"
+        silent: true
+      - kubectl rollout status ds/cilium -n cilium --timeout={{.TIMEOUT_CILIUM}}
+      - kubectl rollout status deploy/cilium-operator -n cilium --timeout={{.TIMEOUT_CILIUM}}
+      - cmd: printf "{{.GREEN}}✅ Cilium is ready! Network established.{{.RESET}}\n"
+        silent: true
+
+      # Phase 4: Deploy ArgoCD (GitOps)
+      - cmd: printf "{{.BLUE}}🌐 Installing ArgoCD (GitOps Controller)...{{.RESET}}\n"
         silent: true
       - kubectl apply -k k8s-cluster/bootstrap/overlays/{{.ENV}}
-      - cmd: printf "{{.BLUE}}⏳ Waiting for Cilium...{{.RESET}}\n"
-        silent: true
-      - kubectl -n kube-system wait --for=condition=ready pod -l app.kubernetes.io/name=cilium --timeout={{.TIMEOUT_CILIUM}}
-      - cmd: printf "{{.GREEN}}✅ Cilium is ready!{{.RESET}}\n"
-        silent: true
       - cmd: printf "{{.BLUE}}⏳ Waiting for ArgoCD...{{.RESET}}\n"
         silent: true
       - kubectl -n gitops-controller wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server --timeout={{.TIMEOUT_ARGOCD}}
       - cmd: printf "{{.GREEN}}✅ ArgoCD is ready!{{.RESET}}\n"
         silent: true
+
+      # Phase 5: Finalize (Secrets & Verification)
       - cmd: printf "{{.BLUE}}🌐 Installing Sealed Secrets...{{.RESET}}\n"
         silent: true
+      - until kubectl get ns sealed-secrets-controller; do sleep 5; done
       - kubectl apply -f k8s-cluster/secrets/sealed-secrets-key.yaml
+
+      # Phase 6: Cleanup
+      - rm -r k8s-cluster/components/cilium/base/charts/
+      - cmd: printf "{{.GREEN}}✅ Cluster bootstrapped!{{.RESET}}\n"
+        silent: true
       - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo)"
-      - task: cluster:verify
 
   cluster:verify:
     desc: "Verify cluster health"
@@ -187,14 +218,43 @@ tasks:
     cmds:
       - cmd: printf "{{.BLUE}}🔍 Verifying cluster health...{{.RESET}}\n"
         silent: true
+      # Phase 1: Node Status
       - kubectl get nodes
+
+      # Phase 2: Pod Status
       - kubectl get pods -A
-      - kubectl -n kube-system exec ds/cilium -- cilium status
+
+      # Phase 3: Cilium Connectivity
+      - kubectl -n cilium exec ds/cilium -- cilium status
+
+      # Phase 4: Storage Verification
       - cmd: printf "{{.BLUE}}💾 Verifying Storage...{{.RESET}}\n"
         silent: true
       - kubectl get storageclass
+
+      # Phase 5: Application Verification
       - cmd: printf "{{.BLUE}}🤖 Verifying ArgoCD Applications...{{.RESET}}\n"
         silent: true
       - kubectl -n gitops-controller get applications
       - cmd: printf "{{.GREEN}}✅ Cluster verification complete!{{.RESET}}\n"
+        silent: true
+
+  cluster:wipe:
+    desc: "Wipe all bootstrap resources (Dangerous!)"
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
+    vars:
+      MANAGED_NAMESPACES:
+        sh: |
+          grep -rh "namespace:" k8s-cluster/components/*/base/kustomization.yaml k8s-cluster/applications/*/base/kustomization.yaml \
+          | awk '{print $2}' \
+          | sort -u \
+          | grep -vE '^(default|kube-system|kube-public|kube-node-lease)$'
+    cmds:
+      - cmd: printf "{{.RED}}💥 Wiping cluster resources...{{.RESET}}\n"
+        silent: true
+      # Phase 1: Delete Namespaces
+      - echo "{{.MANAGED_NAMESPACES}}" | xargs kubectl delete ns --ignore-not-found=true
+      - cmd: printf "{{.GREEN}}✅ Cluster wiped.{{.RESET}}\n"
         silent: true
