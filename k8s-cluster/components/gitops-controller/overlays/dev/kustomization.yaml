@@ -4,7 +4,7 @@ kind: Kustomization
 
 resources:
   - ../../base
-  - ../../../../bootstrap/overlays/dev/
+  - ../../../../bootstrap/gitops-controller/overlays/dev/
 
 patches:
   - patch: |-
