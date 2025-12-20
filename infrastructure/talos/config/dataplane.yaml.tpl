@@ -5,6 +5,9 @@ version: v1alpha1
 debug: false
 
 machine:
+  nodeLabels:
+    node-role.kubernetes.io/data-plane: ""
+
   kubelet:
     extraMounts:
       - destination: ${longhorn_mount_path}
