@@ -2,6 +2,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+namespace: ingress-controller
 resources:
   - ./namespace.yaml
   - ./certificate.yaml
@@ -14,3 +15,6 @@ helmCharts:
     valuesFile: values.yaml
     includeCRDs: true
     namespace: ingress-controller
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-1"

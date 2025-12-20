@@ -5,9 +5,6 @@ kind: Kustomization
 resources:
   - ../../base
 
-commonAnnotations:
-  argocd.argoproj.io/sync-wave: "-2"
-
 patches:
   - patch: |-
       - op: replace

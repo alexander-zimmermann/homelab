@@ -10,22 +10,29 @@ spec:
     - git:
         repoURL: https://github.com/alexander-zimmermann/homelab
         revision: HEAD
-        directories:
-          - path: k8s-cluster/applications/*/overlays/prod
+        # Scan Base Kustomization files
+        files:
+          - path: k8s-cluster/applications/*/base/kustomization.yaml
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   template:
     metadata:
-      name: "{{index .path.segments 2}}-{{.path.basename}}"
+      # Segment 2 is application name (k8s-cluster/applications/NAME/base/kustomization.yaml)
+      name: "{{index .path.segments 2}}-prod"
+      annotations:
+        # Read sync-wave from base if present
+        argocd.argoproj.io/sync-wave: '{{ index .commonAnnotations "argocd.argoproj.io/sync-wave" | default "0" }}'
     spec:
       project: default
       source:
         repoURL: https://github.com/alexander-zimmermann/homelab
         targetRevision: HEAD
-        path: "{{.path.path}}"
+        # Construct path to overlays/prod
+        path: k8s-cluster/applications/{{index .path.segments 2}}/overlays/prod
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{index .path.segments 2}}"
+        # Read namespace from the parsed Kustomization file content
+        namespace: "{{.namespace}}"
       syncPolicy:
         automated:
           prune: true

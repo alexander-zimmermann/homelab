@@ -6,9 +6,6 @@ resources:
   - ../../base
   - ../../../../bootstrap/overlays/dev/
 
-commonAnnotations:
-  argocd.argoproj.io/sync-wave: "0"
-
 patches:
   - patch: |-
       - op: replace

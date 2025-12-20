@@ -2,6 +2,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+namespace: cilium
 resources:
   - ./namespace.yaml
   - ./certificate.yaml
@@ -15,3 +16,6 @@ helmCharts:
     valuesFile: values.yaml
     includeCRDs: true
     namespace: cilium
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-10"

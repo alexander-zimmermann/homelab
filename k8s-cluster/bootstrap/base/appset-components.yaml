@@ -1,6 +1,7 @@
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
+
 metadata:
   name: cluster
   namespace: gitops-controller
@@ -9,24 +10,29 @@ spec:
     - git:
         repoURL: https://github.com/alexander-zimmermann/homelab
         revision: HEAD
+        # Scan Base Kustomization files
         files:
-          - path: k8s-cluster/components/*/overlays/prod/kustomization.yaml
+          - path: k8s-cluster/components/*/base/kustomization.yaml
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   template:
     metadata:
-      name: "{{index .path.segments 2}}-{{index .path.segments 4}}" # segment 2 is component name, 4 is prod/dev
+      # Segment 2 is component name (k8s-cluster/components/NAME/base/kustomization.yaml)
+      name: "{{index .path.segments 2}}-prod"
       annotations:
+        # Read sync-wave from the parsed Kustomization file content
         argocd.argoproj.io/sync-wave: '{{ index .commonAnnotations "argocd.argoproj.io/sync-wave" | default "0" }}'
     spec:
       project: default
       source:
         repoURL: https://github.com/alexander-zimmermann/homelab
         targetRevision: HEAD
-        path: "{{.path.path}}"
+        # Construct path to overlays/prod
+        path: k8s-cluster/components/{{index .path.segments 2}}/overlays/prod
       destination:
         server: https://kubernetes.default.svc
-        # namespace: "..." <- REMOVED! Manifest dictates namespace.
+        # Read namespace from the parsed Kustomization file content
+        namespace: "{{.namespace}}"
       syncPolicy:
         automated:
           prune: true

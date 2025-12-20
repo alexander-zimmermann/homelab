@@ -2,6 +2,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+namespace: cert-manager
 resources:
   - ./namespace.yaml
   - ./sealedsecret.yaml
@@ -24,3 +25,6 @@ patches:
     target:
       kind: CustomResourceDefinition
       labelSelector: app.kubernetes.io/instance=cert-manager
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-3"
