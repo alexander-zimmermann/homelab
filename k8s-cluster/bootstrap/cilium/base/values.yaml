@@ -404,13 +404,13 @@ bgp:
 # CiliumBGPPeeringPolicy CRDs.
 bgpControlPlane:
   # -- Enables the BGP control plane.
-  enabled: false
+  enabled: true
   # -- SecretsNamespace is the namespace which BGP support will retrieve secrets from.
   secretsNamespace:
     # -- Create secrets namespace for BGP secrets.
-    create: false
+    create: true
     # -- The name of the secret namespace to which Cilium agents are given read access
-    name: kube-system
+    name: cilium-secrets
 pmtuDiscovery:
   # -- Enable path MTU discovery to send ICMP fragmentation-needed replies to
   # the client.
@@ -982,7 +982,7 @@ eni:
   instanceTagsFilter: []
 externalIPs:
   # -- Enable ExternalIPs service support.
-  enabled: false
+  enabled: true
 # fragmentTracking enables IPv4 fragment tracking support in the datapath.
 # fragmentTracking: true
 gke:
