@@ -1,0 +1,146 @@
+---
+version: "3"
+
+vars:
+  TIMEOUT_CILIUM: "300s"
+  TIMEOUT_ARGOCD: "300s"
+
+tasks:
+  bootstrap:
+    desc: "Bootstrap ArgoCD on the Kubernetes cluster (usage: task cluster:bootstrap ENV=dev|prod)"
+    vars:
+      ENV: '{{.ENV | default "dev"}}'
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
+    cmds:
+      # Phase 1: Wait for Kubernetes API
+      - cmd: printf "{{.BLUE}}⏳ Waiting for Kubernetes API...{{.RESET}}\n"
+        silent: true
+      - until kubectl get --raw /healthz >/dev/null 2>&1; do sleep 5; done
+      - cmd: printf "{{.GREEN}}✅ API is ready!{{.RESET}}\n"
+        silent: true
+
+      # Phase 2: Seed Cilium (Network)
+      - cmd: printf "{{.BLUE}} Seeding Cilium CNI (Bootstrapping Network)...{{.RESET}}\n"
+        silent: true
+      - kustomize build --enable-helm --helm-command /opt/homebrew/opt/helm@3/bin/helm k8s-cluster/bootstrap/cilium/overlays/{{.ENV}} | kubectl apply -f - || true
+
+      # Phase 3: Wait for Cilium Readiness
+      - cmd: printf "{{.BLUE}}⏳ Waiting for Cilium CNI (Health Check)...{{.RESET}}\n"
+        silent: true
+      # Check K8s Rollout first (Basic Pod Up)
+      - kubectl rollout status ds/cilium -n cilium --timeout={{.TIMEOUT_CILIUM}}
+      - kubectl rollout status deploy/cilium-operator -n cilium --timeout={{.TIMEOUT_CILIUM}}
+      # Check Internal Health (Cilium Status)
+      - cilium status -n cilium --wait
+      - cmd: printf "{{.GREEN}}✅ Cilium is ready! Network established.{{.RESET}}\n"
+        silent: true
+
+      # Phase 4: Deploy ArgoCD (GitOps)
+      - cmd: printf "{{.BLUE}}🌐 Installing ArgoCD (GitOps Controller)...{{.RESET}}\n"
+        silent: true
+      - kubectl apply -k k8s-cluster/bootstrap/gitops-controller/overlays/{{.ENV}}
+      - cmd: printf "{{.BLUE}}⏳ Waiting for ArgoCD...{{.RESET}}\n"
+        silent: true
+      - kubectl -n gitops-controller wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server --timeout={{.TIMEOUT_ARGOCD}}
+      - cmd: printf "{{.GREEN}}✅ ArgoCD is ready!{{.RESET}}\n"
+        silent: true
+
+      # Phase 5: Finalize (Secrets & Verification)
+      - cmd: printf "{{.BLUE}}🌐 Installing Sealed Secrets...{{.RESET}}\n"
+        silent: true
+      # Wait for ArgoCD to create the Application
+      - cmd: printf "{{.BLUE}}⏳ Waiting for Application sealed-secrets-controller-prod...{{.RESET}}\n"
+        silent: true
+      - until kubectl get application -n gitops-controller sealed-secrets-controller-prod >/dev/null 2>&1; do sleep 5; done
+      # Wait for Application to be Healthy
+      - kubectl wait application/sealed-secrets-controller-prod -n gitops-controller --for=jsonpath='{.status.health.status}'=Healthy --timeout=300s
+      - kubectl apply -f k8s-cluster/secrets/sealed-secrets-key.yaml
+
+      # Phase 6: Cleanup
+      - rm -r k8s-cluster/bootstrap/cilium/base/charts
+      - cmd: printf "{{.GREEN}}✅ Cluster bootstrapped!{{.RESET}}\n"
+        silent: true
+
+  output:
+    desc: "Show cluster outputs"
+    dir: k8s-cluster
+    cmds:
+      - cmd: printf "{{.BLUE}}☸️ Showing cluster outputs...{{.RESET}}\n"
+        silent: true
+      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo \n)"
+      - cmd: printf "{{.GREEN}}✅ Cluster outputs shown!{{.RESET}}\n"
+        silent: true
+
+  verify:
+    desc: "Verify cluster health"
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
+    cmds:
+      - cmd: printf "{{.BLUE}}🔍 Verifying cluster health...{{.RESET}}\n"
+        silent: true
+      # Phase 1: Node Status
+      - kubectl get nodes
+
+      # Phase 2: Pod Status
+      - kubectl get pods -A
+
+      # Phase 3: Cilium Connectivity
+      - cilium status -n cilium
+
+      # Phase 4: Storage Verification
+      - cmd: printf "{{.BLUE}}💾 Verifying Storage...{{.RESET}}\n"
+        silent: true
+      - kubectl get storageclass
+
+      # Phase 5: Application Verification
+      - cmd: printf "{{.BLUE}}🤖 Verifying ArgoCD Applications...{{.RESET}}\n"
+        silent: true
+      - kubectl -n gitops-controller get applications
+      - cmd: printf "{{.GREEN}}✅ Cluster verification complete!{{.RESET}}\n"
+        silent: true
+
+  wipe:
+    desc: "Wipe all bootstrap resources (Dangerous!)"
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
+    vars:
+      MANAGED_NAMESPACES:
+        sh: |
+          grep -rh "namespace:" k8s-cluster/components/*/base/kustomization.yaml k8s-cluster/applications/*/base/kustomization.yaml \
+          | awk '{print $2}' \
+          | sort -u \
+          | grep -vE '^(default|kube-system|kube-public|kube-node-lease)$' \
+          | tr '\n' ' '
+    cmds:
+      - cmd: printf "{{.RED}}💥 Wiping cluster resources...{{.RESET}}\n"
+        silent: true
+      # Phase 1: Async Delete
+      - echo "{{.MANAGED_NAMESPACES}}" | xargs kubectl delete ns --ignore-not-found=true --wait=false
+
+      # Phase 2: Force Cleanup (Finalizers)
+      - cmd: |
+          echo "Waiting for namespaces to terminate or force cleanup..."
+          for ns in {{.MANAGED_NAMESPACES}}; do
+            echo "Checking $ns..."
+            # Wait up to 10s for normal deletion
+            kubectl wait --for=delete ns/$ns --timeout=10s >/dev/null 2>&1 || true
+
+            # If still exists, patch finalizers
+            if kubectl get ns $ns >/dev/null 2>&1; then
+              echo "Force removing finalizers for $ns..."
+              kubectl patch ns $ns -p '{"spec":{"finalizers":[]}}' --type=merge >/dev/null 2>&1
+            fi
+          done
+
+      # Phase 3: System Component Cleanup
+      - cmd: printf "{{.RED}}🧹 Cleaning system namespaces...{{.RESET}}\n"
+        silent: true
+      - kubectl delete secret hubble-tls-cert -n default --ignore-not-found=true
+      - kubectl delete deploy,svc metrics-server -n kube-system --ignore-not-found=true
+      - kubectl delete deploy,svc talos-cloud-controller-manager -n kube-system --ignore-not-found=true
+      - cmd: printf "{{.GREEN}}✅ Cluster wiped completely.{{.RESET}}\n"
+        silent: true

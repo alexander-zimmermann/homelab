@@ -1,0 +1,109 @@
+---
+version: "3"
+
+vars:
+  PYTHON: "{{.TASKFILE_DIR}}/.venv/bin/python"
+  PIP: "{{.TASKFILE_DIR}}/.venv/bin/pip"
+
+tasks:
+  prepare:
+    desc: "Prepare Terraform/OpenTofu environment and generate configuration"
+    dir: infrastructure
+    env:
+      PATH: "{{.TASKFILE_DIR}}/.venv/bin:{{.PATH}}"
+      PYTHONPATH: scripts
+    sources:
+      - infrastructure-manifest.yaml
+      - schemas/infrastructure-manifest.schema.json
+      - templates/*.j2
+      - scripts/generate_checksums.py
+      - scripts/generate_tfvars.py
+      - scripts/validate_infrastructure.py
+    generates:
+      - generated.auto.tfvars
+      - build/checksums.yaml
+    preconditions:
+      - sh: test -x ../.venv/bin/python
+        msg: "Python virtual environment missing or not executable. Run 'task initialize' first."
+    cmds:
+      - cmd: printf "{{.BLUE}}🏗️  Preparing OpenTofu environment...{{.RESET}}\n"
+        silent: true
+      # Phase 1: Pre-validation (fail-fast)
+      - "{{.PYTHON}} scripts/validate_infrastructure.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}} pre"
+
+      # Phase 2: Build directory setup
+      - mkdir -p build
+      - 'test -f build/checksums.yaml || echo "checksums: {}" > build/checksums.yaml'
+
+      # Phase 3: Generation tfvars
+      - "{{.PYTHON}} scripts/generate_tfvars.py"
+
+      # Phase 4: Checksum update
+      - "{{.PYTHON}} scripts/generate_checksums.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}"
+      - "{{.PYTHON}} scripts/generate_tfvars.py {{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}"
+
+      # Phase 5: Post-validation (consistency)
+      - "{{.PYTHON}} scripts/validate_infrastructure.py{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}} post"
+
+      # Phase 6: Initialization of OpenTofu working directory
+      - tofu init
+      - cmd: printf "{{.GREEN}}✅ OpenTofu prepared!{{.RESET}}\n"
+        silent: true
+
+  plan:
+    desc: "Generate plan for infrastructure deployment"
+    dir: infrastructure
+    deps: [prepare]
+    preconditions:
+      - sh: test -f generated.auto.tfvars
+        msg: "generated.auto.tfvars is missing – run 'task infra:prepare' first."
+    cmds:
+      - cmd: printf "{{.BLUE}}🕵️  Generating infrastructure plan...{{.RESET}}\n"
+        silent: true
+      - tofu plan -out tfplan
+      - cmd: printf "{{.GREEN}}✅ Plan generated (tfplan){{.RESET}}\n"
+        silent: true
+
+  apply:
+    desc: "Apply planned infrastructure changes to Proxmox (OpenTofu apply)"
+    dir: infrastructure
+    deps: [plan]
+    preconditions:
+      - sh: test -f tfplan
+        msg: "tfplan is missing – run 'task infra:plan' first."
+    cmds:
+      - cmd: printf "{{.BLUE}}🚀 Applying infrastructure changes...{{.RESET}}\n"
+        silent: true
+      - tofu apply tfplan
+      - cmd: printf "{{.GREEN}}✅ Infrastructure applied!{{.RESET}}\n"
+        silent: true
+
+  refresh:
+    desc: "Refresh infrastructure state (OpenTofu refresh)"
+    dir: infrastructure
+    cmds:
+      - cmd: printf "{{.BLUE}}🔄 Refreshing infrastructure state...{{.RESET}}\n"
+        silent: true
+      - tofu refresh
+      - cmd: printf "{{.GREEN}}✅ Infrastructure state refreshed!{{.RESET}}\n"
+        silent: true
+
+  output:
+    desc: "Show infrastructure outputs (OpenTofu output)"
+    dir: infrastructure
+    cmds:
+      - cmd: printf "{{.BLUE}}🏗️ Showing infrastructure outputs...{{.RESET}}\n"
+        silent: true
+      - tofu output
+      - cmd: printf "{{.GREEN}}✅ Infrastructure outputs shown!{{.RESET}}\n"
+        silent: true
+
+  destroy:
+    desc: "Destroy (tear down) all managed Proxmox infrastructure"
+    dir: infrastructure
+    cmds:
+      - cmd: printf "{{.RED}}💥 Destroying infrastructure...{{.RESET}}\n"
+        silent: true
+      - tofu destroy -auto-approve
+      - cmd: printf "{{.GREEN}}✅ Infrastructure destroyed.{{.RESET}}\n"
+        silent: true
