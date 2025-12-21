@@ -2,24 +2,28 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: v5.0.0
     hooks:
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-symlinks
-      #- id: detect-private-key
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-added-large-files
+      - id: detect-private-key
       - id: end-of-file-fixer
       #- id: no-commit-to-branch
       #  args: [--branch, main]
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
 
-  # - repo: https://github.com/igorshubovych/markdownlint-cli
-  #   rev: v0.45.0
-  #   hooks:
-  #     - id: markdownlint
-
   - repo: https://github.com/tofuutils/pre-commit-opentofu
-    rev: v2.2.2
+    rev: v2.1.0
     hooks:
       - id: tofu_fmt
+      - id: tofu_validate
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.0
+    hooks:
+      - id: gitleaks
