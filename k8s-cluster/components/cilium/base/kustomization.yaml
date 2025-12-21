@@ -6,11 +6,11 @@ namespace: cilium
 resources:
   - ./certificate.yaml
   - ./ingressroute.yaml
+  - ./sealedsecret.yaml
   - ./bgp-cluster-config.yaml
   - ./bgp-peer-config.yaml
-  - ./bgp-peer-password.yaml
-  - ./bgp-advertise-lb-services.yaml
-  - ./bgp-ip-pool.yaml
+  - ./bgp-advertisement.yaml
+  - ./bgp-lb-ip-pool.yaml
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-10"
