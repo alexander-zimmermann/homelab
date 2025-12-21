@@ -145,7 +145,7 @@ node:
         memory: 20Mi
 
 externalSnapshotter:
-  enabled: false
+  enabled: true
   name: snapshot-controller
   priorityClassName: system-cluster-critical
   deletionPolicy: Delete
