@@ -69,7 +69,7 @@ tasks:
     cmds:
       - cmd: printf "{{.BLUE}}☸️ Showing cluster outputs...{{.RESET}}\n"
         silent: true
-      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo \n)"
+      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d)"
       - cmd: printf "{{.GREEN}}✅ Cluster outputs shown!{{.RESET}}\n"
         silent: true
 
