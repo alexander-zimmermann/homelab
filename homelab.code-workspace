@@ -1,7 +1,15 @@
 {
   "folders": [
     {
-      "path": ".",
-    },
+      "path": "."
+    }
   ],
+  "settings": {
+    "yaml.schemas": {
+      "https://taskfile.dev/schema.json": [
+        "file:///Users/alexander/Development/homelab/tasks/cluster.yaml",
+        "file:///Users/alexander/Development/homelab/tasks/infrastructure.yaml"
+      ]
+    }
+  }
 }
