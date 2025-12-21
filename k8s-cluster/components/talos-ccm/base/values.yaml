@@ -1,12 +1,155 @@
-image:
-  pullPolicy: IfNotPresent
-  # tag: v1.9.0 # Set by chart version or override here
+# Default values for talos-cloud-controller-manager.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
 
+# -- Number of CCM replicas to deploy.
+replicaCount: 1
+
+image:
+  # -- CCM image repository.
+  repository: ghcr.io/siderolabs/talos-cloud-controller-manager
+  # -- Pull policy: IfNotPresent or Always.
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# -- Optionally specify an array of imagePullSecrets.
+# Secrets must be manually created in the namespace.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+# -- String to partially override deployment name.
+nameOverride: ""
+# -- String to fully override deployment name.
+fullnameOverride: ""
+
+# -- Any extra arguments for talos-cloud-controller-manager
+extraArgs: []
+  # - --cluster-name=kubernetes
+  # Node IPAM controller arguments
+  # - --cidr-allocator-type=CloudAllocator
+  # - --node-cidr-mask-size-ipv4=24
+  # - --node-cidr-mask-size-ipv6=80
+
+# -- List of controllers should be enabled.
+# Use '*' to enable all controllers.
+# Support only `cloud-node, cloud-node-lifecycle, node-csr-approval, node-ipam-controller` controllers.
 enabledControllers:
   - cloud-node
+  # - cloud-node-lifecycle
+  # - route
+  # - service
   - node-csr-approval
+  # - node-ipam-controller
 
-# Tolerate uninitialized nodes so CCM can start and approve CSRs
+# -- List of node transformations.
+# Available matchExpressions key values: https://github.com/siderolabs/talos/blob/main/pkg/machinery/resources/runtime/platform_metadata.go#L28
+transformations: []
+  # - name: control-plane region
+  #   nodeSelector:
+  #     - matchExpressions:
+  #         - key: hostname
+  #           operator: Regexp
+  #           values:
+  #             - ^control-.+$
+  #   annotations:
+  #     talos.dev/instance-id: "{{ .InstanceID }}"
+  #   labels:
+  #     talos.dev/instance-spot: "{{ .Spot }}"
+  #   platformMetadata:
+  #     Region: "us-west-2"
+
+# -- Log verbosity level. See https://github.com/kubernetes/community/blob/master/contributors/devel/sig-instrumentation/logging.md
+# for description of individual verbosity levels.
+logVerbosityLevel: 2
+
+# -- Pods Service Account.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+serviceAccount:
+  # -- Specifies whether a service account should be created.
+  create: true
+  # -- Annotations to add to the service account.
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+# -- CCM pods' priorityClassName.
+priorityClassName: system-cluster-critical
+
+# -- Annotations for data pods.
+# ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+
+# -- Pods Security Context.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10258
+  runAsGroup: 10258
+  fsGroup: 10258
+  fsGroupChangePolicy: "OnRootMismatch"
+
+# -- Container Security Context.
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  seccompProfile:
+    type: RuntimeDefault
+
+service:
+  # -- Service HTTPS port to expose controller.
+  port: 50258
+  # -- Container HTTPS port.
+  containerPort: 50258
+  # -- Additional custom annotations for Service.
+  annotations: {}
+    # prometheus.io/scrape: "true"
+    # prometheus.io/scheme: "https"
+    # prometheus.io/port: "50258"
+
+# -- Resource requests and limits.
+# ref: http://kubernetes.io/docs/user-guide/compute-resources/
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  requests:
+    cpu: 10m
+    memory: 64Mi
+
+# -- Deploy CCM  in Daemonset mode.
+# CCM will use hostNetwork and connect to the Kubernetes API server on the current node by default.
+# Optionally you can specify the Kubernetes API server host and port.
+# You can run it without CNI plugin.
+daemonSet:
+  enabled: false
+  k8s:
+    # -- Kubernetes API server host. Default is the current node IP.
+    serviceHost: ""
+    # -- Kubernetes API server port. Default is 6443.
+    servicePort: 6443
+
+# -- Deployment update strategy type.
+# ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#updating-a-deployment
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
+
+# -- Node labels for data pods assignment.
+# ref: https://kubernetes.io/docs/user-guide/node-selection/
+nodeSelector:
+  node-role.kubernetes.io/control-plane: ""
+
+# -- Tolerations for data pods assignment.
+# ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations:
   - effect: NoSchedule
     key: node-role.kubernetes.io/control-plane
@@ -14,3 +157,9 @@ tolerations:
   - effect: NoSchedule
     key: node.cloudprovider.kubernetes.io/uninitialized
     operator: Exists
+  # - effect: NoSchedule
+  #   operator: Exists
+
+# -- Affinity for data pods assignment.
+# ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+affinity: {}
