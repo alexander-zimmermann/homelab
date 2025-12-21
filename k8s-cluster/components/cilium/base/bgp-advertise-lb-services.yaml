@@ -1,6 +1,7 @@
 ---
 apiVersion: cilium.io/v2
 kind: CiliumBGPAdvertisement
+
 metadata:
   name: loadbalancer-services
   labels:

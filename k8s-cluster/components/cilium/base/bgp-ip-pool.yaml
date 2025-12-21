@@ -1,6 +1,7 @@
 ---
 apiVersion: cilium.io/v2
 kind: CiliumLoadBalancerIPPool
+
 metadata:
   name: default-bgp-ip-pool
 spec:
