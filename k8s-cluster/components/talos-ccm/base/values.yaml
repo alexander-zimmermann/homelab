@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # -- Number of CCM replicas to deploy.
-replicaCount: 1
+replicaCount: 2
 
 image:
   # -- CCM image repository.
@@ -23,7 +23,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 # -- Any extra arguments for talos-cloud-controller-manager
-extraArgs: []
+extraArgs:
+  []
   # - --cluster-name=kubernetes
   # Node IPAM controller arguments
   # - --cidr-allocator-type=CloudAllocator
@@ -43,7 +44,8 @@ enabledControllers:
 
 # -- List of node transformations.
 # Available matchExpressions key values: https://github.com/siderolabs/talos/blob/main/pkg/machinery/resources/runtime/platform_metadata.go#L28
-transformations: []
+transformations:
+  []
   # - name: control-plane region
   #   nodeSelector:
   #     - matchExpressions:
@@ -95,7 +97,7 @@ securityContext:
   allowPrivilegeEscalation: false
   capabilities:
     drop:
-    - ALL
+      - ALL
   seccompProfile:
     type: RuntimeDefault
 
@@ -105,7 +107,8 @@ service:
   # -- Container HTTPS port.
   containerPort: 50258
   # -- Additional custom annotations for Service.
-  annotations: {}
+  annotations:
+    {}
     # prometheus.io/scrape: "true"
     # prometheus.io/scheme: "https"
     # prometheus.io/port: "50258"
