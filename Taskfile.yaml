@@ -149,6 +149,16 @@ tasks:
       - cmd: printf "{{.GREEN}}✅ Infrastructure state refreshed!{{.RESET}}\n"
         silent: true
 
+  infra:output:
+    desc: "Show infrastructure outputs (OpenTofu output)"
+    dir: infrastructure
+    cmds:
+      - cmd: printf "{{.BLUE}}🏗️ Showing infrastructure outputs...{{.RESET}}\n"
+        silent: true
+      - tofu output
+      - cmd: printf "{{.GREEN}}✅ Infrastructure outputs shown!{{.RESET}}\n"
+        silent: true
+
   infra:destroy:
     desc: "Destroy (tear down) all managed Proxmox infrastructure"
     dir: infrastructure
@@ -177,21 +187,23 @@ tasks:
       # Phase 2: Seed Cilium (Network)
       - cmd: printf "{{.BLUE}} Seeding Cilium CNI (Bootstrapping Network)...{{.RESET}}\n"
         silent: true
-      - kustomize build --enable-helm --helm-command /opt/homebrew/opt/helm@3/bin/helm k8s-cluster/components/cilium/overlays/{{.ENV}} | kubectl apply -f - || true
-      - kubectl rollout restart ds/cilium -n cilium && kubectl rollout restart deploy/cilium-operator -n cilium
+      - kustomize build --enable-helm --helm-command /opt/homebrew/opt/helm@3/bin/helm k8s-cluster/bootstrap/cilium/overlays/{{.ENV}} | kubectl apply -f - || true
 
       # Phase 3: Wait for Cilium Readiness
-      - cmd: printf "{{.BLUE}}⏳ Waiting for Cilium CNI...{{.RESET}}\n"
+      - cmd: printf "{{.BLUE}}⏳ Waiting for Cilium CNI (Health Check)...{{.RESET}}\n"
         silent: true
+      # Check K8s Rollout first (Basic Pod Up)
       - kubectl rollout status ds/cilium -n cilium --timeout={{.TIMEOUT_CILIUM}}
       - kubectl rollout status deploy/cilium-operator -n cilium --timeout={{.TIMEOUT_CILIUM}}
+      # Check Internal Health (Cilium Status)
+      - cilium status -n cilium --wait
       - cmd: printf "{{.GREEN}}✅ Cilium is ready! Network established.{{.RESET}}\n"
         silent: true
 
       # Phase 4: Deploy ArgoCD (GitOps)
       - cmd: printf "{{.BLUE}}🌐 Installing ArgoCD (GitOps Controller)...{{.RESET}}\n"
         silent: true
-      - kubectl apply -k k8s-cluster/bootstrap/overlays/{{.ENV}}
+      - kubectl apply -k k8s-cluster/bootstrap/gitops-controller/overlays/{{.ENV}}
       - cmd: printf "{{.BLUE}}⏳ Waiting for ArgoCD...{{.RESET}}\n"
         silent: true
       - kubectl -n gitops-controller wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server --timeout={{.TIMEOUT_ARGOCD}}
@@ -201,14 +213,28 @@ tasks:
       # Phase 5: Finalize (Secrets & Verification)
       - cmd: printf "{{.BLUE}}🌐 Installing Sealed Secrets...{{.RESET}}\n"
         silent: true
-      - until kubectl get ns sealed-secrets-controller; do sleep 5; done
+      # Wait for ArgoCD to create the Application
+      - cmd: printf "{{.BLUE}}⏳ Waiting for Application sealed-secrets-controller-prod...{{.RESET}}\n"
+        silent: true
+      - until kubectl get application -n gitops-controller sealed-secrets-controller-prod >/dev/null 2>&1; do sleep 5; done
+      # Wait for Application to be Healthy
+      - kubectl wait application/sealed-secrets-controller-prod -n gitops-controller --for=jsonpath='{.status.health.status}'=Healthy --timeout=300s
       - kubectl apply -f k8s-cluster/secrets/sealed-secrets-key.yaml
 
       # Phase 6: Cleanup
-      - rm -r k8s-cluster/components/cilium/base/charts/
+      - rm -r k8s-cluster/bootstrap/cilium/base/charts
       - cmd: printf "{{.GREEN}}✅ Cluster bootstrapped!{{.RESET}}\n"
         silent: true
-      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo)"
+
+  cluster:output:
+    desc: "Show cluster outputs"
+    dir: k8s-cluster
+    cmds:
+      - cmd: printf "{{.BLUE}}☸️ Showing cluster outputs...{{.RESET}}\n"
+        silent: true
+      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d ; echo \n)"
+      - cmd: printf "{{.GREEN}}✅ Cluster outputs shown!{{.RESET}}\n"
+        silent: true
 
   cluster:verify:
     desc: "Verify cluster health"
@@ -225,7 +251,7 @@ tasks:
       - kubectl get pods -A
 
       # Phase 3: Cilium Connectivity
-      - kubectl -n cilium exec ds/cilium -- cilium status
+      - cilium status -n cilium
 
       # Phase 4: Storage Verification
       - cmd: printf "{{.BLUE}}💾 Verifying Storage...{{.RESET}}\n"
