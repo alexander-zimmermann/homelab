@@ -23,12 +23,3 @@ repos:
     rev: v2.2.2
     hooks:
       - id: tofu_fmt
-
-  - repo: local
-    hooks:
-      - id: aicommit2
-        name: AI Commit Message Generator
-        entry: aicommit2 --pre-commit
-        language: node
-        stages: [prepare-commit-msg]
-        always_run: true
