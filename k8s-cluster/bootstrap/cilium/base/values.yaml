@@ -408,9 +408,9 @@ bgpControlPlane:
   # -- SecretsNamespace is the namespace which BGP support will retrieve secrets from.
   secretsNamespace:
     # -- Create secrets namespace for BGP secrets.
-    create: true
+    create: false
     # -- The name of the secret namespace to which Cilium agents are given read access
-    name: cilium-secrets
+    name: cilium
 pmtuDiscovery:
   # -- Enable path MTU discovery to send ICMP fragmentation-needed replies to
   # the client.
@@ -737,9 +737,9 @@ envoyConfig:
   # -- SecretsNamespace is the namespace in which envoy SDS will retrieve secrets from.
   secretsNamespace:
     # -- Create secrets namespace for CiliumEnvoyConfig CRDs.
-    create: true
+    create: false
     # -- The name of the secret namespace to which Cilium agents are given read access.
-    name: cilium-secrets
+    name: cilium
   # -- Interval in which an attempt is made to reconcile failed EnvoyConfigs. If the duration is zero, the retry is deactivated.
   retryInterval: 15s
 ingressController:
@@ -781,9 +781,9 @@ ingressController:
   # -- SecretsNamespace is the namespace in which envoy SDS will retrieve TLS secrets from.
   secretsNamespace:
     # -- Create secrets namespace for Ingress.
-    create: true
+    create: false
     # -- Name of Ingress secret namespace.
-    name: cilium-secrets
+    name: cilium
     # -- Enable secret sync, which will make sure all TLS secrets used by Ingress are synced to secretsNamespace.name.
     # If disabled, TLS secrets must be maintained externally.
     sync: true
@@ -867,9 +867,9 @@ gatewayAPI:
   # -- SecretsNamespace is the namespace in which envoy SDS will retrieve TLS secrets from.
   secretsNamespace:
     # -- Create secrets namespace for Gateway API.
-    create: true
+    create: false
     # -- Name of Gateway API secret namespace.
-    name: cilium-secrets
+    name: cilium
     # -- Enable secret sync, which will make sure all TLS secrets used by Ingress are synced to secretsNamespace.name.
     # If disabled, TLS secrets must be maintained externally.
     sync: true
