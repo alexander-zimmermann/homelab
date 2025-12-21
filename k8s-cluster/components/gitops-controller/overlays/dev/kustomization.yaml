@@ -7,21 +7,21 @@ resources:
   - ../../../../bootstrap/gitops-controller/overlays/dev/
 
 patches:
-  - patch: |-
+  - target:
+      kind: IngressRoute
+      name: argocd-server
+    patch: |-
       - op: replace
         path: /spec/routes/0/match
         value: Host(`argocd.zimmermann.phd`)
       - op: replace
         path: /spec/routes/1/match
         value: Host(`argocd.zimmermann.phd`) && Header(`Content-Type`, `application/grpc`)
-    target:
-      kind: IngressRoute
-      name: argocd-server
 
-  - patch: |-
+  - target:
+      kind: Certificate
+      name: argocd-tls-cert
+    patch: |-
       - op: replace
         path: /spec/dnsNames/0
         value: argocd.zimmermann.phd
-    target:
-      kind: Certificate
-      name: argocd-tls-cert

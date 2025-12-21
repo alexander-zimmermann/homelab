@@ -6,7 +6,10 @@ resources:
   - ../../base
 
 patches:
-  - patch: |-
+  - target:
+      kind: PersistentVolume
+      name: pv-nfs-mosquitto
+    patch: |-
       - op: replace
         path: /spec/csi/volumeHandle
         value: linux.zimmermann.eu.com/srv/k8s/mosquitto
@@ -15,6 +18,3 @@ patches:
         value:
           server: linux.zimmermann.eu.com
           share: /srv/k8s/mosquitto
-    target:
-      kind: PersistentVolume
-      name: pv-nfs-mosquitto

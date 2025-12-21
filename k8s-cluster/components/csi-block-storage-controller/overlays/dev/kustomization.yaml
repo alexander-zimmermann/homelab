@@ -6,10 +6,10 @@ resources:
   - ../../base
 
 patches:
-  - patch: |-
+  - target:
+      kind: StorageClass
+      name: longhorn
+    patch: |-
       - op: replace
         path: /parameters/numberOfReplicas
         value: "1"
-    target:
-      kind: StorageClass
-      name: longhorn

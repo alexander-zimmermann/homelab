@@ -6,28 +6,26 @@ resources:
   - ../../base
 
 patches:
-  - patch: |-
+  - target:
+      kind: StorageClass
+      name: nfs-csi
+    patch: |-
       - op: replace
         path: /parameters
         value:
           server: linux.zimmermann.eu.com
           share: /srv/k8s
-    target:
-      kind: StorageClass
-      name: nfs-csi
-
-  - patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-    target:
+  - target:
       kind: Deployment
       name: csi-nfs-controller
-
-  - patch: |-
+    patch: |-
       - op: replace
         path: /spec/replicas
         value: 1
-    target:
+  - target:
       kind: Deployment
       name: snapshot-controller
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
