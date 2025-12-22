@@ -1510,10 +1510,10 @@ variable "kubernetes_version" {
 variable "talos_dns_servers" {
   description = <<EOT
     List of DNS servers configured on Talos nodes. These are used by Talos for
-    name resolution. Default: Cloudflare IPv4 and IPv6 DNS.
+    name resolution.
   EOT
   type        = list(string)
-  default     = ["1.1.1.1", "2606:4700:4700::1111"]
+  default     = []
 }
 
 variable "talos_ntp_servers" {
