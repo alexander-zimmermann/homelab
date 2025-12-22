@@ -18,3 +18,16 @@ helmCharts:
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-1"
+
+patches:
+  - target:
+      kind: Service
+      name: traefik
+    patch: |-
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: traefik
+        labels:
+          bgp.cilium.io/ip-pool: default
+          bgp.cilium.io/advertise-service: default
