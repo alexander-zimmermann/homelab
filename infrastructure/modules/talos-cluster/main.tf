@@ -66,8 +66,8 @@ data "talos_machine_configuration" "controlplane" {
   kubernetes_version = var.kubernetes_version
 
   config_patches = [
-    templatefile("${path.root}/talos/config/baseline.yaml.tpl", local.talos_baseline_defaults),
-    templatefile("${path.root}/talos/config/controlplane.yaml.tpl", local.talos_controlplane_defaults)
+    templatefile("${path.module}/../../talos/baseline.yaml.tpl", local.talos_baseline_defaults),
+    templatefile("${path.module}/../../talos/controlplane.yaml.tpl", local.talos_controlplane_defaults)
   ]
 }
 
@@ -80,8 +80,8 @@ data "talos_machine_configuration" "dataplane" {
   kubernetes_version = var.kubernetes_version
 
   config_patches = [
-    templatefile("${path.root}/talos/config/baseline.yaml.tpl", local.talos_baseline_defaults),
-    templatefile("${path.root}/talos/config/dataplane.yaml.tpl", local.talos_dataplane_defaults)
+    templatefile("${path.module}/../../talos/baseline.yaml.tpl", local.talos_baseline_defaults),
+    templatefile("${path.module}/../../talos/dataplane.yaml.tpl", local.talos_dataplane_defaults)
   ]
 }
 
