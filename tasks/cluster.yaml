@@ -51,11 +51,11 @@ tasks:
       - cmd: printf "{{.BLUE}}🌐 Installing Sealed Secrets...{{.RESET}}\n"
         silent: true
       # Wait for ArgoCD to create the Application
-      - cmd: printf "{{.BLUE}}⏳ Waiting for Application sealed-secrets-controller-prod...{{.RESET}}\n"
+      - cmd: printf "{{.BLUE}}⏳ Waiting for Application sealed-secrets-controller-{{.ENV}}...{{.RESET}}\n"
         silent: true
-      - until kubectl get application -n gitops-controller sealed-secrets-controller-prod >/dev/null 2>&1; do sleep 5; done
+      - until kubectl get application -n gitops-controller sealed-secrets-controller-{{.ENV}} >/dev/null 2>&1; do sleep 5; done
       # Wait for Application to be Healthy
-      - kubectl wait application/sealed-secrets-controller-prod -n gitops-controller --for=jsonpath='{.status.health.status}'=Healthy --timeout=300s
+      - kubectl wait application/sealed-secrets-controller-{{.ENV}} -n gitops-controller --for=jsonpath='{.status.health.status}'=Healthy --timeout=300s
       - kubectl apply -f k8s-cluster/secrets/sealed-secrets-key.yaml
 
       # Phase 6: Cleanup
@@ -89,6 +89,7 @@ tasks:
 
       # Phase 3: Cilium Connectivity
       - cilium status -n cilium
+      - cilium cilium bgp peers -n cilium
 
       # Phase 4: Storage Verification
       - cmd: printf "{{.BLUE}}💾 Verifying Storage...{{.RESET}}\n"
