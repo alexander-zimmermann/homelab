@@ -89,7 +89,7 @@ tasks:
 
       # Phase 3: Cilium Connectivity
       - cilium status -n cilium
-      - cilium cilium bgp peers -n cilium
+      - cilium bgp peers -n cilium
 
       # Phase 4: Storage Verification
       - cmd: printf "{{.BLUE}}💾 Verifying Storage...{{.RESET}}\n"
