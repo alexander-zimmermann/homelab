@@ -16,10 +16,10 @@ spec:
     - nfsvers=3
   csi:
     driver: nfs.csi.k8s.io
-    volumeHandle: storage.zimmermann.eu.com/k8s/mosquitto
+    volumeHandle: storage.zimmermann.eu.com/srv/k8s/mosquitto
     volumeAttributes:
       server: storage.zimmermann.eu.com
-      share: /k8s/mosquitto
+      share: /srv/k8s/mosquitto
 
 ---
 apiVersion: v1
