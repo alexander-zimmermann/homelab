@@ -420,7 +420,7 @@ aksbyocni:
 # @schema
 # -- Enable installation of PodCIDR routes between worker
 # nodes if worker nodes share a common L2 network segment.
-autoDirectNodeRoutes: false
+autoDirectNodeRoutes: true
 # -- Enable skipping of PodCIDR routes between worker
 # nodes if the worker nodes are in a different L2 network segment.
 directRoutingSkipUnreachable: false
@@ -2212,7 +2212,7 @@ vtep:
 # direct routing and the Kubernetes CIDR is included in the native routing CIDR,
 # the user must configure the routes to reach pods, either manually or by
 # setting the auto-direct-node-routes flag.
-ipv4NativeRoutingCIDR: ""
+ipv4NativeRoutingCIDR: "10.244.0.0/16"
 # -- (string) Allows to explicitly specify the IPv6 CIDR for native routing.
 # When specified, Cilium assumes networking for this CIDR is preconfigured and
 # hands traffic destined for that range to the Linux network stack without
@@ -2811,7 +2811,7 @@ underlayProtocol: ""
 #   - native
 #   - tunnel
 # @default -- `"tunnel"`
-routingMode: ""
+routingMode: "native"
 # -- Configure VXLAN and Geneve tunnel port.
 # @default -- Port 8472 for VXLAN, Port 6081 for Geneve
 tunnelPort: 0
