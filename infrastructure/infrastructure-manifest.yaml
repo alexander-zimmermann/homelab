@@ -45,7 +45,7 @@ images:
     distro: ubuntu
     release: plucky
     arch: amd64
-    build_date: "20251210_07:42"
+    build_date: "20251222_07:42"
     extension: tar.xz
 
   ## Windows 11 Installation ISO
