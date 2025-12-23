@@ -2,15 +2,15 @@
 version: "3"
 
 vars:
-  PYTHON: "{{.TASKFILE_DIR}}/.venv/bin/python"
-  PIP: "{{.TASKFILE_DIR}}/.venv/bin/pip"
+  PYTHON: "{{.TASKFILE_DIR}}/../.venv/bin/python"
+  PIP: "{{.TASKFILE_DIR}}/../.venv/bin/pip"
 
 tasks:
   prepare:
     desc: "Prepare Terraform/OpenTofu environment and generate configuration"
     dir: infrastructure
     env:
-      PATH: "{{.TASKFILE_DIR}}/.venv/bin:{{.PATH}}"
+      PATH: "{{.TASKFILE_DIR}}/../.venv/bin:{{.PATH}}"
       PYTHONPATH: scripts
     sources:
       - infrastructure-manifest.yaml
@@ -23,7 +23,7 @@ tasks:
       - generated.auto.tfvars
       - build/checksums.yaml
     preconditions:
-      - sh: test -x ../.venv/bin/python
+      - sh: test -x {{.TASKFILE_DIR}}/../.venv/bin/python
         msg: "Python virtual environment missing or not executable. Run 'task initialize' first."
     cmds:
       - cmd: printf "{{.BLUE}}🏗️  Preparing OpenTofu environment...{{.RESET}}\n"
