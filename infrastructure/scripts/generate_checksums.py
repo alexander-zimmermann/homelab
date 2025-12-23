@@ -235,7 +235,7 @@ class TerraformParser:
     logger = logging.getLogger(__name__)
 
     # Compiled regex patterns for better performance
-    IMAGES_BLOCK_RE = re.compile(r'images\s*=\s*\{(.*?)\}\s*\n\s*vm_templates', re.DOTALL)
+    IMAGES_BLOCK_RE = re.compile(r'^images\s*=\s*\{(.*?)^}', re.DOTALL | re.MULTILINE)
     IMAGE_ENTRY_RE = re.compile(r'([a-zA-Z0-9_.-]+)\s*=\s*\{(.*?)\}', re.DOTALL)
     URL_RE = re.compile(r'image_url\s*=\s*"([^"]+)"')
     TYPE_RE = re.compile(r'image_type\s*=\s*"([^"]+)"')

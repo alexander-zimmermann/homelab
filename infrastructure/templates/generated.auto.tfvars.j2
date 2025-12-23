@@ -19,6 +19,65 @@ images = {
 {% endfor %}
 }
 
+ci_user_configs = {
+{% for key, cfg in ci_user_configs.items() %}
+  {{ key }} = {
+    target_node      = "{{ cfg.target_node }}"
+    target_datastore = "{{ cfg.target_datastore }}"
+    username         = "{{ cfg.username }}"
+    ssh_public_key   = "{{ cfg.ssh_public_key }}"
+    set_password     = {{ cfg.set_password | lower }}
+    password         = "{{ cfg.password }}"
+  }
+{% if not loop.last %}
+
+{% endif %}
+{% endfor %}
+}
+
+ci_vendor_configs = {
+{% for key, cfg in ci_vendor_configs.items() %}
+  {{ key }} = {
+    target_node      = "{{ cfg.target_node }}"
+    target_datastore = "{{ cfg.target_datastore }}"
+    packages         = [{% for pkg in cfg.packages %}"{{ pkg }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+  }
+{% if not loop.last %}
+
+{% endif %}
+{% endfor %}
+}
+
+ci_network_configs = {
+{% for key, cfg in ci_network_configs.items() %}
+  {{ key }} = {
+    target_node       = "{{ cfg.target_node }}"
+    target_datastore  = "{{ cfg.target_datastore }}"
+    interface_name    = "{{ cfg.interface_name }}"
+    dhcp4             = {{ cfg.dhcp4 | lower }}
+    dhcp6             = {{ cfg.dhcp6 | lower }}
+    accept_ra         = {{ cfg.accept_ra | lower }}
+    dns_search_domain = [{% for domain in cfg.dns_search_domain %}"{{ domain }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+  }
+{% if not loop.last %}
+
+{% endif %}
+{% endfor %}
+}
+
+ci_meta_configs = {
+{% for key, cfg in ci_meta_configs.items() %}
+  {{ key }} = {
+    target_node      = "{{ cfg.target_node }}"
+    target_datastore = "{{ cfg.target_datastore }}"
+    hostname         = "{{ cfg.hostname }}"
+  }
+{% if not loop.last %}
+
+{% endif %}
+{% endfor %}
+}
+
 vm_templates = {
 {% for key, tmpl in vm_templates.items() %}
   {{ key }} = {
@@ -143,65 +202,6 @@ containers = {
 {% else %}
     lxc_id           = {{ ct.lxc_id }}
 {% endif %}
-  }
-{% if not loop.last %}
-
-{% endif %}
-{% endfor %}
-}
-
-ci_user_configs = {
-{% for key, cfg in ci_user_configs.items() %}
-  {{ key }} = {
-    target_node      = "{{ cfg.target_node }}"
-    target_datastore = "{{ cfg.target_datastore }}"
-    username         = "{{ cfg.username }}"
-    ssh_public_key   = "{{ cfg.ssh_public_key }}"
-    set_password     = {{ cfg.set_password | lower }}
-    password         = "{{ cfg.password }}"
-  }
-{% if not loop.last %}
-
-{% endif %}
-{% endfor %}
-}
-
-ci_vendor_configs = {
-{% for key, cfg in ci_vendor_configs.items() %}
-  {{ key }} = {
-    target_node      = "{{ cfg.target_node }}"
-    target_datastore = "{{ cfg.target_datastore }}"
-    packages         = [{% for pkg in cfg.packages %}"{{ pkg }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-  }
-{% if not loop.last %}
-
-{% endif %}
-{% endfor %}
-}
-
-ci_network_configs = {
-{% for key, cfg in ci_network_configs.items() %}
-  {{ key }} = {
-    target_node       = "{{ cfg.target_node }}"
-    target_datastore  = "{{ cfg.target_datastore }}"
-    interface_name    = "{{ cfg.interface_name }}"
-    dhcp4             = {{ cfg.dhcp4 | lower }}
-    dhcp6             = {{ cfg.dhcp6 | lower }}
-    accept_ra         = {{ cfg.accept_ra | lower }}
-    dns_search_domain = [{% for domain in cfg.dns_search_domain %}"{{ domain }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-  }
-{% if not loop.last %}
-
-{% endif %}
-{% endfor %}
-}
-
-ci_meta_configs = {
-{% for key, cfg in ci_meta_configs.items() %}
-  {{ key }} = {
-    target_node      = "{{ cfg.target_node }}"
-    target_datastore = "{{ cfg.target_datastore }}"
-    hostname         = "{{ cfg.hostname }}"
   }
 {% if not loop.last %}
 
