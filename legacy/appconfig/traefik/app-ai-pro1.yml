@@ -1,0 +1,23 @@
+http:
+  # Add router
+  routers:
+    ai-pro-1:
+      rule: Host(`ai-pro-1.zimmermann.sh`)
+      entryPoints: websecure
+      tls:
+        certresolver: cloudflare
+      middlewares: chain-add-1FA-BSC@file
+      service: ai-pro-1
+
+  # Add service
+  services:
+    ai-pro-1:
+      loadBalancer:
+        servers:
+          - url: https://ai-pro-1.zimmermann.eu.com
+        serversTransport: ai-pro-1
+
+  # Configure transport between Traefik and http server
+  serversTransports:
+    ai-pro-1:
+      insecureSkipVerify: true

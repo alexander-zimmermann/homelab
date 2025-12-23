@@ -1,0 +1,16 @@
+http:
+  middlewares:
+    remove-headers:
+      headers:
+        customRequestHeaders:
+          X-Real-Ip: ""
+          X-Forwarded-Server: ""
+          X-Forwarded-Proto: ""
+          X-Forwarded-Port: ""
+          X-Forwarded-Host: ""
+          X-Forwarded-For: ""
+          Cf-Visitor: ""
+          Cf-Ray: ""
+          Cf-Ipcountry: ""
+          Cf-Connecting-Ip: ""
+          Cdn-Loop: ""

@@ -1,0 +1,17 @@
+http:
+  # Add router
+  routers:
+    ems-esp:
+      rule: Host(`ems-esp.zimmermann.sh`)
+      entryPoints: websecure
+      tls:
+        certresolver: cloudflare
+      middlewares: chain-add-1FA-MFA_PWD@file
+      service: ems-esp
+
+  # Add service
+  services:
+    ems-esp:
+      loadBalancer:
+        servers:
+          - url: http://ems-esp.zimmermann.eu.com

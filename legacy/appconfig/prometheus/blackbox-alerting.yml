@@ -1,0 +1,24 @@
+groups:
+
+  - name: blackbox-alerts
+    rules:
+
+    - alert: blackbox_probe_failed
+      expr: probe_success != 1
+      for: 1m
+      labels:
+        severity: critical
+        value: "{{ $value }}"
+      annotations:
+        summary: "Instance {{ $labels.instance }} down"
+        description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute."
+
+    - alert: blackbox_http_probe_failed
+      expr: probe_http_status_code != 200
+      for: 1m
+      labels:
+        severity: critical
+        value: "{{ $value }}"
+      annotations:
+        summary: "Instance {{ $labels.instance }} down"
+        description: "{{ $labels.instance }} of job {{ $labels.job }} status code not 200 for more than 1 minute."

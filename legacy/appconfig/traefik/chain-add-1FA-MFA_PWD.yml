@@ -1,0 +1,22 @@
+http:
+  middlewares:
+    chain-add-1FA-MFA_PWD:
+      chain:
+        # Std. middleware w/ additional MFA for password authentication
+        middlewares:
+          - cloudflare
+          - crowdsec
+          - rate-limit
+          - secure-headers
+          - authelia-PWD
+          - remove-headers
+    chain-add-1FA-MFA_PWD-proxmox:
+      chain:
+        # Same as above, but w/ dedicated secure-headers for proxmox
+        middlewares:
+          - cloudflare
+          - crowdsec
+          - rate-limit
+          - secure-headers-proxmox
+          - authelia-PWD
+          - remove-headers

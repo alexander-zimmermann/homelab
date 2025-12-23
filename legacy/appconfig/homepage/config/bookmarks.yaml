@@ -1,0 +1,32 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/bookmarks
+
+- Developer:
+    - Github:
+        - icon: github-light.png
+          href: https://github.com/alexander-zimmermann
+    - Cloudflare:
+        - icon: cloudflare.png
+          href: https://dash.cloudflare.com
+
+- Social:
+    - Reddit:
+        - icon: si-reddit
+          href: https://reddit.com/
+    - Discord:
+        - icon: discord.png
+          href: https://discord.com/
+
+- Artificial Intelligence:
+    - ChatGPT:
+        - icon: chatgpt.png
+          href: https://chat.openai.com/
+    - Gemini:
+        - icon: google-gemini.png
+          href: https://gemini.google.com/app
+
+- Entertainment:
+    - YouTube:
+        - icon: youtube.png
+          href: https://youtube.com/

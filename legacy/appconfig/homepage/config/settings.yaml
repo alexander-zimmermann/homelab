@@ -1,0 +1,39 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/settings/
+
+title: Home Automation Dashboard
+
+headerStyle: boxed
+
+background:
+  image: /images/house.jpeg
+  blur: xs
+  brightness: 90
+  opacity: 60
+
+logpath: /app/logs
+
+layout:
+  KNX:
+    icon: mdi-home-automation-#FFFFFF
+    style: row
+    columns: 5
+
+  Smart Home Integration:
+    icon: mdi-devices-#FFFFFF
+  Infrastructure:
+    icon: mdi-server-#FFFFFF
+  Networking:
+    icon: mdi-network-#FFFFFF
+  Data & AI:
+    icon: mdi-auto-fix-#FFFFFF
+
+  Observability:
+    icon: mdi-chart-bar-stacked-#FFFFFF
+  Management:
+    icon: mdi-list-status-#FFFFFF
+  GitOps:
+    icon: mdi-all-inclusive-#FFFFFF
+  Security & Identity:
+    icon: mdi-shield-lock-#FFFFFF

@@ -1,0 +1,76 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/services/
+
+- KNX:
+    - Basalte home:
+        icon: /icons/basalte.png
+        href: http://core.zimmermann.eu.com
+        siteMonitor: http://core.zimmermann.eu.com
+    - Telenot:
+        icon: /icons/telenot.svg
+        href: http://telenot-knx.zimmermann.eu.com
+        siteMonitor: http://telenot-knx.zimmermann.eu.com
+    - MDT Dali Gateway 1:
+        icon: /icons/mdt.svg
+        href: https://dali-1.zimmermann.sh
+        ping: dali-1.zimmermann.eu.com
+    - MDT Dali Gateway 2:
+        icon: /icons/mdt.svg
+        href: https://dali-2.zimmermann.sh
+        ping: dali-2.zimmermann.eu.com
+    - MDT KNX IP Gateway:
+        icon: /icons/mdt.svg
+        href: https://knx-ip.zimmermann.sh
+        siteMonitor: http://knx-ip.zimmermann.eu.com:8080
+
+- Smart Home Integration:
+    - EMS ESP:
+        icon: emsesp.png
+        href: http://ems-esp.zimmermann.sh
+        siteMonitor: http://ems-esp.zimmermann.eu.com
+        weight: 2
+    - WARP Wallbox:
+        icon: /icons/warp.png
+        href: http://warp.zimmermann.sh
+        siteMonitor: http://warp.zimmermann.eu.com
+        weight: 3
+    - 2N IP Verso:
+        icon: /icons/2n.svg
+        href: https://verso.zimmermann.sh
+        siteMonitor: https://verso.zimmermann.eu.com
+        weight: 4
+
+- Networking:
+    - Unifi:
+        icon: unifi.png
+        href: https://unifi.ui.com
+        siteMonitor: https://gateway.zimmermann.eu.com
+        weight: 1
+        widget:
+          type: unifi
+          url: https://gateway.zimmermann.eu.com
+          key: {{HOMEPAGE_FILE_UNIFI_KEY}}
+    - FritzBox:
+        icon: avm-fritzbox.png
+        href: http://fritzbox.zimmermann.eu.com
+        siteMonitor: http://fritzbox.zimmermann.eu.com
+        weight: 2
+
+- Infrastructure:
+    - Proxmox:
+        icon: proxmox.png
+        href: https://proxmox.zimmermann.sh
+        siteMonitor: https://proxmox.zimmermann.eu.com:8006
+        widget:
+          type: proxmox
+          url: https://proxmox.zimmermann.eu.com:8006
+          username: {{HOMEPAGE_FILE_PROXMOX_USERNAME}}
+          password: {{HOMEPAGE_FILE_PROXMOX_PASSWORD}}
+    - ThinkStation AMT:
+        icon: /icons/thinkstation.png
+        href: https://pve-1-amt.zimmermann.eu.com:16993
+    - APC Smartconnect:
+        icon: apc
+        href: https://smartconnect.apc.com/auth/login
+        ping: apc-ups.zimmermann.eu.com

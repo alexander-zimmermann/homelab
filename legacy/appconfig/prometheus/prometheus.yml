@@ -1,0 +1,131 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 30s
+
+alerting:
+  alertmanagers:
+    - scheme: http
+      path_prefix: /
+      static_configs:
+        - targets: ["alertmanager.zimmermann.eu.com:9093"]
+
+rule_files:
+  - /etc/prometheus/embedded-alerting.yml
+  - /etc/prometheus/blackbox-alerting.yml
+  - /etc/prometheus/traefik-alerting.yml
+  - /etc/prometheus/traefik-alerting.yml
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["prometheus.zimmermann.eu.com:9090"]
+    basic_auth:
+      username: prometheus
+      password_file: "/run/secrets/prometheus_scrape_user_password"
+
+  - job_name: "container"
+    static_configs:
+      - targets: ["cadvisor.zimmermann.eu.com:8088"]
+
+  - job_name: "host"
+    static_configs:
+      - targets: ["node-exporter.zimmermann.eu.com:9100"]
+
+  - job_name: "traefik"
+    static_configs:
+      - targets: ["traefik.zimmermann.eu.com:8888"]
+
+  - job_name: "authelia"
+    static_configs:
+      - targets: ["authelia.zimmermann.eu.com:9959"]
+
+  - job_name: "alloy"
+    static_configs:
+      - targets: ["alloy.zimmermann.eu.com:12345"]
+
+  - job_name: "unifi-poller"
+    scrape_interval: 30s
+    static_configs:
+      - targets: ["unifi-poller.zimmermann.eu.com:9130"]
+
+  - job_name: "fritz-exporter"
+    scrape_interval: 60s
+    scrape_timeout: 20s
+    static_configs:
+      - targets: ["fritz-exporter.zimmermann.eu.com:9787"]
+
+  - job_name: "crowdsec"
+    static_configs:
+      - targets: ["crowdsec.zimmermann.eu.com:6060"]
+
+  - job_name: "blackbox_exporter"
+    static_configs:
+      - targets: ["blackbox-exporter.zimmermann.eu.com:9115"]
+
+  - job_name: "alertmanager"
+    static_configs:
+      - targets: ["alertmanager.zimmermann.eu.com:9093"]
+
+  - job_name: "grafana"
+    static_configs:
+      - targets: ["grafana.zimmermann.eu.com:3000"]
+
+  - job_name: "loki"
+    static_configs:
+      - targets: ["loki.zimmermann.eu.com:3100"]
+
+  - job_name: "telegraf"
+    static_configs:
+      - targets: ["telegraf.zimmermann.eu.com:9273"]
+
+  - job_name: "influx"
+    static_configs:
+      - targets: ["influx.zimmermann.eu.com:8086"]
+
+  - job_name: "minio"
+    bearer_token_file: /run/secrets/minio_scrape_token
+    metrics_path: /minio/v2/metrics/cluster
+    scheme: http
+    static_configs:
+      - targets: ["storage.zimmermann.eu.com:9000"]
+
+  - job_name: "http-probe"
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          [
+            "http://node-red.zimmermann.eu.com:1880",
+            "http://portainer.zimmermann.eu.com:9999",
+            "http://gollum.zimmermann.eu.com:4567",
+            "http://guacamole.zimmermann.eu.com:8080/guacamole",
+            "http://ubuntu-01.zimmermann.eu.com:4000",
+          ]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter.zimmermann.eu.com:9115
+
+  - job_name: "tcp-probe"
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+      - targets:
+          [
+            "syslog.zimmermann.eu.com:601",
+            "mosquitto.zimmermann.eu.com:8883",
+            "postgres.zimmermann.eu.com:5432",
+          ]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter.zimmermann.eu.com:9115

@@ -1,0 +1,27 @@
+route:
+  # When a new group of alerts is created by an incoming alert, wait at
+  # least 'group_wait' to send the initial notification.
+  # This way ensures that you get multiple alerts for the same group that start
+  # firing shortly after another are batched together on the first
+  # notification.
+  group_wait: 30s
+
+  # When the first notification was sent, wait 'group_interval' to send a batch
+  # of new alerts that started firing for that group.
+  group_interval: 1m
+
+  # If an alert has successfully been sent, wait 'repeat_interval' to
+  # resend them.
+  repeat_interval: 1h
+
+  # A default receiver
+  receiver: 'endpoints'
+
+receivers:
+  - name: 'endpoints'
+    pushover_configs:
+      - token_file: /run/secrets/alertmanager_pushover_token
+        user_key_file: /run/secrets/alertmanager_pushover_user_key
+    webhook_configs:
+      - url: "http://node-red.zimmermann.eu.com:1880/container-status"
+        send_resolved: true

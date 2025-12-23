@@ -1,0 +1,20 @@
+http:
+  middlewares:
+    authelia-PWD:
+      forwardAuth:
+        address: 'http://authelia.zimmermann.eu.com:9091/api/authz/forward-auth'
+        trustForwardHeader: true
+        authResponseHeaders:
+          - 'Remote-User'
+          - 'Remote-Groups'
+          - 'Remote-Name'
+          - 'Remote-Email'
+    authelia-BSC:
+      forwardAuth:
+        address: 'http://authelia.zimmermann.eu.com:9091/api/verify?auth=basic?authelia_url=https://authelia.zimmermann.sh'
+        trustForwardHeader: true
+        authResponseHeaders:
+          - 'Remote-User'
+          - 'Remote-Groups'
+          - 'Remote-Name'
+          - 'Remote-Email'

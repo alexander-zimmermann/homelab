@@ -1,0 +1,17 @@
+http:
+  # Add router
+  routers:
+    knx-ip:
+      rule: Host(`knx-ip.zimmermann.sh`)
+      entryPoints: websecure
+      tls:
+        certresolver: cloudflare
+      middlewares: chain-add-1FA-MFA_PWD@file
+      service: knx-ip
+
+  # Add service
+  services:
+    knx-ip:
+      loadBalancer:
+        servers:
+          - url: http://knx-ip.zimmermann.eu.com:8080

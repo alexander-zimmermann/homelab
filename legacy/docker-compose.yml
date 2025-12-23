@@ -1,0 +1,1510 @@
+# ============================================================================
+# Global
+# ============================================================================
+
+name: "home-automation"
+
+# ============================================================================
+# Extension fields
+# ============================================================================
+
+# Default environment values
+x-default-environment:
+  environment: &default-environment
+    TZ: $TZ
+    LANG: $LANG
+    LC_ALL: $LC_ALL
+
+# Default logging
+x-default-logging:
+  logging: &default-logging
+    driver: "json-file"
+    options:
+      tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+
+# ============================================================================
+# Volumes
+# ============================================================================
+
+volumes:
+  traefik_acme:
+  traefik_log:
+  crowdsec_data:
+  crowdsec_config:
+  node-red_data:
+  mosquitto_data:
+  mosquitto_log:
+  influx_data:
+  grafana_data:
+  loki_data:
+  redis_data:
+  prometheus_data:
+  alertmanager_data:
+  authelia_log:
+  postgres_data:
+  homepage_log:
+  portainer_data:
+  gollum_data:
+  minio_data:
+
+# ============================================================================
+# Secrets
+# ============================================================================
+
+secrets:
+  cloudflare_dns_api_token:
+    file: ./.secrets/cloudflare_dns_api_token
+  crowdsec_lapi_key:
+    file: ./.secrets/crowdsec_lapi_key
+  basic_auth_users:
+    file: ./.secrets/basic_auth_users
+  influxdb_init_username:
+    file: ./.secrets/influxdb_init_username
+  influxdb_init_password:
+    file: ./.secrets/influxdb_init_password
+  influxdb_init_admin_token:
+    file: ./.secrets/influxdb_init_admin_token
+  mosquitto_users:
+    file: ./.secrets/mosquitto_users
+  telegraf_influxdb_token:
+    file: ./.secrets/telegraf_influxdb_token
+  telegraf_mqtt_password:
+    file: ./.secrets/telegraf_mqtt_password
+  authelia_jwt_secret:
+    file: ./.secrets/authelia_jwt_secret
+  authelia_session_secret:
+    file: ./.secrets/authelia_session_secret
+  authelia_storage_encryption_key:
+    file: ./.secrets/authelia_storage_encryption_key
+  authelia_storage_password:
+    file: ./.secrets/authelia_storage_password
+  authelia_notifier_smtp_password:
+    file: ./.secrets/authelia_notifier_smtp_password
+  authelia_users:
+    file: ./.secrets/authelia_users
+  smtprelay_remote_user:
+    file: ./.secrets/smtprelay_remote_user
+  smtprelay_remote_pass:
+    file: ./.secrets/smtprelay_remote_pass
+  prometheus_users:
+    file: ./.secrets/prometheus_users
+  prometheus_scrape_user_password:
+    file: ./.secrets/prometheus_scrape_user_password
+  se2mqtt_mqtt__username:
+    file: ./.secrets/se2mqtt_mqtt_user
+  se2mqtt_mqtt__password:
+    file: ./.secrets/se2mqtt_mqtt_password
+  alertmanager_pushover_user_key:
+    file: ./.secrets/alertmanager_pushover_user_key
+  alertmanager_pushover_token:
+    file: ./.secrets/alertmanager_pushover_token
+  fritz-exporter_user_password:
+    file: ./.secrets/fritz-exporter_user_password
+  postgres_password:
+    file: ./.secrets/postgres_root_password
+  unifi_pass:
+    file: ./.secrets/unifi_pass
+  homepage_unifi_key:
+    file: ./.secrets/homepage_unifi_key
+  homepage_proxmox_username:
+    file: ./.secrets/homepage_proxmox_username
+  homepage_proxmox_password:
+    file: ./.secrets/homepage_proxmox_password
+  homepage_portainer_api_token:
+    file: ./.secrets/homepage_portainer_api_token
+  homepage_traefik_username:
+    file: ./.secrets/homepage_traefik_username
+  homepage_traefik_password:
+    file: ./.secrets/homepage_traefik_password
+  homepage_crowdsec_username:
+    file: ./.secrets/homepage_crowdsec_username
+  homepage_crowdsec_lapi_key:
+    file: ./.secrets/homepage_crowdsec_lapi_key
+  homepage_prometheus_username:
+    file: ./.secrets/homepage_prometheus_username
+  homepage_prometheus_password:
+    file: ./.secrets/homepage_prometheus_password
+  guacamole_postgres_user:
+    file: ./.secrets/guacamole_postgres_user
+  guacamole_postgres_password:
+    file: ./.secrets/guacamole_postgres_password
+  watchtower_notification_url:
+    file: ./.secrets/watchtower_notification_url
+  watchtower_http_api_token:
+    file: ./.secrets/watchtower_http_api_token
+  minio_root_user:
+    file: ./.secrets/minio_root_user
+  minio_root_password:
+    file: ./.secrets/minio_root_password
+  minio_scrape_token:
+    file: ./.secrets/minio_scrape_token
+
+# ============================================================================
+# Services
+# ============================================================================
+
+services:
+  # --------------------------------------------------------------------------
+  # Traefik
+  # --------------------------------------------------------------------------
+  traefik:
+    image: traefik
+    container_name: traefik
+    hostname: traefik
+    restart: unless-stopped
+
+    ports:
+      - 80:80
+      - 443:443
+      - 8883:8883
+      - 8888:8080
+
+    volumes:
+      - ./appconfig/traefik:/etc/traefik:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_acme:/etc/acme/
+      - traefik_log:/var/log
+
+    environment:
+      <<: *default-environment
+      CF_DNS_API_TOKEN_FILE: /run/secrets/cloudflare_dns_api_token
+      LOCAL_IPv4: $LOCAL_IPv4
+      CLOUDFLARE_IPv4: $CLOUDFLARE_IPv4
+      CLOUDFLARE_IPv6: $CLOUDFLARE_IPv6
+
+    secrets:
+      - cloudflare_dns_api_token
+      - crowdsec_lapi_key
+      - basic_auth_users
+
+    command:
+      # globals
+      - --global.sendAnonymousUsage=false
+      - --global.checknewversion=false
+
+      # api
+      - --api=true
+      - --api.dashboard=true
+
+      # logging
+      - --log.level=INFO
+      - --log.maxSize=100
+      - --log.maxBackups=5
+      - --accessLog=true
+      - --accessLog.filePath=/var/log/access.log
+      - --accessLog.bufferingSize=100
+      - --accessLog.filters.statusCodes=204-299,400-499,500-599
+
+      # metrics
+      - --metrics.prometheus=true
+      - --metrics.prometheus.addrouterslabels=true
+
+      # docker
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+
+      # dynamic configuration
+      - --providers.file.watch=true
+      - --providers.file.directory=/etc/traefik
+
+      # entrypoints
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entryPoints.web.proxyProtocol.insecure=false
+      - --entrypoints.web.proxyProtocol.trustedIPs=$CLOUDFLARE_IPv4,$CLOUDFLARE_IPv6,$LOCAL_IPv4,$LOCAL_IPv6
+      - --entrypoints.web.forwardedHeaders.insecure=false
+      - --entrypoints.web.forwardedHeaders.trustedIPs=$CLOUDFLARE_IPv4,$CLOUDFLARE_IPv6,$LOCAL_IPv4,$LOCAL_IPv6
+      - --entrypoints.websecure.address=:443
+      - --entryPoints.websecure.proxyProtocol.insecure=false
+      - --entrypoints.websecure.proxyProtocol.trustedIPs=$CLOUDFLARE_IPv4,$CLOUDFLARE_IPv6,$LOCAL_IPv4,$LOCAL_IPv6
+      - --entrypoints.websecure.forwardedHeaders.insecure=false
+      - --entrypoints.websecure.forwardedHeaders.trustedIPs=$CLOUDFLARE_IPv4,$CLOUDFLARE_IPv6,$LOCAL_IPv4,$LOCAL_IPv6
+      - --entrypoints.mqtt.address=:8883
+
+      # let's encrypt
+      - --certificatesResolvers.cloudflare.acme.email=alexander@zimmermann.sh
+      - --certificatesResolvers.cloudflare.acme.storage=/etc/acme/acme.json
+      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+      - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
+      - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=192.168.1.1:53
+
+      # traefik plugins
+      - --experimental.plugins.bouncer.modulename=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+      - --experimental.plugins.bouncer.version=v1.2.1-rc1
+      - --experimental.plugins.cloudflare.modulename=github.com/agence-gaya/traefik-plugin-cloudflare
+      - --experimental.plugins.cloudflare.version=v1.2.0
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+
+      # External dashboard (HTTPS with Authelia)
+      - traefik.http.routers.traefik-external.rule=Host(`traefik.zimmermann.sh`)
+      - traefik.http.routers.traefik-external.entrypoints=websecure
+      - traefik.http.routers.traefik-external.tls=true
+      - traefik.http.routers.traefik-external.tls.certresolver=cloudflare
+      - traefik.http.routers.traefik-external.service=api@internal
+      - traefik.http.routers.traefik-external.middlewares=chain-add-2FA-MFA-BSC@file
+
+      # Internal Dashboard/API (HTTP Port 8888 with Basic Auth)
+      - traefik.http.routers.traefik-internal.rule=Host(`traefik.zimmermann.eu.com`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))
+      - traefik.http.routers.traefik-internal.entrypoints=traefik
+      - traefik.http.routers.traefik-internal.service=api@internal
+      - traefik.http.routers.traefik-internal.middlewares=basic-auth@file
+
+      # homepage
+      - homepage.group=Networking
+      - homepage.name=Traefik
+      - homepage.icon=traefik.png
+      - homepage.href=https://traefik.zimmermann.sh
+      - homepage.weight=3
+      - homepage.widget.type=traefik
+      - homepage.widget.url=http://traefik.zimmermann.eu.com:8888
+      - homepage.widget.username={{HOMEPAGE_FILE_TRAEFIK_USERNAME}}
+      - homepage.widget.password={{HOMEPAGE_FILE_TRAEFIK_PASSWORD}}
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # CrowdSec
+  # --------------------------------------------------------------------------
+  crowdsec:
+    image: crowdsecurity/crowdsec
+    container_name: crowdsec
+    hostname: crowdsec
+    restart: unless-stopped
+
+    ports:
+      - 6060:6060
+      - 8808:8080
+
+    volumes:
+      - ./appconfig/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - /var/log/auth.log:/var/log/auth.log:ro
+      - /var/log/syslog:/var/log/syslog:ro
+      - crowdsec_data:/var/lib/crowdsec/data/
+      - crowdsec_config:/etc/crowdsec/
+      - traefik_log:/var/log/traefik:ro
+      - authelia_log:/var/log/authelia:ro
+
+    environment:
+      <<: *default-environment
+      PUID: $PUID
+      COLLECTIONS: crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors crowdsecurity/linux LePresidente/authelia
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=false
+
+      # homepage
+      - homepage.group=Security & Identity
+      - homepage.name=CrowdSec
+      - homepage.icon=crowdsec.png
+      - homepage.weight=2
+      - homepage.widget.type=crowdsec
+      - homepage.widget.url=http://crowdsec.zimmermann.eu.com:8808
+      - homepage.widget.username={{HOMEPAGE_FILE_CROWDSEC_USERNAME}}
+      - homepage.widget.password={{HOMEPAGE_FILE_CROWDSEC_LAPI_KEY}}
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - authelia
+
+  # --------------------------------------------------------------------------
+  # Whoami
+  # --------------------------------------------------------------------------
+  whoami:
+    image: traefik/whoami
+    container_name: whoami
+    hostname: whoami
+    restart: unless-stopped
+
+    environment:
+      <<: *default-environment
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.whoami.rule=Host(`whoami.zimmermann.sh`)
+      - traefik.http.routers.whoami.entrypoints=websecure
+      - traefik.http.routers.whoami.tls=true
+      - traefik.http.routers.whoami.tls.certresolver=cloudflare
+      - traefik.http.routers.whoami.middlewares=chain-add-2FA-MFA-BSC@file
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - authelia
+
+  # --------------------------------------------------------------------------
+  # Node-Red
+  # --------------------------------------------------------------------------
+  node-red:
+    image: nodered/node-red
+    container_name: node-red
+    hostname: node-red
+    restart: unless-stopped
+
+    ports:
+      - 1880:1880
+
+    volumes:
+      - node-red_data:/data
+
+    environment:
+      <<: *default-environment
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.nodered.rule=Host(`node-red.zimmermann.sh`)
+      - traefik.http.routers.nodered.entrypoints=websecure
+      - traefik.http.routers.nodered.tls=true
+      - traefik.http.routers.nodered.tls.certresolver=cloudflare
+      - traefik.http.routers.nodered.middlewares=chain-add-1FA-MFA_PWD@file
+
+      # homepage
+      - homepage.group=Smart Home Integration
+      - homepage.name=Node-Red
+      - homepage.icon=node-red.png
+      - homepage.href=https://node-red.zimmermann.sh
+      - homepage.weight=1
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - authelia
+
+  # --------------------------------------------------------------------------
+  # Mosquitto
+  # --------------------------------------------------------------------------
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    hostname: mosquitto
+    restart: unless-stopped
+
+    ports:
+      - 1883:1883
+
+    expose:
+      - 8883
+
+    volumes:
+      - ./appconfig/mosquitto:/mosquitto/config
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+
+    environment:
+      <<: *default-environment
+
+    secrets:
+      - mosquitto_users
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.tcp.routers.mqtt.rule=HostSNI(`mqtt.zimmermann.sh`)
+      - traefik.tcp.routers.mqtt.entrypoints=mqtt
+      - traefik.tcp.routers.mqtt.tls=true
+      - traefik.tcp.routers.mqtt.tls.certresolver=cloudflare
+      - traefik.tcp.services.mqtt.loadbalancer.server.port=8883
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+
+  # --------------------------------------------------------------------------
+  # Grafana
+  # --------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    hostname: grafana
+    restart: unless-stopped
+
+    ports:
+      - 3000:3000
+
+    volumes:
+      - ./appconfig/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+      - grafana_data:/var/lib/grafana
+
+    environment:
+      GF_RENDERING_SERVER_URL: http://renderer.zimmermann.eu.com:8081/render
+      GF_RENDERING_CALLBACK_URL: http://grafana.zimmermann.eu.com:3000/
+      <<: *default-environment
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.grafana.rule=Host(`grafana.zimmermann.sh`)
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.routers.grafana.tls=true
+      - traefik.http.routers.grafana.tls.certresolver=cloudflare
+      - traefik.http.routers.grafana.middlewares=chain-add-1FA-MFA_PWD@file
+
+      # homepage
+      - homepage.group=Observability
+      - homepage.name=Grafana
+      - homepage.icon=grafana.png
+      - homepage.href=https://grafana.zimmermann.sh
+      - homepage.weight=1
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - authelia
+      - loki
+      - influxdb
+      - prometheus
+
+  # --------------------------------------------------------------------------
+  # Grafana Renderer
+  # --------------------------------------------------------------------------
+  grafana-renderer:
+    image: grafana/grafana-image-renderer
+    container_name: grafana-renderer
+    hostname: grafana-renderer
+    restart: unless-stopped
+
+    ports:
+      - 8081:8081
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - grafana
+
+  # --------------------------------------------------------------------------
+  # Loki
+  # --------------------------------------------------------------------------
+  loki:
+    image: grafana/loki
+    container_name: loki
+    hostname: loki
+    restart: unless-stopped
+
+    ports:
+      - 3100:3100
+
+    volumes:
+      - ./appconfig/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
+      - loki_data:/data/loki
+
+    environment:
+      <<: *default-environment
+
+    command:
+      - -config.file=/etc/loki/loki-config.yaml
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - alloy
+
+  # --------------------------------------------------------------------------
+  # Alloy
+  # --------------------------------------------------------------------------
+  alloy:
+    image: grafana/alloy
+    container_name: alloy
+    hostname: alloy
+    restart: unless-stopped
+
+    ports:
+      - 514:514/udp
+      - 601:601/tcp
+      - 12345:12345
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./appconfig/alloy/config.alloy:/etc/alloy/config.alloy:ro
+
+    environment:
+      <<: *default-environment
+
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - /etc/alloy/config.alloy
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.alloy.rule=Host(`alloy.zimmermann.sh`)
+      - traefik.http.routers.alloy.entrypoints=websecure
+      - traefik.http.routers.alloy.tls=true
+      - traefik.http.routers.alloy.tls.certresolver=cloudflare
+      - traefik.http.routers.alloy.middlewares=chain-add-2FA-MFA-BSC@file
+      - traefik.http.routers.alloy.service=alloy
+      - traefik.http.services.alloy.loadbalancer.server.port=12345
+
+      # homepage
+      - homepage.group=Observability
+      - homepage.name=Alloy
+      - homepage.icon=alloy.png
+      - homepage.href=https://alloy.zimmermann.sh
+      - homepage.weight=3
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # SMTP Relay
+  # --------------------------------------------------------------------------
+  smtprelay:
+    image: grafana/smtprelay
+    container_name: smtp-relay
+    hostname: smtp-relay
+    restart: unless-stopped
+
+    ports:
+      - 25:25
+
+    environment:
+      <<: *default-environment
+      OTEL_SDK_DISABLED: true
+      REMOTE_PASS: $SMTPRELAY_REMOTE_PASS
+
+    secrets:
+      - smtprelay_remote_user
+      - smtprelay_remote_pass
+
+    command:
+      - -listen=0.0.0.0:25
+      - -allowed_nets=127.0.0.0/8 172.18.0.0/16 192.168.1.0/24
+      - -remote_host=smtp.mail.me.com:587
+      - -remote_user=dr.azimmermann@icloud.com
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # Node Exporter
+  # --------------------------------------------------------------------------
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    hostname: node-exporter
+    restart: unless-stopped
+
+    ports:
+      - 9100:9100
+
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+
+    environment:
+      <<: *default-environment
+
+    command:
+      - --path.procfs=/host/proc
+      - --path.rootfs=/rootfs
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # Backbox Exporter
+  # --------------------------------------------------------------------------
+  blackbox-exporter:
+    image: prom/blackbox-exporter
+    container_name: blackbox-exporter
+    hostname: blackbox-exporter
+    restart: unless-stopped
+
+    ports:
+      - 9115:9115
+
+    volumes:
+      - ./appconfig/blackbox-exporter/blackbox.yml:/etc/blackbox/blackbox.yml:ro
+
+    environment:
+      <<: *default-environment
+
+    command:
+      - --config.file=/etc/blackbox/blackbox.yml
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # Alertmanager
+  # --------------------------------------------------------------------------
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    hostname: alertmanager
+    restart: unless-stopped
+
+    ports:
+      - 9093:9093
+
+    volumes:
+      - ./appconfig/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+
+    environment:
+      <<: *default-environment
+
+    secrets:
+      - alertmanager_pushover_user_key
+      - alertmanager_pushover_token
+
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --log.level=info
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.alertmanager.rule=Host(`alertmanager.zimmermann.sh`)
+      - traefik.http.routers.alertmanager.entrypoints=websecure
+      - traefik.http.routers.alertmanager.tls=true
+      - traefik.http.routers.alertmanager.tls.certresolver=cloudflare
+      - traefik.http.routers.alertmanager.middlewares=chain-add-1FA-MFA_PWD@file
+
+      # homepage
+      - homepage.group=Observability
+      - homepage.name=Alertmanager
+      - homepage.icon=alertmanager.png
+      - homepage.href=https://alertmanager.zimmermann.sh
+      - homepage.weight=2
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # Container Advisor
+  # --------------------------------------------------------------------------
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.52.1
+    container_name: cadvisor
+    hostname: cadvisor
+    restart: unless-stopped
+
+    ports:
+      - 8088:8080
+
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+    environment:
+      <<: *default-environment
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.cadvisor.rule=Host(`cadvisor.zimmermann.sh`)
+      - traefik.http.routers.cadvisor.entrypoints=websecure
+      - traefik.http.routers.cadvisor.tls=true
+      - traefik.http.routers.cadvisor.tls.certresolver=cloudflare
+      - traefik.http.routers.cadvisor.middlewares=chain-add-1FA-MFA_PWD@file
+
+      # homepage
+      - homepage.group=Observability
+      - homepage.name=Container Advisor
+      - homepage.icon=cadvisor.png
+      - homepage.href=https://cadvisor.zimmermann.sh
+      - homepage.weight=5
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # Unifi-poller
+  # --------------------------------------------------------------------------
+  unpoller:
+    image: golift/unifi-poller
+    container_name: unifi-poller
+    hostname: unifi-poller
+    restart: unless-stopped
+
+    ports:
+      - 9130:9130
+
+    volumes:
+      - ./appconfig/unifi-poller/unpoller.conf:/etc/unpoller/up.conf
+
+    environment:
+      <<: *default-environment
+      UP_UNIFI_DEFAULT_PASS: file:///run/secrets/unifi_pass
+
+    secrets:
+      - unifi_pass
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # fritz-exporter
+  # --------------------------------------------------------------------------
+  fritz-exporter:
+    image: pdreker/fritz_exporter
+    container_name: fritz-exporter
+    hostname: fritz-exporter
+    restart: unless-stopped
+
+    ports:
+      - 9787:9787
+
+    volumes:
+      - ./appconfig/fritz-exporter/fritz-exporter.yml:/etc/fritz-exporter.yml:ro
+
+    environment:
+      <<: *default-environment
+
+    secrets:
+      - fritz-exporter_user_password
+
+    command:
+      - --config=/etc/fritz-exporter.yml
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # SolarEdge2MQTT
+  # --------------------------------------------------------------------------
+  solaredge2mqtt:
+    image: ghcr.io/deroetzi/solaredge2mqtt:main
+    container_name: solaredge2mqtt
+    hostname: solaredge2mqtt
+    restart: unless-stopped
+
+    environment:
+      <<: *default-environment
+      SE2MQTT_LOGGING_LEVEL: INFO
+      SE2MQTT_MODBUS__METER2: false
+      SE2MQTT_MODBUS__HOST: solaredge-1.zimmermann.eu.com
+      SE2MQTT_MQTT__BROKER: mqtt.zimmermann.eu.com
+
+    secrets:
+      - se2mqtt_mqtt__username
+      - se2mqtt_mqtt__password
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - mosquitto
+
+  # --------------------------------------------------------------------------
+  # Telegraf
+  # --------------------------------------------------------------------------
+  telegraf:
+    image: telegraf
+    container_name: telegraf
+    hostname: telegraf
+    restart: unless-stopped
+
+    ports:
+      - 9273:9273
+
+    volumes:
+      - ./appconfig/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ./appconfig/telegraf/inputs.knx.conf:/etc/telegraf/telegraf.d/inputs.knx.conf:ro
+      - ./appconfig/telegraf/inputs.mqtt.ems.conf:/etc/telegraf/telegraf.d/inputs.mqtt.ems.conf:ro
+      - ./appconfig/telegraf/inputs.mqtt.warp.conf:/etc/telegraf/telegraf.d/inputs.mqtt.warp.conf:ro
+      - ./appconfig/telegraf/inputs.mqtt.solaredge.conf:/etc/telegraf/telegraf.d/inputs.mqtt.solaredge.conf:ro
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/ca-certificates.crt:ro
+
+    environment:
+      <<: *default-environment
+
+    secrets:
+      - telegraf_influxdb_token
+      - telegraf_mqtt_password
+
+    command:
+      - --watch-config=notify
+      - --config=/etc/telegraf/telegraf.conf
+      - --config-directory=/etc/telegraf/telegraf.d/
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - influxdb
+
+  # --------------------------------------------------------------------------
+  # Authelia
+  # --------------------------------------------------------------------------
+  authelia:
+    image: authelia/authelia
+    container_name: authelia
+    hostname: authelia
+    restart: unless-stopped
+
+    ports:
+      - 9091:9091
+      - 9959:9959
+
+    volumes:
+      - ./appconfig/authelia/configuration.yml:/config/configuration.yml:ro
+      - authelia_log:/var/log/
+
+    environment:
+      <<: *default-environment
+      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
+      AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
+      AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE: /run/secrets/authelia_storage_password
+      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_encryption_key
+      AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE: /run/secrets/authelia_notifier_smtp_password
+
+    secrets:
+      - authelia_jwt_secret
+      - authelia_session_secret
+      - authelia_storage_encryption_key
+      - authelia_storage_password
+      - authelia_notifier_smtp_password
+      - authelia_users
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.authelia.rule=Host(`authelia.zimmermann.sh`)
+      - traefik.http.routers.authelia.entrypoints=websecure
+      - traefik.http.routers.authelia.tls=true
+      - traefik.http.routers.authelia.tls.certresolver=cloudflare
+      - traefik.http.routers.authelia.middlewares=chain-add-0FA@file
+
+      # homepage
+      - homepage.group=Security & Identity
+      - homepage.name=Authelia
+      - homepage.icon=authelia.png
+      - homepage.href=https://authelia.zimmermann.sh
+      - homepage.weight=1
+
+    healthcheck:
+      disable: true
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - postgres
+      - redis
+
+  # --------------------------------------------------------------------------
+  # InfluxDB
+  # --------------------------------------------------------------------------
+  influxdb:
+    image: influxdb
+    container_name: influx
+    hostname: influx
+    restart: unless-stopped
+
+    ports:
+      - 8086:8086
+
+    volumes:
+      - ./appconfig/influx:/etc/influxdb2
+      - influx_data:/var/lib/influxdb2
+
+    environment:
+      <<: *default-environment
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME_FILE: /run/secrets/influxdb_init_username
+      DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/influxdb_init_password
+      DOCKER_INFLUXDB_INIT_ORG: zimmermann.eu.com
+      DOCKER_INFLUXDB_INIT_BUCKET: zimmermann
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/influxdb_init_admin_token
+
+    secrets:
+      - influxdb_init_username
+      - influxdb_init_password
+      - influxdb_init_admin_token
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.influx.rule=Host(`influx.zimmermann.sh`)
+      - traefik.http.routers.influx.entrypoints=websecure
+      - traefik.http.routers.influx.tls=true
+      - traefik.http.routers.influx.tls.certresolver=cloudflare
+      - traefik.http.routers.influx.middlewares=chain-add-1FA-MFA_PWD@file
+
+      # homepage
+      - homepage.group=Data & AI
+      - homepage.name=Influx DB
+      - homepage.icon=influxdb.png
+      - homepage.href=https://influx.zimmermann.sh
+      - homepage.weight=2
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - authelia
+
+  # --------------------------------------------------------------------------
+  # Prometheus
+  # --------------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    hostname: prometheus
+    restart: unless-stopped
+
+    ports:
+      - 9090:9090
+
+    volumes:
+      - ./appconfig/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+
+    environment:
+      <<: *default-environment
+
+    secrets:
+      - prometheus_users
+      - prometheus_scrape_user_password
+      - minio_scrape_token
+
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.enable-lifecycle
+      - --web.enable-admin-api
+      - --web.config.file=/run/secrets/prometheus_users
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.zimmermann.sh`)
+      - traefik.http.routers.prometheus.entrypoints=websecure
+      - traefik.http.routers.prometheus.tls=true
+      - traefik.http.routers.prometheus.tls.certresolver=cloudflare
+      - traefik.http.routers.prometheus.middlewares=chain-add-1FA-MFA_BSC@file
+
+      # homepage
+      - homepage.group=Observability
+      - homepage.name=Prometheus
+      - homepage.icon=prometheus.png
+      - homepage.href=https://prometheus.zimmermann.sh
+      - homepage.weight=1
+      - homepage.widget.type=prometheus
+      - homepage.widget.url=http://prometheus.zimmermann.eu.com:9090
+      - homepage.widget.username={{HOMEPAGE_FILE_PROMETHEUS_USERNAME}}
+      - homepage.widget.password={{HOMEPAGE_FILE_PROMETHEUS_PASSWORD}}
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - node-exporter
+      - blackbox-exporter
+      - fritz-exporter
+      - cadvisor
+      - unpoller
+      - alertmanager
+
+  # --------------------------------------------------------------------------
+  # Redis
+  # --------------------------------------------------------------------------
+  redis:
+    image: redis
+    container_name: redis
+    hostname: redis
+    restart: unless-stopped
+
+    ports:
+      - 6379:6379
+
+    volumes:
+      - redis_data:/data
+
+    environment:
+      <<: *default-environment
+
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # Postgres
+  # --------------------------------------------------------------------------
+  postgres:
+    image: postgres:17.6
+    container_name: postgres
+    hostname: postgres
+    restart: unless-stopped
+
+    ports:
+      - 5432:5432
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    environment:
+      <<: *default-environment
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+
+    secrets:
+      - postgres_password
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # Homepage
+  # --------------------------------------------------------------------------
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    hostname: homepage
+    restart: unless-stopped
+
+    ports:
+      - 4000:3000
+
+    volumes:
+      - ./appconfig/homepage/config:/app/config
+      - ./appconfig/homepage/images:/app/public/images
+      - ./appconfig/homepage/icons:/app/public/icons
+      - homepage_log:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    environment:
+      <<: *default-environment
+      LOG_LEVEL: debug
+      HOMEPAGE_ALLOWED_HOSTS: www.zimmermann.sh,ubuntu-01.zimmermann.eu.com:4000
+      HOMEPAGE_FILE_UNIFI_KEY: /run/secrets/homepage_unifi_key
+      HOMEPAGE_FILE_PROXMOX_USERNAME: /run/secrets/homepage_proxmox_username
+      HOMEPAGE_FILE_PROXMOX_PASSWORD: /run/secrets/homepage_proxmox_password
+      HOMEPAGE_FILE_WATCHTOWER_HTTP_API_TOKEN: /run/secrets/watchtower_http_api_token
+      HOMEPAGE_FILE_PORTAINER_API_TOKEN: /run/secrets/homepage_portainer_api_token
+      HOMEPAGE_FILE_TRAEFIK_USERNAME: /run/secrets/homepage_traefik_username
+      HOMEPAGE_FILE_TRAEFIK_PASSWORD: /run/secrets/homepage_traefik_password
+      HOMEPAGE_FILE_CROWDSEC_USERNAME: /run/secrets/homepage_crowdsec_username
+      HOMEPAGE_FILE_CROWDSEC_LAPI_KEY: /run/secrets/homepage_crowdsec_lapi_key
+      HOMEPAGE_FILE_PROMETHEUS_USERNAME: /run/secrets/homepage_prometheus_username
+      HOMEPAGE_FILE_PROMETHEUS_PASSWORD: /run/secrets/homepage_prometheus_password
+
+    secrets:
+      - homepage_unifi_key
+      - homepage_proxmox_username
+      - homepage_proxmox_password
+      - watchtower_http_api_token
+      - homepage_portainer_api_token
+      - homepage_traefik_username
+      - homepage_traefik_password
+      - homepage_crowdsec_username
+      - homepage_crowdsec_lapi_key
+      - homepage_prometheus_username
+      - homepage_prometheus_password
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.homepage.rule=Host(`www.zimmermann.sh`)
+      - traefik.http.routers.homepage.entrypoints=websecure
+      - traefik.http.routers.homepage.tls=true
+      - traefik.http.routers.homepage.tls.certresolver=cloudflare
+      - traefik.http.routers.homepage.middlewares=chain-add-2FA-MFA-BSC@file
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - authelia
+
+  # --------------------------------------------------------------------------
+  # Portainer
+  # --------------------------------------------------------------------------
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    hostname: portainer
+    restart: unless-stopped
+
+    ports:
+      - 9999:9000
+      - 8000:8000
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - portainer_data:/data
+
+    environment:
+      <<: *default-environment
+      TRUSTED_ORIGINS: portainer.zimmermann.sh
+
+    command: -H unix:///var/run/docker.sock
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.portainer.rule=Host(`portainer.zimmermann.sh`)
+      - traefik.http.routers.portainer.entrypoints=websecure
+      - traefik.http.routers.portainer.tls=true
+      - traefik.http.routers.portainer.tls.certresolver=cloudflare
+      - traefik.http.routers.portainer.middlewares=chain-add-1FA-MFA_PWD@file
+      - traefik.http.routers.portainer.service=portainer
+      - traefik.http.services.portainer.loadbalancer.server.port=9000
+
+      # homepage
+      - homepage.group=Management
+      - homepage.name=Portainer
+      - homepage.icon=portainer.png
+      - homepage.href=https://portainer.zimmermann.sh
+      - homepage.weight=2
+      - homepage.widget.type=portainer
+      - homepage.widget.url=http://portainer.zimmermann.eu.com:9999
+      - homepage.widget.env=15
+      - homepage.widget.key={{HOMEPAGE_FILE_PORTAINER_API_TOKEN}}
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - authelia
+
+  # --------------------------------------------------------------------------
+  # Guacamole Daemon
+  # --------------------------------------------------------------------------
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    hostname: guacd
+    restart: unless-stopped
+
+    environment:
+      <<: *default-environment
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+    logging:
+      <<: *default-logging
+
+  # --------------------------------------------------------------------------
+  # Guacamole
+  # --------------------------------------------------------------------------
+  guacamole:
+    image: guacamole/guacamole
+    container_name: guacamole
+    hostname: guacamole
+    restart: unless-stopped
+
+    ports:
+      - 8080:8080
+
+    environment:
+      <<: *default-environment
+      GUACD_HOSTNAME: guacd
+      POSTGRESQL_HOSTNAME: postgres.zimmermann.eu.com
+      POSTGRESQL_DATABASE: guacamole
+      POSTGRESQL_USER: guacamole
+      #POSTGRESQL_USER_FILE: /run/secrets/guacamole_postgres_user
+      POSTGRESQL_PASSWORD_FILE: /run/secrets/guacamole_postgres_password
+
+    secrets:
+      - guacamole_postgres_user
+      - guacamole_postgres_password
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik routers
+      - traefik.enable=true
+      - traefik.http.routers.guacamole.rule=Host(`guacamole.zimmermann.sh`)
+      - traefik.http.routers.guacamole.entrypoints=websecure
+      - traefik.http.routers.guacamole.tls=true
+      - traefik.http.routers.guacamole.tls.certresolver=cloudflare
+      - traefik.http.routers.guacamole.middlewares=chain-add-1FA-MFA_PWD@file,guacamole
+      - traefik.http.routers.guacamole.service=guacamole
+      - traefik.http.services.guacamole.loadbalancer.server.port=8080
+      - traefik.http.middlewares.guacamole.addPrefix.prefix=/guacamole
+
+      # homepage
+      - homepage.group=Management
+      - homepage.name=Guacamole
+      - homepage.icon=guacamole.png
+      - homepage.href=https://guacamole.zimmermann.sh
+      - homepage.weight=1
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - authelia
+      - guacd
+      - postgres
+
+  # --------------------------------------------------------------------------
+  # Watchtower
+  # --------------------------------------------------------------------------
+  watchtower:
+    image: nickfedor/watchtower
+    container_name: watchtower
+    hostname: watchtower
+    restart: unless-stopped
+
+    ports:
+      - 8181:8080
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    environment:
+      <<: *default-environment
+      WATCHTOWER_CLEANUP: true
+      WATCHTOWER_INCLUDE_RESTARTING: true
+      WATCHTOWER_LABEL_ENABLE: true
+      WATCHTOWER_SCHEDULE: "0 0 1 * * *"
+      WATCHTOWER_NOTIFICATIONS: shoutrrr
+      WATCHTOWER_NOTIFICATION_URL: /run/secrets/watchtower_notification_url
+      WATCHTOWER_HTTP_API_TOKEN: /run/secrets/watchtower_http_api_token
+
+    secrets:
+      - watchtower_notification_url
+      - watchtower_http_api_token
+
+    command:
+      - --http-api-metrics
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # homepage
+      - homepage.group=Management
+      - homepage.name=Watchtower
+      - homepage.icon=watchtower.png
+      - homepage.weight=3
+      - homepage.widget.type=watchtower
+      - homepage.widget.url=http://watchtower.zimmermann.eu.com:8181
+      - homepage.widget.key={{HOMEPAGE_FILE_WATCHTOWER_HTTP_API_TOKEN}}
+
+  # --------------------------------------------------------------------------
+  # Minio
+  # --------------------------------------------------------------------------
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    hostname: minio
+    restart: unless-stopped
+
+    ports:
+      - 9000:9000
+      - 9001:9001
+
+    volumes:
+      - minio_data:/data
+
+    environment:
+      <<: *default-environment
+      MINIO_ROOT_USER_FILE: /run/secrets/minio_root_user
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_root_password
+      MINIO_BROWSER_REDIRECT_URL: https://minio.zimmermann.sh
+      MINIO_SERVER_URL: https://storage.zimmermann.sh
+
+    secrets:
+      - minio_root_user
+      - minio_root_password
+
+    command: server --console-address :9001 /data
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+
+      - traefik.http.routers.minio.rule=Host(`minio.zimmermann.sh`)
+      - traefik.http.routers.minio.entrypoints=websecure
+      - traefik.http.routers.minio.tls=true
+      - traefik.http.routers.minio.tls.certresolver=cloudflare
+      - traefik.http.routers.minio.middlewares=chain-add-1FA-MFA_PWD@file
+      - traefik.http.routers.minio.service=minio
+      - traefik.http.services.minio.loadbalancer.server.port=9001
+
+      - traefik.http.routers.storage.rule=Host(`storage.zimmermann.sh`)
+      - traefik.http.routers.storage.entrypoints=websecure
+      - traefik.http.routers.storage.tls=true
+      - traefik.http.routers.storage.tls.certresolver=cloudflare
+      - traefik.http.routers.minio.middlewares=chain-add-0FA@file
+      - traefik.http.routers.storage.service=storage
+      - traefik.http.services.storage.loadbalancer.server.port=9000
+
+      # homepage
+      - homepage.group=Data & AI
+      - homepage.name=Minio
+      - homepage.icon=minio.png
+      - homepage.href=https://minio.zimmermann.sh
+      - homepage.weight=3
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - authelia
+
+  # --------------------------------------------------------------------------
+  # Gollum
+  # --------------------------------------------------------------------------
+  gollum:
+    image: gollumwiki/gollum:master
+    container_name: gollum
+    hostname: gollum
+    restart: unless-stopped
+
+    ports:
+      - 4567:4567
+
+    volumes:
+      - ./appconfig/gollum/config.rb:/etc/gollum/config.rb:ro
+      - gollum_data:/wiki
+
+    environment:
+      <<: *default-environment
+
+    command:
+      - --config=/etc/gollum/config.rb
+
+    labels:
+      # watchtower
+      - com.centurylinklabs.watchtower.enable=true
+
+      # traefik
+      - traefik.enable=true
+      - traefik.http.routers.gollum.rule=Host(`wiki.zimmermann.sh`)
+      - traefik.http.routers.gollum.entrypoints=websecure
+      - traefik.http.routers.gollum.tls=true
+      - traefik.http.routers.gollum.tls.certresolver=cloudflare
+      - traefik.http.routers.gollum.middlewares=chain-add-2FA-MFA-BSC@file
+
+      # homepage
+      - homepage.group=GitOps
+      - homepage.name=Gollum
+      - homepage.icon=gollum.png
+      - homepage.href=https://gollum.zimmermann.sh
+      - homepage.weight=1
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - traefik
+      - authelia

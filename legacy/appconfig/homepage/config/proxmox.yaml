@@ -1,0 +1,8 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/proxmox/
+
+pve-1:
+  url: https://proxmox.zimmermann.eu.com:8006
+  username: {{HOMEPAGE_FILE_PROXMOX_USERNAME}}
+  password: {{HOMEPAGE_FILE_PROXMOX_PASSWORD}}

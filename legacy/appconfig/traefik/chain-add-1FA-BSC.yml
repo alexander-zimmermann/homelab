@@ -1,0 +1,12 @@
+http:
+  middlewares:
+    chain-add-1FA-BSC:
+      chain:
+        # Std. middleware w/ additional basic authentication
+        middlewares:
+          - cloudflare
+          - crowdsec
+          - rate-limit
+          - secure-headers
+          - basic-auth
+          - remove-headers

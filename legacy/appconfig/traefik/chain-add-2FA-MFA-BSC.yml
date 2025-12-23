@@ -1,0 +1,13 @@
+http:
+  middlewares:
+    chain-add-2FA-MFA-BSC:
+      chain:
+        # Std. middleware w/ additional MFA and basic authentication
+        middlewares:
+          - cloudflare
+          - crowdsec
+          - rate-limit
+          - secure-headers
+          - authelia-BSC
+          - basic-auth
+          - remove-headers

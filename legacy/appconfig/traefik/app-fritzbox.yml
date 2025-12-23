@@ -1,0 +1,17 @@
+http:
+  # Add router
+  routers:
+    fritzbox:
+      rule: Host(`fritzbox.zimmermann.sh`)
+      entryPoints: websecure
+      tls:
+        certresolver: cloudflare
+      middlewares: chain-add-1FA-MFA_BSC@file
+      service: fritzbox
+
+  # Add service
+  services:
+    fritzbox:
+      loadBalancer:
+        servers:
+          - url: http://fritzbox.zimmermann.eu.com

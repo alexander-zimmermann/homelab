@@ -1,0 +1,13 @@
+http:
+  middlewares:
+    crowdsec:
+      plugin:
+        bouncer:
+          enabled: true
+          loglevel: 'INFO'
+          crowdseclapihost: 'crowdsec.zimmermann.eu.com:8808'
+          crowdseclapikeyfile: '/run/secrets/crowdsec_lapi_key'
+          forwardedheaderstrustedips: [{{ expandenv "$CLOUDFLARE_IPv4,$CLOUDFLARE_IPv6"}}]
+          clientTrustedIPs: [{{ expandenv "$LOCAL_IPv4"}}]
+          rediscacheenabled: true
+          rediscachehost: 'redis.zimmermann.eu.com:6379'

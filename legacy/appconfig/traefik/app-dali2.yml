@@ -1,0 +1,23 @@
+http:
+  # Add router
+  routers:
+    dali2:
+      rule: Host(`dali-2.zimmermann.sh`)
+      entryPoints: websecure
+      tls:
+        certresolver: cloudflare
+      middlewares: chain-add-1FA-MFA_PWD@file
+      service: dali2
+
+  # Add service
+  services:
+    dali2:
+      loadBalancer:
+        servers:
+          - url: https://dali-2.zimmermann.eu.com
+        serversTransport: dali2
+
+  # Configure transport between Traefik and http server
+  serversTransports:
+    dali2:
+      insecureSkipVerify: true

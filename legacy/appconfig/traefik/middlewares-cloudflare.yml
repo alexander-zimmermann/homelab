@@ -1,0 +1,9 @@
+http:
+  middlewares:
+    cloudflare:
+      plugin:
+        cloudflare:
+          debug: false
+          trustedCIDRs: [{{ expandenv "$CLOUDFLARE_IPv4,$CLOUDFLARE_IPv6" }}]
+          refreshInterval: 0
+          overwriteRequestHeader: false
