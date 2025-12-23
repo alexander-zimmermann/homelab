@@ -67,7 +67,7 @@ images:
 ###############################################################################
 ## Naming convention for map: ci_(user | vendor | net | meta)_[<distro>_<release> | <profile>]
 ci_user_configs:
-  ci_user_std_linux:
+  ci_user_linux:
     username: alexander
     ssh_public_key: ~/.ssh/id_rsa.pub
     ## Password authentication disabled by default - use SSH keys
@@ -77,31 +77,53 @@ ci_user_configs:
     password: ""
 
 ci_vendor_configs:
-  ci_vendor_std_linux:
+  ci_vendor_linux:
     packages:
       - htop
       - vim
       - qemu-guest-agent
+    runcmd:
+      - systemctl enable --now qemu-guest-agent
+
+  ci_vendor_docker:
+    packages:
+      - htop
+      - vim
+      - curlie
+      - qemu-guest-agent
+      - docker.io
+      - docker-compose-v2
+    runcmd:
+      - systemctl enable --now qemu-guest-agent
+      - systemctl enable --now docker
+      - usermod -aG docker alexander
 
 ci_network_configs:
-  ci_net_std_linux:
+  ci_net_linux:
     dhcp4: true
     dhcp6: false
     accept_ra: true
     dns_search_domain: ["zimmermann.eu.com"]
 
 ci_meta_configs:
-  ci_meta_std_linux:
+  ci_meta_linux:
     hostname: proxmox-vm
 
 ## Naming convention for map: ci_profile_[<distro>_<release> | <profile>]
 vm_cloud_init_profiles:
-  ci_profile_std_linux:
+  ci_profile_linux:
     description: "Standard Linux configuration for development/staging"
-    ci_user_data_id: ci_user_std_linux
-    ci_vendor_data_id: ci_vendor_std_linux
-    ci_network_data_id: ci_net_std_linux
-    ci_meta_data_id: ci_meta_std_linux
+    ci_user_data_id: ci_user_linux
+    ci_vendor_data_id: ci_vendor_linux
+    ci_network_data_id: ci_net_linux
+    ci_meta_data_id: ci_meta_linux
+
+  ci_profile_docker:
+    description: "Docker Host configuration"
+    ci_user_data_id: ci_user_linux
+    ci_vendor_data_id: ci_vendor_docker
+    ci_network_data_id: ci_net_linux
+    ci_meta_data_id: ci_meta_linux
 
 ###############################################################################
 ##  Virtual machine & container templates
@@ -157,14 +179,21 @@ vm_templates:
     image_id: vm_debian_trixie
     os_type: l26
     resource_policy: vm_small
-    cloud_init_profile: ci_profile_std_linux
+    cloud_init_profile: ci_profile_linux
 
   vm_ubuntu_noble:
     vm_id: 10001
     image_id: vm_ubuntu_noble
     os_type: l26
     resource_policy: vm_large
-    cloud_init_profile: ci_profile_std_linux
+    cloud_init_profile: ci_profile_linux
+
+  vm_ubuntu_noble_docker:
+    vm_id: 10005
+    image_id: vm_ubuntu_noble
+    os_type: l26
+    resource_policy: vm_medium
+    cloud_init_profile: ci_profile_docker
 
   vm_talos_1_11_5_cp:
     vm_id: 10002
@@ -202,6 +231,9 @@ virtual_machines:
     ubuntu_01:
       template_id: vm_ubuntu_noble
       vm_id: 1001
+    management_01:
+      template_id: vm_ubuntu_noble_docker
+      vm_id: 1002
     windows_01:
       template_id: vm_windows_11_25h2
       vm_id: 1100
