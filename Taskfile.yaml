@@ -4,8 +4,6 @@ version: "3"
 vars:
   PYTHON: "{{.TASKFILE_DIR}}/.venv/bin/python"
   PIP: "{{.TASKFILE_DIR}}/.venv/bin/pip"
-  TIMEOUT_CILIUM: "300s"
-  TIMEOUT_ARGOCD: "300s"
   # Colors
   BLUE: '\033[0;34m'
   GREEN: '\033[0;32m'
