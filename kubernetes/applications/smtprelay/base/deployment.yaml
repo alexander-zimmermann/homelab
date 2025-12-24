@@ -1,0 +1,49 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: smtprelay
+  namespace: smtprelay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smtprelay
+  template:
+    metadata:
+      labels:
+        app: smtprelay
+    spec:
+      containers:
+        - name: smtprelay
+          image: grafana/smtprelay:latest
+          args:
+            - "-listen=:2525"
+            - "-allowed_nets=10.0.0.0/8 192.168.0.0/16 127.0.0.0/8"
+            - "-remote_host=smtp.mail.me.com:587"
+            - "-remote_user=$(REMOTE_USER)"
+            - "-remote_pass=$(REMOTE_PASS)"
+          env:
+            - name: OTEL_SDK_DISABLED
+              value: "true"
+            - name: REMOTE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: smtprelay-secrets
+                  key: REMOTE_USER
+            - name: REMOTE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: smtprelay-secrets
+                  key: REMOTE_PASS
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "50Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+          ports:
+            - containerPort: 2525
+              name: smtp

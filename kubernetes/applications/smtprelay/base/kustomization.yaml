@@ -1,0 +1,16 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: smtprelay
+resources:
+  - ./namespace.yaml
+  - ./deployment.yaml
+  - ./service.yaml
+  - ./sealedsecret.yaml
+
+commonLabels:
+  app.kubernetes.io/name: smtprelay
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "10"
