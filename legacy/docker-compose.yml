@@ -595,40 +595,6 @@ services:
       <<: *default-logging
 
   # --------------------------------------------------------------------------
-  # SMTP Relay
-  # --------------------------------------------------------------------------
-  smtprelay:
-    image: grafana/smtprelay
-    container_name: smtp-relay
-    hostname: smtp-relay
-    restart: unless-stopped
-
-    ports:
-      - 25:25
-
-    environment:
-      <<: *default-environment
-      OTEL_SDK_DISABLED: true
-      REMOTE_PASS: $SMTPRELAY_REMOTE_PASS
-
-    secrets:
-      - smtprelay_remote_user
-      - smtprelay_remote_pass
-
-    command:
-      - -listen=0.0.0.0:25
-      - -allowed_nets=127.0.0.0/8 172.18.0.0/16 192.168.1.0/24
-      - -remote_host=smtp.mail.me.com:587
-      - -remote_user=dr.azimmermann@icloud.com
-
-    labels:
-      # watchtower
-      - com.centurylinklabs.watchtower.enable=true
-
-    logging:
-      <<: *default-logging
-
-  # --------------------------------------------------------------------------
   # Node Exporter
   # --------------------------------------------------------------------------
   node-exporter:
