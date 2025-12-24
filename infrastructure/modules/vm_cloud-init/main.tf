@@ -59,6 +59,18 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
         - ${p}
 %{endfor~}
       package_update: ${var.package_update}
+%{if length(var.write_files) > 0~}
+      write_files:
+%{for f in var.write_files~}
+        - path: ${f.path}
+          content: |
+            ${indent(12, f.content)}
+          permissions: "${f.permissions}"
+          owner: "${f.owner}"
+          encoding: "${f.encoding}"
+          append: ${f.append}
+%{endfor~}
+%{endif~}
       runcmd:
         - systemctl enable --now qemu-guest-agent
 %{for cmd in var.runcmd~}

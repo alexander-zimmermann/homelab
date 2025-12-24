@@ -813,6 +813,7 @@ variable "ci_vendor_configs" {
     - target_datastore: Where the snippet will be stored. Defaults to 'local'.
     - packages: Optional list of packages to install.
     - runcmd: Optional list of commands to run.
+    - write_files: Optional list of files to create (path, content, permissions).
 
     This variable supports installing additional packages (beyond qemu-guest-agent),
     updating the system, and executing custom commands during VM initialization.
@@ -829,6 +830,16 @@ variable "ci_vendor_configs" {
 
     ## Custom commands
     runcmd = optional(list(string), [])
+
+    ## File management
+    write_files = optional(list(object({
+      path        = string
+      content     = string
+      permissions = optional(string, "0644")
+      owner       = optional(string, "root:root")
+      encoding    = optional(string, "text/plain")
+      append      = optional(bool, false)
+    })), [])
   }))
 
   validation {

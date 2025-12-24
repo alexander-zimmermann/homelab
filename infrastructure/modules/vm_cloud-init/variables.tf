@@ -133,6 +133,22 @@ variable "runcmd" {
   default     = []
 }
 
+variable "write_files" {
+  description = <<EOT
+    List of files to write to the VM filesystem during cloud-init execution.
+    Each item is an object containing path, content, permissions, owner, and encoding.
+  EOT
+  type = list(object({
+    path        = string
+    content     = string
+    permissions = optional(string, "0644")
+    owner       = optional(string, "root:root")
+    encoding    = optional(string, "text/plain")
+    append      = optional(bool, false)
+  }))
+  default = []
+}
+
 
 ###############################################################################
 ##  Network config
