@@ -168,7 +168,7 @@ module "pve-bridge" {
 ## Virtual machine & container images
 ###############################################################################
 module "image" {
-  source   = "./modules/20-image"
+  source   = "./modules/20-images"
   for_each = local.manifest.images
 
   ## Storage configuration
@@ -188,7 +188,7 @@ module "image" {
 ##  VM cloud-init configuration
 ###############################################################################
 module "vm_ci_user_config" {
-  source             = "./modules/30-vm_cloud-init"
+  source             = "./modules/30-cloudinit"
   for_each           = local.manifest.ci_user_configs
   create_user_config = true
 
@@ -205,7 +205,7 @@ module "vm_ci_user_config" {
 }
 
 module "vm_ci_vendor_config" {
-  source               = "./modules/30-vm_cloud-init"
+  source               = "./modules/30-cloudinit"
   for_each             = local.manifest.ci_vendor_configs
   create_vendor_config = true
 
@@ -242,7 +242,7 @@ module "vm_ci_vendor_config" {
 }
 
 module "vm_ci_network_config" {
-  source                = "./modules/30-vm_cloud-init"
+  source                = "./modules/30-cloudinit"
   for_each              = local.manifest.ci_network_configs
   create_network_config = true
 
@@ -268,7 +268,7 @@ module "vm_ci_network_config" {
 }
 
 module "vm_ci_meta_config" {
-  source             = "./modules/30-vm_cloud-init"
+  source             = "./modules/30-cloudinit"
   for_each           = local.manifest.ci_meta_configs
   create_meta_config = true
 
@@ -286,7 +286,7 @@ module "vm_ci_meta_config" {
 ##  Virtual machine & container templates
 ###############################################################################
 module "vm_template" {
-  source   = "./modules/40-vm_template"
+  source   = "./modules/40-templates-vm"
   for_each = local.manifest.vm_templates
 
   ## Infrastructure placement
@@ -323,7 +323,7 @@ module "vm_template" {
 }
 
 module "container_template" {
-  source   = "./modules/40-container_template"
+  source   = "./modules/40-templates-lxc"
   for_each = local.manifest.container_templates
 
   ## Infrastructure placement
@@ -360,7 +360,7 @@ module "container_template" {
 ##  Virtual machine & container clones
 ###############################################################################
 module "virtual_machines" {
-  source   = "./modules/50-vm_clone"
+  source   = "./modules/50-fleet-vm"
   for_each = local.virtual_machines
 
   ## VM placement and identification
@@ -385,7 +385,7 @@ module "virtual_machines" {
 }
 
 module "containers" {
-  source   = "./modules/50-container_clone"
+  source   = "./modules/50-fleet-lxc"
   for_each = local.containers
 
   ## Container placement and identification
@@ -407,7 +407,7 @@ module "containers" {
 ##  Talos cluster
 ###############################################################################
 module "talos_cluster" {
-  source = "./modules/60-talos-cluster"
+  source = "./modules/60-talos"
 
   ## Cluster identity
   cluster_name = local.manifest.talos_configuration.cluster_name
