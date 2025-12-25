@@ -250,3 +250,13 @@ variable "password" {
     error_message = "Password, if provided, must not be empty."
   }
 }
+
+
+###############################################################################
+## Startup variables
+###############################################################################
+variable "started" {
+  description = "Whether to start the container after creation. Default false for templates."
+  type        = bool
+  default     = false
+}

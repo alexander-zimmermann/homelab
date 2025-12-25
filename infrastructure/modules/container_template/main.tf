@@ -19,7 +19,7 @@ resource "proxmox_virtual_environment_container" "lxc_template" {
   vm_id         = var.lxc_id
   unprivileged  = var.unprivileged
   template      = true
-  started       = false
+  started       = var.started
   start_on_boot = false
 
   description = var.description
