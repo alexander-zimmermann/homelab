@@ -1,0 +1,79 @@
+vm_templates:
+  vm_debian_trixie:
+    vm_id: 10000
+    image_id: vm_debian_trixie
+    os_type: l26
+    # resources
+    memory: 1024
+    cores: 1
+    disk_size: 8
+    vnic_bridge: vmbr0
+    # cloud init
+    ci_user_data_id: ci_user_linux
+    ci_vendor_data_id: ci_vendor_linux
+    ci_network_data_id: ci_net_linux
+    ci_meta_data_id: ci_meta_linux
+
+  vm_ubuntu_noble:
+    vm_id: 10001
+    image_id: vm_ubuntu_noble
+    os_type: l26
+    # resources
+    memory: 4096
+    cores: 4
+    disk_size: 32
+    vnic_bridge: vmbr0
+    # cloud init
+    ci_user_data_id: ci_user_linux
+    ci_vendor_data_id: ci_vendor_linux
+    ci_network_data_id: ci_net_linux
+    ci_meta_data_id: ci_meta_linux
+
+  vm_ubuntu_noble_docker:
+    vm_id: 10005
+    image_id: vm_ubuntu_noble
+    os_type: l26
+    # resources
+    memory: 2048
+    cores: 2
+    disk_size: 16
+    vnic_bridge: vmbr0
+    # cloud init
+    ci_user_data_id: ci_user_linux
+    ci_vendor_data_id: ci_vendor_docker
+    ci_network_data_id: ci_net_linux
+    ci_meta_data_id: ci_meta_linux
+
+  vm_talos_1_11_5_cp:
+    vm_id: 10002
+    image_id: vm_talos_1_11_5
+    os_type: l26
+    # resources
+    memory: 4096
+    cores: 4
+    disk_size: 32
+    vnic_bridge: vmbr0
+
+  vm_talos_1_11_5_dp:
+    vm_id: 10003
+    image_id: vm_talos_1_11_5
+    os_type: l26
+    # resources
+    memory: 8192
+    cores: 6
+    disk_size: 48
+    vnic_bridge: vmbr0
+
+  vm_windows_11_25h2:
+    vm_id: 10004
+    image_id: vm_windows_11_25h2
+    os_type: win11
+    # resources
+    memory: 16384
+    cores: 8
+    disk_size: 64
+    vnic_bridge: vmbr0
+    bios: ovmf
+    machine_type: q35
+    enable_tpm: true
+    secure_boot: true

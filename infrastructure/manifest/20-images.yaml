@@ -1,0 +1,38 @@
+---
+images:
+  vm_debian_trixie:
+    image_type: import
+    image_filename: debian-13-genericcloud-amd64.qcow2
+    image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
+    image_checksum: "e5563c7bb388eebf7df385e99ee36c83cd16ba8fad4bd07f4c3fd725a6f1cf1cb9f54c6673d4274a856974327a5007a69ff24d44f9b21f7f920e1938a19edf7e"
+    image_checksum_algorithm: "sha512"
+
+  vm_ubuntu_noble:
+    image_type: import
+    image_filename: ubuntu-noble-server-cloudimg-amd64.qcow2
+    image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+    image_checksum: "2b5f90ffe8180def601c021c874e55d8303e8bcbfc66fee2b94414f43ac5eb1f"
+
+  vm_talos_1_11_5:
+    image_type: import
+    image_filename: talos-1.11.5-nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/b553b4a25d76e938fd7a9aaa7f887c06ea4ef75275e64f4630e6f8f739cf07df/v1.11.5/nocloud-amd64.raw
+    image_checksum: "b106e0b4a6644045e895552877c68c5094d1eb77633a37d900ddfaeefdb8e29b"
+
+  lxc_ubuntu_plucky:
+    image_type: vztmpl
+    image_filename: ubuntu-plucky-cloud-amd64-202512220742.tar.xz
+    image_url: https://images.linuxcontainers.org/images/ubuntu/noble/amd64/cloud/20251222_07:42/rootfs.tar.xz
+    image_checksum: "af66983f97ce1741076e6bcbf1ea535c8cd983e97bff3403a7cb10c877ab7539"
+
+  vm_windows_11_25h2:
+    image_type: iso
+    image_filename: windows-11-25H2-amd64.iso
+    image_url: "" # manuell upload
+    image_checksum: ""
+
+  vm_windows_stable_virtio:
+    image_type: iso
+    image_filename: windows-stable-virtio-amd64.iso
+    image_url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso
+    image_checksum: "e14cf2b94492c3e925f0070ba7fdfedeb2048c91eea9c5a5afb30232a3976331"

@@ -1,0 +1,32 @@
+---
+ci_user_configs:
+  ci_user_linux:
+    username: alexander
+    ssh_public_key: ~/.ssh/id_rsa.pub
+    set_password: false
+    password: ""
+
+ci_vendor_configs:
+  ci_vendor_linux:
+    packages: [qemu-guest-agent, htop, vim]
+    runcmd:
+      - systemctl enable --now qemu-guest-agent
+
+  ci_vendor_docker:
+    packages:
+      [qemu-guest-agent, htop, vim, curlie, docker.io, docker-compose-v2]
+    runcmd:
+      - systemctl enable --now qemu-guest-agent
+
+    secret_ref: lego
+
+ci_network_configs:
+  ci_net_linux:
+    dhcp4: true
+    dhcp6: false
+    accept_ra: true
+    dns_search_domain: [zimmermann.eu.com]
+
+ci_meta_configs:
+  ci_meta_linux:
+    hostname: proxmox-vm

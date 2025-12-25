@@ -54,7 +54,6 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
       #cloud-config
       timezone: Europe/Berlin
       packages:
-        - qemu-guest-agent
 %{for p in var.packages~}
         - ${p}
 %{endfor~}
@@ -72,7 +71,6 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
 %{endfor~}
 %{endif~}
       runcmd:
-        - systemctl enable --now qemu-guest-agent
 %{for cmd in var.runcmd~}
         - ${cmd}
 %{endfor~}

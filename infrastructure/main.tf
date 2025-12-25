@@ -169,17 +169,17 @@ module "pve-bridge" {
 ###############################################################################
 module "image" {
   source   = "./modules/image"
-  for_each = var.images
+  for_each = local.manifest.images
 
   ## Storage configuration
-  node      = each.value.target_node
-  datastore = each.value.target_datastore
+  node      = try(each.value.target_node, local.defaults.target_node)
+  datastore = try(each.value.target_datastore, local.defaults.file_storage)
 
   ## Image source and verification
   image_filename           = each.value.image_filename
   image_url                = each.value.image_url
   image_checksum           = each.value.image_checksum
-  image_checksum_algorithm = each.value.image_checksum_algorithm
+  image_checksum_algorithm = try(each.value.image_checksum_algorithm, "sha256")
   image_type               = each.value.image_type
 }
 
@@ -189,12 +189,12 @@ module "image" {
 ###############################################################################
 module "vm_ci_user_config" {
   source             = "./modules/vm_cloud-init"
-  for_each           = var.ci_user_configs
+  for_each           = local.manifest.ci_user_configs
   create_user_config = true
 
   ## Storage configuration
-  node      = each.value.target_node
-  datastore = each.value.target_datastore
+  node      = try(each.value.target_node, local.defaults.target_node)
+  datastore = try(each.value.target_datastore, local.defaults.file_storage)
   filename  = "${each.key}-user-config.yaml"
 
   ## User account configuration
@@ -206,30 +206,30 @@ module "vm_ci_user_config" {
 
 module "vm_ci_vendor_config" {
   source               = "./modules/vm_cloud-init"
-  for_each             = var.ci_vendor_configs
+  for_each             = local.manifest.ci_vendor_configs
   create_vendor_config = true
 
   ## Storage configuration
-  node      = each.value.target_node
-  datastore = each.value.target_datastore
+  node      = try(each.value.target_node, local.defaults.target_node)
+  datastore = try(each.value.target_datastore, local.defaults.file_storage)
   filename  = "${each.key}-vendor-config.yaml"
 
   ## Package management
-  packages       = each.value.packages
-  package_update = each.value.package_update
+  packages       = try(each.value.packages, [])
+  package_update = try(each.value.package_update, true)
 
   ## Custom commands
-  runcmd = each.value.runcmd
+  runcmd = try(each.value.runcmd, [])
 }
 
 module "vm_ci_network_config" {
   source                = "./modules/vm_cloud-init"
-  for_each              = var.ci_network_configs
+  for_each              = local.manifest.ci_network_configs
   create_network_config = true
 
   ## Storage configuration
-  node      = each.value.target_node
-  datastore = each.value.target_datastore
+  node      = try(each.value.target_node, local.defaults.target_node)
+  datastore = try(each.value.target_datastore, local.defaults.file_storage)
   filename  = "${each.key}-network-config.yaml"
 
   ## DHCP configuration
@@ -238,24 +238,24 @@ module "vm_ci_network_config" {
   accept_ra = each.value.accept_ra
 
   ## Static IP configuration
-  ipv4_address = each.value.ipv4_address
-  ipv6_address = each.value.ipv6_address
-  gateway4     = each.value.ipv4_gateway
-  gateway6     = each.value.ipv6_gateway
+  ipv4_address = try(each.value.ipv4_address, "")
+  ipv6_address = try(each.value.ipv6_address, "")
+  gateway4     = try(each.value.ipv4_gateway, "")
+  gateway6     = try(each.value.ipv6_gateway, "")
 
   ## DNS configuration
-  dns_servers       = each.value.dns_servers
-  dns_search_domain = each.value.dns_search_domain
+  dns_servers       = try(each.value.dns_servers, ["1.1.1.1", "2606:4700:4700::1111"])
+  dns_search_domain = try(each.value.dns_search_domain, [])
 }
 
 module "vm_ci_meta_config" {
   source             = "./modules/vm_cloud-init"
-  for_each           = var.ci_meta_configs
+  for_each           = local.manifest.ci_meta_configs
   create_meta_config = true
 
   ## Storage configuration
-  node      = each.value.target_node
-  datastore = each.value.target_datastore
+  node      = try(each.value.target_node, local.defaults.target_node)
+  datastore = try(each.value.target_datastore, local.defaults.file_storage)
   filename  = "${each.key}-meta-config.yaml"
 
   ## System identity
@@ -268,20 +268,20 @@ module "vm_ci_meta_config" {
 ###############################################################################
 module "vm_template" {
   source   = "./modules/vm_template"
-  for_each = var.vm_templates
+  for_each = local.manifest.vm_templates
 
   ## Infrastructure placement
-  node           = each.value.target_node
-  disk_datastore = each.value.target_datastore
+  node           = try(each.value.target_node, local.defaults.target_node)
+  disk_datastore = try(each.value.target_datastore, local.defaults.block_storage)
 
   ## VM identification
   name        = "${each.key}-template"
   vm_id       = each.value.vm_id
-  description = "${each.value.description} - Created on ${timestamp()}"
-  tags        = each.value.tags
+  description = "${try(each.value.description, "Created by Terraform")} - Created on ${timestamp()}"
+  tags        = try(each.value.tags, ["opentofu", "template", "vm"])
 
   ## Hardware configuration
-  bios         = each.value.bios
+  bios         = try(each.value.bios, "seabios")
   machine_type = lookup(each.value, "machine_type", null)
   cores        = each.value.cores
   memory       = each.value.memory
@@ -305,35 +305,35 @@ module "vm_template" {
 
 module "container_template" {
   source   = "./modules/container_template"
-  for_each = var.container_templates
+  for_each = local.manifest.container_templates
 
   ## Infrastructure placement
-  node           = each.value.target_node
-  disk_datastore = each.value.target_datastore
+  node           = try(each.value.target_node, local.defaults.target_node)
+  disk_datastore = try(each.value.target_datastore, local.defaults.block_storage)
 
   ## Container identification
   name         = "${each.key}-template"
   lxc_id       = each.value.lxc_id
-  description  = "${each.value.description} - Created on ${timestamp()}"
-  tags         = each.value.tags
-  unprivileged = each.value.unprivileged
+  description  = "${try(each.value.description, "Created by Terraform")} - Created on ${timestamp()}"
+  tags         = try(each.value.tags, ["opentofu", "template", "lxc"])
+  unprivileged = try(each.value.unprivileged, true)
   image_id     = try(module.image[each.value.image_id].image_id, null)
 
   ## Resource allocation
   cores       = each.value.cores
   memory      = each.value.memory
-  memory_swap = each.value.memory_swap
+  memory_swap = try(each.value.memory_swap, 512)
   disk_size   = each.value.disk_size
 
   ## Operating system configuration
   os_type = each.value.os_type
 
   ## Network configuration
-  vnic_name         = each.value.vnic_name
-  vnic_bridge       = each.value.vnic_bridge
-  vlan_tag          = each.value.vlan_tag
-  dns_servers       = each.value.dns_servers
-  dns_search_domain = each.value.dns_search_domain
+  vnic_name         = try(each.value.vnic_name, "eth0")
+  vnic_bridge       = try(each.value.vnic_bridge, "vmbr0")
+  vlan_tag          = try(each.value.vlan_tag, null)
+  dns_servers       = try(each.value.dns_servers, ["1.1.1.1", "2606:4700:4700::1111"])
+  dns_search_domain = try(each.value.dns_search_domain, [])
 }
 
 
@@ -358,7 +358,11 @@ module "virtual_machines" {
   protection     = each.value.protection
 
   ## Additional disks
-  disks = try(each.value.disks, [])
+  disks = [
+    for d in try(each.value.disks, []) : merge(d, {
+      disk_datastore = try(d.disk_datastore, local.defaults.block_storage)
+    })
+  ]
 }
 
 module "containers" {
@@ -387,11 +391,11 @@ module "talos_cluster" {
   source = "./modules/talos-cluster"
 
   ## Cluster identity
-  cluster_name = var.talos_cluster_name
+  cluster_name = local.manifest.talos_configuration.cluster_name
 
   ## Talos/Kubernetes versions
-  talos_version      = var.talos_version
-  kubernetes_version = var.kubernetes_version
+  talos_version      = local.manifest.talos_configuration.talos_version
+  kubernetes_version = local.manifest.talos_configuration.kubernetes_version
 
   ## Node topology
   cluster_head  = module.virtual_machines[local.control_plane_node_ids[0]].ipv4[0]

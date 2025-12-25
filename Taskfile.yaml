@@ -40,7 +40,7 @@ tasks:
           var: PACKAGES
           as: PACKAGE
         cmd: "{{.PIP}} install {{.PACKAGE}} >/dev/null 2>&1"
-      - pre-commit install >/dev/null 2>&1
+      - "{{.TASKFILE_DIR}}/.venv/bin/pre-commit install >/dev/null 2>&1"
 
       # All phases complete
       - cmd: printf "{{.GREEN}}✅ Initialization complete!{{.RESET}}\n"
@@ -64,7 +64,4 @@ tasks:
         cilium-cli
         argocd
       PACKAGES: >-
-        pyyaml
-        jsonschema
-        jinja2
         pre-commit

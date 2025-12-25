@@ -1,0 +1,10 @@
+container_templates:
+  lxc_ubuntu_plucky:
+    lxc_id: 15000
+    image_id: lxc_ubuntu_plucky
+    os_type: ubuntu
+    # resources
+    memory: 512
+    cores: 1
+    disk_size: 8
+    vnic_bridge: vmbr0

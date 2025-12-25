@@ -1,0 +1,27 @@
+---
+virtual_machines:
+  ubuntu_01:
+    template_id: vm_ubuntu_noble
+    vm_id: 1001
+
+  management_01:
+    template_id: vm_ubuntu_noble_talos_omni
+    vm_id: 1002
+
+  windows_01:
+    template_id: vm_windows_11_25h2
+    vm_id: 1100
+    wait_for_agent: false
+
+  talos_cp:
+    template_id: vm_talos_1_11_5_cp
+    count: 1
+    vm_id_start: 2000
+
+  talos_dp:
+    template_id: vm_talos_1_11_5_dp
+    count: 3
+    vm_id_start: 2001
+    disks:
+      - disk_interface: scsi1
+        disk_size: 96
