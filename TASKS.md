@@ -5,26 +5,17 @@
 
 ---
 
-## 🚧 In Progress
-
-- [ ] **Homepage Migration**:
-
----
-
 ## 📋 General To-Dos
-
-### Debugging
-
-- [ ] **Unifi UDM NAT/Firewall**: Fix external access to ArgoCD (NAT Issue).
 
 ### Refactoring
 
-- [ ] **Rename Directories**: `infrastructure` -> `terraform` and `k8s-cluster` -> `kubernetes`.
-- [ ] **BGP Helper Script**: Create script to inject BGP password into Unifi configuration.
 - [ ] **Longhorn Backup Target**: Configure NAS via NFS.
 - [ ] **Velero Backup**: Install Helm Chart, configure S3 backend (MinIO/Cloud), schedule backups.
 - [ ] **External DNS**: Automate DNS records for services (Cloudflare Integration).
-- [ ] **Talos Omni**: Migrate to Talos Omni.
+- [ ] **Split Ingress Architecture**: Implement Dual Ingress Controller strategy (Internal vs DMZ).
+  - Define Cilium IP Pools (Internal/DMZ).
+  - Deploy `traefik-internal` & `traefik-external`.
+  - Configure UDM VLAN/DMZ.
 - [ ] **Optimizations**:
   - [ ] Prometheus Retention.
   - [ ] Traefik Retention.
@@ -47,7 +38,7 @@
 - [ ] **homepage**: Custom Deployment. Stateless.
 - [ ] **gollum**: Custom Deployment. PVC 64M. Data migration required.
 - [ ] **whoami**: Custom Deployment. Stateless.
-- [ ] **smtprelay**: Custom Deployment. Stateless.
+- [x] **smtprelay**: Custom Deployment. Stateless.
 
 ### Wave 2: Observability - Exporters
 
@@ -79,6 +70,7 @@
 
 - [ ] **influxdb**: Helm Chart (influxdb/influxdb2). PVC 10GB. Data migration.
 - [ ] **mosquitto**: Custom Deployment, PVC 64M. Data migration.
+  - [ ] Add fix IP from Cilium IP Pools
 - [ ] **node-red**: Helm Chart (nodered/node-red). PVC 512M. Data migration.
 - [ ] **solaredge2mqtt**: Custom Deployment. Stateless.
 
