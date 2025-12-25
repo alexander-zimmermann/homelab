@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+
+LEGO_VERSION="${lego_version}"
+LEGO_ARCH="${lego_arch}"
+CERT_PATH="${cert_path}"
+
+# Install lego if not present
+if ! command -v lego &> /dev/null; then
+  echo "Installing Lego $${LEGO_VERSION}..."
+  curl -sL "https://github.com/go-acme/lego/releases/download/$${LEGO_VERSION}/lego_$${LEGO_VERSION}_$${LEGO_ARCH}.tar.gz" | tar xz -C /usr/local/bin lego
+  chmod +x /usr/local/bin/lego
+fi
+
+# Source environment variables (rendered from ci_secrets into /etc/default/lego)
+if [ -f /etc/default/lego ]; then
+  source /etc/default/lego
+fi
+
+# Create certificates directory
+mkdir -p "$${CERT_PATH}"
+
+# Initial Certificate Generation (if not exists)
+if [ ! -f "$${CERT_PATH}/certificates/$${OMNI_DOMAIN_NAME}.crt" ]; then
+  echo "Generating initial certificate for $${OMNI_DOMAIN_NAME}..."
+  lego --email="$${EMAIL_ADDRESS}" --dns="cloudflare" --domains="$${OMNI_DOMAIN_NAME}" --path="$${CERT_PATH}" --accept-tos run
+fi

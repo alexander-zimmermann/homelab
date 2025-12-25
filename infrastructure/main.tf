@@ -220,6 +220,25 @@ module "vm_ci_vendor_config" {
 
   ## Custom commands
   runcmd = try(each.value.runcmd, [])
+
+  ## File management
+  write_files = [
+    for wf in try(each.value.write_files, []) : {
+      path        = wf.path
+      permissions = try(wf.permissions, "0644")
+      owner       = try(wf.owner, "root:root")
+      encoding    = try(wf.encoding, "text/plain")
+      append      = try(wf.append, false)
+      content = try(wf.secret_ref, null) != null ? join("\n", [
+        for k, v in var.ci_secrets[wf.secret_ref] : "${k}=${v}"
+        ]) : try(
+        try(wf.content_file, null) != null ? file(wf.content_file) :
+        try(wf.template_file, null) != null ? templatefile(wf.template_file, try(wf.vars, {})) :
+        wf.content,
+        ""
+      )
+    }
+  ]
 }
 
 module "vm_ci_network_config" {

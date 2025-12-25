@@ -67,3 +67,15 @@ bridges = {
     comment     = "Primary bridge for VMs and containers"
   }
 }
+
+
+###############################################################################
+##  VM cloud-init configuration
+###############################################################################
+ci_secrets = {
+  lego = {
+    EMAIL_ADDRESS            = "admin@example.com"
+    OMNI_DOMAIN_NAME         = "example.com"
+    CLOUDFLARE_DNS_API_TOKEN = "cloudflare-api-token"
+  }
+}

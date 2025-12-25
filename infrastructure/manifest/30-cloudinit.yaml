@@ -17,8 +17,35 @@ ci_vendor_configs:
       [qemu-guest-agent, htop, vim, curlie, docker.io, docker-compose-v2]
     runcmd:
       - systemctl enable --now qemu-guest-agent
+      - systemctl enable --now docker
+      - usermod -aG docker alexander
+      - /usr/local/bin/setup-lego.sh
+      - systemctl enable --now lego-renew.timer
 
     secret_ref: lego
+
+    write_files:
+      - path: /etc/default/lego
+        secret_ref: lego
+        permissions: "0600"
+        owner: "root:root"
+
+      - path: /usr/local/bin/setup-lego.sh
+        permissions: "0755"
+        template_file: templates/30-cloudinit/setup-lego.sh.tftpl
+        vars:
+          lego_version: v4.17.4
+          lego_arch: linux_amd64
+          cert_path: /data/certs
+
+      - path: /etc/systemd/system/lego-renew.service
+        template_file: templates/30-cloudinit/lego-renew.service.tftpl
+        vars:
+          cert_path: /data/certs
+          hook: docker restart omni
+
+      - path: /etc/systemd/system/lego-renew.timer
+        content_file: templates/30-cloudinit/lego-renew.timer
 
 ci_network_configs:
   ci_net_linux:
