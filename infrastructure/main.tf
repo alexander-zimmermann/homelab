@@ -2,7 +2,7 @@
 ## PVE node configuration
 ###############################################################################
 module "pve_nodes" {
-  source   = "./modules/pve_nodes"
+  source   = "./modules/10-pve_nodes"
   for_each = var.pve_nodes
 
   ## SSH connection (required for local content type changes)
@@ -23,7 +23,7 @@ module "pve_nodes" {
 ## PVE user management
 ###############################################################################
 module "pve_user_mgmt" {
-  source   = "./modules/pve_user_mgmt"
+  source   = "./modules/10-pve_user_mgmt"
   for_each = var.users
 
   ## User identity and authentication
@@ -56,7 +56,7 @@ module "pve_user_mgmt" {
 ## PVE certificate management
 ###############################################################################
 module "pve_acme" {
-  source = "./modules/pve_acme"
+  source = "./modules/10-pve_acme"
 
   ## Pass the aliased provider to satisfy the state reference
   providers = {
@@ -80,7 +80,7 @@ module "pve_acme" {
 ## PVE network configuration
 ###############################################################################
 module "pve-bond" {
-  source      = "./modules/pve_network"
+  source      = "./modules/10-pve_network"
   for_each    = var.bonds
   create_bond = true
 
@@ -114,7 +114,7 @@ module "pve-bond" {
 }
 
 module "pve-vlan" {
-  source      = "./modules/pve_network"
+  source      = "./modules/10-pve_network"
   for_each    = var.vlans
   create_vlan = true
 
@@ -139,7 +139,7 @@ module "pve-vlan" {
 }
 
 module "pve-bridge" {
-  source        = "./modules/pve_network"
+  source        = "./modules/10-pve_network"
   for_each      = var.bridges
   create_bridge = true
 
@@ -168,7 +168,7 @@ module "pve-bridge" {
 ## Virtual machine & container images
 ###############################################################################
 module "image" {
-  source   = "./modules/image"
+  source   = "./modules/20-image"
   for_each = local.manifest.images
 
   ## Storage configuration
@@ -188,7 +188,7 @@ module "image" {
 ##  VM cloud-init configuration
 ###############################################################################
 module "vm_ci_user_config" {
-  source             = "./modules/vm_cloud-init"
+  source             = "./modules/30-vm_cloud-init"
   for_each           = local.manifest.ci_user_configs
   create_user_config = true
 
@@ -205,7 +205,7 @@ module "vm_ci_user_config" {
 }
 
 module "vm_ci_vendor_config" {
-  source               = "./modules/vm_cloud-init"
+  source               = "./modules/30-vm_cloud-init"
   for_each             = local.manifest.ci_vendor_configs
   create_vendor_config = true
 
@@ -223,7 +223,7 @@ module "vm_ci_vendor_config" {
 }
 
 module "vm_ci_network_config" {
-  source                = "./modules/vm_cloud-init"
+  source                = "./modules/30-vm_cloud-init"
   for_each              = local.manifest.ci_network_configs
   create_network_config = true
 
@@ -249,7 +249,7 @@ module "vm_ci_network_config" {
 }
 
 module "vm_ci_meta_config" {
-  source             = "./modules/vm_cloud-init"
+  source             = "./modules/30-vm_cloud-init"
   for_each           = local.manifest.ci_meta_configs
   create_meta_config = true
 
@@ -267,7 +267,7 @@ module "vm_ci_meta_config" {
 ##  Virtual machine & container templates
 ###############################################################################
 module "vm_template" {
-  source   = "./modules/vm_template"
+  source   = "./modules/40-vm_template"
   for_each = local.manifest.vm_templates
 
   ## Infrastructure placement
@@ -304,7 +304,7 @@ module "vm_template" {
 }
 
 module "container_template" {
-  source   = "./modules/container_template"
+  source   = "./modules/40-container_template"
   for_each = local.manifest.container_templates
 
   ## Infrastructure placement
@@ -341,7 +341,7 @@ module "container_template" {
 ##  Virtual machine & container clones
 ###############################################################################
 module "virtual_machines" {
-  source   = "./modules/vm_clone"
+  source   = "./modules/50-vm_clone"
   for_each = local.virtual_machines
 
   ## VM placement and identification
@@ -366,7 +366,7 @@ module "virtual_machines" {
 }
 
 module "containers" {
-  source   = "./modules/container_clone"
+  source   = "./modules/50-container_clone"
   for_each = local.containers
 
   ## Container placement and identification
@@ -388,7 +388,7 @@ module "containers" {
 ##  Talos cluster
 ###############################################################################
 module "talos_cluster" {
-  source = "./modules/talos-cluster"
+  source = "./modules/60-talos-cluster"
 
   ## Cluster identity
   cluster_name = local.manifest.talos_configuration.cluster_name
