@@ -1,0 +1,50 @@
+---
+pve_configuration:
+  connection_configuration:
+    api_url: "https://pve-1.zimmermann.eu.com:8006/api2/json"
+    username: "root@pam"
+    insecure: true
+
+  cluster_nodes:
+    pve-1:
+      node_name: "pve-1"
+      address: "pve-1.zimmermann.eu.com"
+      port: 22
+
+  ssh_configuration:
+    username: "opentofu"
+    private_key_path: "~/.ssh/proxmox_opentofu"
+    agent: true
+
+  node_settings:
+    timezone: "Europe/Berlin"
+    dns_servers: ["192.168.1.1", "1.1.1.1", "2606:4700:4700::1111"]
+    dns_search_domain: "zimmermann.eu.com"
+    local_content_types: ["iso", "vztmpl", "snippets", "import"]
+
+  user_management:
+    users:
+      alexander:
+        path: "/"
+        role_id: "Administrator"
+      proxmate:
+        path: "/"
+        role_id: "Administrator"
+        create_token: true
+        token_name: "proxmate"
+      homepage:
+        path: "/"
+        role_id: "PVEAuditor"
+        create_token: true
+        token_name: "homepage"
+
+  acme_configuration:
+    target_node: "pve-1"
+    account_name: "letsencrypt-prod"
+    contact_email: "alexander@zimmermann.eu.com"
+    cert_domains: ["pve-1.zimmermann.eu.com", "proxmox.zimmermann.eu.com"]
+
+  network_configuration:
+    bridges: {}
+    bonds: {}
+    vlans: {}

@@ -3,3 +3,11 @@ talos_configuration:
   cluster_name: "homelab"
   kubernetes_version: "1.34.0"
   talos_version: "1.11.5"
+
+  infrastructure:
+    dns_servers: []
+    ntp_servers: ["time.cloudflare.com", "pool.ntp.org"]
+    longhorn:
+      disk_selector_match: "!system_disk"
+      mount_path: "/var/mnt/longhorn"
+      filesystem: "ext4"

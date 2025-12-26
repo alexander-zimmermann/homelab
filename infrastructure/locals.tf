@@ -5,6 +5,7 @@ locals {
   ## Raw manifest import
   raw_manifest = merge(
     try(yamldecode(file("${path.module}/manifest/00-globals.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/10-pve.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/20-images.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/30-cloudinit.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/40-templates-vm.yaml")), {}),
@@ -23,6 +24,7 @@ locals {
 
   ## Set transformed manifest (Effective Configuration)
   manifest = {
+    pve_configuration   = try(local.raw_manifest.pve_configuration, {})
     images              = try(local.raw_manifest.images, {})
     ci_user_configs     = try(local.raw_manifest.ci_user_configs, {})
     ci_vendor_configs   = try(local.raw_manifest.ci_vendor_configs, {})
@@ -34,6 +36,17 @@ locals {
     containers          = try(local.raw_manifest.containers, {})
     talos_configuration = try(local.raw_manifest.talos_configuration, {})
   }
+
+  ## Shortcuts
+  pve_nodes      = try(local.manifest.pve_configuration.cluster_nodes, {})
+  pve_connection = try(local.manifest.pve_configuration.connection_configuration, {})
+  pve_settings   = try(local.manifest.pve_configuration.node_settings, {})
+  pve_acme       = try(local.manifest.pve_configuration.acme_configuration, {})
+  pve_network    = try(local.manifest.pve_configuration.network_configuration, {})
+  pve_ssh        = try(local.manifest.pve_configuration.ssh_configuration, {})
+  pve_users      = try(local.manifest.pve_configuration.user_management.users, {})
+  talos_config   = try(local.manifest.talos_configuration, {})
+  talos_infra    = try(local.manifest.talos_configuration.infrastructure, {})
 }
 
 

@@ -53,7 +53,7 @@ output "bond_output" {
     created bonds and any errors encountered during setup. Marked as
     sensitive to avoid exposing internal system details.
   EOT
-  value       = { for k, v in module.pve-bond : k => v.bond_setup_output }
+  value       = { for k, v in module.pve_bond : k => v.bond_setup_output }
   sensitive   = true
 }
 
@@ -64,7 +64,7 @@ output "vlan_output" {
     IDs can be used to reference VLAN interfaces in other modules or for
     resource management operations.
   EOT
-  value       = { for k, v in module.pve-vlan : k => v.vlans }
+  value       = { for k, v in module.pve_vlan : k => v.vlans }
   sensitive   = false
 }
 
@@ -75,7 +75,7 @@ output "bridge_output" {
     IDs can be used to reference bridge interfaces in VM network configurations
     or other modules that require bridge resource identifiers.
   EOT
-  value       = { for k, v in module.pve-bridge : k => v.bridges }
+  value       = { for k, v in module.pve_bridge : k => v.bridges }
   sensitive   = false
 }
 

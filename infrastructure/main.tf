@@ -3,19 +3,19 @@
 ###############################################################################
 module "pve_nodes" {
   source   = "./modules/10-pve_nodes"
-  for_each = var.pve_nodes
+  for_each = local.pve_nodes
 
   ## SSH connection (required for local content type changes)
-  ssh_hostname    = var.pve_nodes[each.key].address
-  ssh_username    = var.pve_ssh_username
-  ssh_private_key = var.pve_ssh_private_key
+  ssh_hostname    = local.pve_nodes[each.key].address
+  ssh_username    = local.pve_ssh.username
+  ssh_private_key = local.pve_ssh.private_key_path
 
   ## PVE node configuration
   node                = each.key
-  local_content_types = var.local_content_types
-  timezone            = var.timezone
-  dns_servers         = var.dns_servers
-  dns_search_domain   = var.dns_search_domain
+  local_content_types = local.pve_settings.local_content_types
+  timezone            = local.pve_settings.timezone
+  dns_servers         = local.pve_settings.dns_servers
+  dns_search_domain   = local.pve_settings.dns_search_domain
 }
 
 
@@ -24,31 +24,31 @@ module "pve_nodes" {
 ###############################################################################
 module "pve_user_mgmt" {
   source   = "./modules/10-pve_user_mgmt"
-  for_each = var.users
+  for_each = local.pve_users
 
   ## User identity and authentication
   username   = each.key
-  password   = each.value.password
-  realm      = each.value.realm
-  enabled    = each.value.enabled
-  first_name = each.value.first_name
-  last_name  = each.value.last_name
-  email      = each.value.email
-  comment    = each.value.comment
+  password   = try(var.pve_user_passwords[each.key], null)
+  realm      = try(each.value.realm, "pve")
+  enabled    = try(each.value.enabled, true)
+  first_name = try(each.value.first_name, null)
+  last_name  = try(each.value.last_name, null)
+  email      = try(each.value.email, null)
+  comment    = try(each.value.comment, "Managed by OpenTofu")
 
   ## Role and permissions
-  role_id         = each.value.role_id
-  create_role     = each.value.create_role
-  role_privileges = each.value.role_privileges
+  role_id         = try(each.value.role_id, null)
+  create_role     = try(each.value.create_role, false)
+  role_privileges = try(each.value.role_privileges, [])
 
   ## Token configuration
-  create_token          = each.value.create_token
-  token_name            = each.value.token_name
-  privileges_separation = each.value.privileges_separation
+  create_token          = try(each.value.create_token, false)
+  token_name            = try(each.value.token_name, null)
+  privileges_separation = try(each.value.privileges_separation, false)
 
   ## ACL configuration
-  path      = each.value.path
-  propagate = each.value.propagate
+  path      = try(each.value.path, null)
+  propagate = try(each.value.propagate, true)
 }
 
 
@@ -64,34 +64,38 @@ module "pve_acme" {
   }
 
   ## SSH connection (required for acme changes)
-  ssh_hostname    = var.pve_nodes[var.acme_target_node].address
-  ssh_username    = var.pve_ssh_username
-  ssh_private_key = var.pve_ssh_private_key
+  ssh_hostname    = local.pve_nodes[local.pve_acme.target_node].address
+  ssh_username    = local.pve_ssh.username
+  ssh_private_key = local.pve_ssh.private_key_path
 
-  ## ACME account configuration
-  cert_domains  = var.acme_cert_domains
-  contact_email = var.acme_contact_email
+  ## ACME Account
+  account_name  = local.pve_acme.account_name
+  contact_email = local.pve_acme.contact_email
+
+  ## Certificate Configuration
+  cert_domains  = local.pve_acme.cert_domains
   cf_token      = var.cf_token
   cf_zone_id    = var.cf_zone_id
   cf_account_id = var.cf_account_id
 }
 
+
 ###############################################################################
 ## PVE network configuration
 ###############################################################################
-module "pve-bond" {
+module "pve_bond" {
   source      = "./modules/10-pve_network"
-  for_each    = var.bonds
+  for_each    = local.pve_network.bonds
   create_bond = true
 
   ## SSH connection (required for network changes)
-  ssh_hostname    = var.pve_nodes[each.value.target_node].address
-  ssh_username    = var.pve_ssh_username
-  ssh_private_key = var.pve_ssh_private_key
+  ssh_hostname    = local.pve_nodes[each.value.target_node].address
+  ssh_username    = local.pve_ssh.username
+  ssh_private_key = local.pve_ssh.private_key_path
 
   ## Node placement
   name = each.key
-  node = each.value.target_node
+  node = local.pve_nodes[each.value.target_node].node_name
 
   ## Bonding configuration
   mode        = each.value.mode
@@ -113,14 +117,19 @@ module "pve-bond" {
   comment   = each.value.comment
 }
 
-module "pve-vlan" {
+module "pve_vlan" {
   source      = "./modules/10-pve_network"
-  for_each    = var.vlans
+  for_each    = local.pve_network.vlans
   create_vlan = true
+
+  ## SSH connection (required for network changes)
+  ssh_hostname    = local.pve_nodes[each.value.target_node].address
+  ssh_username    = local.pve_ssh.username
+  ssh_private_key = local.pve_ssh.private_key_path
 
   ## Node placement
   name = each.key
-  node = each.value.target_node
+  node = local.pve_nodes[each.value.target_node].node_name
 
   ## VLAN configuration
   interface = each.value.interface
@@ -138,14 +147,20 @@ module "pve-vlan" {
   comment   = each.value.comment
 }
 
-module "pve-bridge" {
+module "pve_bridge" {
   source        = "./modules/10-pve_network"
-  for_each      = var.bridges
+  for_each      = local.pve_network.bridges
   create_bridge = true
+  depends_on    = [module.pve_bond, module.pve_vlan]
+
+  ## SSH connection (required for network changes)
+  ssh_hostname    = local.pve_nodes[each.value.target_node].address
+  ssh_username    = local.pve_ssh.username
+  ssh_private_key = local.pve_ssh.private_key_path
 
   ## Node placement
   name = each.key
-  node = each.value.target_node
+  node = local.pve_nodes[each.value.target_node].node_name
 
   ## Bridge configuration
   ports      = each.value.ports
@@ -185,7 +200,7 @@ module "image" {
 
 
 ###############################################################################
-##  VM cloud-init configuration
+## Cloud-Init Configurations
 ###############################################################################
 module "vm_ci_user_config" {
   source             = "./modules/30-cloudinit"
@@ -229,14 +244,19 @@ module "vm_ci_vendor_config" {
       owner       = try(wf.owner, "root:root")
       encoding    = try(wf.encoding, "text/plain")
       append      = try(wf.append, false)
-      content = try(wf.secret_ref, null) != null ? join("\n", [
-        for k, v in var.ci_secrets[wf.secret_ref] : "${k}=${v}"
-        ]) : try(
-        try(wf.content_file, null) != null ? file(wf.content_file) :
-        try(wf.template_file, null) != null ? templatefile(wf.template_file, try(wf.vars, {})) :
-        wf.content,
-        ""
-      )
+      content = join("\n", [
+        ## Inject secrets if secret_ref is present
+        try(wf.secret_ref, null) != null ? join("\n", [for k, v in var.ci_secrets[wf.secret_ref] : "${k}=\"${v}\""]) : "",
+        ## Inject plain variables if vars is present (and it's not a template injection)
+        try(wf.secret_ref, null) != null && try(wf.vars, null) != null ? join("\n", [for k, v in wf.vars : "${k}=\"${v}\""]) : "",
+        ## Fallback to standard content/template logic if not just a secret file
+        try(wf.secret_ref, null) == null ? try(
+          try(wf.content_file, null) != null ? file(wf.content_file) :
+          try(wf.template_file, null) != null ? templatefile(wf.template_file, try(wf.vars, {})) :
+          wf.content,
+          ""
+        ) : ""
+      ])
     }
   ]
 }
@@ -410,11 +430,11 @@ module "talos_cluster" {
   source = "./modules/60-talos"
 
   ## Cluster identity
-  cluster_name = local.manifest.talos_configuration.cluster_name
+  cluster_name = local.talos_config.cluster_name
 
   ## Talos/Kubernetes versions
-  talos_version      = local.manifest.talos_configuration.talos_version
-  kubernetes_version = local.manifest.talos_configuration.kubernetes_version
+  talos_version      = local.talos_config.talos_version
+  kubernetes_version = local.talos_config.kubernetes_version
 
   ## Node topology
   cluster_head  = module.virtual_machines[local.control_plane_node_ids[0]].ipv4[0]
@@ -422,11 +442,11 @@ module "talos_cluster" {
   data_plane    = [for id in local.data_plane_node_ids : module.virtual_machines[id].ipv4[0]]
 
   ## Network configuration
-  dns_servers = var.talos_dns_servers
-  ntp_servers = var.talos_ntp_servers
+  dns_servers = local.talos_infra.dns_servers
+  ntp_servers = local.talos_infra.ntp_servers
 
-  ## Dataplane storage
-  longhorn_disk_selector_match = var.talos_longhorn.disk_selector_match
-  longhorn_mount_path          = var.talos_longhorn.mount_path
-  longhorn_filesystem          = var.talos_longhorn.filesystem
+  ## Dataplane Storage (Longhorn)
+  longhorn_disk_selector_match = local.talos_infra.longhorn.disk_selector_match
+  longhorn_mount_path          = local.talos_infra.longhorn.mount_path
+  longhorn_filesystem          = local.talos_infra.longhorn.filesystem
 }

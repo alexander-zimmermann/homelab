@@ -1,72 +1,26 @@
 ###############################################################################
 ## PVE API connection & auth
 ###############################################################################
-pve_api_url      = "https://pve.example.com:8006/"
-pve_token_id     = "opentofu@pam!apitoken"
-pve_token_secret = "xxxxxxxxxxxxxxxx"
-pve_password     = "xxxxxxxxxxxxxxxx"
-
-
-###############################################################################
-## PVE SSH across the cluster
-###############################################################################
-pve_ssh_private_key = "~/.ssh/id_rsa"
-pve_nodes = {
-  pve-1 = {
-    node_name = "pve"
-    address   = "pve.example.com"
-  }
-}
-
-
-###############################################################################
-## PVE node configuration
-###############################################################################
-dns_search_domain = "example.com"
+pve_token_id     = "YOUR_PVE_TOKEN_ID"
+pve_token_secret = "YOUR_PVE_TOKEN_SECRET"
+pve_password     = "YOUR_PVE_PASSWORD"
 
 
 ###############################################################################
 ## PVE user management
 ###############################################################################
-users = {
-  # Uses an existing built-in role, e.g., cluster read-only
-  alice = {
-    password = "REPLACE_ME"
-    path     = "/vms/1234"
-    role_id  = "PVEAuditor"  # built-in role; no role creation needed
-  },
-
-  # Creates a custom role and grants it cluster-wide (propagate)
-  bob = {
-    password        = "REPLACE_ME"
-    path            = "/"
-    role_id         = "ops-monitoring"
-    create_role     = true
-    role_privileges = ["VM.GuestAgent.Audit"]
-  }
+pve_user_passwords = {
+  alice = "YOUR_ALICE_PASSWORD"
+  bob   = "YOUR_BOB_PASSWORD"
 }
 
 
 ###############################################################################
 ## PVE certificate management
 ###############################################################################
-acme_target_node   = "pve"
-acme_cert_cn       = "pve.example.com"
-acme_account_email = "admin@example.com"
 cf_token           = "YOUR_CLOUDFLARE_API_TOKEN"
 cf_zone_id         = "YOUR_CLOUDFLARE_ZONE_ID"
 cf_account_id      = "YOUR_CLOUDFLARE_ACCOUNT_ID"
-
-
-###############################################################################
-## PVE network configuration
-###############################################################################
-bridges = {
-  vmbr0 = {
-    target_node = "pve"
-    comment     = "Primary bridge for VMs and containers"
-  }
-}
 
 
 ###############################################################################
@@ -74,8 +28,6 @@ bridges = {
 ###############################################################################
 ci_secrets = {
   lego = {
-    EMAIL_ADDRESS            = "admin@example.com"
-    OMNI_DOMAIN_NAME         = "example.com"
-    CLOUDFLARE_DNS_API_TOKEN = "cloudflare-api-token"
+    CLOUDFLARE_DNS_API_TOKEN = "YOUR_CLOUDFLARE_API_TOKEN"
   }
 }

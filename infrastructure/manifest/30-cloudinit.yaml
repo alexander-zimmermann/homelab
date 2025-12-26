@@ -12,7 +12,7 @@ ci_vendor_configs:
     runcmd:
       - systemctl enable --now qemu-guest-agent
 
-  ci_vendor_docker:
+  ci_vendor_talos_omni:
     packages:
       [qemu-guest-agent, htop, vim, curlie, docker.io, docker-compose-v2]
     runcmd:
@@ -29,6 +29,9 @@ ci_vendor_configs:
         secret_ref: lego
         permissions: "0600"
         owner: "root:root"
+        vars:
+          EMAIL_ADDRESS: "alexander@zimmermann.eu.com"
+          OMNI_DOMAIN_NAME: "omni.zimmermann.eu.com"
 
       - path: /usr/local/bin/setup-lego.sh
         permissions: "0755"
