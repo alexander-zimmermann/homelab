@@ -16,7 +16,9 @@ tasks:
   plan:
     desc: "Generate plan for infrastructure deployment"
     dir: infrastructure
-    deps: [prepare]
+    preconditions:
+      - sh: test -d .terraform
+        msg: ".terraform directory is missing. Run 'task infra:prepare' first."
     cmds:
       - cmd: printf "{{.BLUE}}🕵️  Generating infrastructure plan...{{.RESET}}\n"
         silent: true
