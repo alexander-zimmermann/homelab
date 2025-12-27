@@ -24,7 +24,6 @@
 
 ### Documentation
 
-- [ ] **Network Config**: Explain why `ipv4NativeRoutingCIDR: "10.244.0.0/16"` was configured.
 - [ ] **README.md**: Cluster Specs (1 CP + 3 Workers), Bootstrap Procedure, Network Architecture Diagram.
 - [ ] **Backup Strategy**: Document Talos machine-config backups, etcd snapshots, Longhorn snapshots, Velero strategy.
 - [ ] **Disaster Recovery**: Document recovery procedures (Full Cluster Rebuild, Single Node Recovery, Data Restore).
