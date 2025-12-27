@@ -21,7 +21,7 @@ using OpenTofu (Terraform fork). It provides:
 
 ### Core Components
 
-- **OpenTofu 1.10.6**: Infrastructure orchestration engine
+- **OpenTofu 1.11.1**: Infrastructure orchestration engine
 - **Proxmox VE 9.0**: Virtualization platform
 - **Talos Linux**: Kubernetes-focused OS for container workloads
 - **Ubuntu 24.04 Noble**: General-purpose VM workloads
@@ -31,131 +31,89 @@ using OpenTofu (Terraform fork). It provides:
 ### Project Structure
 
 ```bash
-infrastructure/
-├── infrastructure-manifest.yaml    # Main infrastructure definition
-├── generated.auto.tfvars           # Auto-generated OpenTofu variables
-├── main.tf                         # Primary OpenTofu configuration
-├── locals.tf                       # Local variables and computations
-├── variables.tf                    # Input variable definitions
-├── outputs.tf                      # Output definitions
-├── providers.tf                    # Provider configurations
-├── versions.tf                     # Provider version constraints
-├── terraform.tfvars.example        # Example credentials file
-├── modules/                        # Reusable OpenTofu modules
-│   ├── image/                      # Image download and management
-│   ├── vm_template/                # VM template creation
-│   ├── container_template/         # LXC template creation
-│   ├── vm_clone/                   # VM cloning and provisioning
-│   ├── container_clone/            # LXC container cloning
-│   ├── vm_cloud-init/              # Cloud-init configuration
-│   ├── talos-cluster/              # Talos cluster management
-│   ├── pve_nodes/                  # Proxmox node configuration
-│   ├── pve_user_mgmt/              # User and role management
-│   ├── pve_network/                # Network configuration
-│   └── pve_acme/                   # ACME certificate management
-├── scripts/                        # Python utilities
-│   ├── generate_tfvars.py          # Generate OpenTofu variables from manifest
-│   ├── download_checksums.py       # Image checksum management
-│   └── logging_formatter.py        # Shared logging utilities
-├── templates/                      # Jinja2 templates
-│   └── generated.auto.tfvars.j2    # Variable generation template
-├── schemas/                        # Validation schemas
-│   └── infrastructure-manifest.schema.json
-├── build/                          # Build artifacts
-│   └── checksums.yaml              # Downloaded image checksums
-└── talos/                          # Talos-related files
-  └── config/                     # Talos machine config patches + image factory schematic
-      ├── baseline.yaml.tpl        # Applied to all nodes (control plane + workers)
-      ├── dataplane.yaml.tpl       # Data plane only patch
-      ├── controlplane.yaml.tpl    # Control plane only patch
-      └── imagefactory.yaml        # Image Factory schematic (extensions/kernel args)
+homelab/
+├── Taskfile.yaml                   # Entry point for all automation tasks
+├── tasks/                          # Task definitions by category
+│   ├── infrastructure.yaml         # OpenTofu/Proxmox tasks (infra:*)
+│   ├── cluster.yaml                # Kubernetes/Talos tasks (cluster:*)
+│   └── management.yaml             # Management VM tasks (mgmt:*)
+├── infrastructure/                 # Infrastructure Code (OpenTofu)
+│   ├── main.tf                     # Primary configuration
+│   ├── locals.tf                   # Logic & Manifest loading
+│   ├── manifest/                   # YAML definitions (The "Source of Truth")
+│   │   ├── 10-pve.yaml             # Proxmox Nodes, Users, ACME, Network
+│   │   ├── 20-images.yaml          # OS Image definitions
+│   │   ├── 30-cloudinit.yaml       # Cloud-Init config (users, vendor, net)
+│   │   ├── 40-templates-vm.yaml    # VM Templates
+│   │   ├── 40-templates-lxc.yaml   # LXC Templates
+│   │   ├── 50-fleet-vm.yaml        # Virtual Machines
+│   │   └── 60-talos.yaml           # Talos Cluster Config
+│   ├── modules/                    # Reusable OpenTofu modules
+│   │   ├── 10-pve_nodes/           # Proxmox Node Config
+│   │   ├── 30-cloudinit/           # Cloud-Init Generation
+│   │   ├── 60-talos/               # Talos Cluster Logic
+│   │   ├── 60-talos/               # Talos Cluster Logic
+│   │   └── ... (others)
+├── management/                     # Management VM Configuration
+│   ├── Taskfile.yaml               # Local deployment task (runs on VM)
+│   └── compose.yaml                # Omni Docker Compose stack
+├── kubernetes/                     # Kubernetes Manifests & GitOps
+└── talos/                          # Talos Specific Configs
 ```
 
 ## Infrastructure Workflow
 
 ### 1. Task-Based Automation
 
-The project uses a Task-based workflow with the following key commands:
+The project uses `go-task` with organized sub-taskfiles.
 
-#### `task initialize`
+#### Infrastructure (`infra:*`)
 
-Sets up the development environment:
+These tasks manage the Proxmox infrastructure via OpenTofu.
 
-- Installs required dependencies (OpenTofu, Python packages, etc.)
-- Creates Python virtual environment
-- Prepares the workspace for infrastructure management
+- `task infra:prepare`: Initialize OpenTofu (`tofu init`), download plugins.
+- `task infra:plan`: Generate an execution plan. Checks manifest validity.
+- `task infra:apply`: Apply changes to Proxmox (Create VMs, Clusters, etc.).
+- `task infra:destroy`: Tear down all managed infrastructure.
+- `task infra:output`: Show Terraform outputs.
 
-```bash
-task initialize
-```
+#### Kubernetes Cluster (`cluster:*`)
 
-#### `task tofu-prepare`
+These tasks manage the Talos/Kubernetes cluster lifecycle.
 
-Comprehensive preparation pipeline:
+- `task cluster:bootstrap`: Bootstraps the cluster after `infra:apply`.
+  - Deploys ArgoCD.
+  - Deploys CNI (Cilium) and CCM (Talos Cloud Controller).
+  - Approve CSRs automatically.
+- `task cluster:verify`: Checks API access and node health.
+- `task cluster:wipe`: Dangerous! Removes all bootstrap resources.
 
-1. **Template rendering**: Generates `generated.auto.tfvars` from manifest using Python script
-2. **Checksum download**: Fetches and verifies image checksums from upstream sources
-3. **Validation**: Ensures manifest consistency and correctness
+#### Management (`mgmt:*`)
 
-```bash
-task tofu-prepare
-```
+Tasks for the Management VM (Omni).
 
-This automatically:
-
-- Runs `scripts/generate_tfvars.py` with the infrastructure manifest
-- Downloads checksums via `scripts/download_checksums.py`
-- Validates the generated configuration
-
-#### `task tofu-plan`
-
-- Executes OpenTofu planning phase
-- Shows infrastructure changes without applying them
-- Depends on `tofu-prepare` for current configuration
-
-```bash
-task tofu-plan
-```
-
-#### `task tofu-apply`
-
-- Applies planned infrastructure changes to Proxmox
-- Creates VMs, containers, and Talos clusters
-- Depends on successful planning phase
-
-```bash
-task tofu-apply
-```
-
-#### `task k8s-bootstrap-prod`
-
-**Critical Step**: Use this to finalize the Cluster deployment after `tofu-apply`.
-
-- Connects to the new cluster API.
-- Installs ArgoCD.
-- Deploys Core Components via GitOps (Cilium CNI, Talos Cloud Controller Manager).
-- Approves Node CSRs automatically via CCM.
-
-```bash
-task k8s-bootstrap-prod
-```
-
-#### `task tofu-destroy`
-
-- Tears down all managed infrastructure
-- Removes VMs, containers, and associated resources
-- Useful for environment reset or cleanup
-
-```bash
-task tofu-destroy
-```
+- `task mgmt:deploy-omni`: Deploys/Updates the Omni stack.
+  - Connects via SSH to `management-01`.
+  - Pulls latest git changes.
+  - Runs the local deployment task (`docker compose up`).
 
 ### 2. Infrastructure Definition
 
-Infrastructure is defined in `infrastructure-manifest.yaml` using a structured
-YAML format.
+Infrastructure is defined in a **split manifest structure** located in `infrastructure/manifest/*.yaml`. This allows for better organization and maintainability.
 
-#### Image Specifications
+The configuration is loaded and merged by `locals.tf`.
+
+#### Manifest Files
+
+- **`10-pve.yaml`**: Proxmox configurations (Cluster nodes, Users, Permissions, ACME, Network).
+- **`20-images.yaml`**: Operating System images (Debian, Talos, Windows) with checksums.
+- **`30-cloudinit.yaml`**: Reusable Cloud-Init modules (Users, Packages, Networks).
+- **`40-templates-vm.yaml`**: VM Templates (Hardware specs, OS type).
+- **`40-templates-lxc.yaml`**: LXC Templates.
+- **`50-fleet-vm.yaml`**: Actual Virtual Machine instances.
+- **`60-talos.yaml`**: Talos Cluster specific configuration (Control Plane/Worker topology).
+
+#### Example: Image Specifications (`20-images.yaml`)
 
 ```yaml
 images:
@@ -175,7 +133,7 @@ images:
     extension: raw
 
   # Note on Talos images:
-  # - The Image Factory schematic is tracked in `talos/config/imagefactory.yaml`.
+  # - The Image Factory schematic is tracked in `templates/60-talos/imagefactory.yaml`.
   # - OpenTofu downloads the actual Talos image to Proxmox via `image_url` (factory URL).
 
   # Windows 11 ISO (manually provided)
@@ -202,18 +160,42 @@ Modular cloud-init configuration supporting:
 - **Vendor Configuration**: Package installation, system commands
 - **Network Configuration**: Static/DHCP networking, DNS settings
 - **Meta Configuration**: Hostname and metadata
+- **Snap Configuration**: Native support for Snap packages (used for `lego` and `task`)
 
-### 4. Talos Kubernetes Cluster
+### 4. Management VM & Omni Setup (GitOps Light)
+
+A dedicated management VM (`management-01`) hosts the **Omni** platform. The deployment follows a "GitOps Light" approach:
+
+1.  **Bootstrapping**:
+
+    - Cloud-Init provisions the VM (Ubuntu Noble).
+    - Installs dependencies: `docker`, `git`, `snapd`.
+    - Installs tools via Snap: `task` (classic), `lego`.
+    - Configures secrets in `/opt/omni/.env` (injected from `terraform.tfvars`).
+    - Clones the infrastructure repository to `/opt/homelab` using `GITHUB_TOKEN`.
+    - Automatically triggers the local deployment task.
+
+2.  **Deployment Workflow**:
+
+    - **Local (on VM)**: `management/Taskfile.yaml` handles the actual deployment (symlinks `compose.yaml`, runs `docker compose`).
+    - **Remote (from Host)**: `task mgmt:deploy-omni` connects via SSH, pulls the latest code, and triggers the local task.
+
+3.  **Secrets Management**:
+    - Secrets (Auth0, Github Token) are managed in `terraform.tfvars`.
+    - They are injected into `/opt/omni/.env` by Cloud-Init.
+    - `bootstrap-omni.sh` sources this file to authenticate git operations.
+
+### 5. Talos Kubernetes Cluster
 
 The project includes automated Talos Kubernetes cluster deployment.
 
-**Architecture Change (Dec 2025):**
+**Architecture (Dec 2025):**
 The cluster deployment is now split into two phases to avoid cyclic dependencies:
 
 1.  **Infrastructure (OpenTofu)**: Provisions VMs and bootstraps Talos OS.
 2.  **GitOps (ArgoCD)**: Deploys the CNI (Cilium) and Cloud Controller Manager (Talos CCM).
 
-**Note**: The Talos CCM is responsible for approving kubelet serving certificates. Until `task k8s-bootstrap-prod` runs, nodes may appear as `NotReady`.
+**Note**: The Talos CCM is responsible for approving kubelet serving certificates. Until `task cluster:bootstrap ENV=prod` runs, nodes may appear as `NotReady`.
 
 ### 5. Advanced Features
 
@@ -256,8 +238,7 @@ Full support for modern Windows VMs:
 
 ### Development Environment
 
-- **OpenTofu 1.10.6+**: Infrastructure orchestration
-- **Python 3.8+**: Template generation scripts
+- **OpenTofu 1.11.1+**: Infrastructure orchestration
 - **Talosctl**: Talos cluster management CLI
 
 ### Authentication and Access
@@ -266,9 +247,9 @@ Configure Proxmox credentials in `terraform.tfvars`:
 
 ```hcl
 # Proxmox API Authentication
-pve_endpoint = "https://192.168.1.100:8006"
-pve_username = "root@pam"
-pve_password = "your-password"
+pve_token_id     = "YOUR_PVE_TOKEN_ID"
+pve_token_secret = "YOUR_PVE_TOKEN_SECRET"
+pve_password     = "YOUR_PVE_PASSWORD" # Optional (Console Access)
 ```
 
 ## Troubleshooting
@@ -277,14 +258,7 @@ pve_password = "your-password"
 
 **Issue**: Talos nodes are `NotReady` after `tofu-apply`.
 
-- **Solution**: Run `task k8s-bootstrap-prod` to deploy the CNI and CCM via ArgoCD.
-
-**Issue**: Proxmox Console shows white screen.
-
-- **Solution**:
-  - If accessing via Cloudflare, disable **Rocket Loader** in Cloudflare settings.
-  - Check if Cloudflare is injecting `X-Frame-Options: DENY`.
-  - Try accessing Proxmox via local IP to verify VM health.
+- **Solution**: Run `task cluster:bootstrap ENV=prod` to deploy the CNI and CCM via ArgoCD.
 
 **Issue**: Talos Nodes have random names (e.g. `talos-xyz-123`).
 
