@@ -1,0 +1,84 @@
+# ============================================================================
+# Global
+# ============================================================================
+
+name: management
+
+# ============================================================================
+# Extension fields
+# ============================================================================
+
+# Default environment values
+x-default-environment:
+  environment: &default-environment
+    TZ: $TZ
+    LANG: $LANG
+    LC_ALL: $LC_ALL
+
+# Default logging
+x-default-logging:
+  logging: &default-logging
+    driver: "json-file"
+    options:
+      tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+
+# ============================================================================
+# Services
+# ============================================================================
+services:
+  omni:
+    image: ghcr.io/siderolabs/omni:latest
+    container_name: omni
+    hostname: omni
+    restart: unless-stopped
+
+    network_mode: host
+
+    devices:
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+
+    volumes:
+      - ./data:/data
+      - ./certs:/certs
+      - ./secrets:/secrets
+
+    environment:
+      <<: *default-environment
+
+    secrets:
+      - omni.asc
+
+    command:
+      # General Settings
+      - --account-id=${OMNI_ACCOUNT_UUID}
+      - --name=omni
+      # TLS & Security (Web UI & Machine API)
+      - --cert=/certs/certificates/${OMNI_DOMAIN_NAME}.crt
+      - --key=/certs/certificates/${OMNI_DOMAIN_NAME}.key
+      - --machine-api-cert=/certs/certificates/${OMNI_DOMAIN_NAME}.crt
+      - --machine-api-key=/certs/certificates/${OMNI_DOMAIN_NAME}.key
+      - --private-key-source='file:///secrets/omni.asc'
+      # Bind Addresses (Where services listen inside container)
+      - --bind-addr=0.0.0.0:443
+      - --event-sink-port=8091
+      - --machine-api-bind-addr=0.0.0.0:8090
+      - --k8s-proxy-bind-addr=0.0.0.0:8100
+      # Advertised URLs (How users/machines reach this instance)
+      - --advertised-api-url="https://${OMNI_DOMAIN_NAME}"
+      - --advertised-kubernetes-proxy-url="https://:8100/"
+      - --siderolink-api-advertised-url="https://:8090/"
+      - --siderolink-wireguard-advertised-addr=":50180"
+      # User Management
+      - --initial-users=${EMAIL_ADDRESS}
+      # Auth0 Integration
+      - --auth-auth0-enabled=true
+      - --auth-auth0-domain=${AUTH0_ISSUER}
+      - --auth-auth0-client-id=${AUTH0_CLIENT_ID}
+      # Persistence (Database)
+      - --sqlite-storage-path=/data/omni.db
+      - --etcd-embedded-db-path=/data/etcd
+
+    logging:
+      <<: *default-logging

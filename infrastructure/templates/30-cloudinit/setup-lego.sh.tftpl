@@ -1,16 +1,7 @@
 #!/bin/bash
 set -e
 
-LEGO_VERSION="${lego_version}"
-LEGO_ARCH="${lego_arch}"
 CERT_PATH="${cert_path}"
-
-# Install lego if not present
-if ! command -v lego &> /dev/null; then
-  echo "Installing Lego $${LEGO_VERSION}..."
-  curl -sL "https://github.com/go-acme/lego/releases/download/$${LEGO_VERSION}/lego_$${LEGO_VERSION}_$${LEGO_ARCH}.tar.gz" | tar xz -C /usr/local/bin lego
-  chmod +x /usr/local/bin/lego
-fi
 
 # Source environment variables (rendered from ci_secrets into /etc/default/lego)
 if [ -f /etc/default/lego ]; then

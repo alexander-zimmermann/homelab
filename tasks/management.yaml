@@ -1,0 +1,15 @@
+version: "3"
+
+vars:
+  MGMT_HOST: management-01.zimmermann.eu.com
+
+tasks:
+  deploy-omni:
+    desc: "Deploy Omni Stack on Remote Management VM (via SSH)"
+    cmds:
+      - cmd: printf "{{.BLUE}}📡 Connecting to {{.MGMT_HOST}}...{{.RESET}}\n"
+        silent: true
+      # SSH into VM, update repo, and run local deployment task
+      - ssh alexander@{{.MGMT_HOST}} "cd /opt/homelab && git pull && task -d management deploy"
+      - cmd: printf "{{.GREEN}}✨ Remote deployment triggered!{{.RESET}}\n"
+        silent: true

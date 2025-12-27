@@ -230,8 +230,11 @@ module "vm_ci_vendor_config" {
   filename  = "${each.key}-vendor-config.yaml"
 
   ## Package management
-  packages       = try(each.value.packages, [])
-  package_update = try(each.value.package_update, true)
+  snap                       = try(each.value.snap, {})
+  packages                   = try(each.value.packages, [])
+  package_update             = try(each.value.package_update, true)
+  package_upgrade            = try(each.value.package_upgrade, true)
+  package_reboot_if_required = try(each.value.package_reboot_if_required, true)
 
   ## Custom commands
   runcmd = try(each.value.runcmd, [])

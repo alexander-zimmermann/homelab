@@ -14,17 +14,46 @@ ci_vendor_configs:
 
   ci_vendor_talos_omni:
     packages:
-      [qemu-guest-agent, htop, vim, curlie, docker.io, docker-compose-v2]
+      - qemu-guest-agent
+      - htop
+      - vim
+      - curlie
+      - docker.io
+      - docker-compose-v2
+      - git
+      - curl
+      - snapd
+
+    snap:
+      commands:
+        - ["install", "task", "--classic"]
+        - ["install", "lego"]
+        - ["connect", "lego:dot-lego"]
+
     runcmd:
       - systemctl enable --now qemu-guest-agent
       - systemctl enable --now docker
       - usermod -aG docker alexander
       - /usr/local/bin/setup-lego.sh
       - systemctl enable --now lego-renew.timer
+      - /usr/local/bin/bootstrap-omni.sh
 
     secret_ref: lego
 
     write_files:
+      - path: /usr/local/bin/bootstrap-omni.sh
+        permissions: "0755"
+        template_file: templates/30-cloudinit/bootstrap-omni.sh.tftpl
+        secret_ref: omni
+
+      - path: /opt/omni/.env
+        secret_ref: omni
+        permissions: "0600"
+        owner: "alexander:docker"
+        vars:
+          EMAIL_ADDRESS: "alexander@zimmermann.eu.com"
+          OMNI_DOMAIN_NAME: "omni.zimmermann.eu.com"
+
       - path: /etc/default/lego
         secret_ref: lego
         permissions: "0600"
@@ -37,8 +66,6 @@ ci_vendor_configs:
         permissions: "0755"
         template_file: templates/30-cloudinit/setup-lego.sh.tftpl
         vars:
-          lego_version: v4.17.4
-          lego_arch: linux_amd64
           cert_path: /data/certs
 
       - path: /etc/systemd/system/lego-renew.service
@@ -60,3 +87,6 @@ ci_network_configs:
 ci_meta_configs:
   ci_meta_linux:
     hostname: proxmox-vm
+
+  ci_meta_talos_omni:
+    hostname: management-01

@@ -1,0 +1,24 @@
+---
+version: "3"
+
+vars:
+  # Colors
+  BLUE: '\033[0;34m'
+  GREEN: '\033[0;32m'
+  YELLOW: '\033[0;33m'
+  RED: '\033[0;31m'
+  RESET: '\033[0m'
+
+tasks:
+  deploy:
+    desc: "Deploy Omni Stack via Docker Compose (Local Execution)"
+    cmds:
+      - cmd: printf "{{.BLUE}}🚀 Deploying Omni Stack locally...{{.RESET}}\n"
+        silent: true
+      - sudo mkdir -p /opt/omni
+      # Symlink compose file so updates in git are reflected immediately
+      - sudo ln -sf {{.TASKFILE_DIR}}/compose.yaml /opt/omni/compose.yaml
+      # .env is managed by Cloud-Init/Secrets
+      - cd /opt/omni && sudo docker compose up -d
+      - cmd: printf "{{.GREEN}}✅ Omni deployed on management VM!{{.RESET}}\n"
+        silent: true

@@ -115,6 +115,24 @@ variable "package_update" {
   default     = true
 }
 
+variable "package_upgrade" {
+  description = <<EOT
+    Whether to upgrade installed packages to their latest versions.
+    Defaults to true.
+  EOT
+  type        = bool
+  default     = true
+}
+
+variable "package_reboot_if_required" {
+  description = <<EOT
+    Whether to reboot the system if a package upgrade requires a reboot.
+    Defaults to true.
+  EOT
+  type        = bool
+  default     = true
+}
+
 variable "packages" {
   description = <<EOT
     List of additional packages to install during provisioning.
@@ -133,18 +151,31 @@ variable "runcmd" {
   default     = []
 }
 
+variable "snap" {
+  description = <<EOT
+    Custom Snap configuration (commands, assertions, etc.).
+    Passed directly to cloud-init's `snap` module.
+  EOT
+  type        = any
+  default     = {}
+}
+
 variable "write_files" {
   description = <<EOT
     List of files to write to the VM filesystem during cloud-init execution.
     Each item is an object containing path, content, permissions, owner, and encoding.
   EOT
   type = list(object({
-    path        = string
-    content     = string
-    permissions = optional(string, "0644")
-    owner       = optional(string, "root:root")
-    encoding    = optional(string, "text/plain")
-    append      = optional(bool, false)
+    path          = string
+    content       = optional(string)
+    content_file  = optional(string)
+    template_file = optional(string)
+    secret_ref    = optional(string)
+    vars          = optional(map(string))
+    permissions   = optional(string, "0644")
+    owner         = optional(string, "root:root")
+    encoding      = optional(string, "text/plain")
+    append        = optional(bool, false)
   }))
   default = []
 }

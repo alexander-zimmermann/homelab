@@ -29,7 +29,7 @@ vm_templates:
     ci_network_data_id: ci_net_linux
     ci_meta_data_id: ci_meta_linux
 
-  vm_ubuntu_noble_docker:
+  vm_ubuntu_noble_talos_omni:
     vm_id: 10005
     image_id: vm_ubuntu_noble
     os_type: l26
@@ -42,7 +42,7 @@ vm_templates:
     ci_user_data_id: ci_user_linux
     ci_vendor_data_id: ci_vendor_talos_omni
     ci_network_data_id: ci_net_linux
-    ci_meta_data_id: ci_meta_linux
+    ci_meta_data_id: ci_meta_talos_omni
 
   vm_talos_1_11_5_cp:
     vm_id: 10002

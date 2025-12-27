@@ -14,6 +14,7 @@ vars:
 includes:
   infra: ./tasks/infrastructure.yaml
   cluster: ./tasks/cluster.yaml
+  mgmt: ./tasks/management.yaml
 
 tasks:
   default:
