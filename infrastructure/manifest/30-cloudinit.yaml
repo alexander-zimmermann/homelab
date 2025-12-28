@@ -34,7 +34,8 @@ ci_vendor_configs:
       - systemctl enable --now qemu-guest-agent
       - systemctl enable --now docker
       - usermod -aG docker alexander
-      - /usr/local/bin/setup-lego.sh
+      - chown alexander:docker /opt/omni/.env
+      - /usr/local/bin/bootstrap-lego.sh
       - systemctl enable --now lego-renew.timer
       - /usr/local/bin/bootstrap-omni.sh
 
@@ -49,7 +50,7 @@ ci_vendor_configs:
       - path: /opt/omni/.env
         secret_ref: omni
         permissions: "0600"
-        owner: "alexander:docker"
+        owner: "root:root"
         vars:
           EMAIL_ADDRESS: "alexander@zimmermann.eu.com"
           OMNI_DOMAIN_NAME: "omni.zimmermann.eu.com"
@@ -62,9 +63,9 @@ ci_vendor_configs:
           EMAIL_ADDRESS: "alexander@zimmermann.eu.com"
           OMNI_DOMAIN_NAME: "omni.zimmermann.eu.com"
 
-      - path: /usr/local/bin/setup-lego.sh
+      - path: /usr/local/bin/bootstrap-lego.sh
         permissions: "0755"
-        template_file: templates/30-cloudinit/setup-lego.sh.tftpl
+        template_file: templates/30-cloudinit/bootstrap-lego.sh.tftpl
         vars:
           cert_path: /data/certs
 

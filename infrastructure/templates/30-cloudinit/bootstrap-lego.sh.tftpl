@@ -5,7 +5,7 @@ CERT_PATH="${cert_path}"
 
 # Source environment variables (rendered from ci_secrets into /etc/default/lego)
 if [ -f /etc/default/lego ]; then
-  source /etc/default/lego
+  . /etc/default/lego
 fi
 
 # Create certificates directory
