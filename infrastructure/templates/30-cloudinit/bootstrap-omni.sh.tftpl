@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-REPO_URL="https://oauth2:$${GITHUB_TOKEN}@github.com/AlexanderZimmermann/homelab.git"
-REPO_DIR="/opt/homelab"
+REPO_URL="${repo_url}"
+REPO_DIR="${repo_dir}"
 
 # Source secrets (GITHUB_TOKEN, etc.)
 if [ -f /opt/omni/.env ]; then

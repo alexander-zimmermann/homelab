@@ -44,7 +44,9 @@ ci_vendor_configs:
       - path: /usr/local/bin/bootstrap-omni.sh
         permissions: "0755"
         template_file: templates/30-cloudinit/bootstrap-omni.sh.tftpl
-        secret_ref: omni
+        vars:
+          repo_url: "https://oauth2:$${GITHUB_TOKEN}@github.com/AlexanderZimmermann/homelab.git"
+          repo_dir: "/opt/homelab"
 
       - path: /opt/omni/.env
         secret_ref: omni
