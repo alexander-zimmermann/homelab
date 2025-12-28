@@ -3,26 +3,20 @@ set -e
 
 REPO_URL="https://oauth2:$${GITHUB_TOKEN}@github.com/AlexanderZimmermann/homelab.git"
 REPO_DIR="/opt/homelab"
-TASK_VERSION="v3.40.1"
 
 # Source secrets (GITHUB_TOKEN, etc.)
 if [ -f /opt/omni/.env ]; then
   . /opt/omni/.env
-fi
-
-
-# Clone/Pull Repository
-if [ ! -d "$${REPO_DIR}" ]; then
-  echo "Cloning repository..."
-  git clone "$${REPO_URL}" "$${REPO_DIR}"
 else
-  echo "Updating repository..."
-  cd "$${REPO_DIR}"
-  git pull
+  echo "No /opt/omni/.env found. Please check your cloud-init configuration."
+  exit 1
 fi
+
+# Clone repository
+echo "Cloning repository..."
+/usr/bin/git clone "$${REPO_URL}" "$${REPO_DIR}"
 
 # Deploy Omni
 echo "Running deployment task..."
 cd "$${REPO_DIR}"
-# Run the local deployment task defined in management/Taskfile.yaml
-task -d management deploy
+/snap/bin/task -d management deploy

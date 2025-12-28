@@ -82,10 +82,12 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
           append: ${f.append}
 %{endfor~}
 %{endif~}
+%{if length(var.runcmd) > 0~}
       runcmd:
 %{for cmd in var.runcmd~}
         - ${cmd}
 %{endfor~}
+%{endif~}
     EOF
 
     file_name = var.filename

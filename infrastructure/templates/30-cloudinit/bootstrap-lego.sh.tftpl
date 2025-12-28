@@ -3,16 +3,15 @@ set -e
 
 CERT_PATH="${cert_path}"
 
-# Source environment variables (rendered from ci_secrets into /etc/default/lego)
+# Source secrets (rendered from ci_secrets)
 if [ -f /etc/default/lego ]; then
   . /etc/default/lego
+else
+  echo "No /etc/default/lego found. Please check your cloud-init configuration."
+  exit 1
 fi
 
-# Create certificates directory
+# Initial certificate generation
+echo "Generating initial certificate for $${OMNI_DOMAIN_NAME}..."
 mkdir -p "$${CERT_PATH}"
-
-# Initial Certificate Generation (if not exists)
-if [ ! -f "$${CERT_PATH}/certificates/$${OMNI_DOMAIN_NAME}.crt" ]; then
-  echo "Generating initial certificate for $${OMNI_DOMAIN_NAME}..."
-  lego --email="$${EMAIL_ADDRESS}" --dns="cloudflare" --domains="$${OMNI_DOMAIN_NAME}" --path="$${CERT_PATH}" --accept-tos run
-fi
+/snap/bin/lego --email="$${EMAIL_ADDRESS}" --dns="cloudflare" --domains="$${OMNI_DOMAIN_NAME}" --path="$${CERT_PATH}" --accept-tos run
