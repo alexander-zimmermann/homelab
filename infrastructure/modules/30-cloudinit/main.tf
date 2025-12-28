@@ -54,13 +54,22 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
       #cloud-config
       timezone: Europe/Berlin
       locale: de_DE.UTF-8
+%{if length(var.packages) > 0~}
       packages:
 %{for p in var.packages~}
         - ${p}
 %{endfor~}
+%{endif~}
       package_update: ${var.package_update}
       package_upgrade: ${var.package_upgrade}
       package_reboot_if_required: ${var.package_reboot_if_required}
+%{if length(var.snap) > 0~}
+      snap:
+        commands:
+%{for cmd in try(var.snap.commands, [])~}
+          - ${jsonencode(cmd)}
+%{endfor~}
+%{endif~}
 %{if length(var.write_files) > 0~}
       write_files:
 %{for f in var.write_files~}

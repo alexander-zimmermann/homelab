@@ -17,7 +17,6 @@ ci_vendor_configs:
       - qemu-guest-agent
       - htop
       - vim
-      - curlie
       - docker.io
       - docker-compose-v2
       - git
