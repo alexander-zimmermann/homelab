@@ -194,19 +194,23 @@ variable "mountpoint" {
 
   validation {
     condition = var.mountpoint == null || alltrue([
-      for mp in var.mountpoint : (
-        mp.mp_path != null &&
-        can(regex("^/[^\\s]*$", mp.mp_path)) &&
-        (mp.mp_volume != null || mp.mp_size != null) &&
-        (mp.mp_size == null || mp.mp_size > 0)
-      )
+      for mp in var.mountpoint : mp.mp_path != null && can(regex("^/[^\\s]*$", mp.mp_path))
     ])
-    error_message = <<EOM
-      Each mountpoint must meet these rules:
-      - mp_path must be provided and be an absolute path starting with '/'
-      - Either mp_volume (existing volume) or mp_size (new volume size in GiB) must be specified
-      - mp_size, if provided, must be greater than 0
-    EOM
+    error_message = "mp_path must be provided and be an absolute path starting with '/'."
+  }
+
+  validation {
+    condition = var.mountpoint == null || alltrue([
+      for mp in var.mountpoint : (mp.mp_volume != null || mp.mp_size != null)
+    ])
+    error_message = "Either mp_volume (existing volume) or mp_size (new volume size in GiB) must be specified."
+  }
+
+  validation {
+    condition = var.mountpoint == null || alltrue([
+      for mp in var.mountpoint : (mp.mp_size == null || mp.mp_size > 0)
+    ])
+    error_message = "mp_size must be greater than 0 if provided."
   }
 }
 
@@ -247,21 +251,23 @@ variable "network_interfaces" {
   }]
 
   validation {
-    condition = alltrue([
-      for nic in var.network_interfaces : (
-        length(trimspace(nic.vnic_name)) > 0 &&
-        length(trimspace(nic.vnic_bridge)) > 0 &&
-        (nic.vlan_tag == null || (nic.vlan_tag >= 1 && nic.vlan_tag <= 4094)) &&
-        (nic.mac_address == null || can(regex("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", nic.mac_address)))
-      )
-    ])
-    error_message = <<EOM
-      Each network interface must meet these rules:
-      - vnic_name must be a non-empty string
-      - vnic_bridge must be a non-empty string
-      - vlan_tag must be null or an integer between 1 and 4094
-      - mac_address must be null or a valid MAC address format (xx:xx:xx:xx:xx:xx)
-    EOM
+    condition     = alltrue([for nic in var.network_interfaces : length(trimspace(nic.vnic_name)) > 0])
+    error_message = "vnic_name must be a non-empty string."
+  }
+
+  validation {
+    condition     = alltrue([for nic in var.network_interfaces : length(trimspace(nic.vnic_bridge)) > 0])
+    error_message = "vnic_bridge must be a non-empty string."
+  }
+
+  validation {
+    condition     = alltrue([for nic in var.network_interfaces : nic.vlan_tag == null || (nic.vlan_tag >= 1 && nic.vlan_tag <= 4094)])
+    error_message = "vlan_tag must be null or an integer between 1 and 4094."
+  }
+
+  validation {
+    condition     = alltrue([for nic in var.network_interfaces : nic.mac_address == null || can(regex("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", nic.mac_address))])
+    error_message = "mac_address must be null or a valid MAC address format (xx:xx:xx:xx:xx:xx)."
   }
 }
 
@@ -327,20 +333,25 @@ variable "ipv4" {
 
   validation {
     condition = alltrue([
-      for ip in var.ipv4 : (
-        (ip.ipv4_address == "dhcp" && ip.ipv4_gateway == null) ||
-        (ip.ipv4_address != "dhcp" &&
-          can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$", ip.ipv4_address)) &&
-          ip.ipv4_gateway != null &&
-        can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}$", ip.ipv4_gateway)))
-      )
+      for ip in var.ipv4 : (ip.ipv4_address == "dhcp" || can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$", ip.ipv4_address)))
     ])
-    error_message = <<EOM
-      Each IPv4 configuration must meet these rules:
-      - ipv4_address must be either "dhcp" or a valid CIDR notation (e.g., "192.168.1.100/24")
-      - ipv4_gateway must be null when using "dhcp"
-      - ipv4_gateway must be provided and be a valid IPv4 address when using static IP addresses
-    EOM
+    error_message = "ipv4_address must be 'dhcp' or a valid IPv4 CIDR."
+  }
+
+  validation {
+    condition = alltrue([
+      for ip in var.ipv4 : (ip.ipv4_address != "dhcp" || ip.ipv4_gateway == null)
+    ])
+    error_message = "ipv4_gateway must be null when ipv4_address is 'dhcp'."
+  }
+
+  validation {
+    condition = alltrue([
+      for ip in var.ipv4 : (ip.ipv4_address == "dhcp" || (
+        ip.ipv4_gateway != null && can(regex("^([0-9]{1,3}\\.){3}[0-9]{1,3}$", ip.ipv4_gateway))
+      ))
+    ])
+    error_message = "ipv4_gateway must be a valid IPv4 address when using static IP."
   }
 }
 

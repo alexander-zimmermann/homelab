@@ -373,23 +373,37 @@ variable "disks" {
 
   validation {
     condition = alltrue([
-      for d in var.disks : (
-        length(trimspace(d.disk_datastore)) > 0 &&
-        length(trimspace(d.disk_interface)) > 0 &&
-        d.disk_size >= 1 &&
-        contains(["raw", "qcow2"], lower(d.disk_format)) &&
-        contains(["writeback", "none", "directsync"], lower(d.disk_cache)) &&
-        contains(["on", "ignore", "unmap"], lower(d.disk_discard))
-      )
+      for d in var.disks : length(trimspace(d.disk_datastore)) > 0 && length(trimspace(d.disk_interface)) > 0
     ])
-    error_message = <<EOM
-      Each disk must have:
-      - disk_datastore and disk_interface as non-empty strings
-      - disk_size >= 1 GiB
-      - disk_format in: raw, qcow2
-      - disk_cache in: writeback, none, directsync
-      - disk_discard in: on, ignore, unmap
-    EOM
+    error_message = "disk_datastore and disk_interface must be non-empty strings."
+  }
+
+  validation {
+    condition = alltrue([
+      for d in var.disks : d.disk_size >= 1
+    ])
+    error_message = "disk_size must be at least 1 GiB."
+  }
+
+  validation {
+    condition = alltrue([
+      for d in var.disks : contains(["raw", "qcow2"], lower(d.disk_format))
+    ])
+    error_message = "disk_format must be either 'raw' or 'qcow2'."
+  }
+
+  validation {
+    condition = alltrue([
+      for d in var.disks : contains(["writeback", "none", "directsync"], lower(d.disk_cache))
+    ])
+    error_message = "disk_cache must be one of: writeback, none, directsync."
+  }
+
+  validation {
+    condition = alltrue([
+      for d in var.disks : contains(["on", "ignore", "unmap"], lower(d.disk_discard))
+    ])
+    error_message = "disk_discard must be one of: on, ignore, unmap."
   }
 }
 
@@ -432,20 +446,30 @@ variable "network_interfaces" {
 
   validation {
     condition = alltrue([
-      for nic in var.network_interfaces : (
-        contains(["virtio", "e1000", "e1000e", "rtl8139", "vmxnet3"], lower(trimspace(nic.vnic_model))) &&
-        length(trimspace(nic.vnic_bridge)) > 0 &&
-        (nic.vlan_tag == null || (nic.vlan_tag >= 1 && nic.vlan_tag <= 4094)) &&
-        (nic.mac_address == null || can(regex("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", nic.mac_address)))
-      )
+      for nic in var.network_interfaces : contains(["virtio", "e1000", "e1000e", "rtl8139", "vmxnet3"], lower(trimspace(nic.vnic_model)))
     ])
-    error_message = <<EOM
-      Each network interface must meet these rules:
-      - vnic_model must be one of: virtio, e1000, e1000e, rtl8139, vmxnet3
-      - vnic_bridge must be a non-empty string
-      - vlan_tag must be null or an integer between 1 and 4094
-      - mac_address must be null or a valid MAC address format (xx:xx:xx:xx:xx:xx)
-    EOM
+    error_message = "vnic_model must be one of: virtio, e1000, e1000e, rtl8139, vmxnet3."
+  }
+
+  validation {
+    condition = alltrue([
+      for nic in var.network_interfaces : length(trimspace(nic.vnic_bridge)) > 0
+    ])
+    error_message = "vnic_bridge must be a non-empty string."
+  }
+
+  validation {
+    condition = alltrue([
+      for nic in var.network_interfaces : nic.vlan_tag == null || (nic.vlan_tag >= 1 && nic.vlan_tag <= 4094)
+    ])
+    error_message = "vlan_tag must be null or an integer between 1 and 4094."
+  }
+
+  validation {
+    condition = alltrue([
+      for nic in var.network_interfaces : nic.mac_address == null || can(regex("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", nic.mac_address))
+    ])
+    error_message = "mac_address must be null or a valid MAC address format (xx:xx:xx:xx:xx:xx)."
   }
 }
 

@@ -202,11 +202,13 @@ variable "slaves" {
   default     = null
 
   validation {
-    condition = var.slaves == null || (
-      length(var.slaves) >= 2 &&
-      alltrue([for slave in var.slaves : length(trimspace(slave)) > 0])
-    )
-    error_message = "slaves must contain at least 2 non-empty interface names (e.g., ['eno1', 'eno2']) or be null."
+    condition     = var.slaves == null || length(var.slaves) >= 2
+    error_message = "slaves must contain at least 2 interface names if provided."
+  }
+
+  validation {
+    condition     = var.slaves == null || alltrue([for slave in var.slaves : length(trimspace(slave)) > 0])
+    error_message = "All slave interface names must be non-empty strings."
   }
 }
 
