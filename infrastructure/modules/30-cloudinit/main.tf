@@ -25,18 +25,22 @@ resource "proxmox_virtual_environment_file" "user_config" {
       #cloud-config
       users:
         - default
-        - name: ${var.username}
-          groups: [sudo]
+%{for u in var.users~}
+        - name: ${u.username}
+          groups: ${jsonencode(u.groups)}
           shell: /bin/bash
+%{if u.ssh_public_key != ""~}
           ssh-authorized-keys:
-            - ${trimspace(file(pathexpand(var.ssh_public_key)))}
+            - ${trimspace(file(pathexpand(u.ssh_public_key)))}
+%{endif~}
           sudo: ALL=(ALL) NOPASSWD:ALL
-%{if var.set_password~}
+%{if u.set_password~}
       chpasswd:
         list: |
-          ${var.username}:${var.password}
+          ${u.username}:${u.password}
         expire: false
 %{endif~}
+%{endfor~}
     EOF
 
     file_name = var.filename

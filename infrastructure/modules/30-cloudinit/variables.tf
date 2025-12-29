@@ -45,51 +45,29 @@ variable "create_user_config" {
   default     = false
 }
 
-variable "username" {
+variable "users" {
   description = <<EOT
-    Username to be created on the VM. This user will be added to the `sudo` group
-    and configured with the provided SSH key and optional password.
+    List of user configurations to create. Each object represents a user
+    with properties like username, password, ssh_keys, and groups.
   EOT
-  type        = string
-  default     = "admin"
-}
-
-variable "ssh_public_key" {
-  description = <<EOT
-    SSH public key to authorize for the created user. Required when
-    `create_user_config` is true.
-  EOT
-  type        = string
-  default     = ""
+  type = list(object({
+    username       = string
+    ssh_public_key = optional(string, "")
+    password       = optional(string, "")
+    set_password   = optional(bool, false)
+    groups         = optional(list(string), ["sudo"])
+  }))
+  default = []
 
   validation {
-    condition     = var.create_user_config == false || var.ssh_public_key != ""
-    error_message = "ssh_public_key must be set when create_user_config is true."
+    condition     = alltrue([for u in var.users : (!u.set_password) || length(u.password) > 0])
+    error_message = "Password must be provided for any user where set_password is true."
   }
-}
-
-variable "password" {
-  description = <<EOT
-    Optional password for the created user. Only used if `set_password` is true.
-    Leave empty to disable password login.
-  EOT
-  type        = string
-  default     = ""
-  sensitive   = true
 
   validation {
-    condition     = var.set_password == false || length(var.password) > 0
-    error_message = "Password must be provided when set_password is true."
+    condition     = alltrue([for u in var.users : length(u.ssh_public_key) > 0])
+    error_message = "ssh_public_key must be set for all users."
   }
-}
-
-variable "set_password" {
-  description = <<EOT
-    Whether to set a password for the created user. If true, the `password`
-    variable must be provided.
-  EOT
-  type        = bool
-  default     = false
 }
 
 

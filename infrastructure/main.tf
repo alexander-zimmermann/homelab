@@ -213,10 +213,7 @@ module "vm_ci_user_config" {
   filename  = "${each.key}-user-config.yaml"
 
   ## User account configuration
-  username       = each.value.username
-  ssh_public_key = each.value.ssh_public_key
-  password       = each.value.password
-  set_password   = each.value.set_password
+  users = each.value
 }
 
 module "vm_ci_vendor_config" {
