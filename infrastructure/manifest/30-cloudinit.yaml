@@ -1,10 +1,18 @@
 ---
 ci_user_configs:
   ci_user_linux:
-    username: alexander
-    ssh_public_key: ~/.ssh/id_rsa.pub
-    set_password: false
-    password: ""
+    - username: alexander
+      groups: [sudo]
+      ssh_public_key: ~/.ssh/id_rsa.pub
+      set_password: false
+      password: ""
+
+  ci_user_talos_omni:
+    - username: alexander
+      groups: [sudo, docker]
+      ssh_public_key: ~/.ssh/id_rsa.pub
+      set_password: false
+      password: ""
 
 ci_vendor_configs:
   ci_vendor_linux:
@@ -17,6 +25,7 @@ ci_vendor_configs:
       - qemu-guest-agent
       - htop
       - vim
+      - nfs-common
       - docker.io
       - docker-compose-v2
       - git
@@ -26,58 +35,87 @@ ci_vendor_configs:
     snap:
       commands:
         - ["install", "task", "--classic"]
-        - ["install", "lego"]
-        - ["connect", "lego:dot-lego"]
+        - ["install", "lego", "--classic"]
+
+    mounts:
+      - ["storage.zimmermann.eu.com:/srv/mgmt", "/mnt/mgmt", "nfs"]
+
+    mount_default_fields:
+      [
+        none,
+        none,
+        auto,
+        "defaults,nofail,x-systemd.after=cloud-init-network.service",
+        "0",
+        "2",
+      ]
+
+    bootcmd:
+      - mkdir -p /mnt/mgmt
 
     runcmd:
+      # Symlinks for snap packages
+      - ln -s /snap/bin/lego /usr/local/bin/lego
+      - ln -s /snap/bin/task /usr/local/bin/task
+      # Setup Omni
+      - /usr/local/bin/omni-setup-ssl.sh
+      - /usr/local/bin/omni.setup-gpg.sh
+      - /usr/local/bin/omni-bootstrap.sh
+      #- chown alexander:docker /opt/omni/.env
+      # Systemd services
       - systemctl enable --now qemu-guest-agent
       - systemctl enable --now docker
-      - usermod -aG docker alexander
-      - chown alexander:docker /opt/omni/.env
-      - /usr/local/bin/bootstrap-lego.sh
       - systemctl enable --now lego-renew.timer
-      - /usr/local/bin/bootstrap-omni.sh
-
-    secret_ref: lego
 
     write_files:
-      - path: /usr/local/bin/bootstrap-omni.sh
-        permissions: "0755"
-        template_file: templates/30-cloudinit/bootstrap-omni.sh.tftpl
-        vars:
-          repo_url: "https://oauth2:$${GITHUB_TOKEN}@github.com/alexander-zimmermann/homelab.git"
-          repo_dir: "/opt/homelab"
-
-      - path: /opt/omni/.env
-        secret_ref: omni
-        permissions: "0600"
-        owner: "root:root"
-        vars:
-          EMAIL_ADDRESS: "alexander@zimmermann.eu.com"
-          OMNI_DOMAIN_NAME: "omni.zimmermann.eu.com"
-
+      # Secrets for lego
       - path: /etc/default/lego
         secret_ref: lego
         permissions: "0600"
         owner: "root:root"
-        vars:
-          EMAIL_ADDRESS: "alexander@zimmermann.eu.com"
-          OMNI_DOMAIN_NAME: "omni.zimmermann.eu.com"
 
-      - path: /usr/local/bin/bootstrap-lego.sh
+      # SSL Certificate Setup
+      - path: /usr/local/bin/omni-setup-ssl.sh
         permissions: "0755"
-        template_file: templates/30-cloudinit/bootstrap-lego.sh.tftpl
+        template_file: templates/30-cloudinit/omni-setup-ssl.sh.tftpl
         vars:
-          cert_path: /data/certs
+          env_file: /etc/default/lego
+          cert_dir: /mnt/mgmt/certificates
 
-      - path: /etc/systemd/system/lego-renew.service
-        template_file: templates/30-cloudinit/lego-renew.service.tftpl
+      - path: /etc/systemd/system/omni-renew-ssl.service
+        template_file: templates/30-cloudinit/omni-renew-ssl.service.tftpl
         vars:
-          cert_path: /data/certs
+          env_file: /etc/default/lego
+          cert_dir: /mnt/mgmt/certificates
           hook: docker restart omni
 
-      - path: /etc/systemd/system/lego-renew.timer
-        content_file: templates/30-cloudinit/lego-renew.timer
+      - path: /etc/systemd/system/omni-renew-ssl.timer
+        content_file: templates/30-cloudinit/omni-renew-ssl.timer
+
+      # Secrets for omni
+      - path: /etc/default/omni
+        secret_ref: omni
+        permissions: "0600"
+        owner: "root:root"
+
+      # GPG Key Setup
+      - path: /usr/local/bin/omni.setup-gpg.sh
+        permissions: "0755"
+        template_file: templates/30-cloudinit/omni.setup-gpg.sh.tftpl
+        vars:
+          env_file: /etc/default/omni
+          keys_dir: /mnt/mgmt/secret
+
+      # Bootstrap Omni
+      - path: /usr/local/bin/omni-bootstrap.sh
+        permissions: "0755"
+        template_file: templates/30-cloudinit/omni-bootstrap.sh.tftpl
+        vars:
+          env_file: /etc/default/omni
+          repo_url: "https://oauth2:$${GITHUB_TOKEN}@github.com/alexander-zimmermann/homelab.git"
+          repo_dir: /opt/homelab
+          omni_dir: /opt/omni
+          persistent_dir: /mnt/mgmt
 
 ci_network_configs:
   ci_net_linux:

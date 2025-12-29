@@ -39,7 +39,7 @@ vm_templates:
     disk_size: 16
     vnic_bridge: vmbr0
     # cloud init
-    ci_user_data_id: ci_user_linux
+    ci_user_data_id: ci_user_talos_omni
     ci_vendor_data_id: ci_vendor_talos_omni
     ci_network_data_id: ci_net_linux
     ci_meta_data_id: ci_meta_talos_omni

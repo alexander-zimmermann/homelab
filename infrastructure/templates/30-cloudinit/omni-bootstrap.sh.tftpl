@@ -1,0 +1,114 @@
+#!/bin/bash
+# ==============================================================================
+# Omni Bootstrap Script
+# ==============================================================================
+# This script automates Omni bootstrap process.
+#
+# Prerequisites:
+# - git installed
+# - task installed
+
+set -euo pipefail
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Configuration
+ENV_FILE="${env_file}"
+REPO_URL="${repo_url}"
+REPO_DIR="${repo_dir}"
+OMNI_DIR="${omni_dir}"
+PERSISTENT_DIR="${persistent_dir}"
+
+ln -sf "$${REPO_DIR}/management/compose.yaml" "$${OMNI_DIR}/compose.yaml"
+ln -sf "$${DATA_DIR}" "$${OMNI_DIR}/data"
+ln -sf "$${CERT_DIR}" "$${OMNI_DIR}/certificates"
+ln -sf "$${SECRET_DIR}" "$${OMNI_DIR}/secret"
+
+persistent_dir
+
+# ==============================================================================
+# Helper Functions
+# ==============================================================================
+
+print_info() {
+  echo -e "$${GREEN}[INFO]$${NC} $1"
+}
+
+print_warn() {
+  echo -e "$${YELLOW}[WARN]$${NC} $1"
+}
+
+print_error() {
+  echo -e "$${RED}[ERROR]$${NC} $1"
+}
+
+check_file() {
+  [[ ! -f "$${1}" ]] && return 1
+}
+
+check_variable() {
+  [[ -z "$${1}" ]] && return 1
+}
+
+check_command() {
+  command -v "$${1}" &> /dev/null || return 1
+}
+
+check_status() {
+  if [[ $${?} -ne 0 ]]; then
+    print_error "$${1}"
+    exit 1
+  fi
+}
+
+# ==============================================================================
+# Main Script
+# ==============================================================================
+
+echo "===================================="
+echo "  Omni Bootstrap"
+echo "===================================="
+echo ""
+
+# Check prerequisites
+print_info "Checking prerequisites..."
+check_command "git"
+check_status "Git not found. Please install git and try again."
+
+check_command "task"
+check_status "Task not found. Please install task and try again."
+
+check_file "$${ENV_FILE}"
+check_status "No $${ENV_FILE} found. Please check your terraform.tfvars file."
+
+# Source secrets (rendered from ci_secrets)
+source "$${ENV_FILE}"
+
+# Check for required variables
+check_variable "$${GITHUB_TOKEN}"
+check_status "Github token for git clone is required (GITHUB_TOKEN) in $${ENV_FILE}."
+
+# Clone repository
+print_info "Cloning repository..."
+git clone "$${REPO_URL}" "$${REPO_DIR}"
+check_status "Failed to clone repository. Please check your repository URL and try again."
+
+# Symlink compose file & directories so updates are reflected immediately
+print_info "Symlinking compose file & directories..."
+ln -sf "$${REPO_DIR}/management/compose.yaml" "$${OMNI_DIR}/compose.yaml"
+ln -sf "$${PERSISTENT_DIR}/*" "$${OMNI_DIR}/*"
+
+# Deploy Omni
+print_info "Running deployment task..."
+task -d "$${REPO_DIR}/management" deploy
+check_status "Failed to deploy Omni."
+
+print_info ""
+print_info "===================================="
+print_info "  Omni Bootstrap completed successfully!"
+print_info "===================================="
+print_info ""

@@ -15,10 +15,6 @@ tasks:
     cmds:
       - cmd: printf "{{.BLUE}}🚀 Deploying Omni Stack locally...{{.RESET}}\n"
         silent: true
-      - sudo mkdir -p /opt/omni
-      # Symlink compose file so updates in git are reflected immediately
-      - sudo ln -sf {{.TASKFILE_DIR}}/compose.yaml /opt/omni/compose.yaml
-      # .env is managed by Cloud-Init/Secrets
-      - cd /opt/omni && sudo docker compose up -d
+      - cd /opt/omni && docker compose up -d
       - cmd: printf "{{.GREEN}}✅ Omni deployed on management VM!{{.RESET}}\n"
         silent: true

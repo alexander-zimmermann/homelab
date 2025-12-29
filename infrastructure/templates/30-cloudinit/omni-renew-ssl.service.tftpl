@@ -1,0 +1,10 @@
+[Unit]
+Description=Renew Lego SSL Certificates
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Environment="CERT_DIR=${cert_dir}"
+EnvironmentFile="${env_file}"
+ExecStart=lego --email="$${EMAIL_ADDRESS}" --dns="cloudflare" --domains="$${OMNI_DOMAIN_NAME}" --path="$${CERT_DIR}" --accept-tos renew --hook "${hook}"
