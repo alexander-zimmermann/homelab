@@ -28,19 +28,23 @@ KEYS_FILE="${keys_dir}/omni.asc"
 # ==============================================================================
 
 print_info() {
-  echo -e "$${GREEN}[INFO]${NC} $1"
+  echo -e "$${GREEN}[INFO]$${NC} $1"
 }
 
 print_warn() {
-  echo -e "$${YELLOW}[WARN]${NC} $1"
+  echo -e "$${YELLOW}[WARN]$${NC} $1"
 }
 
 print_error() {
-  echo -e "$${RED}[ERROR]${NC} $1"
+  echo -e "$${RED}[ERROR]$${NC} $1"
 }
 
 print_step() {
-  echo -e "$${BLUE}[STEP]${NC} $1"
+  echo -e "$${BLUE}[STEP]$${NC} $1"
+}
+
+check_file() {
+  [[ ! -f "$${1}" ]] && return 1
 }
 
 check_variable() {

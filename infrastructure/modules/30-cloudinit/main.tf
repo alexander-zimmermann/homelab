@@ -58,6 +58,21 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
       #cloud-config
       timezone: Europe/Berlin
       locale: de_DE.UTF-8
+%{if length(var.bootcmd) > 0~}
+      bootcmd:
+%{for cmd in var.bootcmd~}
+        - ${jsonencode(cmd)}
+%{endfor~}
+%{endif~}
+%{if length(var.mounts) > 0~}
+      mounts:
+%{for m in var.mounts~}
+        - ${jsonencode(m)}
+%{endfor~}
+%{endif~}
+%{if length(var.mount_default_fields) > 0~}
+      mount_default_fields: ${jsonencode(var.mount_default_fields)}
+%{endif~}
 %{if length(var.packages) > 0~}
       packages:
 %{for p in var.packages~}
@@ -89,7 +104,7 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
 %{if length(var.runcmd) > 0~}
       runcmd:
 %{for cmd in var.runcmd~}
-        - ${cmd}
+        - ${jsonencode(cmd)}
 %{endfor~}
 %{endif~}
     EOF

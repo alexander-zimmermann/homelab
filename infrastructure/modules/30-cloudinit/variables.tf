@@ -120,12 +120,39 @@ variable "packages" {
   default     = []
 }
 
+variable "mounts" {
+  description = <<EOT
+    List of mount points to configure.
+    Each item is a list: [ source, target, fs_type, options, dump, pass ]
+  EOT
+  type        = list(any)
+  default     = []
+}
+
+variable "mount_default_fields" {
+  description = <<EOT
+    Default values for mount fields if not specified.
+    List of 6 strings: [ source, target, fs_type, options, dump, pass ]
+  EOT
+  type        = list(string)
+  default     = []
+}
+
+variable "bootcmd" {
+  description = <<EOT
+    List of shell commands to run early in the boot process (before networking).
+    Useful for directory creation, disk formatting, etc.
+  EOT
+  type        = list(any)
+  default     = []
+}
+
 variable "runcmd" {
   description = <<EOT
     List of shell commands to run during provisioning. These will be executed
     after enabling the `qemu-guest-agent`. Use an empty list to skip custom commands.
   EOT
-  type        = list(string)
+  type        = list(any)
   default     = []
 }
 

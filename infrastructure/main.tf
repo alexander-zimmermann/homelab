@@ -234,7 +234,12 @@ module "vm_ci_vendor_config" {
   package_reboot_if_required = try(each.value.package_reboot_if_required, true)
 
   ## Custom commands
-  runcmd = try(each.value.runcmd, [])
+  runcmd  = try(each.value.runcmd, [])
+  bootcmd = try(each.value.bootcmd, [])
+
+  ## Mounts
+  mounts               = try(each.value.mounts, [])
+  mount_default_fields = try(each.value.mount_default_fields, [])
 
   ## File management
   write_files = [
@@ -250,11 +255,10 @@ module "vm_ci_vendor_config" {
         ## Inject plain variables if vars is present (and it's not a template injection)
         try(wf.secret_ref, null) != null && try(wf.vars, null) != null ? join("\n", [for k, v in wf.vars : "${k}=\"${v}\""]) : "",
         ## Fallback to standard content/template logic if not just a secret file
-        try(wf.secret_ref, null) == null ? try(
+        try(wf.secret_ref, null) == null ? (
           try(wf.content_file, null) != null ? file(wf.content_file) :
           try(wf.template_file, null) != null ? templatefile(wf.template_file, try(wf.vars, {})) :
-          wf.content,
-          ""
+          try(wf.content, "")
         ) : ""
       ])
     }

@@ -55,17 +55,18 @@ ci_vendor_configs:
 
     runcmd:
       # Symlinks for snap packages
-      - ln -s /snap/bin/lego /usr/local/bin/lego
-      - ln -s /snap/bin/task /usr/local/bin/task
+      - ["ln", "-s", "/snap/bin/lego", "/usr/local/bin/lego"]
+      - ["ln", "-s", "/snap/bin/task", "/usr/local/bin/task"]
+      # Mounts retry (after nfs-common install)
+      - ["mount", "-a"]
       # Setup Omni
-      - /usr/local/bin/omni-setup-ssl.sh
-      - /usr/local/bin/omni.setup-gpg.sh
-      - /usr/local/bin/omni-bootstrap.sh
-      #- chown alexander:docker /opt/omni/.env
+      - ["bash", "/usr/local/bin/omni-setup-ssl.sh"]
+      - ["bash", "/usr/local/bin/omni.setup-gpg.sh"]
+      - ["bash", "/usr/local/bin/omni-bootstrap.sh"]
       # Systemd services
-      - systemctl enable --now qemu-guest-agent
-      - systemctl enable --now docker
-      - systemctl enable --now lego-renew.timer
+      - ["systemctl", "enable", "--now", "qemu-guest-agent"]
+      - ["systemctl", "enable", "--now", "docker"]
+      - ["systemctl", "enable", "--now", "omni-renew-ssl.timer"]
 
     write_files:
       # Secrets for lego

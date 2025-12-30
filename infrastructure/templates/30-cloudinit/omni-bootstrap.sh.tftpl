@@ -23,13 +23,6 @@ REPO_DIR="${repo_dir}"
 OMNI_DIR="${omni_dir}"
 PERSISTENT_DIR="${persistent_dir}"
 
-ln -sf "$${REPO_DIR}/management/compose.yaml" "$${OMNI_DIR}/compose.yaml"
-ln -sf "$${DATA_DIR}" "$${OMNI_DIR}/data"
-ln -sf "$${CERT_DIR}" "$${OMNI_DIR}/certificates"
-ln -sf "$${SECRET_DIR}" "$${OMNI_DIR}/secret"
-
-persistent_dir
-
 # ==============================================================================
 # Helper Functions
 # ==============================================================================
@@ -69,10 +62,10 @@ check_status() {
 # Main Script
 # ==============================================================================
 
-echo "===================================="
-echo "  Omni Bootstrap"
-echo "===================================="
-echo ""
+print_info "===================================="
+print_info "  Omni Bootstrap"
+print_info "===================================="
+print_info ""
 
 # Check prerequisites
 print_info "Checking prerequisites..."
