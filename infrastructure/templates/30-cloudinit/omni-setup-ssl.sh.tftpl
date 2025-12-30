@@ -27,7 +27,7 @@ CERT_DIR="${cert_dir}"
 # ==============================================================================
 
 info() {
-  echo -e "$${GREEN}[INFO]$${NC} $1"
+  echo -e "$${GREEN}[INFO]$${NC}  $1"
 }
 
 die() {
@@ -71,27 +71,26 @@ check_file "$${ENV_FILE}" && source "$${ENV_FILE}"
 check_command "lego"
 check_variable "$${CLOUDFLARE_DNS_API_TOKEN:-}" "CLOUDFLARE_DNS_API_TOKEN"
 check_variable "$${EMAIL_ADDRESS:-}" "EMAIL_ADDRESS"
-check_variable "$${OMNI_DOMAIN_NAME:-}" "OMNI_DOMAIN_NAME"
+check_variable "$${DOMAIN_NAME:-}" "DOMAIN_NAME"
 
 # Certificate file paths
-CRT_FILE="$${CERT_DIR}/$${OMNI_DOMAIN_NAME}.crt"
-KEY_FILE="$${CERT_DIR}/$${OMNI_DOMAIN_NAME}.key"
+CRT_FILE="$${CERT_DIR}/$${DOMAIN_NAME}.crt"
+KEY_FILE="$${CERT_DIR}/$${DOMAIN_NAME}.key"
 
 # Check if certificate already exists
 if [[ -f "$${CRT_FILE}"  ]] && [[ -f "$${KEY_FILE}" ]]; then
-  info "Certificate already exists for $${OMNI_DOMAIN_NAME}!"
+  info "Certificate already exists for $${DOMAIN_NAME}!"
   info "Skipping generation."
   exit 0
 fi
 
 # Generate certificate
-info "Requesting SSL certificate from Let's Encrypt for $${OMNI_DOMAIN_NAME}..."
+info "Requesting SSL certificate from Let's Encrypt for $${DOMAIN_NAME}..."
 lego \
   --email="$${EMAIL_ADDRESS}" \
   --dns="cloudflare" \
-  --domains="$${OMNI_DOMAIN_NAME}" \
+  --domains="$${DOMAIN_NAME}" \
   --dns.resolvers="1.1.1.1:53" \
-  --path="$${CERT_DIR}" \
   --path="$${CERT_DIR}" \
   --accept-tos run || die "Failed to generate certificate."
 

@@ -28,7 +28,7 @@ PERSISTENT_DIR="${persistent_dir}"
 # ==============================================================================
 
 info() {
-  echo -e "$${GREEN}[INFO]$${NC} $1"
+  echo -e "$${GREEN}[INFO]$${NC}  $1"
 }
 
 die() {
@@ -87,7 +87,8 @@ fi
 # Symlink compose file & directories so updates are reflected immediately
 info "Symlinking compose file & directories..."
 mkdir -p "$${OMNI_DIR}"
-ln -sf "$${REPO_DIR}/management/compose.yaml" "$${OMNI_DIR}/compose.yaml"
+ln -sf "$${REPO_DIR}/management/"* "$${OMNI_DIR}/"
+ln -sf "$${ENV_FILE}" "$${OMNI_DIR}/.env"
 ln -sf "$${PERSISTENT_DIR}/"* "$${OMNI_DIR}/"
 
 # Deploy Omni

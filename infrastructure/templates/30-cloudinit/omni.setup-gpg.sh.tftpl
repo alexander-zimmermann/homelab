@@ -27,7 +27,7 @@ KEYS_FILE="${keys_dir}/omni.asc"
 # ==============================================================================
 
 info() {
-  echo -e "$${GREEN}[INFO]$${NC} $1"
+  echo -e "$${GREEN}[INFO]$${NC}  $1"
 }
 
 die() {
@@ -69,11 +69,11 @@ info ""
 info "Checking prerequisites..."
 check_file "$${ENV_FILE}" && source "$${ENV_FILE}"
 check_command "gpg"
-check_variable "$${EMAIL_ADDRESS:-}" "EMAIL_ADDRESS"
+check_variable "$${OMNI_EMAIL_ADDRESS:-}" "OMNI_EMAIL_ADDRESS"
 
 # Check if key already exists
-if gpg --homedir "$${KEYS_DIR}" --list-keys "$${EMAIL_ADDRESS}" &> /dev/null; then
-  info "A GPG key for $${EMAIL_ADDRESS} already exists!"
+if gpg --homedir "$${KEYS_DIR}" --list-keys "$${OMNI_EMAIL_ADDRESS}" &> /dev/null; then
+  info "A GPG key for $${OMNI_EMAIL_ADDRESS} already exists!"
   info "Skipping generation."
   exit 0
 fi
@@ -84,7 +84,7 @@ gpg \
   --homedir "$${KEYS_DIR}" \
   --batch --passphrase '' \
   --pinentry-mode loopback \
-  --quick-generate-key "Omni (Used for etcd data encryption) <$${EMAIL_ADDRESS}>" \
+  --quick-generate-key "Omni (Used for etcd data encryption) <$${OMNI_EMAIL_ADDRESS}>" \
   rsa4096 \
   cert \
   never || die "Failed to generate primary key."
@@ -92,7 +92,7 @@ info "Primary key generated successfully!"
 
 # Get key fingerprint
 info "Retrieving key fingerprint..."
-KEY_FINGERPRINT=$$(gpg --homedir "$${KEYS_DIR}" --list-secret-keys --with-colons "$${EMAIL_ADDRESS}" | awk -F: '/^fpr:/ {print $$10; exit}')
+KEY_FINGERPRINT=$$(gpg --homedir "$${KEYS_DIR}" --list-secret-keys --with-colons "$${OMNI_EMAIL_ADDRESS}" | awk -F: '/^fpr:/ {print $$10; exit}')
 check_variable "$${KEY_FINGERPRINT}" "KEY_FINGERPRINT"
 info "Key fingerprint: $${KEY_FINGERPRINT}"
 
@@ -112,14 +112,14 @@ info "Verifying key configuration..."
 gpg \
   --homedir "$${KEYS_DIR}" \
   --list-secret-keys \
-  --with-subkey-fingerprint "$${EMAIL_ADDRESS}" || die "Failed to list secret keys."
+  --with-subkey-fingerprint "$${OMNI_EMAIL_ADDRESS}" || die "Failed to list secret keys."
 
 # Export the key
 info "Exporting key to file..."
 gpg \
   --homedir "$${KEYS_DIR}" \
   --export-secret-key \
-  --armor "$${EMAIL_ADDRESS}" > "$${KEYS_FILE}" || die "Failed to export key."
+  --armor "$${OMNI_EMAIL_ADDRESS}" > "$${KEYS_FILE}" || die "Failed to export key."
 
 # Secure the exported key
 chmod 600 "$${KEYS_FILE}"
@@ -130,7 +130,7 @@ info "  Omni GPG Key Generation Complete!"
 info "===================================="
 info ""
 info "Key details:"
-info "  Email: $${EMAIL_ADDRESS}"
+info "  Email: $${OMNI_EMAIL_ADDRESS}"
 info "  Fingerprint: $${KEY_FINGERPRINT}"
 info "  Exported to: $${KEYS_FILE}"
 info ""
