@@ -48,34 +48,33 @@ services:
       <<: *default-environment
 
     command:
-      # General Settings
-      - --account-id=${OMNI_ACCOUNT_UUID}
+      # Omni configuration
       - --name=omni
-      # TLS & Security (Web UI & Machine API)
+      - --account-id=${OMNI_ACCOUNT_UUID}
+      - --initial-users=${EMAIL_ADDRESS}
+      # Persistence data
+      - --sqlite-storage-path=/data/omni.db
+      - --etcd-embedded-db-path=/data/etcd
+      # Bind addresses
+      - --bind-addr=0.0.0.0:443
+      - --event-sink-port=8091
+      - --machine-api-bind-addr=0.0.0.0:8090
+      - --k8s-proxy-bind-addr=0.0.0.0:8100
+      # Advertised URLs
+      - --advertised-api-url="https://${OMNI_DOMAIN_NAME}"
+      - --advertised-kubernetes-proxy-url="https://${OMNI_DOMAIN_NAME}:8100/"
+      - --siderolink-api-advertised-url="https://${OMNI_DOMAIN_NAME}:8090/"
+      - --siderolink-wireguard-advertised-addr="${OMNI_DOMAIN_NAME}:50180"
+      # TLS & security
       - --cert=/certificates/${OMNI_DOMAIN_NAME}.crt
       - --key=/certificates/${OMNI_DOMAIN_NAME}.key
       - --machine-api-cert=/certificates/${OMNI_DOMAIN_NAME}.crt
       - --machine-api-key=/certificates/${OMNI_DOMAIN_NAME}.key
       - --private-key-source='file:///keys/omni.asc'
-      # Bind Addresses (Where services listen inside container)
-      - --bind-addr=0.0.0.0:443
-      - --event-sink-port=8091
-      - --machine-api-bind-addr=0.0.0.0:8090
-      - --k8s-proxy-bind-addr=0.0.0.0:8100
-      # Advertised URLs (How users/machines reach this instance)
-      - --advertised-api-url="https://${OMNI_DOMAIN_NAME}"
-      - --advertised-kubernetes-proxy-url="https://:8100/"
-      - --siderolink-api-advertised-url="https://:8090/"
-      - --siderolink-wireguard-advertised-addr=":50180"
-      # User Management
-      - --initial-users=${EMAIL_ADDRESS}
-      # Auth0 Integration
+      # Auth0 integration
       - --auth-auth0-enabled=true
       - --auth-auth0-domain=${AUTH0_ISSUER}
       - --auth-auth0-client-id=${AUTH0_CLIENT_ID}
-      # Persistence (Database)
-      - --sqlite-storage-path=/data/omni.db
-      - --etcd-embedded-db-path=/data/etcd
 
     logging:
       <<: *default-logging
