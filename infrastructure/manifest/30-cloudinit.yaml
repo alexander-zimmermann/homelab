@@ -46,10 +46,10 @@ ci_vendor_configs:
 
     mount_default_fields:
       [
-        none,
-        none,
+        None,
+        None,
         auto,
-        "defaults,nofail,x-systemd.after=cloud-init-network.service",
+        "defaults,_netdev,noauto,nofail,x-systemd.after=cloud-init-network.service",
         "0",
         "0",
       ]
