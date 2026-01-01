@@ -69,27 +69,27 @@ locals {
   BASH
 }
 
-resource "null_resource" "bond" {
+resource "terraform_data" "bond" {
   count = var.create_bond ? 1 : 0
 
   ## Re-execute if any attribute changes
-  triggers = {
-    node        = var.node
-    name        = var.name
-    mode        = var.mode
-    slaves      = join(",", var.slaves)
-    miimon      = tostring(var.miimon)
-    lacp_rate   = var.lacp_rate
-    hash_policy = var.hash_policy
-    primary     = var.primary
-    mtu         = tostring(var.mtu)
-    address     = var.address
-    address6    = var.address6
-    gateway     = var.gateway
-    gateway6    = var.gateway6
-    autostart   = tostring(var.autostart)
-    comment     = var.comment
-  }
+  triggers_replace = [
+    var.node,
+    var.name,
+    var.mode,
+    join(",", var.slaves),
+    tostring(var.miimon),
+    var.lacp_rate,
+    var.hash_policy,
+    var.primary,
+    tostring(var.mtu),
+    var.address,
+    var.address6,
+    var.gateway,
+    var.gateway6,
+    tostring(var.autostart),
+    var.comment
+  ]
 
   connection {
     type        = "ssh"
@@ -120,15 +120,15 @@ resource "null_resource" "bond" {
 
 data "external" "bond_setup_output" {
   count      = var.create_bond ? 1 : 0
-  depends_on = [null_resource.bond]
+  depends_on = [terraform_data.bond]
   program    = ["bash", "-c", "cat ${local.log_output} | jq -R -s '{output: .}'"]
 }
 
 ## Single "join" resource to depend on in other resources (handles for_each)
-resource "null_resource" "bonds_apply" {
+resource "terraform_data" "bonds_apply" {
   count = var.create_bond ? 1 : 0
   depends_on = [
-    null_resource.bond
+    terraform_data.bond
   ]
 }
 
@@ -140,7 +140,7 @@ resource "proxmox_virtual_environment_network_linux_vlan" "vlans" {
   count = var.create_vlan ? 1 : 0
 
   ## If we create bonds via SSH, ensure they exist before VLANs like bond0.30
-  depends_on = [null_resource.bonds_apply]
+  depends_on = [terraform_data.bonds_apply]
 
   node_name = var.node
   name      = var.name
@@ -165,7 +165,7 @@ resource "proxmox_virtual_environment_network_linux_bridge" "bridges" {
   ## Ensure VLANs (and optionally bonds) are ready before we attach ports
   depends_on = [
     proxmox_virtual_environment_network_linux_vlan.vlans,
-    null_resource.bonds_apply
+    terraform_data.bonds_apply
   ]
 
   node_name  = var.node

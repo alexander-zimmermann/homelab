@@ -88,7 +88,7 @@ locals {
   BASH
 }
 
-resource "null_resource" "acme_order" {
+resource "terraform_data" "acme_order" {
   ## Esure ACME account & plugin are created first
   depends_on = [
     proxmox_virtual_environment_acme_account.this,
@@ -96,11 +96,11 @@ resource "null_resource" "acme_order" {
   ]
 
   ## Re-execute if any attribute changes
-  triggers = {
-    cert_hostnames = join(",", tolist(var.cert_domains))
-    account        = proxmox_virtual_environment_acme_account.this.name
-    plugin_name    = proxmox_virtual_environment_acme_dns_plugin.this.plugin
-  }
+  triggers_replace = [
+    join(",", tolist(var.cert_domains)),
+    proxmox_virtual_environment_acme_account.this.name,
+    proxmox_virtual_environment_acme_dns_plugin.this.plugin
+  ]
 
   connection {
     type        = "ssh"
@@ -129,6 +129,6 @@ resource "null_resource" "acme_order" {
 }
 
 data "external" "acme_order_output" {
-  depends_on = [null_resource.acme_order]
+  depends_on = [terraform_data.acme_order]
   program    = ["bash", "-c", "cat ${local.log_output}| jq -R -s '{output: .}'"]
 }

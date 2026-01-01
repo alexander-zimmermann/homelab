@@ -119,12 +119,12 @@ locals {
   BASH
 }
 
-resource "null_resource" "local_content_types" {
+resource "terraform_data" "local_content_types" {
   ## Re-execute if any attribute changes
-  triggers = {
+  triggers_replace = [
     ## only re‑runs when the membership changes (not the order)
-    content_types = local.content_types
-  }
+    local.content_types
+  ]
 
   connection {
     type        = "ssh"
@@ -153,6 +153,6 @@ resource "null_resource" "local_content_types" {
 }
 
 data "external" "local_content_type_output" {
-  depends_on = [null_resource.local_content_types]
+  depends_on = [terraform_data.local_content_types]
   program    = ["bash", "-c", "cat ${local.log_output}| jq -R -s '{output: .}'"]
 }
