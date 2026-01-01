@@ -12,7 +12,8 @@ output "ipv4" {
         for addr in addr_list : addr
         if !startswith(addr, "127.") &&  ## No loopback (127.x.x.x)
         !startswith(addr, "169.254.") && ## No link-local (169.254.x.x)
-        !startswith(addr, "10.244.")     ## No Kubernetes CNI (10.244.x.x)
+        !startswith(addr, "10.244.") &&  ## No Kubernetes CNI (10.244.x.x)
+        !startswith(addr, "172.")        ## No Docker bridge (172.x.x.x)
       ]
     ]),
     []
