@@ -26,8 +26,8 @@ SRC_KEYS_PATH="/root"
 SRC_KEYRING_PATH="$${SRC_KEYS_PATH}/.gnupg"
 SRC_KEY_FILE="$${SRC_KEYS_PATH}/omni.asc"
 DST_KEYS_PATH="${keys_path}"
-DST_KEYRING_PATH="${keys_path}/.gnupg"
-DST_KEY_FILE="${keys_path}/omni.asc"
+DST_KEYRING_PATH="$${DST_KEYS_PATH}/.gnupg"
+DST_KEY_FILE="$${DST_KEYS_PATH}/omni.asc"
 
 # ==============================================================================
 # Helper Functions
@@ -148,8 +148,8 @@ cp -f "$${SRC_KEY_FILE}" "$${DST_KEY_FILE}" || die "Failed to copy exported key.
 info "Set ownership of directories and files to $${OWNER}..."
 chown -R "$${OWNER}" "$${DST_KEYS_PATH}"
 chown "$${OWNER}" "$${DST_KEY_FILE}"
-chmod 700 "$${DST_KEYS_PATH}"
-chmod 600 "$${DST_KEY_FILE}"
+chmod 750 "$${DST_KEYS_PATH}"
+chmod 640 "$${DST_KEY_FILE}"
 
 info ""
 info "===================================="

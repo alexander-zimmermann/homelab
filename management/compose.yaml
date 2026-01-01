@@ -61,16 +61,16 @@ services:
       - --machine-api-bind-addr=0.0.0.0:8090
       - --k8s-proxy-bind-addr=0.0.0.0:8100
       # Advertised URLs
-      - --advertised-api-url="https://${OMNI_DOMAIN_NAME}"
-      - --advertised-kubernetes-proxy-url="https://${OMNI_DOMAIN_NAME}:8100/"
-      - --siderolink-api-advertised-url="https://${OMNI_DOMAIN_NAME}:8090/"
-      - --siderolink-wireguard-advertised-addr="${OMNI_DOMAIN_NAME}:50180"
+      - --advertised-api-url=https://${OMNI_DOMAIN_NAME}
+      - --advertised-kubernetes-proxy-url=https://${OMNI_DOMAIN_NAME}:8100/
+      - --siderolink-api-advertised-url=https://${OMNI_DOMAIN_NAME}:8090/
+      - --siderolink-wireguard-advertised-addr=${OMNI_DOMAIN_NAME}:50180
       # TLS & security
       - --cert=/certificates/${OMNI_DOMAIN_NAME}.crt
       - --key=/certificates/${OMNI_DOMAIN_NAME}.key
       - --machine-api-cert=/certificates/${OMNI_DOMAIN_NAME}.crt
       - --machine-api-key=/certificates/${OMNI_DOMAIN_NAME}.key
-      - --private-key-source='file:///keys/omni.asc'
+      - --private-key-source=file:///keys/omni.asc
       # Auth0 integration
       - --auth-auth0-enabled=true
       - --auth-auth0-domain=${AUTH0_ISSUER}

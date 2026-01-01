@@ -112,7 +112,7 @@ ci_vendor_configs:
         template_file: templates/30-cloudinit/omni.setup-gpg.sh.tftpl
         vars:
           env_file: /etc/default/omni
-          keys_path: /mnt/mgmt/secret
+          keys_path: /mnt/mgmt/keys
           owner: "omni:omni"
 
       # Bootstrap Omni

@@ -115,7 +115,8 @@ cp -f "$${SRC_CERT_PATH}/$${KEY_FILE}" "$${DST_CERT_PATH}/" || die "Failed to co
 # Set ownership and permissions on persistent volume
 info "Set ownership of directories and files to $${OWNER}..."
 chown -R "$${OWNER}" "$${DST_CERT_PATH}"
-chmod 600 "$${DST_CERT_PATH}/$${KEY_FILE}"
+chmod 750 "$${DST_CERT_PATH}"
+chmod 640 "$${DST_CERT_PATH}/$${KEY_FILE}"
 chmod 644 "$${DST_CERT_PATH}/$${CRT_FILE}"
 
 info ""

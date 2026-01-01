@@ -101,6 +101,8 @@ ln -sf "$${VOLUME_PATH}/"* "$${OMNI_PATH}/"
 info "Set ownership of directories and files to $${OWNER}..."
 chown -R "$${OWNER}" "$${REPO_PATH}"
 chown -R "$${OWNER}" "$${OMNI_PATH}"
+chmod -R g+w "$${REPO_PATH}"
+chmod -R g+w "$${OMNI_PATH}"
 
 # Deploy Omni
 info "Running deployment task..."
