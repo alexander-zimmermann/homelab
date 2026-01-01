@@ -49,7 +49,7 @@ ci_vendor_configs:
         None,
         None,
         auto,
-        "defaults,_netdev,noauto,nofail,x-systemd.after=cloud-init-network.service",
+        "defaults,_netdev,nofail,x-systemd.automount,x-systemd.after=cloud-init-network.service",
         "0",
         "0",
       ]
