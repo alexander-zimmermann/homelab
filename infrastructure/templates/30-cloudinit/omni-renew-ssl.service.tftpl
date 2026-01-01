@@ -5,6 +5,11 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-Environment="CERT_DIR=${cert_dir}"
+User=root
+Group=root
 EnvironmentFile="${env_file}"
-ExecStart=lego --email="$${EMAIL_ADDRESS}" --dns="cloudflare" --domains="$${OMNI_DOMAIN_NAME}" --path="$${CERT_DIR}" --accept-tos renew --hook "${hook}"
+Environment="OWNER=${owner}"
+Environment="SRC_CERT_DIR=/var/snap/lego/common/.lego/certificates"
+Environment="DST_CERT_DIR=${cert_path}"
+ExecStart=/bin/bash -c "CLOUDFLARE_DNS_API_TOKEN='$${CF_DNS_API_TOKEN}' CLOUDFLARE_EMAIL='$${CF_API_EMAIL}' lego --email='$${CF_API_EMAIL}' --dns='cloudflare' --domains='$${DOMAIN_NAME}' --accept-tos renew"
+ExecStartPost=/bin/bash -c "cp -f $${SRC_CERT_DIR}/$${DOMAIN_NAME}.crt $${DST_CERT_DIR}/ && cp -f $${SRC_CERT_DIR}/$${DOMAIN_NAME}.key $${DST_CERT_DIR}/ && chown -R "$${OWNER}" "$${DST_CERT_DIR}" && docker restart omni"

@@ -8,8 +8,12 @@ ci_user_configs:
       password: ""
 
   ci_user_talos_omni:
-    - username: alexander
+    - username: omni
       groups: [sudo, docker]
+      set_password: false
+
+    - username: alexander
+      groups: [sudo, docker, omni]
       ssh_public_key: ~/.ssh/id_rsa.pub
       set_password: false
       password: ""
@@ -47,7 +51,7 @@ ci_vendor_configs:
         auto,
         "defaults,nofail,x-systemd.after=cloud-init-network.service",
         "0",
-        "2",
+        "0",
       ]
 
     bootcmd:
@@ -61,7 +65,7 @@ ci_vendor_configs:
       - ["mount", "-a"]
       # Setup Omni
       - ["bash", "/usr/local/bin/omni-setup-ssl.sh"]
-      - ["bash", "/usr/local/bin/omni.setup-gpg.sh"]
+      - ["bash", "/usr/local/bin/omni-setup-gpg.sh"]
       - ["bash", "/usr/local/bin/omni-bootstrap.sh"]
       # Systemd services
       - ["systemctl", "enable", "--now", "qemu-guest-agent"]
@@ -73,7 +77,8 @@ ci_vendor_configs:
       - path: /etc/default/lego
         secret_ref: lego
         permissions: "0600"
-        owner: "root:root"
+        owner: "omni:omni"
+        defer: true
 
       # SSL Certificate Setup
       - path: /usr/local/bin/omni-setup-ssl.sh
@@ -81,14 +86,15 @@ ci_vendor_configs:
         template_file: templates/30-cloudinit/omni-setup-ssl.sh.tftpl
         vars:
           env_file: /etc/default/lego
-          cert_dir: /mnt/mgmt/certificates
+          cert_path: /mnt/mgmt/certificates
+          owner: "omni:omni"
 
       - path: /etc/systemd/system/omni-renew-ssl.service
         template_file: templates/30-cloudinit/omni-renew-ssl.service.tftpl
         vars:
           env_file: /etc/default/lego
-          cert_dir: /mnt/mgmt/certificates
-          hook: docker restart omni
+          cert_path: /mnt/mgmt/certificates
+          owner: "omni:omni"
 
       - path: /etc/systemd/system/omni-renew-ssl.timer
         content_file: templates/30-cloudinit/omni-renew-ssl.timer
@@ -97,15 +103,17 @@ ci_vendor_configs:
       - path: /etc/default/omni
         secret_ref: omni
         permissions: "0600"
-        owner: "root:root"
+        owner: "omni:omni"
+        defer: true
 
       # GPG Key Setup
-      - path: /usr/local/bin/omni.setup-gpg.sh
+      - path: /usr/local/bin/omni-setup-gpg.sh
         permissions: "0755"
         template_file: templates/30-cloudinit/omni.setup-gpg.sh.tftpl
         vars:
           env_file: /etc/default/omni
-          keys_dir: /mnt/mgmt/secret
+          keys_path: /mnt/mgmt/secret
+          owner: "omni:omni"
 
       # Bootstrap Omni
       - path: /usr/local/bin/omni-bootstrap.sh
@@ -114,9 +122,10 @@ ci_vendor_configs:
         vars:
           env_file: /etc/default/omni
           repo_url: "https://oauth2:$${GITHUB_TOKEN}@github.com/alexander-zimmermann/homelab.git"
-          repo_dir: /opt/homelab
-          omni_dir: /opt/omni
-          persistent_dir: /mnt/mgmt
+          repo_path: /opt/homelab
+          omni_path: /opt/omni
+          volume_path: /mnt/mgmt
+          owner: "omni:omni"
 
 ci_network_configs:
   ci_net_linux:

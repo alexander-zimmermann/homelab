@@ -28,9 +28,9 @@ cf_account_id      = "YOUR_CLOUDFLARE_ACCOUNT_ID"
 ###############################################################################
 ci_secrets = {
   lego = {
-    CLOUDFLARE_DNS_API_TOKEN = "YOUR_CLOUDFLARE_API_TOKEN"
-    EMAIL_ADDRESS            = "YOUR_EMAIL_ADDRESS"
-    DOMAIN_NAME              = "YOUR_DOMAIN_NAME"
+    CF_DNS_API_TOKEN = "YOUR_CLOUDFLARE_API_TOKEN"
+    CF_API_EMAIL     = "YOUR_EMAIL_ADDRESS"
+    DOMAIN_NAME      = "YOUR_DOMAIN_NAME"
   }
   omni = {
     GITHUB_TOKEN       = "YOUR_GITHUB_TOKEN"

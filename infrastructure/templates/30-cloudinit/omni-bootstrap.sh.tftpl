@@ -18,15 +18,17 @@ NC='\033[0m'
 
 # Configuration
 ENV_FILE="${env_file}"
+OWNER="${owner}"
+
+# Paths
 REPO_URL="${repo_url}"
-REPO_DIR="${repo_dir}"
-OMNI_DIR="${omni_dir}"
-PERSISTENT_DIR="${persistent_dir}"
+REPO_PATH="${repo_path}"
+OMNI_PATH="${omni_path}"
+VOLUME_PATH="${volume_path}"
 
 # ==============================================================================
 # Helper Functions
 # ==============================================================================
-
 info() {
   echo -e "$${GREEN}[INFO]$${NC}  $1"
 }
@@ -34,6 +36,13 @@ info() {
 die() {
   echo -e "$${RED}[ERROR]$${NC} $1"
   exit 1
+}
+
+check_user() {
+  local user="$${1}"
+  if ! id -u "$${user}" &> /dev/null; then
+    die "User '$${user}' does not exist. Please create it and try again."
+  fi
 }
 
 check_file() {
@@ -60,7 +69,6 @@ check_command() {
 # ==============================================================================
 # Main Script
 # ==============================================================================
-
 info "===================================="
 info "  Omni Bootstrap"
 info "===================================="
@@ -68,32 +76,35 @@ info ""
 
 # Check prerequisites
 info "Checking prerequisites..."
+check_user "omni"
 check_file "$${ENV_FILE}" && source "$${ENV_FILE}"
 check_command "git"
 check_command "task"
 check_variable "$${GITHUB_TOKEN:-}" "GITHUB_TOKEN"
 
+# Prepare directories
+info "Preparing persistent directories..."
+mkdir -p "$${REPO_PATH}"
+mkdir -p "$${OMNI_PATH}"
+
 # Clone or update repository
-if [[ ! -d "$${REPO_DIR}" ]]; then
-  info "Cloning repository..."
-  git clone "$${REPO_URL}" "$${REPO_DIR}" || die "Failed to clone repository."
-else
-  info "Repository already exists at $${REPO_DIR}."
-  info "Updating repository..."
-  cd "$${REPO_DIR}"
-  git pull || die "Failed to update repository."
-fi
+info "Cloning repository..."
+git clone "$${REPO_URL}" "$${REPO_PATH}" || die "Failed to clone repository."
 
 # Symlink compose file & directories so updates are reflected immediately
 info "Symlinking compose file & directories..."
-mkdir -p "$${OMNI_DIR}"
-ln -sf "$${REPO_DIR}/management/"* "$${OMNI_DIR}/"
-ln -sf "$${ENV_FILE}" "$${OMNI_DIR}/.env"
-ln -sf "$${PERSISTENT_DIR}/"* "$${OMNI_DIR}/"
+ln -sf "$${REPO_PATH}/management/"* "$${OMNI_PATH}/"
+ln -sf "$${ENV_FILE}" "$${OMNI_PATH}/.env"
+ln -sf "$${VOLUME_PATH}/"* "$${OMNI_PATH}/"
+
+# Set ownership and permissions
+info "Set ownership of directories and files to $${OWNER}..."
+chown -R "$${OWNER}" "$${REPO_PATH}"
+chown -R "$${OWNER}" "$${OMNI_PATH}"
 
 # Deploy Omni
 info "Running deployment task..."
-cd "$${OMNI_DIR}"
+cd "$${OMNI_PATH}"
 task deploy || die "Failed to deploy Omni."
 
 info ""

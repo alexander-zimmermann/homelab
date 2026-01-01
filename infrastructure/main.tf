@@ -249,6 +249,7 @@ module "vm_ci_vendor_config" {
       owner       = try(wf.owner, "root:root")
       encoding    = try(wf.encoding, "text/plain")
       append      = try(wf.append, false)
+      defer       = try(wf.defer, false)
       content = join("\n", [
         ## Inject secrets if secret_ref is present
         try(wf.secret_ref, null) != null ? join("\n", [for k, v in var.ci_secrets[wf.secret_ref] : "${k}=\"${v}\""]) : "",

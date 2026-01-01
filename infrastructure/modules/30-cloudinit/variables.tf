@@ -63,11 +63,6 @@ variable "users" {
     condition     = alltrue([for u in var.users : (!u.set_password) || length(u.password) > 0])
     error_message = "Password must be provided for any user where set_password is true."
   }
-
-  validation {
-    condition     = alltrue([for u in var.users : length(u.ssh_public_key) > 0])
-    error_message = "ssh_public_key must be set for all users."
-  }
 }
 
 
@@ -181,6 +176,7 @@ variable "write_files" {
     owner         = optional(string, "root:root")
     encoding      = optional(string, "text/plain")
     append        = optional(bool, false)
+    defer         = optional(bool, false)
   }))
   default = []
 }

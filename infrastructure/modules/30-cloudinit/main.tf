@@ -99,6 +99,7 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
           owner: "${f.owner}"
           encoding: "${f.encoding}"
           append: ${f.append}
+          defer: ${f.defer}
 %{endfor~}
 %{endif~}
 %{if length(var.runcmd) > 0~}
