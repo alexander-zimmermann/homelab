@@ -71,6 +71,33 @@ resource "proxmox_virtual_environment_apt_repository" "disable_ceph" {
 
 
 ###############################################################################
+## Proxmox Subscription Key
+###############################################################################
+resource "terraform_data" "set_subscription" {
+  count = var.proxmox_subscription_key != "" ? 1 : 0
+
+  triggers_replace = [
+    var.proxmox_subscription_key
+  ]
+
+  connection {
+    type        = "ssh"
+    host        = var.ssh_hostname
+    user        = var.ssh_username
+    port        = var.ssh_port
+    private_key = file(pathexpand(var.ssh_private_key))
+    timeout     = "60s"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "/usr/sbin/pvesubscription set ${var.proxmox_subscription_key}"
+    ]
+  }
+}
+
+
+###############################################################################
 ## Local storage content types
 ###############################################################################
 locals {

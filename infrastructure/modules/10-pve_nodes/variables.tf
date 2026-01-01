@@ -37,6 +37,20 @@ variable "dns_search_domain" {
 
 
 ###############################################################################
+## Proxmox Subscription Key
+###############################################################################
+variable "proxmox_subscription_key" {
+  description = <<EOT
+    Proxmox subscription key to activate. If left empty, no key will be set.
+    Use `pvesubscription set <KEY>` manually if you prefer.
+  EOT
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+
+###############################################################################
 ## Set content type for local storage
 ###############################################################################
 variable "ssh_hostname" {
