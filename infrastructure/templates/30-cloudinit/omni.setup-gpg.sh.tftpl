@@ -112,13 +112,14 @@ info "Primary key generated successfully"
 # Get key fingerprint
 info "Retrieving key fingerprint..."
 OUTPUT=$(gpg --list-secret-keys --with-colons "$${OMNI_EMAIL_ADDRESS}")
-KEY_FINGERPRINT=$(echo "$${OUTPUT}" | awk -F: '/^fpr:/ {print $$10; exit}')
+KEY_FINGERPRINT=$(echo "$${OUTPUT}" | grep '^fpr:' | head -n1 | cut -d: -f10)
 check_variable "$${KEY_FINGERPRINT}" "KEY_FINGERPRINT"
 info "Key fingerprint: $${KEY_FINGERPRINT}"
 
 # Add encryption subkey
 gpg \
   --batch \
+  --passphrase '' \
   --pinentry-mode loopback \
   --quick-add-key "$${KEY_FINGERPRINT}" \
   rsa4096 \
