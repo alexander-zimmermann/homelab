@@ -4,15 +4,15 @@
 locals {
   ## Raw manifest import
   raw_manifest = merge(
-    try(yamldecode(file("${path.module}/manifest/00-globals.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/10-pve.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/20-images.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/30-cloudinit.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/40-templates-vm.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/40-templates-lxc.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/50-fleet-vm.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/50-fleet-lxc.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/60-talos.yaml")), {})
+    try(yamldecode(file("${path.module}/manifest/00-globals/globals.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/10-pve/pve.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/20-images/images.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/30-cloudinit/cloudinit.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/40-templates/vm.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/40-templates/lxc.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/50-fleet/vm.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/50-fleet/lxc.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/60-talos/talos.yaml")), {})
   )
 
   ## Set defaults settings
