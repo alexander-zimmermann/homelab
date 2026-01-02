@@ -1,3 +1,4 @@
+---
 vm_templates:
   vm_debian_trixie:
     vm_id: 10000
