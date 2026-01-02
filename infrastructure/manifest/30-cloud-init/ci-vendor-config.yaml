@@ -1,30 +1,11 @@
 ---
-ci_user_configs:
-  ci_user_linux:
-    - username: alexander
-      groups: [sudo]
-      ssh_public_key: ~/.ssh/id_rsa.pub
-      set_password: false
-      password: ""
-
-  ci_user_talos_omni:
-    - username: omni
-      groups: [sudo, docker]
-      set_password: false
-
-    - username: alexander
-      groups: [sudo, docker, omni]
-      ssh_public_key: ~/.ssh/id_rsa.pub
-      set_password: false
-      password: ""
-
-ci_vendor_configs:
-  ci_vendor_linux:
+ci_vendor_config:
+  std_linux:
     packages: [qemu-guest-agent, htop, vim]
     runcmd:
       - systemctl enable --now qemu-guest-agent
 
-  ci_vendor_talos_omni:
+  omni:
     packages:
       - qemu-guest-agent
       - htop
@@ -126,17 +107,3 @@ ci_vendor_configs:
           omni_path: /opt/omni
           volume_path: /mnt/mgmt
           owner: "omni:omni"
-
-ci_network_configs:
-  ci_net_linux:
-    dhcp4: true
-    dhcp6: false
-    accept_ra: true
-    dns_search_domain: [zimmermann.eu.com]
-
-ci_meta_configs:
-  ci_meta_linux:
-    hostname: proxmox-vm
-
-  ci_meta_talos_omni:
-    hostname: management-01

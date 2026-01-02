@@ -1,0 +1,19 @@
+---
+ci_user_config:
+  std_linux:
+    - username: alexander
+      groups: [sudo]
+      ssh_public_key: ~/.ssh/id_rsa.pub
+      set_password: false
+      password: ""
+
+  omni:
+    - username: omni
+      groups: [sudo, docker]
+      set_password: false
+
+    - username: alexander
+      groups: [sudo, docker, omni]
+      ssh_public_key: ~/.ssh/id_rsa.pub
+      set_password: false
+      password: ""

@@ -1,0 +1,7 @@
+---
+ci_meta_config:
+  std_linux:
+    hostname: proxmox-vm
+
+  omni:
+    hostname: management-01

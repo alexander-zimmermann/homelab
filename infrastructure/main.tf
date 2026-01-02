@@ -204,7 +204,7 @@ module "image" {
 ###############################################################################
 module "cloud_init_user_config" {
   source             = "./modules/30-cloud-init"
-  for_each           = local.manifest.ci_user_configs
+  for_each           = local.manifest.ci_user_config
   create_user_config = true
 
   ## Storage configuration
@@ -218,7 +218,7 @@ module "cloud_init_user_config" {
 
 module "cloud_init_vendor_config" {
   source               = "./modules/30-cloud-init"
-  for_each             = local.manifest.ci_vendor_configs
+  for_each             = local.manifest.ci_vendor_config
   create_vendor_config = true
 
   ## Storage configuration
@@ -268,7 +268,7 @@ module "cloud_init_vendor_config" {
 
 module "cloud_init_network_config" {
   source                = "./modules/30-cloud-init"
-  for_each              = local.manifest.ci_network_configs
+  for_each              = local.manifest.ci_network_config
   create_network_config = true
 
   ## Storage configuration
@@ -294,7 +294,7 @@ module "cloud_init_network_config" {
 
 module "cloud_init_meta_config" {
   source             = "./modules/30-cloud-init"
-  for_each           = local.manifest.ci_meta_configs
+  for_each           = local.manifest.ci_meta_config
   create_meta_config = true
 
   ## Storage configuration
@@ -337,10 +337,10 @@ module "template_vm" {
 
   ## Cloud-init configuration
   enable_cloud_init = lookup(each.value, "enable_cloud_init", true)
-  ci_user_data      = try(module.cloud_init_user_config[each.value.ci_user_data_id].user_data_file_id, null)
-  ci_vendor_data    = try(module.cloud_init_vendor_config[each.value.ci_vendor_data_id].vendor_data_file_id, null)
-  ci_network_data   = try(module.cloud_init_network_config[each.value.ci_network_data_id].network_data_file_id, null)
-  ci_meta_data      = try(module.cloud_init_meta_config[each.value.ci_meta_data_id].meta_data_file_id, null)
+  ci_user_data      = try(module.cloud_init_user_config[each.value.ci_user_config].user_data_file_id, null)
+  ci_vendor_data    = try(module.cloud_init_vendor_config[each.value.ci_vendor_config].vendor_data_file_id, null)
+  ci_network_data   = try(module.cloud_init_network_config[each.value.ci_network_config].network_data_file_id, null)
+  ci_meta_data      = try(module.cloud_init_meta_config[each.value.ci_meta_config].meta_data_file_id, null)
 
   ## Security and UEFI configuration (Windows 11 / modern OS)
   enable_tpm  = lookup(each.value, "enable_tpm", false)

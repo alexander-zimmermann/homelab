@@ -10,10 +10,10 @@ template_vm:
     disk_size: 8
     vnic_bridge: vmbr0
     # cloud init
-    ci_user_data_id: ci_user_linux
-    ci_vendor_data_id: ci_vendor_linux
-    ci_network_data_id: ci_net_linux
-    ci_meta_data_id: ci_meta_linux
+    ci_user_config: std_linux
+    ci_vendor_config: std_linux
+    ci_network_config: std_linux
+    ci_meta_config: std_linux
 
   vm_ubuntu_noble:
     vm_id: 10001
@@ -25,10 +25,10 @@ template_vm:
     disk_size: 32
     vnic_bridge: vmbr0
     # cloud init
-    ci_user_data_id: ci_user_linux
-    ci_vendor_data_id: ci_vendor_linux
-    ci_network_data_id: ci_net_linux
-    ci_meta_data_id: ci_meta_linux
+    ci_user_config: std_linux
+    ci_vendor_config: std_linux
+    ci_network_config: std_linux
+    ci_meta_config: std_linux
 
   vm_ubuntu_noble_talos_omni:
     vm_id: 10005
@@ -40,10 +40,10 @@ template_vm:
     disk_size: 16
     vnic_bridge: vmbr0
     # cloud init
-    ci_user_data_id: ci_user_talos_omni
-    ci_vendor_data_id: ci_vendor_talos_omni
-    ci_network_data_id: ci_net_linux
-    ci_meta_data_id: ci_meta_talos_omni
+    ci_user_config: omni
+    ci_vendor_config: omni
+    ci_network_config: omni
+    ci_meta_config: omni
 
   vm_talos_1_11_5_cp:
     vm_id: 10002

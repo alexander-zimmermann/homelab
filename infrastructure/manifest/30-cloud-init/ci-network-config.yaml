@@ -1,0 +1,13 @@
+---
+ci_network_config:
+  std_linux:
+    dhcp4: true
+    dhcp6: false
+    accept_ra: true
+    dns_search_domain: [zimmermann.eu.com]
+
+  omni:
+    dhcp4: true
+    dhcp6: false
+    accept_ra: true
+    dns_search_domain: [zimmermann.eu.com]

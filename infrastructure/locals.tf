@@ -10,31 +10,34 @@ locals {
     try(yamldecode(file("${path.module}/manifest/10-pve-node/pve-node-core.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/10-pve-node/pve-node-network.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/20-image/image.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/30-cloud-init/cloudinit.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/30-cloud-init/ci-user-config.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/30-cloud-init/ci-vendor-config.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/30-cloud-init/ci-network-config.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/30-cloud-init/ci-meta-config.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/40-template/template-vm.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/40-template/template-lxc.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/50-fleet/fleet-vm.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/50-fleet/fleet-lxc.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/60-talos-cluster/talos.yaml")), {})
+    try(yamldecode(file("${path.module}/manifest/60-talos-cluster/talos-cluster.yaml")), {})
   )
 
   ## Set transformed manifest (effective configuration)
   manifest = {
-    pve_cluster        = try(local.raw_manifest.pve_cluster, {})
-    pve_cluster_users  = try(local.raw_manifest.pve_cluster_users, {})
-    pve_cluster_acme   = try(local.raw_manifest.pve_cluster_acme, {})
-    pve_node_core      = try(local.raw_manifest.pve_node_core, {})
-    pve_node_network   = try(local.raw_manifest.pve_node_network, {})
-    image              = try(local.raw_manifest.image, {})
-    ci_user_configs    = try(local.raw_manifest.ci_user_configs, {})
-    ci_vendor_configs  = try(local.raw_manifest.ci_vendor_configs, {})
-    ci_network_configs = try(local.raw_manifest.ci_network_configs, {})
-    ci_meta_configs    = try(local.raw_manifest.ci_meta_configs, {})
-    template_vm        = try(local.raw_manifest.template_vm, {})
-    template_lxc       = try(local.raw_manifest.template_lxc, {})
-    fleet_vm           = try(local.raw_manifest.fleet_vm, {})
-    fleet_lxc          = try(local.raw_manifest.fleet_lxc, {})
-    talos_cluster      = try(local.raw_manifest.talos_cluster, {})
+    pve_cluster       = try(local.raw_manifest.pve_cluster, {})
+    pve_cluster_users = try(local.raw_manifest.pve_cluster_users, {})
+    pve_cluster_acme  = try(local.raw_manifest.pve_cluster_acme, {})
+    pve_node_core     = try(local.raw_manifest.pve_node_core, {})
+    pve_node_network  = try(local.raw_manifest.pve_node_network, {})
+    image             = try(local.raw_manifest.image, {})
+    ci_user_config    = try(local.raw_manifest.ci_user_config, {})
+    ci_vendor_config  = try(local.raw_manifest.ci_vendor_config, {})
+    ci_network_config = try(local.raw_manifest.ci_network_config, {})
+    ci_meta_config    = try(local.raw_manifest.ci_meta_config, {})
+    template_vm       = try(local.raw_manifest.template_vm, {})
+    template_lxc      = try(local.raw_manifest.template_lxc, {})
+    fleet_vm          = try(local.raw_manifest.fleet_vm, {})
+    fleet_lxc         = try(local.raw_manifest.fleet_lxc, {})
+    talos_cluster     = try(local.raw_manifest.talos_cluster, {})
   }
 
   ## Shortcuts
