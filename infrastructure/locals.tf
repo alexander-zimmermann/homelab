@@ -5,13 +5,16 @@ locals {
   ## Raw manifest import
   raw_manifest = merge(
     try(yamldecode(file("${path.module}/manifest/00-globals/globals.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/10-pve/pve.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/10-pve/pve-nodes.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/10-pve/pve-network.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/10-pve/pve-acme.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/10-pve/pve-user-mgmt.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/20-images/images.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/30-cloudinit/cloudinit.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/40-templates/vm.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/40-templates/lxc.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/50-fleet/vm.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/50-fleet/lxc.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/40-templates/templates-vm.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/40-templates/templates-lxc.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/50-fleet/fleet-vm.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/50-fleet/fleet-lxc.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/60-talos/talos.yaml")), {})
   )
 
@@ -24,7 +27,15 @@ locals {
 
   ## Set transformed manifest (Effective Configuration)
   manifest = {
-    pve_configuration   = try(local.raw_manifest.pve_configuration, {})
+    pve_configuration = {
+      connection_configuration = try(local.raw_manifest.cluster_configuration.connection_configuration, {})
+      cluster_nodes            = try(local.raw_manifest.cluster_nodes, {})
+      ssh_configuration        = try(local.raw_manifest.cluster_configuration.ssh_configuration, {})
+      node_settings            = try(local.raw_manifest.node_settings, {})
+      user_management          = try(local.raw_manifest.user_management, {})
+      acme_configuration       = try(local.raw_manifest.acme_configuration, {})
+      network_configuration    = try(local.raw_manifest.network_configuration, {})
+    }
     images              = try(local.raw_manifest.images, {})
     ci_user_configs     = try(local.raw_manifest.ci_user_configs, {})
     ci_vendor_configs   = try(local.raw_manifest.ci_vendor_configs, {})
@@ -42,11 +53,36 @@ locals {
   pve_connection = try(local.manifest.pve_configuration.connection_configuration, {})
   pve_settings   = try(local.manifest.pve_configuration.node_settings, {})
   pve_acme       = try(local.manifest.pve_configuration.acme_configuration, {})
-  pve_network    = try(local.manifest.pve_configuration.network_configuration, {})
-  pve_ssh        = try(local.manifest.pve_configuration.ssh_configuration, {})
-  pve_users      = try(local.manifest.pve_configuration.user_management.users, {})
-  talos_config   = try(local.manifest.talos_configuration, {})
-  talos_infra    = try(local.manifest.talos_configuration.infrastructure, {})
+  pve_network = {
+    bridges = merge([
+      for node, config in try(local.manifest.pve_configuration.network_configuration, {}) : {
+        for name, params in try(config.bridges, {}) : "${node}_${name}" => merge(params, {
+          target_node = node
+          name        = name
+        })
+      }
+    ]...)
+    bonds = merge([
+      for node, config in try(local.manifest.pve_configuration.network_configuration, {}) : {
+        for name, params in try(config.bonds, {}) : "${node}_${name}" => merge(params, {
+          target_node = node
+          name        = name
+        })
+      }
+    ]...)
+    vlans = merge([
+      for node, config in try(local.manifest.pve_configuration.network_configuration, {}) : {
+        for name, params in try(config.vlans, {}) : "${node}_${name}" => merge(params, {
+          target_node = node
+          name        = name
+        })
+      }
+    ]...)
+  }
+  pve_ssh      = try(local.manifest.pve_configuration.ssh_configuration, {})
+  pve_users    = try(local.manifest.pve_configuration.user_management.users, {})
+  talos_config = try(local.manifest.talos_configuration, {})
+  talos_infra  = try(local.manifest.talos_configuration.infrastructure, {})
 }
 
 

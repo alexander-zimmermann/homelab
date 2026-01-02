@@ -1,0 +1,6 @@
+---
+network_configuration:
+  pve-1:
+    bridges: {}
+    bonds: {}
+    vlans: {}

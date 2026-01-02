@@ -1,0 +1,6 @@
+---
+acme_configuration:
+  target_node: "pve-1"
+  account_name: "letsencrypt-prod"
+  contact_email: "alexander@zimmermann.eu.com"
+  cert_domains: ["pve-1.zimmermann.eu.com", "proxmox.zimmermann.eu.com"]

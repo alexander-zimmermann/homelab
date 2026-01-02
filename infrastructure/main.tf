@@ -12,10 +12,10 @@ module "pve_nodes" {
 
   ## PVE node configuration
   node                = each.key
-  local_content_types = local.pve_settings.local_content_types
-  timezone            = local.pve_settings.timezone
-  dns_servers         = local.pve_settings.dns_servers
-  dns_search_domain   = local.pve_settings.dns_search_domain
+  local_content_types = local.pve_settings[each.key].local_content_types
+  timezone            = local.pve_settings[each.key].timezone
+  dns_servers         = local.pve_settings[each.key].dns_servers
+  dns_search_domain   = local.pve_settings[each.key].dns_search_domain
 }
 
 
@@ -94,7 +94,7 @@ module "pve_bond" {
   ssh_private_key = local.pve_ssh.private_key_path
 
   ## Node placement
-  name = each.key
+  name = each.value.name
   node = local.pve_nodes[each.value.target_node].node_name
 
   ## Bonding configuration
@@ -128,7 +128,7 @@ module "pve_vlan" {
   ssh_private_key = local.pve_ssh.private_key_path
 
   ## Node placement
-  name = each.key
+  name = each.value.name
   node = local.pve_nodes[each.value.target_node].node_name
 
   ## VLAN configuration
@@ -159,7 +159,7 @@ module "pve_bridge" {
   ssh_private_key = local.pve_ssh.private_key_path
 
   ## Node placement
-  name = each.key
+  name = each.value.name
   node = local.pve_nodes[each.value.target_node].node_name
 
   ## Bridge configuration

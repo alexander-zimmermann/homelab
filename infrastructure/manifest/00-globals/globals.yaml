@@ -3,3 +3,14 @@ global_settings:
   pve_default_target_node: pve-1
   pve_file_storage: local
   pve_block_storage: local-zfs
+
+cluster_configuration:
+  connection_configuration:
+    api_url: "https://192.168.1.9:8006/api2/json"
+    username: "root@pam"
+    insecure: true
+
+  ssh_configuration:
+    username: "opentofu"
+    private_key_path: "~/.ssh/proxmox_opentofu"
+    agent: true
