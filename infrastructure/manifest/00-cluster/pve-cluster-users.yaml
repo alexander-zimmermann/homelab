@@ -1,5 +1,5 @@
 ---
-user_configuration:
+pve_cluster_users:
   users:
     alexander:
       path: "/"

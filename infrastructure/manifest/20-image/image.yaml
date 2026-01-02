@@ -1,5 +1,5 @@
 ---
-images:
+image:
   vm_debian_trixie:
     image_type: import
     image_filename: debian-13-genericcloud-amd64.qcow2

@@ -1,5 +1,5 @@
 ---
-connection_configuration:
+pve_cluster:
   api_connection:
     api_url: "https://192.168.1.9:8006/api2/json"
     username: "root@pam"
@@ -9,3 +9,14 @@ connection_configuration:
     username: "opentofu"
     private_key_path: "~/.ssh/proxmox_opentofu"
     agent: true
+
+  defaults:
+    target_node: pve-1
+    file_storage: local
+    block_storage: local-zfs
+
+  nodes:
+    pve-1:
+      node_name: "pve-1"
+      address: "192.168.1.9"
+      port: 22

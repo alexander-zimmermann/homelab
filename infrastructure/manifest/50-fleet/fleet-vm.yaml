@@ -1,5 +1,5 @@
 ---
-virtual_machines:
+fleet_vm:
   ubuntu_01:
     template_id: vm_ubuntu_noble
     vm_id: 1001

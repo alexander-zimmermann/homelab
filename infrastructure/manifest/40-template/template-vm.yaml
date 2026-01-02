@@ -1,5 +1,5 @@
 ---
-vm_templates:
+template_vm:
   vm_debian_trixie:
     vm_id: 10000
     image_id: vm_debian_trixie

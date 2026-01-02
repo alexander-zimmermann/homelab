@@ -1,5 +1,5 @@
 ---
-network_configuration:
+pve_node_network:
   pve-1:
     bridges: {}
     bonds: {}

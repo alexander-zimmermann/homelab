@@ -1,34 +1,13 @@
 ###############################################################################
-## PVE node configuration
+## PVE cluster - user configuration
 ###############################################################################
-module "pve_nodes_core" {
-  source   = "./modules/10-pve-nodes-core"
-  for_each = local.pve_nodes
-
-  ## SSH connection (required for local content type changes)
-  ssh_hostname    = local.pve_nodes[each.key].address
-  ssh_username    = local.pve_ssh.username
-  ssh_private_key = local.pve_ssh.private_key_path
-
-  ## PVE node configuration
-  node                = each.key
-  local_content_types = local.pve_settings[each.key].local_content_types
-  timezone            = local.pve_settings[each.key].timezone
-  dns_servers         = local.pve_settings[each.key].dns_servers
-  dns_search_domain   = local.pve_settings[each.key].dns_search_domain
-}
-
-
-###############################################################################
-## PVE user management
-###############################################################################
-module "pve_cluster_users" {
-  source   = "./modules/00-pve-cluster-users"
-  for_each = local.pve_users
+module "pve_cluster_user" {
+  source   = "./modules/00-pve-cluster-user"
+  for_each = local.pve_cluster.users
 
   ## User identity and authentication
   username   = each.key
-  password   = try(var.pve_user_passwords[each.key], null)
+  password   = try(var.pve_cluster_user_passwords[each.key], null)
   realm      = try(each.value.realm, "pve")
   enabled    = try(each.value.enabled, true)
   first_name = try(each.value.first_name, null)
@@ -53,7 +32,7 @@ module "pve_cluster_users" {
 
 
 ###############################################################################
-## PVE certificate management
+## PVE cluster - ACME configuration
 ###############################################################################
 module "pve_cluster_acme" {
   source = "./modules/00-pve-cluster-acme"
@@ -64,38 +43,59 @@ module "pve_cluster_acme" {
   }
 
   ## SSH connection (required for acme changes)
-  ssh_hostname    = local.pve_nodes[local.pve_acme.target_node].address
-  ssh_username    = local.pve_ssh.username
-  ssh_private_key = local.pve_ssh.private_key_path
+  ssh_hostname    = local.pve_cluster.nodes[local.pve_cluster.acme.target_node].address
+  ssh_username    = local.pve_cluster.ssh.username
+  ssh_private_key = local.pve_cluster.ssh.private_key_path
 
   ## ACME Account
-  account_name  = local.pve_acme.account_name
-  contact_email = local.pve_acme.contact_email
+  account_name  = local.pve_cluster.acme.account_name
+  contact_email = local.pve_cluster.acme.contact_email
 
   ## Certificate Configuration
-  cert_domains  = local.pve_acme.cert_domains
-  cf_token      = var.cf_token
-  cf_zone_id    = var.cf_zone_id
-  cf_account_id = var.cf_account_id
+  cert_domains  = local.pve_cluster.acme.cert_domains
+  cf_token      = var.pve_cluster_acme_cf_token
+  cf_zone_id    = var.pve_cluster_acme_cf_zone_id
+  cf_account_id = var.pve_cluster_acme_cf_account_id
 }
 
 
 ###############################################################################
-## PVE network configuration
+## PVE node - core configuration
 ###############################################################################
-module "pve_nodes_bond" {
-  source      = "./modules/10-pve-nodes-network"
-  for_each    = local.pve_network.bonds
+module "pve_node_core" {
+  source   = "./modules/10-pve-node-core"
+  for_each = local.pve_cluster.nodes
+
+  ## SSH connection (required for local content type changes)
+  ssh_hostname    = local.pve_cluster.nodes[each.key].address
+  ssh_username    = local.pve_cluster.ssh.username
+  ssh_private_key = local.pve_cluster.ssh.private_key_path
+
+  ## PVE node configuration
+  node                = each.key
+  local_content_types = local.pve_node.core[each.key].local_content_types
+  timezone            = local.pve_node.core[each.key].timezone
+  dns_servers         = local.pve_node.core[each.key].dns_servers
+  dns_search_domain   = local.pve_node.core[each.key].dns_search_domain
+}
+
+
+###############################################################################
+## PVE node - network configuration
+###############################################################################
+module "pve_node_network_bond" {
+  source      = "./modules/10-pve-node-network"
+  for_each    = local.pve_node.network.bonds
   create_bond = true
 
   ## SSH connection (required for network changes)
-  ssh_hostname    = local.pve_nodes[each.value.target_node].address
-  ssh_username    = local.pve_ssh.username
-  ssh_private_key = local.pve_ssh.private_key_path
+  ssh_hostname    = local.pve_cluster.nodes[each.value.target_node].address
+  ssh_username    = local.pve_cluster.ssh.username
+  ssh_private_key = local.pve_cluster.ssh.private_key_path
 
   ## Node placement
   name = each.value.name
-  node = local.pve_nodes[each.value.target_node].node_name
+  node = local.pve_cluster.nodes[each.value.target_node].node_name
 
   ## Bonding configuration
   mode        = each.value.mode
@@ -117,19 +117,19 @@ module "pve_nodes_bond" {
   comment   = each.value.comment
 }
 
-module "pve_nodes_vlan" {
-  source      = "./modules/10-pve-nodes-network"
-  for_each    = local.pve_network.vlans
+module "pve_node_network_vlan" {
+  source      = "./modules/10-pve-node-network"
+  for_each    = local.pve_node.network.vlans
   create_vlan = true
 
   ## SSH connection (required for network changes)
-  ssh_hostname    = local.pve_nodes[each.value.target_node].address
-  ssh_username    = local.pve_ssh.username
-  ssh_private_key = local.pve_ssh.private_key_path
+  ssh_hostname    = local.pve_cluster.nodes[each.value.target_node].address
+  ssh_username    = local.pve_cluster.ssh.username
+  ssh_private_key = local.pve_cluster.ssh.private_key_path
 
   ## Node placement
   name = each.value.name
-  node = local.pve_nodes[each.value.target_node].node_name
+  node = local.pve_cluster.nodes[each.value.target_node].node_name
 
   ## VLAN configuration
   interface = each.value.interface
@@ -147,20 +147,20 @@ module "pve_nodes_vlan" {
   comment   = each.value.comment
 }
 
-module "pve_nodes_bridge" {
-  source        = "./modules/10-pve-nodes-network"
-  for_each      = local.pve_network.bridges
+module "pve_node_network_bridge" {
+  source        = "./modules/10-pve-node-network"
+  for_each      = local.pve_node.network.bridges
   create_bridge = true
-  depends_on    = [module.pve_nodes_bond, module.pve_nodes_vlan]
+  depends_on    = [module.pve_node_network_bond, module.pve_node_network_vlan]
 
   ## SSH connection (required for network changes)
-  ssh_hostname    = local.pve_nodes[each.value.target_node].address
-  ssh_username    = local.pve_ssh.username
-  ssh_private_key = local.pve_ssh.private_key_path
+  ssh_hostname    = local.pve_cluster.nodes[each.value.target_node].address
+  ssh_username    = local.pve_cluster.ssh.username
+  ssh_private_key = local.pve_cluster.ssh.private_key_path
 
   ## Node placement
   name = each.value.name
-  node = local.pve_nodes[each.value.target_node].node_name
+  node = local.pve_cluster.nodes[each.value.target_node].node_name
 
   ## Bridge configuration
   ports      = each.value.ports
@@ -183,8 +183,8 @@ module "pve_nodes_bridge" {
 ## Virtual machine & container images
 ###############################################################################
 module "image" {
-  source   = "./modules/20-images"
-  for_each = local.manifest.images
+  source   = "./modules/20-image"
+  for_each = local.manifest.image
 
   ## Storage configuration
   node      = try(each.value.target_node, local.defaults.target_node)
@@ -200,10 +200,10 @@ module "image" {
 
 
 ###############################################################################
-## Cloud-Init Configurations
+## Cloud-Init configurations
 ###############################################################################
-module "vm_ci_user_config" {
-  source             = "./modules/30-cloudinit"
+module "cloud_init_user_config" {
+  source             = "./modules/30-cloud-init"
   for_each           = local.manifest.ci_user_configs
   create_user_config = true
 
@@ -216,8 +216,8 @@ module "vm_ci_user_config" {
   users = each.value
 }
 
-module "vm_ci_vendor_config" {
-  source               = "./modules/30-cloudinit"
+module "cloud_init_vendor_config" {
+  source               = "./modules/30-cloud-init"
   for_each             = local.manifest.ci_vendor_configs
   create_vendor_config = true
 
@@ -266,8 +266,8 @@ module "vm_ci_vendor_config" {
   ]
 }
 
-module "vm_ci_network_config" {
-  source                = "./modules/30-cloudinit"
+module "cloud_init_network_config" {
+  source                = "./modules/30-cloud-init"
   for_each              = local.manifest.ci_network_configs
   create_network_config = true
 
@@ -292,8 +292,8 @@ module "vm_ci_network_config" {
   dns_search_domain = try(each.value.dns_search_domain, [])
 }
 
-module "vm_ci_meta_config" {
-  source             = "./modules/30-cloudinit"
+module "cloud_init_meta_config" {
+  source             = "./modules/30-cloud-init"
   for_each           = local.manifest.ci_meta_configs
   create_meta_config = true
 
@@ -310,9 +310,9 @@ module "vm_ci_meta_config" {
 ###############################################################################
 ##  Virtual machine & container templates
 ###############################################################################
-module "vm_template" {
-  source   = "./modules/40-templates-vm"
-  for_each = local.manifest.vm_templates
+module "template_vm" {
+  source   = "./modules/40-template-vm"
+  for_each = local.manifest.template_vm
 
   ## Infrastructure placement
   node           = try(each.value.target_node, local.defaults.target_node)
@@ -337,19 +337,19 @@ module "vm_template" {
 
   ## Cloud-init configuration
   enable_cloud_init = lookup(each.value, "enable_cloud_init", true)
-  ci_user_data      = try(module.vm_ci_user_config[each.value.ci_user_data_id].user_data_file_id, null)
-  ci_vendor_data    = try(module.vm_ci_vendor_config[each.value.ci_vendor_data_id].vendor_data_file_id, null)
-  ci_network_data   = try(module.vm_ci_network_config[each.value.ci_network_data_id].network_data_file_id, null)
-  ci_meta_data      = try(module.vm_ci_meta_config[each.value.ci_meta_data_id].meta_data_file_id, null)
+  ci_user_data      = try(module.cloud_init_user_config[each.value.ci_user_data_id].user_data_file_id, null)
+  ci_vendor_data    = try(module.cloud_init_vendor_config[each.value.ci_vendor_data_id].vendor_data_file_id, null)
+  ci_network_data   = try(module.cloud_init_network_config[each.value.ci_network_data_id].network_data_file_id, null)
+  ci_meta_data      = try(module.cloud_init_meta_config[each.value.ci_meta_data_id].meta_data_file_id, null)
 
   ## Security and UEFI configuration (Windows 11 / modern OS)
   enable_tpm  = lookup(each.value, "enable_tpm", false)
   secure_boot = lookup(each.value, "secure_boot", false)
 }
 
-module "container_template" {
-  source   = "./modules/40-templates-lxc"
-  for_each = local.manifest.container_templates
+module "template_lxc" {
+  source   = "./modules/40-template-lxc"
+  for_each = local.manifest.template_lxc
 
   ## Infrastructure placement
   node           = try(each.value.target_node, local.defaults.target_node)
@@ -384,9 +384,9 @@ module "container_template" {
 ###############################################################################
 ##  Virtual machine & container clones
 ###############################################################################
-module "virtual_machines" {
+module "fleet_vm" {
   source   = "./modules/50-fleet-vm"
-  for_each = local.virtual_machines
+  for_each = local.fleet_vm
 
   ## VM placement and identification
   node  = each.value.target_node
@@ -394,8 +394,8 @@ module "virtual_machines" {
   name  = each.value.vm_name
 
   ## Used VM template
-  template_id   = module.vm_template[each.value.template_id].vmid
-  template_node = module.vm_template[each.value.template_id].node
+  template_id   = module.template_vm[each.value.template_id].vmid
+  template_node = module.template_vm[each.value.template_id].node
 
   ## Startup variables
   wait_for_agent = each.value.wait_for_agent
@@ -409,9 +409,9 @@ module "virtual_machines" {
   ]
 }
 
-module "containers" {
+module "fleet_lxc" {
   source   = "./modules/50-fleet-lxc"
-  for_each = local.containers
+  for_each = local.fleet_lxc
 
   ## Container placement and identification
   node      = each.value.target_node
@@ -420,8 +420,8 @@ module "containers" {
   name      = each.value.container_name
 
   ## Used vontainer template
-  template_id   = module.container_template[each.value.template_id].lxc_id
-  template_node = module.container_template[each.value.template_id].node
+  template_id   = module.template_lxc[each.value.template_id].lxc_id
+  template_node = module.template_lxc[each.value.template_id].node
 
   ## Startup variables
   protection = each.value.protection
@@ -432,7 +432,7 @@ module "containers" {
 ##  Talos cluster
 ###############################################################################
 module "talos_cluster" {
-  source = "./modules/60-talos"
+  source = "./modules/60-talos-cluster"
 
   ## Cluster identity
   cluster_name = local.talos_config.cluster_name
@@ -442,9 +442,9 @@ module "talos_cluster" {
   kubernetes_version = local.talos_config.kubernetes_version
 
   ## Node topology
-  cluster_head  = module.virtual_machines[local.control_plane_node_ids[0]].ipv4[0]
-  control_plane = [for id in local.control_plane_node_ids : module.virtual_machines[id].ipv4[0]]
-  data_plane    = [for id in local.data_plane_node_ids : module.virtual_machines[id].ipv4[0]]
+  cluster_head  = module.fleet_vm[local.control_plane_node_ids[0]].ipv4[0]
+  control_plane = [for id in local.control_plane_node_ids : module.fleet_vm[id].ipv4[0]]
+  data_plane    = [for id in local.data_plane_node_ids : module.fleet_vm[id].ipv4[0]]
 
   ## Network configuration
   dns_servers = local.talos_infra.dns_servers

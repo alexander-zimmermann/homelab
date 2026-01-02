@@ -1,5 +1,0 @@
----
-global_settings:
-  pve_default_target_node: pve-1
-  pve_file_storage: local
-  pve_block_storage: local-zfs

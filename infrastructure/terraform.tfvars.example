@@ -1,13 +1,13 @@
 ###############################################################################
-## PVE API connection & auth
+## PVE cluster API connection & auth
 ###############################################################################
-pve_token_id     = "YOUR_PVE_TOKEN_ID"
-pve_token_secret = "YOUR_PVE_TOKEN_SECRET"
-pve_password     = "YOUR_PVE_PASSWORD"
+pve_cluster_token_id     = "YOUR_PVE_TOKEN_ID"
+pve_cluster_token_secret = "YOUR_PVE_TOKEN_SECRET"
+pve_cluster_password     = "YOUR_PVE_PASSWORD"
 
 
 ###############################################################################
-## PVE user management
+## PVE cluster - user configuration
 ###############################################################################
 pve_user_passwords = {
   alice = "YOUR_ALICE_PASSWORD"
@@ -16,15 +16,15 @@ pve_user_passwords = {
 
 
 ###############################################################################
-## PVE certificate management
+## PVE cluster - ACME configuration
 ###############################################################################
-cf_token           = "YOUR_CLOUDFLARE_API_TOKEN"
-cf_zone_id         = "YOUR_CLOUDFLARE_ZONE_ID"
-cf_account_id      = "YOUR_CLOUDFLARE_ACCOUNT_ID"
+pve_cluster_acme_cf_token      = "YOUR_CLOUDFLARE_API_TOKEN"
+pve_cluster_acme_cf_zone_id    = "YOUR_CLOUDFLARE_ZONE_ID"
+pve_cluster_acme_cf_account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"
 
 
 ###############################################################################
-##  VM cloud-init configuration
+## Cloud-Init configurations
 ###############################################################################
 ci_secrets = {
   lego = {

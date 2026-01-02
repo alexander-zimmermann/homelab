@@ -83,21 +83,21 @@ ci_vendor_configs:
       # SSL Certificate Setup
       - path: /usr/local/bin/omni-setup-ssl.sh
         permissions: "0755"
-        template_file: templates/30-cloudinit/omni-setup-ssl.sh.tftpl
+        template_file: templates/30-cloud-init/omni-setup-ssl.sh.tftpl
         vars:
           env_file: /etc/default/lego
           cert_path: /mnt/mgmt/certificates
           owner: "omni:omni"
 
       - path: /etc/systemd/system/omni-renew-ssl.service
-        template_file: templates/30-cloudinit/omni-renew-ssl.service.tftpl
+        template_file: templates/30-cloud-init/omni-renew-ssl.service.tftpl
         vars:
           env_file: /etc/default/lego
           cert_path: /mnt/mgmt/certificates
           owner: "omni:omni"
 
       - path: /etc/systemd/system/omni-renew-ssl.timer
-        content_file: templates/30-cloudinit/omni-renew-ssl.timer
+        content_file: templates/30-cloud-init/omni-renew-ssl.timer
 
       # Secrets for omni
       - path: /etc/default/omni
@@ -109,7 +109,7 @@ ci_vendor_configs:
       # GPG Key Setup
       - path: /usr/local/bin/omni-setup-gpg.sh
         permissions: "0755"
-        template_file: templates/30-cloudinit/omni.setup-gpg.sh.tftpl
+        template_file: templates/30-cloud-init/omni.setup-gpg.sh.tftpl
         vars:
           env_file: /etc/default/omni
           keys_path: /mnt/mgmt/keys
@@ -118,7 +118,7 @@ ci_vendor_configs:
       # Bootstrap Omni
       - path: /usr/local/bin/omni-bootstrap.sh
         permissions: "0755"
-        template_file: templates/30-cloudinit/omni-bootstrap.sh.tftpl
+        template_file: templates/30-cloud-init/omni-bootstrap.sh.tftpl
         vars:
           env_file: /etc/default/omni
           repo_url: "https://oauth2:$${GITHUB_TOKEN}@github.com/alexander-zimmermann/homelab.git"
