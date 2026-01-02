@@ -49,7 +49,7 @@ ci_vendor_configs:
         None,
         None,
         auto,
-        "defaults,_netdev,nofail,x-systemd.automount,x-systemd.after=cloud-init-network.service",
+        "defaults,_netdev,noauto,nofail,x-systemd.after=cloud-init-network.service",
         "0",
         "0",
       ]
@@ -61,8 +61,8 @@ ci_vendor_configs:
       # Symlinks for snap packages
       - ["ln", "-s", "/snap/bin/lego", "/usr/local/bin/lego"]
       - ["ln", "-s", "/snap/bin/task", "/usr/local/bin/task"]
-      # Mounts retry (after nfs-common install)
-      - ["mount", "-a"]
+      # Manually mount NFS share (after nfs-common install)
+      - ["mount", "/mnt/mgmt"]
       # Setup Omni
       - ["bash", "/usr/local/bin/omni-setup-ssl.sh"]
       - ["bash", "/usr/local/bin/omni-setup-gpg.sh"]
