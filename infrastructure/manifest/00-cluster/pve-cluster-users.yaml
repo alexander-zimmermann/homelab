@@ -1,5 +1,5 @@
 ---
-user_management:
+user_configuration:
   users:
     alexander:
       path: "/"

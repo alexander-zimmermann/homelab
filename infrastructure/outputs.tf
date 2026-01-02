@@ -9,7 +9,7 @@ output "local_content_type_output" {
     storage capabilities across nodes. Marked as sensitive to avoid exposing
     internal system details.
   EOT
-  value       = { for k, v in module.pve_nodes : k => v.local_content_type_output }
+  value       = { for k, v in module.pve_nodes_core : k => v.local_content_type_output }
   sensitive   = true
 }
 
@@ -23,7 +23,7 @@ output "token_value" {
     API requests to the Proxmox cluster. Only populated when a new token is created.
     Marked as sensitive to prevent exposure of credentials.
   EOT
-  value       = { for k, v in module.pve_user_mgmt : k => try(v.token_value, null) }
+  value       = { for k, v in module.pve_cluster_users : k => try(v.token_value, null) }
   sensitive   = true
 }
 
@@ -38,7 +38,7 @@ output "acme_order_output" {
     debugging and auditing certificate provisioning. Marked as sensitive to avoid
     exposing internal details or domain information.
   EOT
-  value       = module.pve_acme.acme_order_output
+  value       = module.pve_cluster_acme.acme_order_output
   sensitive   = true
 }
 
@@ -53,7 +53,7 @@ output "bond_output" {
     created bonds and any errors encountered during setup. Marked as
     sensitive to avoid exposing internal system details.
   EOT
-  value       = { for k, v in module.pve_bond : k => v.bond_setup_output }
+  value       = { for k, v in module.pve_nodes_bond : k => v.bond_setup_output }
   sensitive   = true
 }
 
@@ -64,7 +64,7 @@ output "vlan_output" {
     IDs can be used to reference VLAN interfaces in other modules or for
     resource management operations.
   EOT
-  value       = { for k, v in module.pve_vlan : k => v.vlans }
+  value       = { for k, v in module.pve_nodes_vlan : k => v.vlans }
   sensitive   = false
 }
 
@@ -75,7 +75,7 @@ output "bridge_output" {
     IDs can be used to reference bridge interfaces in VM network configurations
     or other modules that require bridge resource identifiers.
   EOT
-  value       = { for k, v in module.pve_bridge : k => v.bridges }
+  value       = { for k, v in module.pve_nodes_bridge : k => v.bridges }
   sensitive   = false
 }
 

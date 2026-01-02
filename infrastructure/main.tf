@@ -1,8 +1,8 @@
 ###############################################################################
 ## PVE node configuration
 ###############################################################################
-module "pve_nodes" {
-  source   = "./modules/10-pve_nodes"
+module "pve_nodes_core" {
+  source   = "./modules/10-pve-nodes-core"
   for_each = local.pve_nodes
 
   ## SSH connection (required for local content type changes)
@@ -22,8 +22,8 @@ module "pve_nodes" {
 ###############################################################################
 ## PVE user management
 ###############################################################################
-module "pve_user_mgmt" {
-  source   = "./modules/10-pve_user_mgmt"
+module "pve_cluster_users" {
+  source   = "./modules/00-pve-cluster-users"
   for_each = local.pve_users
 
   ## User identity and authentication
@@ -55,8 +55,8 @@ module "pve_user_mgmt" {
 ###############################################################################
 ## PVE certificate management
 ###############################################################################
-module "pve_acme" {
-  source = "./modules/10-pve_acme"
+module "pve_cluster_acme" {
+  source = "./modules/00-pve-cluster-acme"
 
   ## Pass the aliased provider to satisfy the state reference
   providers = {
@@ -83,8 +83,8 @@ module "pve_acme" {
 ###############################################################################
 ## PVE network configuration
 ###############################################################################
-module "pve_bond" {
-  source      = "./modules/10-pve_network"
+module "pve_nodes_bond" {
+  source      = "./modules/10-pve-nodes-network"
   for_each    = local.pve_network.bonds
   create_bond = true
 
@@ -117,8 +117,8 @@ module "pve_bond" {
   comment   = each.value.comment
 }
 
-module "pve_vlan" {
-  source      = "./modules/10-pve_network"
+module "pve_nodes_vlan" {
+  source      = "./modules/10-pve-nodes-network"
   for_each    = local.pve_network.vlans
   create_vlan = true
 
@@ -147,11 +147,11 @@ module "pve_vlan" {
   comment   = each.value.comment
 }
 
-module "pve_bridge" {
-  source        = "./modules/10-pve_network"
+module "pve_nodes_bridge" {
+  source        = "./modules/10-pve-nodes-network"
   for_each      = local.pve_network.bridges
   create_bridge = true
-  depends_on    = [module.pve_bond, module.pve_vlan]
+  depends_on    = [module.pve_nodes_bond, module.pve_nodes_vlan]
 
   ## SSH connection (required for network changes)
   ssh_hostname    = local.pve_nodes[each.value.target_node].address

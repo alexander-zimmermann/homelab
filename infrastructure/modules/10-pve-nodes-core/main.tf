@@ -71,7 +71,7 @@ resource "proxmox_virtual_environment_apt_repository" "disable_ceph" {
 
 
 ###############################################################################
-## Proxmox Subscription Key
+## Subscription Key
 ###############################################################################
 resource "terraform_data" "set_subscription" {
   count = var.proxmox_subscription_key != "" ? 1 : 0

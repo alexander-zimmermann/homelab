@@ -1,10 +1,10 @@
-cluster_nodes:
+pve_nodes:
   pve-1:
     node_name: "pve-1"
     address: "192.168.1.9"
     port: 22
 
-node_settings:
+core_configuration:
   pve-1:
     timezone: "Europe/Berlin"
     dns_servers: ["192.168.1.1", "1.1.1.1", "2606:4700:4700::1111"]

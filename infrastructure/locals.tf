@@ -4,11 +4,12 @@
 locals {
   ## Raw manifest import
   raw_manifest = merge(
-    try(yamldecode(file("${path.module}/manifest/00-globals/globals.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/10-pve/pve-nodes.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/10-pve/pve-network.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/10-pve/pve-acme.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/10-pve/pve-user-mgmt.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/00-cluster/pve-cluster-globals.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/00-cluster/pve-cluster-connection.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/00-cluster/pve-cluster-users.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/00-cluster/pve-cluster-acme.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/10-pve-nodes/pve-nodes-core.yaml")), {}),
+    try(yamldecode(file("${path.module}/manifest/10-pve-nodes/pve-nodes-network.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/20-images/images.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/30-cloudinit/cloudinit.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/40-templates/templates-vm.yaml")), {}),
@@ -28,11 +29,11 @@ locals {
   ## Set transformed manifest (Effective Configuration)
   manifest = {
     pve_configuration = {
-      connection_configuration = try(local.raw_manifest.cluster_configuration.connection_configuration, {})
-      cluster_nodes            = try(local.raw_manifest.cluster_nodes, {})
-      ssh_configuration        = try(local.raw_manifest.cluster_configuration.ssh_configuration, {})
-      node_settings            = try(local.raw_manifest.node_settings, {})
-      user_management          = try(local.raw_manifest.user_management, {})
+      connection_configuration = try(local.raw_manifest.connection_configuration.api_connection, {})
+      cluster_nodes            = try(local.raw_manifest.pve_nodes, {})
+      ssh_configuration        = try(local.raw_manifest.connection_configuration.ssh_connection, {})
+      node_settings            = try(local.raw_manifest.core_configuration, {})
+      user_management          = try(local.raw_manifest.user_configuration, {})
       acme_configuration       = try(local.raw_manifest.acme_configuration, {})
       network_configuration    = try(local.raw_manifest.network_configuration, {})
     }
@@ -42,7 +43,7 @@ locals {
     ci_network_configs  = try(local.raw_manifest.ci_network_configs, {})
     ci_meta_configs     = try(local.raw_manifest.ci_meta_configs, {})
     vm_templates        = try(local.raw_manifest.vm_templates, {})
-    container_templates = try(local.raw_manifest.container_templates, {})
+    container_templates = try(local.raw_manifest.lxc_templates, {})
     virtual_machines    = try(local.raw_manifest.virtual_machines, {})
     containers          = try(local.raw_manifest.containers, {})
     talos_configuration = try(local.raw_manifest.talos_configuration, {})

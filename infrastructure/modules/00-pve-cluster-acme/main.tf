@@ -53,7 +53,6 @@ resource "proxmox_virtual_environment_acme_dns_plugin" "this" {
 ###############################################################################
 ## Certificate issuing
 ###############################################################################
-
 ## The provider exposes resources for the ACME account and ACME DNS plugin,
 ## but does not yet expose a resource to assign domains to nodes / order certs.
 ## See: https://github.com/bpg/terraform-provider-proxmox/issues/2157

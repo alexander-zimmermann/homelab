@@ -1,5 +1,5 @@
 ---
-container_templates:
+lxc_templates:
   lxc_ubuntu_plucky:
     lxc_id: 15000
     image_id: lxc_ubuntu_plucky
