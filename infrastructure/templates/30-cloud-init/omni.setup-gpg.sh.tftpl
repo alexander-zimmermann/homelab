@@ -75,7 +75,7 @@ info "Checking prerequisites..."
 check_user "omni"
 check_file "$${ENV_FILE}" && source "$${ENV_FILE}"
 check_command "gpg"
-check_variable "$${OMNI_EMAIL_ADDRESS:-}" "OMNI_EMAIL_ADDRESS"
+check_variable "$${EMAIL_ADDRESS:-}" "EMAIL_ADDRESS"
 
 # Prepare directories
 info "Preparing persistent directories..."
@@ -97,7 +97,7 @@ gpg \
   --quiet \
   --passphrase '' \
   --pinentry-mode loopback \
-  --quick-generate-key "Omni (Used for etcd data encryption) <$${OMNI_EMAIL_ADDRESS}>" \
+  --quick-generate-key "Omni (Used for etcd data encryption) <$${EMAIL_ADDRESS}>" \
   rsa4096 \
   cert \
   never || die "Failed to generate primary key."
@@ -105,7 +105,7 @@ info "Primary key generated successfully"
 
 # Get key fingerprint
 info "Retrieving GPG key fingerprint..."
-OUTPUT=$(gpg --quiet --list-secret-keys --with-colons "$${OMNI_EMAIL_ADDRESS}")
+OUTPUT=$(gpg --quiet --list-secret-keys --with-colons "$${EMAIL_ADDRESS}")
 KEY_FINGERPRINT=$(echo "$${OUTPUT}" | grep '^fpr:' | head -n1 | cut -d: -f10)
 check_variable "$${KEY_FINGERPRINT}" "KEY_FINGERPRINT"
 info "GPG key fingerprint: $${KEY_FINGERPRINT}"
@@ -127,14 +127,14 @@ info "Verifying GPG key configuration..."
 gpg \
   --quiet \
   --list-secret-keys \
-  --with-subkey-fingerprint "$${OMNI_EMAIL_ADDRESS}" || die "Failed to list secret keys."
+  --with-subkey-fingerprint "$${EMAIL_ADDRESS}" || die "Failed to list secret keys."
 
 # Export GPG key
 info "Exporting GPG key to file..."
 gpg \
   --quiet \
   --export-secret-key \
-  --armor "$${OMNI_EMAIL_ADDRESS}" > "$${SRC_KEY_FILE}" || die "Failed to export key."
+  --armor "$${EMAIL_ADDRESS}" > "$${SRC_KEY_FILE}" || die "Failed to export key."
 
 # Copy GPG keyring and ecnryption key to pesistent volume
 info "Publishing GPG keyring and key to persistent volume ($${DST_KEYS_PATH})..."
@@ -150,6 +150,6 @@ chmod 640 "$${DST_KEY_FILE}"
 
 info "Omni GPG key generation complete!"
 info "Key details:"
-info "  Email: $${OMNI_EMAIL_ADDRESS}"
+info "  Email: $${EMAIL_ADDRESS}"
 info "  Fingerprint: $${KEY_FINGERPRINT}"
 info "  Exported to: $${DST_KEY_FILE}"

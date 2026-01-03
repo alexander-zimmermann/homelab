@@ -15,7 +15,6 @@ ENV_FILE="${env_file}"
 OWNER="${owner}"
 
 # Paths
-REPO_URL="${repo_url}"
 REPO_PATH="${repo_path}"
 OMNI_PATH="${omni_path}"
 VOLUME_PATH="${volume_path}"
@@ -74,6 +73,7 @@ check_file "$${ENV_FILE}" && source "$${ENV_FILE}"
 check_command "git"
 check_command "task"
 check_variable "$${GITHUB_TOKEN:-}" "GITHUB_TOKEN"
+check_variable "$${REPO_URL:-}" "REPO_URL"
 
 # Prepare directories
 info "Preparing persistent directories..."

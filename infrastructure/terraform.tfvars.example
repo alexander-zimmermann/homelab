@@ -35,17 +35,22 @@ pve_node_core_subscription_keys = {
 ## Cloud-Init configurations
 ###############################################################################
 ci_secrets = {
-  lego = {
-    CF_DNS_API_TOKEN = "YOUR_CLOUDFLARE_API_TOKEN"
-    CF_API_EMAIL     = "YOUR_EMAIL_ADDRESS"
-    DOMAIN_NAME      = "YOUR_DOMAIN_NAME"
+  omni_lego = {
+    cf_dns_api_token = "YOUR_CLOUDFLARE_API_TOKEN"
+    cf_api_email     = "YOUR_EMAIL_ADDRESS"
+    domain_name      = "YOUR_DOMAIN_NAME"
   }
-  omni = {
-    GITHUB_TOKEN       = "YOUR_GITHUB_TOKEN"
-    OMNI_ACCOUNT_UUID  = "YOUR_OMNI_ACCOUNT_UUID"
-    OMNI_DOMAIN_NAME   = "YOUR_OMNI_DOMAIN_NAME"
-    OMNI_EMAIL_ADDRESS = "YOUR_OMNI_EMAIL_ADDRESS"
-    AUTH0_ISSUER       = "YOUR_AUTH0_ISSUER"
-    AUTH0_CLIENT_ID    = "YOUR_AUTH0_CLIENT_ID"
+  omni_gpg = {
+    email_address = "YOUR_OMNI_EMAIL_ADDRESS"
+  }
+  omni_bootstrap = {
+    github_token = "YOUR_GITHUB_TOKEN"
+  }
+  omni_env = {
+    omni_account_uuid  = "YOUR_OMNI_ACCOUNT_UUID"
+    omni_domain_name   = "YOUR_OMNI_DOMAIN_NAME"
+    omni_email_address = "YOUR_OMNI_EMAIL_ADDRESS"
+    auth0_client_id    = "YOUR_AUTH0_CLIENT_ID"
+    auth0_issuer       = "YOUR_AUTH0_ISSUER"
   }
 }

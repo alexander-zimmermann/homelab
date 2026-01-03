@@ -37,72 +37,96 @@ ci_vendor_config:
 
     bootcmd:
       - mkdir -p /mnt/mgmt
+      - mkdir -p /opt/omni/.env
 
     runcmd:
-      # Symlinks for snap packages
+      ## Symlinks for snap packages
       - ["ln", "-s", "/snap/bin/lego", "/usr/local/bin/lego"]
       - ["ln", "-s", "/snap/bin/task", "/usr/local/bin/task"]
-      # Manually mount NFS share (after nfs-common install)
+      ## Manually mount NFS share (after nfs-common install)
       - ["mount", "/mnt/mgmt"]
-      # Setup Omni
+      ## Setup Omni
       - ["bash", "/usr/local/bin/omni-setup-ssl.sh"]
       - ["bash", "/usr/local/bin/omni-setup-gpg.sh"]
       - ["bash", "/usr/local/bin/omni-bootstrap.sh"]
-      # Systemd services
+      ## Systemd services
       - ["systemctl", "enable", "--now", "qemu-guest-agent"]
       - ["systemctl", "enable", "--now", "docker"]
       - ["systemctl", "enable", "--now", "omni-renew-ssl.timer"]
 
     write_files:
-      # Secrets for lego
-      - path: /etc/default/lego
-        secret_ref: lego
+      ## Environment file for lego
+      - path: /opt/omni/.env/lego
+        secret_ref: omni_lego
+        template_file: templates/30-cloud-init/omni.lego.env.tftpl
         permissions: "0600"
         owner: "omni:omni"
         defer: true
 
-      # SSL Certificate Setup
+      ## Environment file for gpg
+      - path: /opt/omni/.env/gpg
+        secret_ref: omni_gpg
+        template_file: templates/30-cloud-init/omni.gpg.env.tftpl
+        permissions: "0600"
+        owner: "omni:omni"
+        defer: true
+
+      ## Environment file for Omni bootstrap
+      - path: /opt/omni/.env/bootstrap
+        secret_ref: omni_bootstrap
+        template_file: templates/30-cloud-init/omni.bootstrap.env.tftpl
+        vars:
+          repo_url: "https://oauth2:$${GITHUB_TOKEN}@github.com/alexander-zimmermann/homelab.git"
+        permissions: "0600"
+        owner: "omni:omni"
+        defer: true
+
+      ## Environment file for Omni docker compose
+      - path: /opt/omni/.env/omni
+        secret_ref: omni_env
+        template_file: templates/30-cloud-init/omni.docker.env.tftpl
+        vars:
+          tz: "Europe/Berlin"
+          lang: "de_DE.UTF-8"
+          lc_all: "de_DE.UTF-8"
+        permissions: "0600"
+        owner: "omni:omni"
+        defer: true
+
+      ## Omni SSL certificate (lego)
       - path: /usr/local/bin/omni-setup-ssl.sh
         permissions: "0755"
         template_file: templates/30-cloud-init/omni-setup-ssl.sh.tftpl
         vars:
-          env_file: /etc/default/lego
+          env_file: /opt/omni/.env/lego
           cert_path: /mnt/mgmt/certificates
           owner: "omni:omni"
 
       - path: /etc/systemd/system/omni-renew-ssl.service
         template_file: templates/30-cloud-init/omni-renew-ssl.service.tftpl
         vars:
-          env_file: /etc/default/lego
+          env_file: /opt/omni/.env/lego
           cert_path: /mnt/mgmt/certificates
           owner: "omni:omni"
 
       - path: /etc/systemd/system/omni-renew-ssl.timer
         content_file: templates/30-cloud-init/omni-renew-ssl.timer
 
-      # Secrets for omni
-      - path: /etc/default/omni
-        secret_ref: omni
-        permissions: "0600"
-        owner: "omni:omni"
-        defer: true
-
-      # GPG Key Setup
+      ## Omni encryption key (GPG)
       - path: /usr/local/bin/omni-setup-gpg.sh
         permissions: "0755"
         template_file: templates/30-cloud-init/omni.setup-gpg.sh.tftpl
         vars:
-          env_file: /etc/default/omni
+          env_file: /opt/omni/.env/gpg
           keys_path: /mnt/mgmt/keys
           owner: "omni:omni"
 
-      # Bootstrap Omni
+      ## Omni bootstrap
       - path: /usr/local/bin/omni-bootstrap.sh
         permissions: "0755"
         template_file: templates/30-cloud-init/omni-bootstrap.sh.tftpl
         vars:
-          env_file: /etc/default/omni
-          repo_url: "https://oauth2:$${GITHUB_TOKEN}@github.com/alexander-zimmermann/homelab.git"
+          env_file: /opt/omni/.env/bootstrap
           repo_path: /opt/homelab
           omni_path: /opt/omni
           volume_path: /mnt/mgmt
