@@ -2,6 +2,11 @@
 pve_node_core:
   pve-1:
     timezone: "Europe/Berlin"
-    dns_servers: ["192.168.1.1", "1.1.1.1", "2606:4700:4700::1111"]
-    dns_search_domain: "zimmermann.eu.com"
+    dns:
+      servers: ["192.168.1.1", "1.1.1.1", "2606:4700:4700::1111"]
+      search_domain: "zimmermann.eu.com"
     local_content_types: ["iso", "vztmpl", "snippets", "import"]
+    repositories:
+      no_subscription: true
+      enterprise: false
+      ceph: false

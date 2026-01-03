@@ -75,8 +75,13 @@ module "pve_node_core" {
   node                = each.key
   local_content_types = local.pve_node.core[each.key].local_content_types
   timezone            = local.pve_node.core[each.key].timezone
-  dns_servers         = local.pve_node.core[each.key].dns_servers
-  dns_search_domain   = local.pve_node.core[each.key].dns_search_domain
+  dns_servers         = local.pve_node.core[each.key].dns.servers
+  dns_search_domain   = local.pve_node.core[each.key].dns.search_domain
+
+  ## Repository configuration
+  enable_no_subscription_repository = try(local.pve_node.core[each.key].repositories.no_subscription, true)
+  enable_enterprise_repository      = try(local.pve_node.core[each.key].repositories.enterprise, false)
+  enable_ceph_repository            = try(local.pve_node.core[each.key].repositories.ceph, false)
 }
 
 

@@ -36,10 +36,10 @@ resource "proxmox_virtual_environment_apt_standard_repository" "no_subscription"
 }
 
 resource "proxmox_virtual_environment_apt_repository" "enable_no_subscription" {
-  enabled   = true
   node      = proxmox_virtual_environment_apt_standard_repository.no_subscription.node
   file_path = proxmox_virtual_environment_apt_standard_repository.no_subscription.file_path
   index     = proxmox_virtual_environment_apt_standard_repository.no_subscription.index
+  enabled   = var.enable_no_subscription_repository
 }
 
 
@@ -49,11 +49,11 @@ data "proxmox_virtual_environment_apt_standard_repository" "enterprise" {
   node   = var.node
 }
 
-resource "proxmox_virtual_environment_apt_repository" "disable_enterprise" {
+resource "proxmox_virtual_environment_apt_repository" "enable_enterprise" {
   node      = data.proxmox_virtual_environment_apt_standard_repository.enterprise.node
   file_path = data.proxmox_virtual_environment_apt_standard_repository.enterprise.file_path
   index     = data.proxmox_virtual_environment_apt_standard_repository.enterprise.index
-  enabled   = false
+  enabled   = var.enable_enterprise_repository
 }
 
 ## Disable ceph repository
@@ -62,11 +62,11 @@ data "proxmox_virtual_environment_apt_standard_repository" "ceph" {
   node   = var.node
 }
 
-resource "proxmox_virtual_environment_apt_repository" "disable_ceph" {
+resource "proxmox_virtual_environment_apt_repository" "enable_ceph" {
   node      = data.proxmox_virtual_environment_apt_standard_repository.ceph.node
   file_path = data.proxmox_virtual_environment_apt_standard_repository.ceph.file_path
   index     = data.proxmox_virtual_environment_apt_standard_repository.ceph.index
-  enabled   = false
+  enabled   = var.enable_ceph_repository
 }
 
 

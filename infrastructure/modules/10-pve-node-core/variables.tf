@@ -37,6 +37,28 @@ variable "dns_search_domain" {
 
 
 ###############################################################################
+## APT repositories
+###############################################################################
+variable "enable_no_subscription_repository" {
+  description = "Enable the Proxmox no-subscription repository."
+  type        = bool
+  default     = true
+}
+
+variable "enable_enterprise_repository" {
+  description = "Enable the Proxmox enterprise repository."
+  type        = bool
+  default     = false
+}
+
+variable "enable_ceph_repository" {
+  description = "Enable the Ceph repository."
+  type        = bool
+  default     = false
+}
+
+
+###############################################################################
 ## Proxmox Subscription Key
 ###############################################################################
 variable "proxmox_subscription_key" {
