@@ -1,5 +1,5 @@
 ###############################################################################
-## PVE cluster API connection & auth
+## PVE cluster - API connection & auth
 ###############################################################################
 pve_cluster_token_id     = "YOUR_PVE_TOKEN_ID"
 pve_cluster_token_secret = "YOUR_PVE_TOKEN_SECRET"
@@ -21,6 +21,14 @@ pve_user_passwords = {
 pve_cluster_acme_cf_token      = "YOUR_CLOUDFLARE_API_TOKEN"
 pve_cluster_acme_cf_zone_id    = "YOUR_CLOUDFLARE_ZONE_ID"
 pve_cluster_acme_cf_account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"
+
+
+###############################################################################
+## PVE node - core configuration
+###############################################################################
+pve_node_core_subscription_keys = {
+  node1 = "YOUR_SUBSCRIPTION_KEY"
+}
 
 
 ###############################################################################

@@ -1,5 +1,5 @@
 ###############################################################################
-## PVE cluster API connection & auth
+## PVE cluster - API connection & auth
 ###############################################################################
 variable "pve_cluster_token_id" {
   description = <<EOT
@@ -72,6 +72,20 @@ variable "pve_cluster_acme_cf_account_id" {
   EOT
   type        = string
   default     = null
+}
+
+
+###############################################################################
+## PVE node - core configuration
+###############################################################################
+variable "pve_node_core_subscription_keys" {
+  description = <<EOT
+    Map of Proxmox subscription keys (node name => key).
+    If a node is not in the map or has an empty key, no subscription is set.
+  EOT
+  type        = map(string)
+  default     = {}
+  sensitive   = true
 }
 
 

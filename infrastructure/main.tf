@@ -71,17 +71,22 @@ module "pve_node_core" {
   ssh_username    = local.pve_cluster.ssh.username
   ssh_private_key = local.pve_cluster.ssh.private_key_path
 
-  ## PVE node configuration
-  node                = each.key
-  local_content_types = local.pve_node.core[each.key].local_content_types
-  timezone            = local.pve_node.core[each.key].timezone
-  dns_servers         = local.pve_node.core[each.key].dns.servers
-  dns_search_domain   = local.pve_node.core[each.key].dns.search_domain
+  ## Node placement
+  node = each.key
 
-  ## Repository configuration
+  ## Timezone and DNS configuration
+  timezone          = local.pve_node.core[each.key].timezone
+  dns_servers       = local.pve_node.core[each.key].dns.servers
+  dns_search_domain = local.pve_node.core[each.key].dns.search_domain
+
+  ## Subscription key & repository configuration
+  proxmox_subscription_key          = var.pve_node_core_subscription_keys[each.key]
   enable_no_subscription_repository = try(local.pve_node.core[each.key].repositories.no_subscription, true)
   enable_enterprise_repository      = try(local.pve_node.core[each.key].repositories.enterprise, false)
   enable_ceph_repository            = try(local.pve_node.core[each.key].repositories.ceph, false)
+
+  ## Local content types
+  local_content_types = local.pve_node.core[each.key].local_content_types
 }
 
 
