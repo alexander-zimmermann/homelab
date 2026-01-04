@@ -46,7 +46,7 @@ ci_vendor_config:
       ## Manually mount NFS share (after nfs-common install)
       - ["mount", "/mnt/mgmt"]
       ## Setup Omni
-      - ["bash", "/usr/local/bin/omni-ssl.sh", "setup"]
+      - ["bash", "/usr/local/bin/omni-ssl.sh", "run"]
       - ["bash", "/usr/local/bin/omni-setup-gpg.sh"]
       - ["bash", "/usr/local/bin/omni-bootstrap.sh"]
       ## Systemd services
