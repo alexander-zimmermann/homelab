@@ -37,7 +37,7 @@ ci_vendor_config:
 
     bootcmd:
       - mkdir -p /mnt/mgmt
-      - mkdir -p /opt/omni/.env
+      - mkdir -p /opt/omni/.secrets
 
     runcmd:
       ## Symlinks for snap packages
@@ -56,21 +56,21 @@ ci_vendor_config:
 
     write_files:
       ## Environment file for lego, GPG, Omni Bootstrap, and Omni docker compose
-      - path: /opt/omni/.env/lego
+      - path: /opt/omni/.secrets/lego
         secret_ref: omni_lego
         template_file: templates/30-cloud-init/omni.env.lego.tftpl
         permissions: "0600"
         owner: "omni:omni"
         defer: true
 
-      - path: /opt/omni/.env/gpg
+      - path: /opt/omni/.secrets/gpg
         secret_ref: omni_gpg
         template_file: templates/30-cloud-init/omni.env.gpg.tftpl
         permissions: "0600"
         owner: "omni:omni"
         defer: true
 
-      - path: /opt/omni/.env/bootstrap
+      - path: /opt/omni/.secrets/bootstrap
         secret_ref: omni_bootstrap
         template_file: templates/30-cloud-init/omni.env.bootstrap.tftpl
         vars:
@@ -79,7 +79,7 @@ ci_vendor_config:
         owner: "omni:omni"
         defer: true
 
-      - path: /opt/omni/.env/omni
+      - path: /opt/omni/.secrets/omni
         secret_ref: omni_env
         template_file: templates/30-cloud-init/omni.env.docker.tftpl
         vars:
@@ -100,14 +100,14 @@ ci_vendor_config:
         permissions: "0755"
         template_file: templates/30-cloud-init/omni-ssl.sh.tftpl
         vars:
-          env_file: /opt/omni/.env/lego
+          env_file: /opt/omni/.secrets/lego
           cert_path: /mnt/mgmt/certificates
           owner: "omni:omni"
 
       - path: /etc/systemd/system/omni-renew-ssl.service
         template_file: templates/30-cloud-init/omni-renew-ssl.service.tftpl
         vars:
-          env_file: /opt/omni/.env/lego
+          env_file: /opt/omni/.secrets/lego
           cert_path: /mnt/mgmt/certificates
           owner: "omni:omni"
 
@@ -119,7 +119,7 @@ ci_vendor_config:
         permissions: "0755"
         template_file: templates/30-cloud-init/omni.setup-gpg.sh.tftpl
         vars:
-          env_file: /opt/omni/.env/gpg
+          env_file: /opt/omni/.secrets/gpg
           keys_path: /mnt/mgmt/keys
           owner: "omni:omni"
 
@@ -128,7 +128,7 @@ ci_vendor_config:
         permissions: "0755"
         template_file: templates/30-cloud-init/omni-bootstrap.sh.tftpl
         vars:
-          env_file: /opt/omni/.env/bootstrap
+          env_file: /opt/omni/.secrets/bootstrap
           repo_path: /opt/homelab
           omni_path: /opt/omni
           volume_path: /mnt/mgmt

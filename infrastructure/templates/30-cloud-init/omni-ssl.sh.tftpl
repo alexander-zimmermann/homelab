@@ -1,9 +1,10 @@
 #!/bin/bash
 # ==============================================================================
-# Omni SSL Manager
+# Omni SSL Certificate Generation Script (Cloudflare DNS)
 # ==============================================================================
-# Unified script to handle SSL certificate generation (setup) and renewal.
-# Usage: ./omni-ssl.sh [setup|renew]
+# This script automates SSL certificate generation using go-acme/lego DNS
+# validation for Omni deployment.
+# Usage: ./omni-ssl.sh [run|renew]
 #
 # Prerequisites:
 # - go-acme/lego installed
@@ -27,7 +28,7 @@ source /usr/local/bin/omni-functions.sh
 # Logic
 # ==============================================================================
 prepare_environment() {
-  local mode="$${1}" # setup or renew
+  local mode="$${1}"
 
   info "Checking prerequisites..."
   check_file "$${ENV_FILE}" && source "$${ENV_FILE}"
@@ -55,7 +56,7 @@ prepare_environment() {
   fi
 
   # Logic based on mode
-  if [[ "$${mode}" == "setup" ]]; then
+  if [[ "$${mode}" == "run" ]]; then
     if [[ "$${cert_exists}" == "true" ]]; then
       info "Certificate already exists. Skipping setup."
       exit 0
@@ -101,11 +102,15 @@ run_lego() {
 # ==============================================================================
 MODE="$${1:-}"
 
+info "===================================="
+info "  Omni SSL Certificate Generation   "
+info "===================================="
+
 # Prepare environment checks (handles exit if skip needed)
 prepare_environment "$${MODE}"
 
 case "$${MODE}" in
-  setup)
+  run)
     info "Running lego for new certificate..."
     run_lego "$${MODE}"
     publish_certificates
@@ -120,6 +125,6 @@ case "$${MODE}" in
     ;;
 
   *)
-    die "Usage: $${0} [setup|renew]"
+    die "Usage: $${0} [run|renew]"
     ;;
 esac
