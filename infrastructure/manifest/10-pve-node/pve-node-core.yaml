@@ -7,6 +7,6 @@ pve_node_core:
       search_domain: "zimmermann.eu.com"
     local_content_types: ["iso", "vztmpl", "snippets", "import"]
     repositories:
-      no_subscription: true
-      enterprise: false
-      ceph: false
+      no_subscription: false
+      enterprise: true
+      ceph: true
