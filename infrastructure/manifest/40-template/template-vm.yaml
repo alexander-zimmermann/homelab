@@ -45,9 +45,9 @@ template_vm:
     ci_network_config: omni
     ci_meta_config: omni
 
-  vm_talos_1_11_5_cp:
+  vm_talos_1_12_0_cp:
     vm_id: 10002
-    image_id: vm_talos_1_11_5
+    image_id: vm_talos_1_12_0
     os_type: l26
     # resources
     memory: 4096
@@ -55,9 +55,9 @@ template_vm:
     disk_size: 32
     vnic_bridge: vmbr0
 
-  vm_talos_1_11_5_dp:
+  vm_talos_1_12_0_dp:
     vm_id: 10003
-    image_id: vm_talos_1_11_5
+    image_id: vm_talos_1_12_0
     os_type: l26
     # resources
     memory: 8192

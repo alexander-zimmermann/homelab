@@ -13,6 +13,12 @@ image:
     image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
     image_checksum: "2b5f90ffe8180def601c021c874e55d8303e8bcbfc66fee2b94414f43ac5eb1f"
 
+  vm_talos_1_12_0:
+    image_type: import
+    image_filename: talos-1.12.0-nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/5167fcf6c57852d3593744185172e26a87239733424126684f2a86d5283b4f47/1.12.0/nocloud-amd64.raw
+    image_checksum: "1656934ec34d7117d634a7f6f3e9be6b5bd9d590966e8e92f901ade61015e13e"
+
   vm_talos_1_11_5:
     image_type: import
     image_filename: talos-1.11.5-nocloud-amd64.raw

@@ -14,12 +14,12 @@ fleet_vm:
     wait_for_agent: false
 
   talos_cp:
-    template_id: vm_talos_1_11_5_cp
+    template_id: vm_talos_1_12_0_cp
     count: 1
     vm_id_start: 2000
 
   talos_dp:
-    template_id: vm_talos_1_11_5_dp
+    template_id: vm_talos_1_12_0_dp
     count: 3
     vm_id_start: 2001
     disks:
