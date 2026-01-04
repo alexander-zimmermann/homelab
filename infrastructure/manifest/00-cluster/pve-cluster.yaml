@@ -8,7 +8,7 @@ pve_cluster:
   ssh_connection:
     username: "opentofu"
     private_key_path: "~/.ssh/proxmox_opentofu"
-    agent: true
+    agent: false
 
   defaults:
     target_node: pve-1

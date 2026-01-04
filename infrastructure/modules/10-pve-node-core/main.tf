@@ -91,7 +91,7 @@ resource "terraform_data" "set_subscription" {
 
   provisioner "remote-exec" {
     inline = [
-      "/usr/sbin/pvesubscription set ${var.proxmox_subscription_key}"
+      "sudo /usr/bin/pvesubscription set ${var.proxmox_subscription_key}"
     ]
   }
 }

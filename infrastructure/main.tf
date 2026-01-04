@@ -334,7 +334,7 @@ module "template_vm" {
   ## VM identification
   name        = "${each.key}-template"
   vm_id       = each.value.vm_id
-  description = "${try(each.value.description, "Created by Terraform")} - Created on ${timestamp()}"
+  description = try(each.value.description, "Created by OpenTofu")
   tags        = try(each.value.tags, ["opentofu", "template", "vm"])
 
   ## Hardware configuration
@@ -371,7 +371,7 @@ module "template_lxc" {
   ## Container identification
   name         = "${each.key}-template"
   lxc_id       = each.value.lxc_id
-  description  = "${try(each.value.description, "Created by Terraform")} - Created on ${timestamp()}"
+  description  = try(each.value.description, "Created by OpenTofu")
   tags         = try(each.value.tags, ["opentofu", "template", "lxc"])
   unprivileged = try(each.value.unprivileged, true)
   image_id     = try(module.image[each.value.image_id].image_id, null)
