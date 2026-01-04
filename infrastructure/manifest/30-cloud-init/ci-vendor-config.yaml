@@ -129,6 +129,7 @@ ci_vendor_config:
         template_file: templates/30-cloud-init/omni-bootstrap.sh.tftpl
         vars:
           env_file: /opt/omni/.secrets/bootstrap
+          docker_env: /opt/omni/.secrets/omni
           repo_path: /opt/homelab
           omni_path: /opt/omni
           volume_path: /mnt/mgmt

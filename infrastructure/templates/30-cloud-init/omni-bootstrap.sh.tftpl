@@ -12,6 +12,7 @@ set -euo pipefail
 
 # Configuration
 ENV_FILE="${env_file}"
+DOCKER_ENV="${docker_env}"
 OWNER="${owner}"
 
 # Paths
@@ -50,7 +51,7 @@ git clone --quiet "$${REPO_URL}" "$${REPO_PATH}" || die "Failed to clone reposit
 # Symlink compose file & directories so updates are reflected immediately
 info "Symlinking compose file & directories..."
 ln -sf "$${REPO_PATH}/management/"* "$${OMNI_PATH}/"
-ln -sf "$${ENV_FILE}" "$${OMNI_PATH}/.env"
+ln -sf "$${DOCKER_ENV}" "$${OMNI_PATH}/.env"
 ln -sf "$${VOLUME_PATH}/"* "$${OMNI_PATH}/"
 
 # Set ownership and permissions
