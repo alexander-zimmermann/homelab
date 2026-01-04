@@ -58,7 +58,7 @@ ci_vendor_config:
       ## Environment file for lego
       - path: /opt/omni/.env/lego
         secret_ref: omni_lego
-        template_file: templates/30-cloud-init/omni.lego.env.tftpl
+        template_file: templates/30-cloud-init/omni.env.lego.tftpl
         permissions: "0600"
         owner: "omni:omni"
         defer: true
@@ -66,7 +66,7 @@ ci_vendor_config:
       ## Environment file for gpg
       - path: /opt/omni/.env/gpg
         secret_ref: omni_gpg
-        template_file: templates/30-cloud-init/omni.gpg.env.tftpl
+        template_file: templates/30-cloud-init/omni.env.gpg.tftpl
         permissions: "0600"
         owner: "omni:omni"
         defer: true
@@ -74,7 +74,7 @@ ci_vendor_config:
       ## Environment file for Omni bootstrap
       - path: /opt/omni/.env/bootstrap
         secret_ref: omni_bootstrap
-        template_file: templates/30-cloud-init/omni.bootstrap.env.tftpl
+        template_file: templates/30-cloud-init/omni.env.bootstrap.tftpl
         vars:
           repo_url: "https://oauth2:$${GITHUB_TOKEN}@github.com/alexander-zimmermann/homelab.git"
         permissions: "0600"
@@ -84,7 +84,7 @@ ci_vendor_config:
       ## Environment file for Omni docker compose
       - path: /opt/omni/.env/omni
         secret_ref: omni_env
-        template_file: templates/30-cloud-init/omni.docker.env.tftpl
+        template_file: templates/30-cloud-init/omni.env.docker.tftpl
         vars:
           tz: "Europe/Berlin"
           lang: "de_DE.UTF-8"
