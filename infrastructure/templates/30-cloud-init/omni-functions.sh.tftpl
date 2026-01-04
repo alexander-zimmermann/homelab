@@ -1,0 +1,46 @@
+#!/bin/bash
+# ==============================================================================
+# Omni Helper Functions
+# ==============================================================================
+# Shared helper functions for Omni scripts.
+
+# Logging
+info() {
+  printf "[INFO]  %s\n" "$${1}"
+}
+
+die() {
+  printf "[ERROR] %s\n" "$${1}"
+  exit 1
+}
+
+# Checks
+check_user() {
+  local user="$${1}"
+  if ! id -u "$${user}" &> /dev/null; then
+    die "User '$${user}' does not exist. Please create it and try again."
+  fi
+}
+
+check_file() {
+  if [[ ! -f "$${1}" ]]; then
+    die "File not found: $${1}"
+  fi
+}
+
+check_variable() {
+  local var_value="$${1}"
+  local var_name="$${2:-Variable}"
+
+  if [[ -z "$${var_value}" ]]; then
+    die "$${var_name} is not set."
+  fi
+}
+
+check_command() {
+  local cmd="$${1}"
+
+  if ! command -v "$${cmd}" &> /dev/null; then
+    die "Command not found: $${cmd}. Please install it and try again."
+  fi
+}

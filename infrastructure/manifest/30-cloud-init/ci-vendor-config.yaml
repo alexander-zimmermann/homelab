@@ -46,7 +46,7 @@ ci_vendor_config:
       ## Manually mount NFS share (after nfs-common install)
       - ["mount", "/mnt/mgmt"]
       ## Setup Omni
-      - ["bash", "/usr/local/bin/omni-setup-ssl.sh"]
+      - ["bash", "/usr/local/bin/omni-ssl.sh", "setup"]
       - ["bash", "/usr/local/bin/omni-setup-gpg.sh"]
       - ["bash", "/usr/local/bin/omni-bootstrap.sh"]
       ## Systemd services
@@ -55,7 +55,7 @@ ci_vendor_config:
       - ["systemctl", "enable", "--now", "omni-renew-ssl.timer"]
 
     write_files:
-      ## Environment file for lego
+      ## Environment file for lego, GPG, Omni Bootstrap, and Omni docker compose
       - path: /opt/omni/.env/lego
         secret_ref: omni_lego
         template_file: templates/30-cloud-init/omni.env.lego.tftpl
@@ -63,7 +63,6 @@ ci_vendor_config:
         owner: "omni:omni"
         defer: true
 
-      ## Environment file for gpg
       - path: /opt/omni/.env/gpg
         secret_ref: omni_gpg
         template_file: templates/30-cloud-init/omni.env.gpg.tftpl
@@ -71,7 +70,6 @@ ci_vendor_config:
         owner: "omni:omni"
         defer: true
 
-      ## Environment file for Omni bootstrap
       - path: /opt/omni/.env/bootstrap
         secret_ref: omni_bootstrap
         template_file: templates/30-cloud-init/omni.env.bootstrap.tftpl
@@ -81,7 +79,6 @@ ci_vendor_config:
         owner: "omni:omni"
         defer: true
 
-      ## Environment file for Omni docker compose
       - path: /opt/omni/.env/omni
         secret_ref: omni_env
         template_file: templates/30-cloud-init/omni.env.docker.tftpl
@@ -93,10 +90,15 @@ ci_vendor_config:
         owner: "omni:omni"
         defer: true
 
-      ## Omni SSL certificate (lego)
-      - path: /usr/local/bin/omni-setup-ssl.sh
+      ## Helper functions
+      - path: /usr/local/bin/omni-functions.sh
         permissions: "0755"
-        template_file: templates/30-cloud-init/omni-setup-ssl.sh.tftpl
+        template_file: templates/30-cloud-init/omni-functions.sh.tftpl
+
+      ## Omni SSL certificate (lego)
+      - path: /usr/local/bin/omni-ssl.sh
+        permissions: "0755"
+        template_file: templates/30-cloud-init/omni-ssl.sh.tftpl
         vars:
           env_file: /opt/omni/.env/lego
           cert_path: /mnt/mgmt/certificates

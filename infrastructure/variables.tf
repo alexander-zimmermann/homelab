@@ -94,7 +94,7 @@ variable "pve_node_core_subscription_keys" {
 ###############################################################################
 variable "ci_secrets" {
   description = "A map of secrets used for cloud-init injection (e.g., Lego tokens)."
-  type        = map(map(string))
+  type        = map(any)
   sensitive   = true
   default     = {}
 }

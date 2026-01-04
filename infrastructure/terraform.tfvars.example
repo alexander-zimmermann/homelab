@@ -38,7 +38,8 @@ ci_secrets = {
   omni_lego = {
     cf_dns_api_token = "YOUR_CLOUDFLARE_API_TOKEN"
     cf_api_email     = "YOUR_EMAIL_ADDRESS"
-    domain_name      = "YOUR_DOMAIN_NAME"
+    primary_domain   = "YOUR_PRIMARY_DOMAIN"
+    san_domains      = "YOUR_SAN_DOMAINS" # comma-separated list of domains
   }
   omni_gpg = {
     email_address = "YOUR_OMNI_EMAIL_ADDRESS"
