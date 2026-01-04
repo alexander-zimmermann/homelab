@@ -31,34 +31,28 @@ using OpenTofu (Terraform fork). It provides:
 ### Project Structure
 
 ```bash
-homelab/
-├── Taskfile.yaml                   # Entry point for all automation tasks
-├── tasks/                          # Task definitions by category
-│   ├── infrastructure.yaml         # OpenTofu/Proxmox tasks (infra:*)
-│   ├── cluster.yaml                # Kubernetes/Talos tasks (cluster:*)
-│   └── management.yaml             # Management VM tasks (mgmt:*)
-├── infrastructure/                 # Infrastructure Code (OpenTofu)
-│   ├── main.tf                     # Primary configuration
-│   ├── locals.tf                   # Logic & Manifest loading
-│   ├── manifest/                   # YAML definitions (The "Source of Truth")
-│   │   ├── 10-pve.yaml             # Proxmox Nodes, Users, ACME, Network
-│   │   ├── 20-images.yaml          # OS Image definitions
-│   │   ├── 30-cloudinit.yaml       # Cloud-Init config (users, vendor, net)
-│   │   ├── 40-templates-vm.yaml    # VM Templates
-│   │   ├── 40-templates-lxc.yaml   # LXC Templates
-│   │   ├── 50-fleet-vm.yaml        # Virtual Machines
-│   │   └── 60-talos.yaml           # Talos Cluster Config
-│   ├── modules/                    # Reusable OpenTofu modules
-│   │   ├── 10-pve_nodes/           # Proxmox Node Config
-│   │   ├── 30-cloudinit/           # Cloud-Init Generation
-│   │   ├── 60-talos/               # Talos Cluster Logic
-│   │   ├── 60-talos/               # Talos Cluster Logic
-│   │   └── ... (others)
-├── management/                     # Management VM Configuration
-│   ├── Taskfile.yaml               # Local deployment task (runs on VM)
-│   └── compose.yaml                # Omni Docker Compose stack
-├── kubernetes/                     # Kubernetes Manifests & GitOps
-└── talos/                          # Talos Specific Configs
+infrastructure/
+├── main.tf                     # Primary configuration
+├── locals.tf                   # Logic & Manifest loading
+├── variables.tf                # Input variables definitions
+├── outputs.tf                  # Output values definitions
+├── versions.tf                 # Provider & Terraform versions
+├── terraform.tfvars.example    # Example variable values
+├── manifest/                   # YAML definitions (The "Source of Truth")
+│   ├── 00-cluster/             # Cluster-wide settings (PVE connection)
+│   ├── 10-pve-node/            # Node configurations (Core, Network)
+│   ├── 20-image/               # OS Image definitions
+│   ├── 30-cloud-init/          # Cloud-Init config (users, vendor, net)
+│   ├── 40-template/            # VM/LXC Templates
+│   ├── 50-fleet/               # Virtual Machines & Containers
+│   └── 60-talos-cluster/       # Talos Cluster Config
+├── modules/                    # Reusable OpenTofu modules
+│   ├── 10-pve-node-core/       # Proxmox Node Core Config
+│   ├── 30-cloud-init/          # Cloud-Init Generation
+│   └── ... (others)
+└── templates/                  # Templates for Cloud-Init & Provisioning
+    ├── 30-cloud-init/          # Secret injection templates (.tftpl)
+    └── 60-talos-cluster/       # Talos configuration templates
 ```
 
 ## Infrastructure Workflow
@@ -76,26 +70,7 @@ These tasks manage the Proxmox infrastructure via OpenTofu.
 - `task infra:apply`: Apply changes to Proxmox (Create VMs, Clusters, etc.).
 - `task infra:destroy`: Tear down all managed infrastructure.
 - `task infra:output`: Show Terraform outputs.
-
-#### Kubernetes Cluster (`cluster:*`)
-
-These tasks manage the Talos/Kubernetes cluster lifecycle.
-
-- `task cluster:bootstrap`: Bootstraps the cluster after `infra:apply`.
-  - Deploys ArgoCD.
-  - Deploys CNI (Cilium) and CCM (Talos Cloud Controller).
-  - Approve CSRs automatically.
-- `task cluster:verify`: Checks API access and node health.
-- `task cluster:wipe`: Dangerous! Removes all bootstrap resources.
-
-#### Management (`mgmt:*`)
-
-Tasks for the Management VM (Omni).
-
-- `task mgmt:deploy-omni`: Deploys/Updates the Omni stack.
-  - Connects via SSH to `management-01`.
-  - Pulls latest git changes.
-  - Runs the local deployment task (`docker compose up`).
+- `task infra:refresh`: Refresh infrastructure state (OpenTofu refresh).
 
 ### 2. Infrastructure Definition
 
@@ -105,44 +80,49 @@ The configuration is loaded and merged by `locals.tf`.
 
 #### Manifest Files
 
-- **`10-pve.yaml`**: Proxmox configurations (Cluster nodes, Users, Permissions, ACME, Network).
-- **`20-images.yaml`**: Operating System images (Debian, Talos, Windows) with checksums.
-- **`30-cloudinit.yaml`**: Reusable Cloud-Init modules (Users, Packages, Networks).
-- **`40-templates-vm.yaml`**: VM Templates (Hardware specs, OS type).
-- **`40-templates-lxc.yaml`**: LXC Templates.
-- **`50-fleet-vm.yaml`**: Actual Virtual Machine instances.
-- **`60-talos.yaml`**: Talos Cluster specific configuration (Control Plane/Worker topology).
+#### Manifest Directories
 
-#### Example: Image Specifications (`20-images.yaml`)
+- **`00-cluster/`**: Cluster-wide configurations (PVE connection, ACME, Users).
+- **`10-pve-node/`**: Node-specific configurations (Core settings, Repositories, Network).
+- **`20-image/`**: Operating System images (Debian, Talos, Windows) with checksums.
+- **`30-cloud-init/`**: Reusable Cloud-Init modules (Users, Vendor, Network).
+- **`40-template/`**: VM and LXC Templates (Hardware specs, OS type).
+- **`50-fleet/`**: Actual Virtual Machine and Container instances.
+- **`60-talos-cluster/`**: Talos Cluster specific configuration (Control Plane/Worker topology).
+
+#### Example: Image Specifications (`20-image/`)
 
 ```yaml
-images:
+image:
   # Debian Cloud Image
   vm_debian_trixie:
-    distro: debian
-    release: trixie # Debian 13
-    arch: amd64
-    extension: qcow2
+    image_type: import
+    image_filename: debian-13-genericcloud-amd64.qcow2
+    image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
+    image_checksum: "e5563c7bb388eebf7df385e99ee36c83cd16ba8fad4bd07f4c3fd725a6f1cf1cb9f54c6673d4274a856974327a5007a69ff24d44f9b21f7f920e1938a19edf7e"
+    image_checksum_algorithm: "sha512"
 
-  # Talos Linux (Factory build with custom extensions)
+  # Talos Linux (Factory build)
   vm_talos_1_11_5:
-    distro: talos
-    release: "1.11.5"
-    variant: nocloud
-    schematic: b553b4a25d76e938fd7a9aaa7f887c06ea4ef75275e64f4630e6f8f739cf07df
-    extension: raw
-
-  # Note on Talos images:
-  # - The Image Factory schematic is tracked in `templates/60-talos/imagefactory.yaml`.
-  # - OpenTofu downloads the actual Talos image to Proxmox via `image_url` (factory URL).
+    image_type: import
+    image_filename: talos-1.11.5-nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/b553b4a25d76e938fd7a9aaa7f887c06ea4ef75275e64f4630e6f8f739cf07df/v1.11.5/nocloud-amd64.raw
+    image_checksum: "b106e0b4a6644045e895552877c68c5094d1eb77633a37d900ddfaeefdb8e29b"
 
   # Windows 11 ISO (manually provided)
   vm_windows_11_25h2:
-    distro: windows
-    release: "11-25H2"
-    arch: amd64
-    extension: iso
+    image_type: iso
+    image_filename: windows-11-25H2-amd64.iso
+    image_url: "" # manual upload
+    image_checksum: ""
 ```
+
+#### Templates Directory (`templates/`)
+
+Contains text-based templates (`.tftpl`) used by OpenTofu's `templatefile()` function:
+
+- **`30-cloud-init/`**: Environment files and scripts injected into VMs via Cloud-Init. Supports secret injection.
+- **`60-talos-cluster/`**: Talos machine configuration patches and overrides.
 
 #### VM Templates and Deployment
 
@@ -243,13 +223,66 @@ Full support for modern Windows VMs:
 
 ### Authentication and Access
 
-Configure Proxmox credentials in `terraform.tfvars`:
+Configure Proxmox credentials and subscription keys in `terraform.tfvars`:
 
 ```hcl
 # Proxmox API Authentication
-pve_token_id     = "YOUR_PVE_TOKEN_ID"
-pve_token_secret = "YOUR_PVE_TOKEN_SECRET"
-pve_password     = "YOUR_PVE_PASSWORD" # Optional (Console Access)
+pve_cluster_token_id     = "YOUR_PVE_TOKEN_ID"
+pve_cluster_token_secret = "YOUR_PVE_TOKEN_SECRET"
+pve_cluster_password     = "YOUR_PVE_PASSWORD" # Optional (Console Access)
+
+# Proxmox Subscription Keys (Optional)
+pve_node_core_subscription_keys = {
+  pve-1 = "YOUR_SUBSCRIPTION_KEY"
+}
+```
+
+## Configuration
+
+### APT Repositories
+
+You can configure which APT repositories are enabled on your Proxmox nodes via `manifest/10-pve-node/pve-node-core.yaml`:
+
+```yaml
+pve_node_core:
+  pve-1:
+    repositories:
+      enable_no_subscription: true
+      enable_enterprise: false
+      enable_ceph: false
+```
+
+### Secret Injection (Cloud-Init)
+
+Secrets are securely injected into VMs using a template-based approach:
+
+1.  **Define Secrets**: Store sensitive values in `terraform.tfvars` under `ci_secrets`.
+2.  **Create Template**: Create a `.tftpl` file in `infrastructure/templates/` (e.g., `service.env.tftpl`).
+3.  **Reference in Manifest**: Use `secret_ref` and `template_file` in your cloud-init manifest.
+
+**Example `terraform.tfvars`**:
+
+```hcl
+ci_secrets = {
+  my_service = {
+    api_key = "secret-value"
+  }
+}
+```
+
+**Example Template (`service.env.tftpl`)**:
+
+```bash
+API_KEY=${api_key}
+```
+
+**Example Manifest (`ci-vendor-config.yaml`)**:
+
+```yaml
+write_files:
+  - path: /etc/my-service/.env
+    secret_ref: my_service
+    template_file: templates/my-service/service.env.tftpl
 ```
 
 ## Troubleshooting
