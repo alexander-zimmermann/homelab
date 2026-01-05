@@ -444,27 +444,27 @@ module "fleet_lxc" {
 ###############################################################################
 ##  Talos cluster
 ###############################################################################
-module "talos_cluster" {
-  source = "./modules/60-talos-cluster"
-
-  ## Cluster identity
-  cluster_name = local.talos_config.cluster_name
-
-  ## Talos/Kubernetes versions
-  talos_version      = local.talos_config.talos_version
-  kubernetes_version = local.talos_config.kubernetes_version
-
-  ## Node topology
-  cluster_head  = module.fleet_vm[local.control_plane_node_ids[0]].ipv4[0]
-  control_plane = [for id in local.control_plane_node_ids : module.fleet_vm[id].ipv4[0]]
-  data_plane    = [for id in local.data_plane_node_ids : module.fleet_vm[id].ipv4[0]]
-
-  ## Network configuration
-  dns_servers = local.talos_infra.dns_servers
-  ntp_servers = local.talos_infra.ntp_servers
-
-  ## Dataplane Storage (Longhorn)
-  longhorn_disk_selector_match = local.talos_infra.longhorn.disk_selector_match
-  longhorn_mount_path          = local.talos_infra.longhorn.mount_path
-  longhorn_filesystem          = local.talos_infra.longhorn.filesystem
-}
+# module "talos_cluster" {
+#   source = "./modules/60-talos-cluster"
+#
+#   ## Cluster identity
+#   cluster_name = local.talos_config.cluster_name
+#
+#   ## Talos/Kubernetes versions
+#   talos_version      = local.talos_config.talos_version
+#   kubernetes_version = local.talos_config.kubernetes_version
+#
+#   ## Node topology
+#   cluster_head  = module.fleet_vm[local.control_plane_node_ids[0]].ipv4[0]
+#   control_plane = [for id in local.control_plane_node_ids : module.fleet_vm[id].ipv4[0]]
+#   data_plane    = [for id in local.data_plane_node_ids : module.fleet_vm[id].ipv4[0]]
+#
+#   ## Network configuration
+#   dns_servers = local.talos_infra.dns_servers
+#   ntp_servers = local.talos_infra.ntp_servers
+#
+#   ## Dataplane Storage (Longhorn)
+#   longhorn_disk_selector_match = local.talos_infra.longhorn.disk_selector_match
+#   longhorn_mount_path          = local.talos_infra.longhorn.mount_path
+#   longhorn_filesystem          = local.talos_infra.longhorn.filesystem
+# }
