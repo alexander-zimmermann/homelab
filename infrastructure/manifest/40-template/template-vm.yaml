@@ -4,12 +4,12 @@ template_vm:
     vm_id: 10000
     image_id: vm_debian_trixie
     os_type: l26
-    # resources
+    ## Resources
     memory: 1024
     cores: 1
     disk_size: 8
     vnic_bridge: vmbr0
-    # cloud init
+    ## Cloud-init
     ci_user_config: std_linux
     ci_vendor_config: std_linux
     ci_network_config: std_linux
@@ -19,12 +19,12 @@ template_vm:
     vm_id: 10001
     image_id: vm_ubuntu_noble
     os_type: l26
-    # resources
+    ## Resources
     memory: 4096
     cores: 4
     disk_size: 32
     vnic_bridge: vmbr0
-    # cloud init
+    ## Cloud-init
     ci_user_config: std_linux
     ci_vendor_config: std_linux
     ci_network_config: std_linux
@@ -34,12 +34,12 @@ template_vm:
     vm_id: 10005
     image_id: vm_ubuntu_noble
     os_type: l26
-    # resources
+    ## Resources
     memory: 2048
     cores: 2
     disk_size: 16
     vnic_bridge: vmbr0
-    # cloud init
+    ## Cloud-init
     ci_user_config: omni
     ci_vendor_config: omni
     ci_network_config: omni
@@ -49,7 +49,7 @@ template_vm:
     vm_id: 10002
     image_id: vm_talos_1_12_0
     os_type: l26
-    # resources
+    ## Resources
     memory: 4096
     cores: 4
     disk_size: 32
@@ -59,8 +59,8 @@ template_vm:
     vm_id: 10003
     image_id: vm_talos_1_12_0
     os_type: l26
-    # resources
-    memory: 8192
+    ## Resources
+    memory: 4048 #8192
     cores: 6
     disk_size: 48
     vnic_bridge: vmbr0
@@ -69,12 +69,14 @@ template_vm:
     vm_id: 10004
     image_id: vm_windows_11_25h2
     os_type: win11
-    # resources
+    ## Resources
     memory: 16384
     cores: 8
     disk_size: 64
     vnic_bridge: vmbr0
+    ## Bios and hardware variables
     bios: ovmf
     machine_type: q35
+    ## Security and UEFI configuration
     enable_tpm: true
     secure_boot: true
