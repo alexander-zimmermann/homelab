@@ -11,6 +11,7 @@
 
 - [ ] **Longhorn Backup Target**: Configure NAS via NFS.
 - [ ] **Velero Backup**: Install Helm Chart, configure S3 backend (MinIO/Cloud), schedule backups.
+- [ ] **Proxmox Backup Server**: Setup PBS (LXC/VM), Configure Storage (NAS), Backup Jobs for Omni.
 - [ ] **External DNS**: Automate DNS records for services (Cloudflare Integration).
 - [ ] **Split Ingress Architecture**: Implement Dual Ingress Controller strategy (Internal vs DMZ).
   - Define Cilium IP Pools (Internal/DMZ).
