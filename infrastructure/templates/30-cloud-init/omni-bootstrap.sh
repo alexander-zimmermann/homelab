@@ -19,11 +19,11 @@ source /usr/local/etc/omni/.env/lego || die "Failed to load lego environment var
 # Helper: Logging functions
 # ==============================================================================
 info() {
-  printf "[INFO]  %s\n" "$${1}"
+  printf "[INFO]  %s\n" "${1}"
 }
 
 die() {
-  printf "[ERROR] %s\n" "$${1}"
+  printf "[ERROR] %s\n" "${1}"
   exit 1
 }
 
@@ -74,8 +74,8 @@ setup_certificates() {
   cp "${LEGO_CERT_DIR}/"* "${OMNI_LOCAL_CERT_DIR}"
 
   # Backup new certificates
-  info "Backing up new certificates to ${OMNI_CERT_BACKUP_DIR}..."
-  cp "${LEGO_CERT_DIR}/"* "${OMNI_CERT_BACKUP_DIR}"
+  info "Backing up new certificates to ${OMNI_BACKUP_CERT_DIR}..."
+  cp "${LEGO_CERT_DIR}/"* "${OMNI_BACKUP_CERT_DIR}"
 
   # Set permissions
   chown -R "${OWNER}" "${OMNI_LOCAL_CERT_DIR}"
