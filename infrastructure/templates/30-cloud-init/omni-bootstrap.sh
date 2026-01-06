@@ -34,7 +34,6 @@ setup_certificates() {
   local local_cert_file="${OMNI_LOCAL_CERT_DIR}/${PRIMARY_DOMAIN}.crt"
   local backup_cert_file="${OMNI_BACKUP_CERT_DIR}/${PRIMARY_DOMAIN}.crt"
 
-  info "Setting up SSL certificates..."
   mkdir -p "${OMNI_LOCAL_CERT_DIR}"
   mkdir -p "${OMNI_BACKUP_CERT_DIR}"
 
@@ -79,7 +78,7 @@ setup_certificates() {
 
   # Set permissions
   chown -R "${OWNER}" "${OMNI_LOCAL_CERT_DIR}"
-  chown -R "${OWNER}" "${OMNI_CERT_BACKUP_DIR}"
+  chown -R "${OWNER}" "${OMNI_BACKUP_CERT_DIR}"
 }
 
 # ==============================================================================
@@ -90,7 +89,6 @@ setup_gpg() {
   local backup_key_file="${OMNI_BACKUP_KEY_DIR}/${OMNI_PRIVATE_KEY}"
   local backup_keyring="${OMNI_BACKUP_KEY_DIR}/.gnupg"
 
-  info "Setting up GPG keys..."
   mkdir -p "${OMNI_LOCAL_KEY_DIR}"
   mkdir -p "${OMNI_BACKUP_KEY_DIR}"
 
@@ -168,7 +166,6 @@ setup_gpg() {
 # Helper: Data Persistence
 # ==============================================================================
 setup_data() {
-  info "Setting up data persistence..."
   mkdir -p "${OMNI_LOCAL_DATA_DIR}"
   mkdir -p "${OMNI_BACKUP_DATA_DIR}"
 
