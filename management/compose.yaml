@@ -51,7 +51,7 @@ services:
       # Omni configuration
       - --name=omni
       - --account-id=${OMNI_ACCOUNT_UUID}
-      - --initial-users=${OMNI_EMAIL_ADDRESS}
+      - --initial-users=${OMNI_INITIAL_USERS}
       # Persistence data
       - --sqlite-storage-path=/data/omni.db
       - --etcd-embedded-db-path=/data/etcd
