@@ -6,17 +6,21 @@
 #
 # Prerequisites:
 # - lego installed.
-# - Environment files in /usr/local/etc/omni/.env/
+# - Environment files in /usr/local/etc/omni/.env/{bootstrap,lego}
 
 set -euo pipefail
 
-# Load environments
-source /usr/local/etc/omni/.env/lego
-source /usr/local/etc/omni/.env/bootstrap
+# Set environment files
+ENV_BOOTSTRAP="/usr/local/etc/omni/.env/bootstrap"
+ENV_LEGO="/usr/local/etc/omni/.env/lego"
 
 # ==============================================================================
 # Main Script
 # ==============================================================================
+# Load environment files
+source "${ENV_BOOTSTRAP}"
+source "${ENV_LEGO}"
+
 # Construct domain flags for running lego
 local domain_flags="--domains=${PRIMARY_DOMAIN}"
 IFS=',' read -ra domains_arr <<< "${SAN_DOMAINS:-}"
@@ -27,11 +31,11 @@ done
 # Define Renew Hook
 # This runs ONLY if the certificate is actually renewed.
 # It copies the new certs to the destination and restarts Omni.
-HOOK_CMD="cp \"${LEGO_CERT_DIR}/\"* \"${OMNI_LOCAL_CERT_DIR}\" && \
-          cp \"${LEGO_CERT_DIR}/\"* \"${OMNI_CERT_BACKUP_DIR}\" && \
-          chown -R "${OWNER}" \"${OMNI_LOCAL_CERT_DIR}\" && \
-          chown -R "${OWNER}" \"${OMNI_CERT_BACKUP_DIR}\" && \
-          docker restart omni || true"
+local hook_cmd="cp \"${LEGO_CERT_DIR}/\"* \"${OMNI_LOCAL_CERT_DIR}\" && \
+                cp \"${LEGO_CERT_DIR}/\"* \"${OMNI_BACKUP_CERT_DIR}\" && \
+                chown -R \"${OWNER}\" \"${OMNI_LOCAL_CERT_DIR}\" && \
+                chown -R \"${OWNER}\" \"${OMNI_BACKUP_CERT_DIR}\" && \
+                docker restart omni || true"
 
 CLOUDFLARE_DNS_API_TOKEN="${CF_DNS_API_TOKEN}" \
 CLOUDFLARE_EMAIL="${CF_API_EMAIL}" \
@@ -41,4 +45,4 @@ CLOUDFLARE_EMAIL="${CF_API_EMAIL}" \
   --accept-tos \
   ${domain_flags} \
   renew \
-  --renew-hook "${HOOK_CMD}"
+  --renew-hook "${hook_cmd}"

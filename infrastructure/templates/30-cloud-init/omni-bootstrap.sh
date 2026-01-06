@@ -6,14 +6,14 @@
 #
 # Prerequisites:
 # - git, lego, gpg installed.
-# - Environment files in /usr/local/etc/omni/.env/
+# - Environment files in /usr/local/etc/omni/.env/{bootstrap,docker,lego}
 
 set -euo pipefail
 
-# Load environment files
-source /usr/local/etc/omni/.env/bootstrap || die "Failed to load bootstrap environment variables."
-source /usr/local/etc/omni/.env/docker || die "Failed to load docker environment variables."
-source /usr/local/etc/omni/.env/lego || die "Failed to load lego environment variables."
+# Set environment files
+ENV_BOOTSTRAP="/usr/local/etc/omni/.env/bootstrap"
+ENV_DOCKER="/usr/local/etc/omni/.env/docker"
+ENV_LEGO="/usr/local/etc/omni/.env/lego"
 
 # ==============================================================================
 # Helper: Logging functions
@@ -75,10 +75,6 @@ setup_certificates() {
   # Backup new certificates
   info "Backing up new certificates to ${OMNI_BACKUP_CERT_DIR}..."
   cp "${LEGO_CERT_DIR}/"* "${OMNI_BACKUP_CERT_DIR}"
-
-  # Set permissions
-  chown -R "${OWNER}" "${OMNI_LOCAL_CERT_DIR}"
-  chown -R "${OWNER}" "${OMNI_BACKUP_CERT_DIR}"
 }
 
 # ==============================================================================
@@ -102,7 +98,6 @@ setup_gpg() {
   if [[ -f "${backup_key_file}" ]]; then
     info "Restoring GPG key and keyring from backup..."
     cp "${backup_key_file}" "${OMNI_LOCAL_KEY_DIR}/"
-    cp -r "${backup_keyring}" "${OMNI_LOCAL_KEY_DIR}/"
     return 0
   fi
 
@@ -156,10 +151,6 @@ setup_gpg() {
   info "Backing up new GPG key..."
   cp "${local_key_file}" "${OMNI_BACKUP_KEY_DIR}"
   cp -r "${GPG_KEYRING_DIR}" "${OMNI_BACKUP_KEY_DIR}"
-
-  # Set permissions
-  chown -R "${OWNER}" "${OMNI_LOCAL_KEY_DIR}"
-  chown -R "${OWNER}" "${OMNI_BACKUP_KEY_DIR}"
 }
 
 # ==============================================================================
@@ -192,6 +183,12 @@ info "===================================="
 info "  Omni Bootstrap "
 info "===================================="
 
+# Load environment files
+info "Loading environment files..."
+source ${ENV_BOOTSTRAP} || die "Failed to load bootstrap environment variables."
+source ${ENV_DOCKER} || die "Failed to load docker environment variables."
+source ${ENV_LEGO} || die "Failed to load lego environment variables."
+
 # Clone git repository
 info "Cloning repository..."
 git clone --quiet "${GITHUB_REPO_URL}" "${LOCAL_REPO_DIR}" || die "Failed to clone repository."
@@ -208,10 +205,13 @@ setup_gpg
 info "Checking for Omni data state to restore..."
 setup_data
 
-# Set Ownership
-info "Fixing ownership..."
-chown -R "${OWNER}" "${LOCAL_REPO_DIR}"
+# Set permissions & ownership
 chmod -R g+w "${LOCAL_REPO_DIR}"
+chown -R "${OWNER}" "${LOCAL_REPO_DIR}"
+chown -R "${OWNER}" "${OMNI_LOCAL_CERT_DIR}"
+chown -R "${OWNER}" "${OMNI_BACKUP_CERT_DIR}"
+chown -R "${OWNER}" "${OMNI_LOCAL_KEY_DIR}"
+chown -R "${OWNER}" "${OMNI_BACKUP_KEY_DIR}"
 
 # Deploy with Docker Compose
 info "Deploying Omni via docker compose..."
