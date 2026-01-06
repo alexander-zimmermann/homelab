@@ -7,6 +7,9 @@ fleet_vm:
   management_01:
     template_id: vm_ubuntu_noble_talos_omni
     vm_id: 1002
+    disks:
+      - disk_interface: scsi1
+        disk_size: 16
 
   windows_01:
     template_id: vm_windows_11_25h2

@@ -160,6 +160,24 @@ variable "snap" {
   default     = {}
 }
 
+variable "disk_setup" {
+  description = <<EOT
+    Disk setup configuration (partitioning).
+    Passed directly to cloud-init's `disk_setup` module.
+  EOT
+  type        = any
+  default     = {}
+}
+
+variable "fs_setup" {
+  description = <<EOT
+    Filesystem setup configuration (formatting).
+    Passed directly to cloud-init's `fs_setup` module.
+  EOT
+  type        = list(any)
+  default     = []
+}
+
 variable "write_files" {
   description = <<EOT
     List of files to write to the VM filesystem during cloud-init execution.

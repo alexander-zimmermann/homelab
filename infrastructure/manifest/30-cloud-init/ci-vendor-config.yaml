@@ -22,32 +22,46 @@ ci_vendor_config:
         - ["install", "task", "--classic"]
         - ["install", "lego", "--classic"]
 
-    mounts:
-      - ["storage.zimmermann.eu.com:/srv/mgmt", "/mnt/mgmt", "nfs"]
+    disk_setup:
+      /dev/sdb:
+        table_type: gpt
+        layout: true
+        overwrite: false
 
-    mount_default_fields:
-      [
-        None,
-        None,
-        auto,
-        "defaults,_netdev,noauto,nofail,x-systemd.after=cloud-init-network.service",
-        "0",
-        "0",
-      ]
+    fs_setup:
+      - label: omni_data
+        filesystem: ext4
+        device: /dev/sdb
+        partition: auto
+
+    mounts:
+      - ["LABEL=omni_data", "/opt/omni"]
+      - [
+          "storage.zimmermann.eu.com:/srv/mgmt",
+          "/mnt/backup",
+          "nfs",
+          "defaults,_netdev,noauto,nofail,x-systemd.after=cloud-init-network.service",
+          "0",
+          "0",
+        ]
+
+    mount_default_fields: [None, None, "auto", "defaults", "0", "0"]
 
     bootcmd:
-      - mkdir -p /mnt/mgmt
-      - mkdir -p /opt/omni/.secrets
+      - mkdir -p /opt/omni
+      - mkdir -p /mnt/backup
+      - mkdir -p /usr/local/etc/omni/.env
+      - mkdir -p /usr/local/etc/omni/.secrets
 
     runcmd:
       ## Symlinks for snap packages
       - ["ln", "-s", "/snap/bin/lego", "/usr/local/bin/lego"]
       - ["ln", "-s", "/snap/bin/task", "/usr/local/bin/task"]
       ## Manually mount NFS share (after nfs-common install)
-      - ["mount", "/mnt/mgmt"]
+      - ["mount", "/mnt/backup"]
+      ## Set permissions for data disk
+      - ["chown", "omni:omni", "/opt/omni"]
       ## Setup Omni
-      - ["bash", "/usr/local/bin/omni-ssl.sh", "run"]
-      - ["bash", "/usr/local/bin/omni-setup-gpg.sh"]
       - ["bash", "/usr/local/bin/omni-bootstrap.sh"]
       ## Systemd services
       - ["systemctl", "enable", "--now", "qemu-guest-agent"]
@@ -55,82 +69,44 @@ ci_vendor_config:
       - ["systemctl", "enable", "--now", "omni-renew-ssl.timer"]
 
     write_files:
-      ## Environment file for lego, GPG, Omni Bootstrap, and Omni docker compose
-      - path: /opt/omni/.secrets/lego
-        secret_ref: omni_lego
+      ## Environment file for lego, Omni Bootstrap, and Omni docker compose
+      - path: /usr/local/etc/omni/.env/lego
         template_file: templates/30-cloud-init/omni.env.lego.tftpl
-        permissions: "0600"
+        secret_ref: omni_env_lego
+        permissions: "0660"
         owner: "omni:omni"
         defer: true
 
-      - path: /opt/omni/.secrets/gpg
-        secret_ref: omni_gpg
-        template_file: templates/30-cloud-init/omni.env.gpg.tftpl
-        permissions: "0600"
-        owner: "omni:omni"
-        defer: true
-
-      - path: /opt/omni/.secrets/bootstrap
-        secret_ref: omni_bootstrap
+      - path: /usr/local/etc/omni/.env/bootstrap
         template_file: templates/30-cloud-init/omni.env.bootstrap.tftpl
-        vars:
-          repo_url: "https://oauth2:$${GITHUB_TOKEN}@github.com/alexander-zimmermann/homelab.git"
-        permissions: "0600"
+        secret_ref: omni_env_bootstrap
+        permissions: "0660"
         owner: "omni:omni"
         defer: true
 
-      - path: /opt/omni/.secrets/omni
-        secret_ref: omni_env
+      - path: /usr/local/etc/omni/.env/docker
         template_file: templates/30-cloud-init/omni.env.docker.tftpl
-        vars:
-          tz: "Europe/Berlin"
-          lang: "de_DE.UTF-8"
-          lc_all: "de_DE.UTF-8"
-        permissions: "0600"
+        secret_ref: omni_env_docker
+        permissions: "0660"
         owner: "omni:omni"
         defer: true
 
-      ## Helper functions
-      - path: /usr/local/bin/omni-functions.sh
-        permissions: "0755"
-        template_file: templates/30-cloud-init/omni-functions.sh.tftpl
-
-      ## Omni SSL certificate (lego)
-      - path: /usr/local/bin/omni-ssl.sh
-        permissions: "0755"
-        template_file: templates/30-cloud-init/omni-ssl.sh.tftpl
-        vars:
-          env_file: /opt/omni/.secrets/lego
-          cert_path: /mnt/mgmt/certificates
-          owner: "omni:omni"
-
+      ## Systemd service for renewing SSL certificates
       - path: /etc/systemd/system/omni-renew-ssl.service
-        template_file: templates/30-cloud-init/omni-renew-ssl.service.tftpl
-        vars:
-          env_file: /opt/omni/.secrets/lego
-          cert_path: /mnt/mgmt/certificates
-          owner: "omni:omni"
+        content_file: templates/30-cloud-init/omni-renew-ssl.service
 
       - path: /etc/systemd/system/omni-renew-ssl.timer
         content_file: templates/30-cloud-init/omni-renew-ssl.timer
 
-      ## Omni encryption key (GPG)
-      - path: /usr/local/bin/omni-setup-gpg.sh
+      - path: /usr/local/bin/omni-renew-ssl.sh
+        content_file: templates/30-cloud-init/omni-renew-ssl.sh
         permissions: "0755"
-        template_file: templates/30-cloud-init/omni.setup-gpg.sh.tftpl
-        vars:
-          env_file: /opt/omni/.secrets/gpg
-          keys_path: /mnt/mgmt/keys
-          owner: "omni:omni"
+        owner: "omni:omni"
+        defer: true
 
-      ## Omni bootstrap
+      ## Omni bootstrap script
       - path: /usr/local/bin/omni-bootstrap.sh
+        content_file: templates/30-cloud-init/omni-bootstrap.sh
         permissions: "0755"
-        template_file: templates/30-cloud-init/omni-bootstrap.sh.tftpl
-        vars:
-          env_file: /opt/omni/.secrets/bootstrap
-          docker_env: /opt/omni/.secrets/omni
-          repo_path: /opt/homelab
-          omni_path: /opt/omni
-          volume_path: /mnt/mgmt
-          owner: "omni:omni"
+        owner: "omni:omni"
+        defer: true

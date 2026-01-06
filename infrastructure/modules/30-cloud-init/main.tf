@@ -58,6 +58,15 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
       #cloud-config
       timezone: Europe/Berlin
       locale: de_DE.UTF-8
+%{if length(var.disk_setup) > 0~}
+      disk_setup: ${jsonencode(var.disk_setup)}
+%{endif~}
+%{if length(var.fs_setup) > 0~}
+      fs_setup:
+%{for fs in var.fs_setup~}
+        - ${jsonencode(fs)}
+%{endfor~}
+%{endif~}
 %{if length(var.bootcmd) > 0~}
       bootcmd:
 %{for cmd in var.bootcmd~}

@@ -231,7 +231,7 @@ module "cloud_init_vendor_config" {
   for_each             = local.manifest.ci_vendor_config
   create_vendor_config = true
 
-  ## Storage configuration
+  ## Storage configuration (rootfs)
   node      = try(each.value.target_node, local.defaults.target_node)
   datastore = try(each.value.target_datastore, local.defaults.file_storage)
   filename  = "${each.key}-vendor-config.yaml"
@@ -246,6 +246,10 @@ module "cloud_init_vendor_config" {
   ## Custom commands
   runcmd  = try(each.value.runcmd, [])
   bootcmd = try(each.value.bootcmd, [])
+
+  ## Disk configuration (additional disks)
+  disk_setup = try(each.value.disk_setup, {})
+  fs_setup   = try(each.value.fs_setup, [])
 
   ## Mounts
   mounts               = try(each.value.mounts, [])

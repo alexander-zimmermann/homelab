@@ -1,0 +1,10 @@
+[Unit]
+Description=Renew Lego SSL Certificates
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+ExecStart=/usr/local/bin/omni-renew-ssl.sh
