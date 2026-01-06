@@ -47,7 +47,7 @@ template_vm:
 
   vm_talos_1_12_0_cp:
     vm_id: 10002
-    image_id: vm_talos_1_12_0
+    image_id: vm_talos_1_12_0_cp
     os_type: l26
     ## Resources
     memory: 4096
@@ -57,7 +57,7 @@ template_vm:
 
   vm_talos_1_12_0_dp:
     vm_id: 10003
-    image_id: vm_talos_1_12_0
+    image_id: vm_talos_1_12_0_dp
     os_type: l26
     ## Resources
     memory: 4048 #8192
