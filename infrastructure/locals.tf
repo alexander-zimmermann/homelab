@@ -18,7 +18,6 @@ locals {
     try(yamldecode(file("${path.module}/manifest/40-template/template-lxc.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/50-fleet/fleet-vm.yaml")), {}),
     try(yamldecode(file("${path.module}/manifest/50-fleet/fleet-lxc.yaml")), {}),
-    try(yamldecode(file("${path.module}/manifest/60-talos-cluster/talos-cluster.yaml")), {})
   )
 
   ## Set transformed manifest (effective configuration)
@@ -37,7 +36,6 @@ locals {
     template_lxc      = try(local.raw_manifest.template_lxc, {})
     fleet_vm          = try(local.raw_manifest.fleet_vm, {})
     fleet_lxc         = try(local.raw_manifest.fleet_lxc, {})
-    talos_cluster     = try(local.raw_manifest.talos_cluster, {})
   }
 
   ## Shortcuts
@@ -85,8 +83,6 @@ locals {
       ]...)
     }
   }
-  talos_config = try(local.manifest.talos_cluster, {})
-  talos_infra  = try(local.manifest.talos_cluster.infrastructure, {})
 }
 
 
@@ -149,10 +145,4 @@ locals {
       } if try(spec.count, 0) > 0
     ]...)
   )
-
-  ## Talos control plane node IDs
-  control_plane_node_ids = [for k, v in local.fleet_vm : k if startswith(k, "talos_cp_")]
-
-  ## Talos data/worker plane node IDs
-  data_plane_node_ids = [for k, v in local.fleet_vm : k if startswith(k, "talos_dp_")]
 }

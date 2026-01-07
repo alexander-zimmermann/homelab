@@ -34,9 +34,3 @@ provider "proxmox" {
   username = local.pve_cluster.api.username
   password = var.pve_cluster_password
 }
-
-
-###############################################################################
-## Talos provider
-###############################################################################
-provider "talos" {}

@@ -106,27 +106,3 @@ output "containers_ipv4" {
 output "containers_ipv6" {
   value = { for k, v in module.fleet_lxc : k => try(flatten(v.ipv6), []) }
 }
-
-
-###############################################################################
-## Talos cluster
-###############################################################################
-output "talos_control_plane_ids" {
-  description = "Keys for generated Talos control plane VMs (e.g. talos_cp_*)."
-  value       = local.control_plane_node_ids
-}
-
-output "talos_data_plane_ids" {
-  description = "Keys for generated Talos worker VMs (e.g. talos_dp_*)."
-  value       = local.data_plane_node_ids
-}
-
-output "talos_control_plane_ipv4" {
-  description = "IPv4 addresses of Talos control plane nodes keyed by VM key."
-  value       = { for k in local.control_plane_node_ids : k => try(module.fleet_vm[k].ipv4, []) }
-}
-
-output "talos_data_plane_ipv4" {
-  description = "IPv4 addresses of Talos worker nodes keyed by VM key."
-  value       = { for k in local.data_plane_node_ids : k => try(module.fleet_vm[k].ipv4, []) }
-}

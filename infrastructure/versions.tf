@@ -7,11 +7,6 @@ terraform {
       source  = "bpg/proxmox"
       version = "=0.89.0"
     }
-    talos = {
-      ## https://search.opentofu.org/provider/siderolabs/talos/latest
-      source  = "siderolabs/talos"
-      version = "=0.9.0"
-    }
     external = {
       ## https://search.opentofu.org/provider/hashicorp/external/latest
       source  = "hashicorp/external"
