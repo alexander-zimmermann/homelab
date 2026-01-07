@@ -1,0 +1,15 @@
+metadata:
+  id: control-plane-class
+  type: MachineClasses.omni.sidero.dev
+  namespace: default
+spec:
+  matchlabels:
+    - role = control-plane
+---
+metadata:
+  id: data-plane-class
+  type: MachineClasses.omni.sidero.dev
+  namespace: default
+spec:
+  matchlabels:
+    - role = data-plane
