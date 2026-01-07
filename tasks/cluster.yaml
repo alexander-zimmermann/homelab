@@ -7,12 +7,14 @@ vars:
 
 tasks:
   bootstrap:
-    desc: "Bootstrap ArgoCD on the Kubernetes cluster (usage: task cluster:bootstrap ENV=dev|prod)"
+    desc: "Bootstrap Kubernetes components (usage: task cluster:bootstrap -- ENV)"
     vars:
-      ENV: '{{.ENV | default "dev"}}'
+      ENV: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{end}}"
     preconditions:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
+      - sh: test -n "{{.ENV}}"
+        msg: "Usage: task cluster:bootstrap -- ENV"
     cmds:
       # Phase 1: Wait for Kubernetes API
       - cmd: printf "{{.BLUE}}⏳ Waiting for Kubernetes API...{{.RESET}}\n"
@@ -24,7 +26,7 @@ tasks:
       # Phase 2: Seed Cilium (Network)
       - cmd: printf "{{.BLUE}} Seeding Cilium CNI (Bootstrapping Network)...{{.RESET}}\n"
         silent: true
-      - kustomize build --enable-helm --helm-command /opt/homebrew/opt/helm@3/bin/helm kubernetes/bootstrap/cilium/overlays/{{.ENV}} | kubectl apply -f - || true
+      - kustomize build --enable-helm --helm-command /opt/homebrew/opt/helm@3/bin/helm bootstrap/cilium/overlays/{{.ENV}} | kubectl apply -f - || true
 
       # Phase 3: Wait for Cilium Readiness
       - cmd: printf "{{.BLUE}}⏳ Waiting for Cilium CNI (Health Check)...{{.RESET}}\n"
@@ -40,7 +42,7 @@ tasks:
       # Phase 4: Deploy ArgoCD (GitOps)
       - cmd: printf "{{.BLUE}}🌐 Installing ArgoCD (GitOps Controller)...{{.RESET}}\n"
         silent: true
-      - kubectl apply -k kubernetes/bootstrap/gitops-controller/overlays/{{.ENV}}
+      - kubectl apply -k bootstrap/gitops-controller/overlays/{{.ENV}}
       - cmd: printf "{{.BLUE}}⏳ Waiting for ArgoCD...{{.RESET}}\n"
         silent: true
       - kubectl -n gitops-controller wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server --timeout={{.TIMEOUT_ARGOCD}}
@@ -56,16 +58,18 @@ tasks:
       - until kubectl get application -n gitops-controller sealed-secrets-controller-{{.ENV}} >/dev/null 2>&1; do sleep 5; done
       # Wait for Application to be Healthy
       - kubectl wait application/sealed-secrets-controller-{{.ENV}} -n gitops-controller --for=jsonpath='{.status.health.status}'=Healthy --timeout=300s
-      - kubectl apply -f kubernetes/secrets/sealed-secrets-key.yaml
+      - kubectl apply -f secrets/sealed-secrets-key.yaml
 
       # Phase 6: Cleanup
-      - rm -r kubernetes/bootstrap/cilium/base/charts
+      - rm -r bootstrap/cilium/base/charts
       - cmd: printf "{{.GREEN}}✅ Cluster bootstrapped!{{.RESET}}\n"
         silent: true
 
   output:
-    desc: "Show cluster outputs"
-    dir: kubernetes
+    desc: "Show cluster credentials and outputs (kubectl)"
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
     cmds:
       - cmd: printf "{{.BLUE}}☸️ Showing cluster outputs...{{.RESET}}\n"
         silent: true
@@ -74,7 +78,7 @@ tasks:
         silent: true
 
   verify:
-    desc: "Verify cluster health"
+    desc: "Verify cluster health and connectivity (kubectl, cilium)"
     preconditions:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
@@ -104,18 +108,18 @@ tasks:
         silent: true
 
   wipe:
-    desc: "Wipe all bootstrap resources (Dangerous!)"
-    preconditions:
-      - sh: command -v kubectl
-        msg: "kubectl is not installed"
+    desc: "Wipe all cluster resources (Dangerous)"
     vars:
       MANAGED_NAMESPACES:
         sh: |
-          grep -rh "namespace:" kubernetes/components/*/base/kustomization.yaml kubernetes/applications/*/base/kustomization.yaml \
+          grep -rh "namespace:" components/*/base/kustomization.yaml applications/*/base/kustomization.yaml \
           | awk '{print $2}' \
           | sort -u \
           | grep -vE '^(default|kube-system|kube-public|kube-node-lease)$' \
           | tr '\n' ' '
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
     cmds:
       - cmd: printf "{{.RED}}💥 Wiping cluster resources...{{.RESET}}\n"
         silent: true

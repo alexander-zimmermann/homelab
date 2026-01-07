@@ -1,30 +1,21 @@
 ---
 ###############################################################################
-# Omni Cluster Template
-# Defines the Kubernetes Cluster, Control Plane, and Worker Node sets.
-# Uses declarative patches to apply Talos machine configuration.
+## Global cluster definition
 ###############################################################################
-
-# -----------------------------------------------------------------------------
-# Global Cluster Definition
-# -----------------------------------------------------------------------------
 kind: Cluster
 name: homelab
 kubernetes:
-  version: v1.32.0 # Target Kubernetes version
+  version: v1.32.0
 talos:
-  version: v1.12.0 # Target Talos OS version
+  version: v1.12.0
 features:
-  diskEncryption: true # Enable Full Disk Encryption (LUKS) on all nodes
+  diskEncryption: true # Full disk encryption (LUKS) on all nodes
 
-# -----------------------------------------------------------------------------
-# Global Patches
-# Applied to ALL nodes (both Control Plane and Workers)
-# -----------------------------------------------------------------------------
+## Global patches, applied to ALL nodes (both control plane and data plane)
 patches:
   - name: global-settings
     inline:
-      # Cluster-wide network settings
+      ## Cluster-wide network settings
       cluster:
         network:
           cni:
@@ -32,32 +23,32 @@ patches:
         proxy:
           disabled: true # Disable KubeProxy (Cilium Replacement Mode)
 
-      # Machine-level settings
+      ## Machine-level settings
       machine:
-        # Load kernel modules required for ZFS storage
+        ## Load required kernel modules
         kernel:
           modules:
-            - name: zfs
+            - name: zfs # Required for ZFS storage
 
-        # Network sysctls required for Cilium
+        ## Network sysctls required for Cilium
         sysctls:
           net.ipv4.ip_forward: "1"
           net.ipv6.conf.all.forwarding: "1"
 
-        # Kubelet security and bootstrap config
+        ## Kubelet security and bootstrap config
         kubelet:
           extraArgs:
             rotate-server-certificates: "true" # Enable kubelet serving cert rotation
           extraConfig:
             serverTLSBootstrap: true # Allow kubelet to request TLS certs
 
-        # NTP Time Synchronization
+        ## NTP Time Synchronization
         time:
           servers:
             - time.cloudflare.com
             - pool.ntp.org
 
-        # Talos specific features
+        ## Talos specific features
         features:
           kubePrism:
             enabled: true
@@ -67,22 +58,22 @@ patches:
             forwardKubeDNSToHost: true # Forward DNS from pods to host resolver
 
 ---
-# -----------------------------------------------------------------------------
-# Control Plane definition
-# -----------------------------------------------------------------------------
+###############################################################################
+## Control Plane definition
+###############################################################################
 kind: ControlPlane
 machineClass:
-  name: control-plane-class
+  name: control-plane-prod
   size: 1
 
 patches:
   - name: cp-settings
     inline:
-      # Control plane specific machine config
+      ## Control plane specific machine config
       machine:
         features:
-          # Enable Talos API access from within Kubernetes
-          # Required for the Talos Cloud Controller Manager (CCM) to function
+          ## Enable Talos API access from within Kubernetes
+          ## Required for the Talos Cloud Controller Manager (CCM) to function
           kubernetesTalosAPIAccess:
             enabled: true
             allowedRoles:
@@ -91,16 +82,16 @@ patches:
               - kube-system
 
 ---
-# -----------------------------------------------------------------------------
-# Data plane definition
-# -----------------------------------------------------------------------------
+###############################################################################
+## Data plane definition
+###############################################################################
 kind: Workers
 machineClass:
-  name: data-plane-class
+  name: data-plane-prod
   size: 3
 
-# Update Strategies
-# Critical for Storage Nodes: Ensure only one node reboots at a time to maintain data availability.
+## Update Strategies
+## Critical for storage nodes: Ensure only one node reboots at a time to maintain data availability.
 updateStrategy:
   rolling:
     maxParallelism: 1
@@ -112,10 +103,10 @@ deleteStrategy:
 patches:
   - name: worker-settings
     inline:
-      # Data plane specific cluster config
+      ## Data plane specific cluster config
       cluster:
-        # Inject UserVolumeConfig for Longhorn Disk Partitioning
-        # This creates the partition on the extra disk (!system_disk)
+        ## Inject UserVolumeConfig for Longhorn Disk Partitioning
+        ## This creates the partition on the extra disk (!system_disk)
         inlineManifests:
           - name: longhorn-vol-config
             contents: |
@@ -129,14 +120,14 @@ patches:
               filesystem:
                 type: ext4
 
-      # Data plane specific machine config
+      ## Data plane specific machine config
       machine:
-        # Kubernetes Node Role Label
+        ## Kubernetes Node Role Label
         nodeLabels:
           node-role.kubernetes.io/data-plane: ""
 
-        # Mounts for Longhorn Storage
-        # Binds the physical mount point into the Kubelet container
+        ## Mounts for Longhorn Storage
+        ## Binds the physical mount point into the Kubelet container
         kubelet:
           extraMounts:
             - destination: /var/mnt/longhorn

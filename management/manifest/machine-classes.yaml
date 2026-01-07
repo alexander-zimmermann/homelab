@@ -1,15 +1,39 @@
+---
+###############################################################################
+## Production machine class
+###############################################################################
 metadata:
-  id: control-plane-class
+  id: control-plane-prod
   type: MachineClasses.omni.sidero.dev
   namespace: default
 spec:
   matchlabels:
-    - role = control-plane
+    - "omni.sidero.dev/cluster = homelab, environment = prod, role = control-plane"
 ---
 metadata:
-  id: data-plane-class
+  id: data-plane-prod
   type: MachineClasses.omni.sidero.dev
   namespace: default
 spec:
   matchlabels:
-    - role = data-plane
+    - "omni.sidero.dev/cluster = homelab, environment = prod, role = data-plane"
+
+---
+###############################################################################
+## Development machine class
+###############################################################################
+metadata:
+  id: control-plane-dev
+  type: MachineClasses.omni.sidero.dev
+  namespace: default
+spec:
+  matchlabels:
+    - "omni.sidero.dev/cluster = homelab, environment = dev, role = control-plane"
+---
+metadata:
+  id: data-plane-dev
+  type: MachineClasses.omni.sidero.dev
+  namespace: default
+spec:
+  matchlabels:
+    - "omni.sidero.dev/cluster = homelab, environment = dev, role = data-plane"

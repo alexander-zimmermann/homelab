@@ -4,7 +4,7 @@ version: "3"
 vars:
   PYTHON: "{{.TASKFILE_DIR}}/.venv/bin/python"
   PIP: "{{.TASKFILE_DIR}}/.venv/bin/pip"
-  # Colors
+
   BLUE: '\033[0;34m'
   GREEN: '\033[0;32m'
   YELLOW: '\033[0;33m'
@@ -12,9 +12,15 @@ vars:
   RESET: '\033[0m'
 
 includes:
-  infra: ./tasks/infrastructure.yaml
-  cluster: ./tasks/cluster.yaml
-  mgmt: ./tasks/management.yaml
+  infra:
+    taskfile: ./tasks/infrastructure.yaml
+    dir: ./infrastructure
+  cluster:
+    taskfile: ./tasks/cluster.yaml
+    dir: ./kubernetes
+  mgmt:
+    taskfile: ./tasks/management.yaml
+    dir: ./management
 
 tasks:
   default:
@@ -22,7 +28,28 @@ tasks:
       - task --list
 
   initialize:
-    desc: "Initialize homelab project on macOS (Homebrew, virtualenv, base Python deps)"
+    desc: "Initialize project environment (Homebrew, Python)"
+    vars:
+      FORMULAS: >-
+        kubernetes-cli
+        kustomize
+        helm
+        opentofu
+        talosctl
+        siderolabs/tap/sidero-tools
+        cilium-cli
+        argocd
+      PACKAGES: >-
+        pre-commit
+    preconditions:
+      - sh: command -v brew
+        msg: |
+          Homebrew is not installed. Please install Homebrew using the following command:
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - sh: command -v python3
+        msg: |
+          Python3 is not installed. Please install Python3 using Homebrew:
+          brew install python3
     cmds:
       - cmd: printf "{{.BLUE}}🚀 Initializing homelab environment...{{.RESET}}\n"
         silent: true
@@ -46,23 +73,3 @@ tasks:
       # All phases complete
       - cmd: printf "{{.GREEN}}✅ Initialization complete!{{.RESET}}\n"
         silent: true
-    preconditions:
-      - sh: command -v brew
-        msg: |
-          Homebrew is not installed. Please install Homebrew using the following command:
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      - sh: command -v python3
-        msg: |
-          Python3 is not installed. Please install Python3 using Homebrew:
-          brew install python3
-    vars:
-      FORMULAS: >-
-        kubernetes-cli
-        kustomize
-        helm
-        opentofu
-        talosctl
-        cilium-cli
-        argocd
-      PACKAGES: >-
-        pre-commit

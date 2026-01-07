@@ -3,8 +3,10 @@ version: "3"
 
 tasks:
   prepare:
-    desc: "Prepare Terraform/OpenTofu environment (tofu init)"
-    dir: infrastructure
+    desc: "Initialize OpenTofu environment (tofu init)"
+    preconditions:
+      - sh: command -v tofu
+        msg: "OpenTofu (tofu) is not installed"
     cmds:
       - cmd: printf "{{.BLUE}}🏗️  Initializing OpenTofu...{{.RESET}}\n"
         silent: true
@@ -14,8 +16,7 @@ tasks:
         silent: true
 
   plan:
-    desc: "Generate plan for infrastructure deployment"
-    dir: infrastructure
+    desc: "Generate infrastructure plan (tofu plan)"
     preconditions:
       - sh: test -d .terraform
         msg: ".terraform directory is missing. Run 'task infra:prepare' first."
@@ -27,8 +28,7 @@ tasks:
         silent: true
 
   apply:
-    desc: "Apply planned infrastructure changes to Proxmox (OpenTofu apply)"
-    dir: infrastructure
+    desc: "Apply infrastructure changes (tofu apply)"
     deps: [plan]
     preconditions:
       - sh: test -f tfplan
@@ -41,8 +41,12 @@ tasks:
         silent: true
 
   refresh:
-    desc: "Refresh infrastructure state (OpenTofu refresh)"
-    dir: infrastructure
+    desc: "Refresh infrastructure state (tofu refresh)"
+    preconditions:
+      - sh: command -v tofu
+        msg: "OpenTofu (tofu) is not installed"
+      - sh: test -d .terraform
+        msg: ".terraform directory is missing. Run 'task infra:prepare' first."
     cmds:
       - cmd: printf "{{.BLUE}}🔄 Refreshing infrastructure state...{{.RESET}}\n"
         silent: true
@@ -51,8 +55,12 @@ tasks:
         silent: true
 
   output:
-    desc: "Show infrastructure outputs (OpenTofu output)"
-    dir: infrastructure
+    desc: "Show infrastructure outputs (tofu output)"
+    preconditions:
+      - sh: command -v tofu
+        msg: "OpenTofu (tofu) is not installed"
+      - sh: test -f terraform.tfstate
+        msg: "terraform.tfstate is missing. Run 'task infra:apply' first."
     cmds:
       - cmd: printf "{{.BLUE}}🏗️ Showing infrastructure outputs...{{.RESET}}\n"
         silent: true
@@ -61,8 +69,10 @@ tasks:
         silent: true
 
   destroy:
-    desc: "Destroy (tear down) all managed Proxmox infrastructure"
-    dir: infrastructure
+    desc: "Destroy infrastructure resources (tofu destroy)"
+    preconditions:
+      - sh: command -v tofu
+        msg: "OpenTofu (tofu) is not installed"
     cmds:
       - cmd: printf "{{.RED}}💥 Destroying infrastructure...{{.RESET}}\n"
         silent: true

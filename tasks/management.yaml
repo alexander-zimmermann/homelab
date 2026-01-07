@@ -1,15 +1,96 @@
+---
 version: "3"
 
-vars:
-  MGMT_HOST: management-01.zimmermann.eu.com
-
 tasks:
-  deploy-omni:
-    desc: "Deploy Omni Stack on Remote Management VM (via SSH)"
+  classes:
+    desc: "Apply machine classes (omnictl apply)"
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+      - sh: test -f manifest/machine-classes.yaml
+        msg: "manifest/machine-classes.yaml is missing"
     cmds:
-      - cmd: printf "{{.BLUE}}📡 Connecting to {{.MGMT_HOST}}...{{.RESET}}\n"
+      - cmd: printf "{{.BLUE}}🏭 Applying Machine Classes...{{.RESET}}\n"
         silent: true
-      # SSH into VM, update repo, and run local deployment task
-      - ssh alexander@{{.MGMT_HOST}} "cd /opt/homelab && git pull && task -d management deploy"
-      - cmd: printf "{{.GREEN}}✨ Remote deployment triggered!{{.RESET}}\n"
+      - omnictl apply -f manifest/machine-classes.yaml
+      - cmd: printf "{{.GREEN}}✅ Machine Classes applied.{{.RESET}}\n"
+        silent: true
+
+  validate:
+    desc: "Validate cluster template (usage: task mgmt:validate -- CLUSTER ENV)"
+    vars:
+      CLUSTER: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{end}}"
+      ENV: "{{if gt (len .CLI_ARGS_LIST) 1}}{{index .CLI_ARGS_LIST 1}}{{end}}"
+      MANIFEST: "manifest/{{.CLUSTER}}-cluster-{{.ENV}}.yaml"
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+      - sh: test -n "{{.CLUSTER}}" && test -n "{{.ENV}}"
+        msg: "Usage: task mgmt:validate -- CLUSTER ENV"
+      - sh: test -f "{{.MANIFEST}}"
+        msg: "Manifest not found: {{.MANIFEST}}"
+    cmds:
+      - cmd: printf "{{.BLUE}}🔍 Validating Cluster Template for {{.CLUSTER}} ({{.ENV}})...{{.RESET}}\n"
+        silent: true
+      - omnictl cluster template validate -f "{{.MANIFEST}}"
+      - cmd: printf "{{.GREEN}}✅ Cluster Template is valid.{{.RESET}}\n"
+        silent: true
+
+  sync:
+    desc: "Sync cluster template (usage: task mgmt:sync -- CLUSTER ENV)"
+    vars:
+      CLUSTER: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{end}}"
+      ENV: "{{if gt (len .CLI_ARGS_LIST) 1}}{{index .CLI_ARGS_LIST 1}}{{end}}"
+      MANIFEST: "manifest/{{.CLUSTER}}-cluster-{{.ENV}}.yaml"
+    deps: [validate]
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+      - sh: test -n "{{.CLUSTER}}" && test -n "{{.ENV}}"
+        msg: "Usage: task mgmt:sync -- CLUSTER ENV"
+      - sh: test -f "{{.MANIFEST}}"
+        msg: "Manifest not found: {{.MANIFEST}}"
+    cmds:
+      - cmd: printf "{{.BLUE}}🔄 Syncing Cluster Template for {{.CLUSTER}} {{.ENV}})...{{.RESET}}\n"
+        silent: true
+      - omnictl cluster template sync -f "{{.MANIFEST}}"
+      - cmd: printf "{{.GREEN}}✅ Cluster Template synced.{{.RESET}}\n"
+        silent: true
+
+  status:
+    desc: "Show cluster status (usage: task mgmt:status -- CLUSTER ENV)"
+    vars:
+      CLUSTER: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{end}}"
+      ENV: "{{if gt (len .CLI_ARGS_LIST) 1}}{{index .CLI_ARGS_LIST 1}}{{end}}"
+      MANIFEST: "manifest/{{.CLUSTER}}-cluster-{{.ENV}}.yaml"
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+      - sh: test -n "{{.CLUSTER}}" && test -n "{{.ENV}}"
+        msg: "Usage: task mgmt:status -- CLUSTER ENV"
+      - sh: test -f "{{.MANIFEST}}"
+        msg: "Manifest not found: {{.MANIFEST}}"
+    cmds:
+      - cmd: printf "{{.BLUE}}📊 Checking Cluster Status for {{.CLUSTER}} ({{.ENV}})...{{.RESET}}\n"
+        silent: true
+      - omnictl cluster template status -f "{{.MANIFEST}}"
+      - cmd: printf "{{.GREEN}}✅ Status check complete.{{.RESET}}\n"
+        silent: true
+
+  config:
+    desc: "Download cluster credentials (usage: task mgmt:config -- CLUSTER)"
+    vars:
+      CLUSTER: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{end}}"
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+      - sh: test -n "{{.CLUSTER}}"
+        msg: "Usage: task mgmt:config -- CLUSTER"
+    cmds:
+      - cmd: printf "{{.BLUE}}📥 Downloading Credentials for {{.CLUSTER}}...{{.RESET}}\n"
+        silent: true
+      - mkdir -p {{.BUILD_DIR}}
+      - omnictl kubeconfig --cluster "{{.CLUSTER}}" > "{{.BUILD_DIR}}/kubeconfig_{{.CLUSTER}}.yaml"
+      - omnictl talosconfig --cluster "{{.CLUSTER}}" > "{{.BUILD_DIR}}/talosconfig_{{.CLUSTER}}.yaml"
+      - cmd: printf "{{.GREEN}}✅ Credentials saved to {{.BUILD_DIR}}/kubeconfig_{{.CLUSTER}}.yaml{{.RESET}}\n"
         silent: true
