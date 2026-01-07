@@ -7,14 +7,14 @@ vars:
 
 tasks:
   bootstrap:
-    desc: "Bootstrap Kubernetes components (usage: task cluster:bootstrap -- ENV)"
+    desc: "Bootstrap Kubernetes components (usage: task k8s:bootstrap -- [ENV])"
     vars:
-      ENV: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{end}}"
+      ENV: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}dev{{end}}"
     preconditions:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
       - sh: test -n "{{.ENV}}"
-        msg: "Usage: task cluster:bootstrap -- ENV"
+        msg: "Usage: task k8s:bootstrap -- ENV"
     cmds:
       # Phase 1: Wait for Kubernetes API
       - cmd: printf "{{.BLUE}}⏳ Waiting for Kubernetes API...{{.RESET}}\n"

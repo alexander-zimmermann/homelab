@@ -15,8 +15,8 @@ includes:
   infra:
     taskfile: ./tasks/infrastructure.yaml
     dir: ./infrastructure
-  cluster:
-    taskfile: ./tasks/cluster.yaml
+  k8s:
+    taskfile: ./tasks/kubernetes.yaml
     dir: ./kubernetes
   mgmt:
     taskfile: ./tasks/management.yaml
@@ -25,7 +25,8 @@ includes:
 tasks:
   default:
     cmds:
-      - task --list
+      - cmd: task --list
+        silent: true
 
   initialize:
     desc: "Initialize project environment (Homebrew, Python)"
