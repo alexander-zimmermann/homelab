@@ -4,7 +4,7 @@ fleet_vm:
     template_id: vm_ubuntu_noble
     vm_id: 1001
 
-  management_01:
+  cluster_mgmt_01:
     template_id: vm_ubuntu_noble_talos_omni
     vm_id: 1002
     disks:

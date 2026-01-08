@@ -4,4 +4,4 @@ ci_meta_config:
     hostname: proxmox-vm
 
   omni:
-    hostname: management-01
+    hostname: cluster-mgmt-01
