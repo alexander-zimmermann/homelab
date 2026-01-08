@@ -17,7 +17,7 @@ tasks:
         silent: true
 
   validate:
-    desc: "Validate cluster template (usage: task mgmt:validate -- CLUSTER ENV)"
+    desc: "Validate cluster template (usage: task cluster:validate -- CLUSTER ENV)"
     vars:
       CLUSTER: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{end}}"
       ENV: "{{if gt (len .CLI_ARGS_LIST) 1}}{{index .CLI_ARGS_LIST 1}}{{end}}"
@@ -26,7 +26,7 @@ tasks:
       - sh: command -v omnictl
         msg: "omnictl is not installed"
       - sh: test -n "{{.CLUSTER}}" && test -n "{{.ENV}}"
-        msg: "Usage: task mgmt:validate -- CLUSTER ENV"
+        msg: "Usage: task cluster:validate -- CLUSTER ENV"
       - sh: test -f "{{.MANIFEST}}"
         msg: "Manifest not found: {{.MANIFEST}}"
     cmds:
@@ -37,7 +37,7 @@ tasks:
         silent: true
 
   sync:
-    desc: "Sync cluster template (usage: task mgmt:sync -- CLUSTER ENV)"
+    desc: "Sync cluster template (usage: task cluster:sync -- CLUSTER ENV)"
     vars:
       CLUSTER: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{end}}"
       ENV: "{{if gt (len .CLI_ARGS_LIST) 1}}{{index .CLI_ARGS_LIST 1}}{{end}}"
@@ -47,7 +47,7 @@ tasks:
       - sh: command -v omnictl
         msg: "omnictl is not installed"
       - sh: test -n "{{.CLUSTER}}" && test -n "{{.ENV}}"
-        msg: "Usage: task mgmt:sync -- CLUSTER ENV"
+        msg: "Usage: task cluster:sync -- CLUSTER ENV"
       - sh: test -f "{{.MANIFEST}}"
         msg: "Manifest not found: {{.MANIFEST}}"
     cmds:
@@ -58,7 +58,7 @@ tasks:
         silent: true
 
   status:
-    desc: "Show cluster status (usage: task mgmt:status -- CLUSTER ENV)"
+    desc: "Show cluster status (usage: task cluster:status -- CLUSTER ENV)"
     vars:
       CLUSTER: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{end}}"
       ENV: "{{if gt (len .CLI_ARGS_LIST) 1}}{{index .CLI_ARGS_LIST 1}}{{end}}"
@@ -67,7 +67,7 @@ tasks:
       - sh: command -v omnictl
         msg: "omnictl is not installed"
       - sh: test -n "{{.CLUSTER}}" && test -n "{{.ENV}}"
-        msg: "Usage: task mgmt:status -- CLUSTER ENV"
+        msg: "Usage: task cluster:status -- CLUSTER ENV"
       - sh: test -f "{{.MANIFEST}}"
         msg: "Manifest not found: {{.MANIFEST}}"
     cmds:
@@ -78,14 +78,14 @@ tasks:
         silent: true
 
   config:
-    desc: "Download cluster credentials (usage: task mgmt:config -- CLUSTER)"
+    desc: "Download cluster credentials (usage: task cluster:config -- CLUSTER)"
     vars:
       CLUSTER: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{end}}"
     preconditions:
       - sh: command -v omnictl
         msg: "omnictl is not installed"
       - sh: test -n "{{.CLUSTER}}"
-        msg: "Usage: task mgmt:config -- CLUSTER"
+        msg: "Usage: task cluster:config -- CLUSTER"
     cmds:
       - cmd: printf "{{.BLUE}}📥 Downloading Credentials for {{.CLUSTER}}...{{.RESET}}\n"
         silent: true

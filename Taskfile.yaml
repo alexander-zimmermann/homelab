@@ -18,9 +18,9 @@ includes:
   k8s:
     taskfile: ./tasks/kubernetes.yaml
     dir: ./kubernetes
-  mgmt:
-    taskfile: ./tasks/management.yaml
-    dir: ./management
+  cluster:
+    taskfile: ./tasks/cluster-mgmt.yaml
+    dir: ./cluster-mgmt
 
 tasks:
   default:
