@@ -3,5 +3,5 @@ ci_meta_config:
   std_linux:
     hostname: proxmox-vm
 
-  omni:
+  cluster-mgmt:
     hostname: cluster-mgmt-01

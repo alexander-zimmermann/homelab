@@ -30,7 +30,7 @@ template_vm:
     ci_network_config: std_linux
     ci_meta_config: std_linux
 
-  vm_ubuntu_noble_talos_omni:
+  vm_ubuntu_noble_cluster-mgmt:
     vm_id: 10005
     image_id: vm_ubuntu_noble
     os_type: l26
@@ -40,10 +40,10 @@ template_vm:
     disk_size: 16
     vnic_bridge: vmbr0
     ## Cloud-init
-    ci_user_config: omni
-    ci_vendor_config: omni
-    ci_network_config: omni
-    ci_meta_config: omni
+    ci_user_config: cluster-mgmt
+    ci_vendor_config: cluster-mgmt
+    ci_network_config: cluster-mgmt
+    ci_meta_config: cluster-mgmt
 
   vm_talos_1_12_0_cp:
     vm_id: 10002

@@ -6,7 +6,7 @@ ci_network_config:
     accept_ra: true
     dns_search_domain: [zimmermann.eu.com]
 
-  omni:
+  cluster-mgmt:
     dhcp4: true
     dhcp6: false
     accept_ra: true

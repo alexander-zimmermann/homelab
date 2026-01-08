@@ -7,7 +7,7 @@ ci_user_config:
       set_password: false
       password: ""
 
-  omni:
+  cluster-mgmt:
     - username: omni
       groups: [sudo, docker]
       set_password: false

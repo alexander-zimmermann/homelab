@@ -5,7 +5,7 @@ ci_vendor_config:
     runcmd:
       - systemctl enable --now qemu-guest-agent
 
-  omni:
+  cluster-mgmt:
     packages:
       - qemu-guest-agent
       - htop
