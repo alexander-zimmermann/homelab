@@ -45,9 +45,9 @@ template_vm:
     ci_network_config: cluster-mgmt
     ci_meta_config: cluster-mgmt
 
-  vm_talos_1_12_0_cp:
+  vm_talos_1_12_0_cp-prod:
     vm_id: 10002
-    image_id: vm_talos_1_12_0_cp
+    image_id: vm_talos_1_12_0_cp-prod
     os_type: l26
     ## Resources
     memory: 4096
@@ -55,9 +55,9 @@ template_vm:
     disk_size: 32
     vnic_bridge: vmbr0
 
-  vm_talos_1_12_0_dp:
+  vm_talos_1_12_0_dp-prod:
     vm_id: 10003
-    image_id: vm_talos_1_12_0_dp
+    image_id: vm_talos_1_12_0_dp-prod
     os_type: l26
     ## Resources
     memory: 4048 #8192
