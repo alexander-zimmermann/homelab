@@ -2,8 +2,8 @@
 version: "3"
 
 vars:
-  PYTHON: "{{.TASKFILE_DIR}}/.venv/bin/python"
-  PIP: "{{.TASKFILE_DIR}}/.venv/bin/pip"
+  PYTHON: "{{.ROOT_DIR}}/.venv/bin/python"
+  PIP: "{{.ROOT_DIR}}/.venv/bin/pip"
 
   BLUE: '\033[0;34m'
   GREEN: '\033[0;32m'

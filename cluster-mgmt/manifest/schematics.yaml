@@ -1,0 +1,91 @@
+---
+###############################################################################
+## Production Talos images (schematics)
+###############################################################################
+customization:
+  extraKernelArgs:
+    - talos.platform=nocloud
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/qemu-guest-agent
+      - siderolabs/util-linux-tools
+      - siderolabs/i915
+      - siderolabs/intel-ucode
+      - siderolabs/nvidia-open-gpu-kernel-modules-lts
+      - siderolabs/iscsi-tools
+      - siderolabs/zfs
+  meta:
+    - key: 12
+      value: |
+        machineLabels:
+          omni.sidero.dev/cluster: homelab
+          environment: prod
+          role: control-plane
+          image-id: cp-prod
+
+---
+customization:
+  extraKernelArgs:
+    - talos.platform=nocloud
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/qemu-guest-agent
+      - siderolabs/util-linux-tools
+      - siderolabs/i915
+      - siderolabs/intel-ucode
+      - siderolabs/nvidia-open-gpu-kernel-modules-lts
+      - siderolabs/iscsi-tools
+      - siderolabs/zfs
+  meta:
+    - key: 12
+      value: |
+        machineLabels:
+          omni.sidero.dev/cluster: homelab
+          environment: prod
+          role: data-plane
+          image-id: dp-prod
+---
+###############################################################################
+## Development Talos images (schematics)
+###############################################################################
+customization:
+  extraKernelArgs:
+    - talos.platform=nocloud
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/qemu-guest-agent
+      - siderolabs/util-linux-tools
+      - siderolabs/i915
+      - siderolabs/intel-ucode
+      - siderolabs/nvidia-open-gpu-kernel-modules-lts
+      - siderolabs/iscsi-tools
+      - siderolabs/zfs
+  meta:
+    - key: 12
+      value: |
+        machineLabels:
+          omni.sidero.dev/cluster: homelab
+          environment: dev
+          role: control-plane
+          image-id: cp-dev
+---
+customization:
+  extraKernelArgs:
+    - talos.platform=nocloud
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/qemu-guest-agent
+      - siderolabs/util-linux-tools
+      - siderolabs/i915
+      - siderolabs/intel-ucode
+      - siderolabs/nvidia-open-gpu-kernel-modules-lts
+      - siderolabs/iscsi-tools
+      - siderolabs/zfs
+  meta:
+    - key: 12
+      value: |
+        machineLabels:
+          omni.sidero.dev/cluster: homelab
+          environment: dev
+          role: data-plane
+          image-id: dp-dev

@@ -16,6 +16,24 @@ tasks:
       - cmd: printf "{{.GREEN}}✅ Machine Classes applied.{{.RESET}}\n"
         silent: true
 
+  schematics:
+    desc: "Generate Talos Schematic IDs via Factory API"
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+      - sh: test -f manifest/schematics.yaml
+        msg: "manifest/schematics.yaml is missing"
+    sources:
+      - manifest/schematics.yaml
+    generates:
+      - "build/schematicIDs.yaml"
+    cmds:
+      - cmd: printf "{{.BLUE}}🏭 Generating Talos Schematics...{{.RESET}}\n"
+        silent: true
+      - cmd: "{{.PYTHON}} scripts/generate_schematics.py"
+      - cmd: printf "{{.GREEN}}✅ Schematics generated at {{.OUTPUT}}.{{.RESET}}\n"
+        silent: true
+
   validate:
     desc: "Validate cluster template (usage: task cluster:validate -- CLUSTER ENV)"
     vars:
