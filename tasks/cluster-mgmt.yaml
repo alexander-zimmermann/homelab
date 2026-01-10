@@ -107,8 +107,7 @@ tasks:
     cmds:
       - cmd: printf "{{.BLUE}}📥 Downloading Credentials for {{.CLUSTER}}...{{.RESET}}\n"
         silent: true
-      - mkdir -p {{.BUILD_DIR}}
-      - omnictl kubeconfig --cluster "{{.CLUSTER}}" > "{{.BUILD_DIR}}/kubeconfig_{{.CLUSTER}}.yaml"
-      - omnictl talosconfig --cluster "{{.CLUSTER}}" > "{{.BUILD_DIR}}/talosconfig_{{.CLUSTER}}.yaml"
-      - cmd: printf "{{.GREEN}}✅ Credentials saved to {{.BUILD_DIR}}/kubeconfig_{{.CLUSTER}}.yaml{{.RESET}}\n"
+      - omnictl kubeconfig --cluster "{{.CLUSTER}}" --grant-type authcode-keyboard
+      - omnictl talosconfig --cluster "{{.CLUSTER}}"
+      - cmd: printf "{{.GREEN}}✅ Credentials saved to $HOME/.kube/ and $HOME/.talos/\n"
         silent: true
