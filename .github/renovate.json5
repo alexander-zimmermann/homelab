@@ -1,0 +1,42 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    "schedule:earlyMondays",
+  ],
+  labels: ["dependencies"],
+  timezone: "Europe/Berlin",
+  packageRules: [
+    {
+      matchUpdateTypes: ["minor", "patch"],
+      automerge: true,
+      automergeType: "pr",
+    },
+    {
+      matchPackagePatterns: ["cilium"],
+      groupName: "cilium components",
+    },
+  ],
+  customManagers: [
+    {
+      customType: "regex",
+      fileMatch: ["infrastructure/manifest/20-image/image.yaml"],
+      matchStrings: [
+        "image_url: https://factory\\.talos\\.dev/image/(?<schematic>[a-f0-9]+)/(?<currentValue>[\\d\\.]+)/nocloud-amd64\\.raw",
+      ],
+      datasourceTemplate: "github-releases",
+      depNameTemplate: "siderolabs/talos",
+      versioningTemplate: "semver",
+    },
+  ],
+  postUpgradeTasks: {
+    commands: ["python3 .github/scripts/update_checksums.py"],
+    fileFilters: ["infrastructure/manifest/20-image/image.yaml"],
+    executionMode: "branch",
+  },
+  allowedPostUpgradeCommands: [
+    "^python3 .github/scripts/update_checksums\\.py$",
+  ],
+}
