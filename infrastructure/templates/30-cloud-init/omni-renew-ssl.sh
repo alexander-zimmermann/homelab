@@ -11,8 +11,8 @@
 set -euo pipefail
 
 # Set environment files
-ENV_BOOTSTRAP="/usr/local/etc/omni/.env/bootstrap"
-ENV_LEGO="/usr/local/etc/omni/.env/lego"
+ENV_BOOTSTRAP="/opt/omni/.bootstrap"
+ENV_LEGO="/opt/omni/.lego"
 
 # ==============================================================================
 # Main Script

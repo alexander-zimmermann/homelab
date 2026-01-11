@@ -27,7 +27,7 @@ x-default-logging:
 # ============================================================================
 services:
   omni:
-    image: ghcr.io/siderolabs/omni:latest
+    image: ghcr.io/siderolabs/omni:v1.4.7
     container_name: omni
     hostname: omni
     restart: unless-stopped

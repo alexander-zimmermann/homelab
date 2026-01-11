@@ -42,7 +42,6 @@ ci_secrets = {
     san_domains      = "YOUR_SAN_DOMAINS" # comma-separated list of domains
   }
   omni_env_bootstrap = {
-    github_token       = "YOUR_GITHUB_TOKEN"
     omni_email_address = "YOUR_OMNI_EMAIL_ADDRESS"
   }
   omni_env_docker = {

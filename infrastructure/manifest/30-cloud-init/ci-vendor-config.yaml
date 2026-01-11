@@ -35,7 +35,7 @@ ci_vendor_config:
         partition: auto
 
     mounts:
-      - ["LABEL=omni_data", "/opt/omni"]
+      - ["LABEL=omni_data", "/mnt/omni"]
       - [
           "storage.zimmermann.eu.com:/srv/mgmt",
           "/mnt/backup",
@@ -49,9 +49,8 @@ ci_vendor_config:
 
     bootcmd:
       - mkdir -p /opt/omni
+      - mkdir -p /mnt/omni
       - mkdir -p /mnt/backup
-      - mkdir -p /usr/local/etc/omni/.env
-      - mkdir -p /usr/local/etc/omni/.secrets
 
     runcmd:
       ## Symlinks for snap packages
@@ -61,6 +60,7 @@ ci_vendor_config:
       - ["mount", "/mnt/backup"]
       ## Set permissions for data disk
       - ["chown", "omni:omni", "/opt/omni"]
+      - ["chown", "omni:omni", "/mnt/omni"]
       ## Setup Omni
       - ["bash", "/usr/local/bin/omni-bootstrap.sh"]
       ## Systemd services
@@ -70,21 +70,21 @@ ci_vendor_config:
 
     write_files:
       ## Environment file for lego, Omni Bootstrap, and Omni docker compose
-      - path: /usr/local/etc/omni/.env/lego
+      - path: /opt/omni/.lego
         template_file: templates/30-cloud-init/omni.env.lego.tftpl
         secret_ref: omni_env_lego
         permissions: "0660"
         owner: "omni:omni"
         defer: true
 
-      - path: /usr/local/etc/omni/.env/bootstrap
+      - path: /opt/omni/.bootstrap
         template_file: templates/30-cloud-init/omni.env.bootstrap.tftpl
         secret_ref: omni_env_bootstrap
         permissions: "0660"
         owner: "omni:omni"
         defer: true
 
-      - path: /usr/local/etc/omni/.env/docker
+      - path: /opt/omni/.env
         template_file: templates/30-cloud-init/omni.env.docker.tftpl
         secret_ref: omni_env_docker
         permissions: "0660"
@@ -108,5 +108,12 @@ ci_vendor_config:
       - path: /usr/local/bin/omni-bootstrap.sh
         content_file: templates/30-cloud-init/omni-bootstrap.sh
         permissions: "0755"
+        owner: "omni:omni"
+        defer: true
+
+      ## Omni Docker Compose configuration
+      - path: /opt/omni/compose.yaml
+        content_file: templates/30-cloud-init/omni-compose.yaml
+        permissions: "0644"
         owner: "omni:omni"
         defer: true

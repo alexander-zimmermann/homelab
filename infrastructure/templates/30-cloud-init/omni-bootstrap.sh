@@ -11,9 +11,9 @@
 set -euo pipefail
 
 # Set environment files
-ENV_BOOTSTRAP="/usr/local/etc/omni/.env/bootstrap"
-ENV_DOCKER="/usr/local/etc/omni/.env/docker"
-ENV_LEGO="/usr/local/etc/omni/.env/lego"
+ENV_BOOTSTRAP="/opt/omni/.bootstrap"
+ENV_DOCKER="/opt/omni/.env"
+ENV_LEGO="/opt/omni/.lego"
 
 # ==============================================================================
 # Helper: Logging functions
@@ -189,10 +189,6 @@ source ${ENV_BOOTSTRAP} || die "Failed to load bootstrap environment variables."
 source ${ENV_DOCKER} || die "Failed to load docker environment variables."
 source ${ENV_LEGO} || die "Failed to load lego environment variables."
 
-# Clone git repository
-info "Cloning repository..."
-git clone --quiet "${GITHUB_REPO_URL}" "${LOCAL_REPO_DIR}" || die "Failed to clone repository."
-
 # Restore or generate new certificates
 info "Checking for certificate state to restore..."
 setup_certificates
@@ -206,8 +202,6 @@ info "Checking for Omni data state to restore..."
 setup_data
 
 # Set permissions & ownership
-chmod -R g+w "${LOCAL_REPO_DIR}"
-chown -R "${OWNER}" "${LOCAL_REPO_DIR}"
 chown -R "${OWNER}" "${OMNI_LOCAL_CERT_DIR}"
 chown -R "${OWNER}" "${OMNI_BACKUP_CERT_DIR}"
 chown -R "${OWNER}" "${OMNI_LOCAL_KEY_DIR}"
@@ -215,8 +209,7 @@ chown -R "${OWNER}" "${OMNI_BACKUP_KEY_DIR}"
 
 # Deploy with Docker Compose
 info "Deploying Omni via docker compose..."
-ln -sf "${ENV_DOCKER}" "${OMNI_REPO_DIR}/.env"
-cd "${OMNI_REPO_DIR}"
+cd "${OMNI_LOCAL_DIR}"
 docker compose up -d > /dev/null || die "Failed to deploy docker compose."
 
 info "Bootstrap complete!"
