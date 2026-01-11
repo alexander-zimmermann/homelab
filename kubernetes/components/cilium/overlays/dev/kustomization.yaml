@@ -4,7 +4,6 @@ kind: Kustomization
 
 resources:
   - ../../base
-  - ../../../../bootstrap/cilium/overlays/dev/
 
 patches:
   - target:

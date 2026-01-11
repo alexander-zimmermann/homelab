@@ -4,9 +4,40 @@ kind: Kustomization
 
 namespace: gitops-controller
 resources:
-  - ./sealedsecret.yaml
-  - ./ingressroute.yaml
+  - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+  - ./namespace.yaml
+  - ./appset-applications.yaml
+  - ./appset-components.yaml
+  - ./appproject.yaml
   - ./certificate.yaml
+  - ./ingressroute.yaml
+  - ./sealedsecret.yaml
+
+patches:
+  - patch: |-
+      - op: add
+        path: /data
+        value:
+          kustomize.buildOptions: --enable-helm
+    target:
+      kind: ConfigMap
+      name: argocd-cm
+
+  - patch: |-
+      - op: add
+        path: /data
+        value:
+          server.insecure: "true"
+    target:
+      kind: ConfigMap
+      name: argocd-cmd-params-cm
+
+  - patch: |-
+      - op: replace
+        path: /subjects/0/namespace
+        value: gitops-controller
+    target:
+      kind: ClusterRoleBinding
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "0"

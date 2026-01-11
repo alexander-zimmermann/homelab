@@ -4,4 +4,3 @@ kind: Kustomization
 
 resources:
   - ../../base
-  - ../../../../bootstrap/gitops-controller/overlays/prod/

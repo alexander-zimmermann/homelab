@@ -11,6 +11,16 @@ resources:
   - ./bgp-peer-config.yaml
   - ./bgp-advertisement.yaml
   - ./bgp-lb-ip-pool.yaml
+  - ./namespace.yaml
+
+helmCharts:
+  - name: cilium
+    repo: https://helm.cilium.io
+    releaseName: cilium
+    version: 1.18.5
+    valuesFile: values.yaml
+    includeCRDs: true
+    namespace: cilium
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-10"
