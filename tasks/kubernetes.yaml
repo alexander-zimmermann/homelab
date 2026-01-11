@@ -5,114 +5,92 @@ vars:
   TIMEOUT_CILIUM: "300s"
   TIMEOUT_ARGOCD: "300s"
 
+  SCRIPTS_DIR: "kubernetes/scripts"
+  BOOTSTRAP_DIR: "kubernetes/bootstrap"
+  COMPONENTS_DIR: "kubernetes/components"
+  HELM_CMD: "/opt/homebrew/opt/helm@3/bin/helm"
+
 tasks:
-  bootstrap:
-    desc: "Bootstrap Kubernetes components (usage: task k8s:bootstrap -- [ENV])"
+  init:
+    desc: "render kustomize manifests [env]"
+    summary: |
+      Generate inline patches for CNI and GitOps (Manifest Hydration).
+      Arguments: [env] (default: prod)
+      Underlying command: kustomize build | generate_patch.py
     vars:
-      ENV: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}dev{{end}}"
+      ENVIRONMENT: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}prod{{end}}"
+    requires:
+      vars:
+        - name: ENVIRONMENT
+          enum: [dev, prod]
+    sources:
+      - "{{.COMPONENTS_DIR}}/cilium/overlays/{{.ENVIRONMENT}}/**"
+      - "{{.COMPONENTS_DIR}}/gitops-controller/overlays/{{.ENVIRONMENT}}/**"
+    generates:
+      - "{{.BOOTSTRAP_DIR}}/patches/cilium-{{.ENVIRONMENT}}.yaml"
+      - "{{.BOOTSTRAP_DIR}}/patches/argocd-{{.ENVIRONMENT}}.yaml"
+    preconditions:
+      - sh: command -v kustomize
+        msg: "kustomize is not installed"
+      - sh: command -v {{.PYTHON}}
+        msg: "python3 is not installed"
+      - sh: test -d {{.COMPONENTS_DIR}}
+        msg: "{{.COMPONENTS_DIR}} is missing"
+    cmds:
+      - mkdir -p {{.BOOTSTRAP_DIR}}/patches/{{.ENVIRONMENT}}
+      # Cilium
+      - kustomize build --enable-helm --helm-command {{.HELM_CMD}} {{.COMPONENTS_DIR}}/cilium/overlays/{{.ENVIRONMENT}} | {{.PYTHON}} {{.SCRIPTS_DIR}}/generate_patch.py --target {{.BOOTSTRAP_DIR}}/patches/{{.ENVIRONMENT}}/cilium.yaml --name cilium
+      # ArgoCD
+      - kustomize build --enable-helm --helm-command {{.HELM_CMD}} {{.COMPONENTS_DIR}}/gitops-controller/overlays/{{.ENVIRONMENT}} | {{.PYTHON}} {{.SCRIPTS_DIR}}/generate_patch.py --target {{.BOOTSTRAP_DIR}}/patches/{{.ENVIRONMENT}}/argocd.yaml --name argocd
+      # cleanup
+      - rm -r {{.COMPONENTS_DIR}}/cilium/base/charts
+
+  create:
+    desc: "bootstrap kubernetes cluster [env]"
+    summary: |
+      Bootstrap the complete Kubernetes cluster (Zero-to-Hero).
+      Arguments: [env] (default: prod)
+      Pipeline: Render -> Sync -> Verify -> Secrets.
+    vars:
+      ENVIRONMENT: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}prod{{end}}"
+    requires:
+      vars:
+        - name: ENVIRONMENT
+          enum: [dev, prod]
+    deps: [init, "cluster:update"]
     preconditions:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
-      - sh: test -n "{{.ENV}}"
-        msg: "Usage: task k8s:bootstrap -- ENV"
+      - sh: command -v cilium
+        msg: "cilium-cli is not installed"
+      - sh: test -f secrets/sealed-secrets-key.yaml
+        msg: "secrets/sealed-secrets-key.yaml not found. Cluster bootstrap requires sealed secrets key."
     cmds:
-      # Phase 1: Wait for Kubernetes API
-      - cmd: printf "{{.BLUE}}⏳ Waiting for Kubernetes API...{{.RESET}}\n"
-        silent: true
+      # wait for Kubernetes API readiness
       - until kubectl get --raw /healthz >/dev/null 2>&1; do sleep 5; done
-      - cmd: printf "{{.GREEN}}✅ API is ready!{{.RESET}}\n"
-        silent: true
-
-      # Phase 2: Seed Cilium (Network)
-      - cmd: printf "{{.BLUE}} Seeding Cilium CNI (Bootstrapping Network)...{{.RESET}}\n"
-        silent: true
-      - kustomize build --enable-helm --helm-command /opt/homebrew/opt/helm@3/bin/helm bootstrap/cilium/overlays/{{.ENV}} | kubectl apply -f - || true
-
-      # Phase 3: Wait for Cilium Readiness
-      - cmd: printf "{{.BLUE}}⏳ Waiting for Cilium CNI (Health Check)...{{.RESET}}\n"
-        silent: true
-      # Check K8s Rollout first (Basic Pod Up)
+      # wait for Cilium readiness
       - kubectl rollout status ds/cilium -n cilium --timeout={{.TIMEOUT_CILIUM}}
       - kubectl rollout status deploy/cilium-operator -n cilium --timeout={{.TIMEOUT_CILIUM}}
-      # Check Internal Health (Cilium Status)
       - cilium status -n cilium --wait
-      - cmd: printf "{{.GREEN}}✅ Cilium is ready! Network established.{{.RESET}}\n"
-        silent: true
-
-      # Phase 4: Deploy ArgoCD (GitOps)
-      - cmd: printf "{{.BLUE}}🌐 Installing ArgoCD (GitOps Controller)...{{.RESET}}\n"
-        silent: true
-      - kubectl apply -k bootstrap/gitops-controller/overlays/{{.ENV}}
-      - cmd: printf "{{.BLUE}}⏳ Waiting for ArgoCD...{{.RESET}}\n"
-        silent: true
+      # wait for ArgoCD readiness
+      - until kubectl get pods -n gitops-controller -l app.kubernetes.io/name=argocd-server >/dev/null 2>&1; do sleep 5; done
       - kubectl -n gitops-controller wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server --timeout={{.TIMEOUT_ARGOCD}}
-      - cmd: printf "{{.GREEN}}✅ ArgoCD is ready!{{.RESET}}\n"
-        silent: true
+      # inject sealed secrets master key
+      - kubectl apply -f .secrets/sealed-secrets-key.yaml
+      # wait for sealed secrets controller app
+      - until kubectl get application -n gitops-controller sealed-secrets-controller-{{.ENVIRONMENT}} >/dev/null 2>&1; do sleep 5; done
+      - kubectl wait application/sealed-secrets-controller-{{.ENVIRONMENT}} -n gitops-controller --for=jsonpath='{.status.health.status}'=Healthy --timeout=300s
 
-      # Phase 5: Finalize (Secrets & Verification)
-      - cmd: printf "{{.BLUE}}🌐 Installing Sealed Secrets...{{.RESET}}\n"
-        silent: true
-      # Wait for ArgoCD to create the Application
-      - cmd: printf "{{.BLUE}}⏳ Waiting for Application sealed-secrets-controller-{{.ENV}}...{{.RESET}}\n"
-        silent: true
-      - until kubectl get application -n gitops-controller sealed-secrets-controller-{{.ENV}} >/dev/null 2>&1; do sleep 5; done
-      # Wait for Application to be Healthy
-      - kubectl wait application/sealed-secrets-controller-{{.ENV}} -n gitops-controller --for=jsonpath='{.status.health.status}'=Healthy --timeout=300s
-      - kubectl apply -f secrets/sealed-secrets-key.yaml
-
-      # Phase 6: Cleanup
-      - rm -r bootstrap/cilium/base/charts
-      - cmd: printf "{{.GREEN}}✅ Cluster bootstrapped!{{.RESET}}\n"
-        silent: true
-
-  output:
-    desc: "Show cluster credentials and outputs (kubectl)"
-    preconditions:
-      - sh: command -v kubectl
-        msg: "kubectl is not installed"
-    cmds:
-      - cmd: printf "{{.BLUE}}☸️ Showing cluster outputs...{{.RESET}}\n"
-        silent: true
-      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d)"
-      - cmd: printf "{{.GREEN}}✅ Cluster outputs shown!{{.RESET}}\n"
-        silent: true
-
-  verify:
-    desc: "Verify cluster health and connectivity (kubectl, cilium)"
-    preconditions:
-      - sh: command -v kubectl
-        msg: "kubectl is not installed"
-    cmds:
-      - cmd: printf "{{.BLUE}}🔍 Verifying cluster health...{{.RESET}}\n"
-        silent: true
-      # Phase 1: Node Status
-      - kubectl get nodes
-
-      # Phase 2: Pod Status
-      - kubectl get pods -A
-
-      # Phase 3: Cilium Connectivity
-      - cilium status -n cilium
-      - cilium bgp peers -n cilium
-
-      # Phase 4: Storage Verification
-      - cmd: printf "{{.BLUE}}💾 Verifying Storage...{{.RESET}}\n"
-        silent: true
-      - kubectl get storageclass
-
-      # Phase 5: Application Verification
-      - cmd: printf "{{.BLUE}}🤖 Verifying ArgoCD Applications...{{.RESET}}\n"
-        silent: true
-      - kubectl -n gitops-controller get applications
-      - cmd: printf "{{.GREEN}}✅ Cluster verification complete!{{.RESET}}\n"
-        silent: true
-
-  wipe:
-    desc: "Wipe all cluster resources (Dangerous)"
+  delete:
+    desc: "complete cluster wipe"
+    summary: |
+      Wipe all cluster resources.
+      Underlying command: kubectl delete ns
     vars:
+      COMPONENTS_DIR: "kubernetes/components"
       MANAGED_NAMESPACES:
         sh: |
-          grep -rh "namespace:" components/*/base/kustomization.yaml applications/*/base/kustomization.yaml \
+          grep -rh "namespace:" {{.COMPONENTS_DIR}}/*/base/kustomization.yaml kubernetes/applications/*/base/kustomization.yaml \
           | awk '{print $2}' \
           | sort -u \
           | grep -vE '^(default|kube-system|kube-public|kube-node-lease)$' \
@@ -120,32 +98,44 @@ tasks:
     preconditions:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
+    prompt: "Are you sure you want to wipe the cluster?"
     cmds:
-      - cmd: printf "{{.RED}}💥 Wiping cluster resources...{{.RESET}}\n"
-        silent: true
-      # Phase 1: Async Delete
+      # async delete
       - echo "{{.MANAGED_NAMESPACES}}" | xargs kubectl delete ns --ignore-not-found=true --wait=false
-
-      # Phase 2: Force Cleanup (Finalizers)
+      # force cleanup
       - cmd: |
           echo "Waiting for namespaces to terminate or force cleanup..."
           for ns in {{.MANAGED_NAMESPACES}}; do
-            echo "Checking $ns..."
-            # Wait up to 10s for normal deletion
             kubectl wait --for=delete ns/$ns --timeout=10s >/dev/null 2>&1 || true
-
-            # If still exists, patch finalizers
             if kubectl get ns $ns >/dev/null 2>&1; then
               echo "Force removing finalizers for $ns..."
               kubectl patch ns $ns -p '{"spec":{"finalizers":[]}}' --type=merge >/dev/null 2>&1
             fi
           done
-
-      # Phase 3: System Component Cleanup
-      - cmd: printf "{{.RED}}🧹 Cleaning system namespaces...{{.RESET}}\n"
-        silent: true
+      # system component cleanup
       - kubectl delete secret hubble-tls-cert -n default --ignore-not-found=true
-      - kubectl delete deploy,svc metrics-server -n kube-system --ignore-not-found=true
-      - kubectl delete deploy,svc talos-cloud-controller-manager -n kube-system --ignore-not-found=true
-      - cmd: printf "{{.GREEN}}✅ Cluster wiped completely.{{.RESET}}\n"
-        silent: true
+
+  show:
+    desc: "show cluster credentials"
+    summary: |
+      Show important cluster secrets (ArgoCD admin).
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
+    cmds:
+      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d)"
+
+  status:
+    desc: "verify cluster health"
+    summary: |
+      Verify cluster health and connectivity.
+      Underlying command: kubectl get nodes/pods, cilium status
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
+      - sh: command -v cilium
+        msg: "cilium-cli is not installed"
+    cmds:
+      - kubectl get nodes
+      - kubectl get pods -A
+      - cilium status -n cilium

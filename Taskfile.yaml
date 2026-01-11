@@ -5,22 +5,14 @@ vars:
   PYTHON: "{{.ROOT_DIR}}/.venv/bin/python"
   PIP: "{{.ROOT_DIR}}/.venv/bin/pip"
 
-  BLUE: '\033[0;34m'
-  GREEN: '\033[0;32m'
-  YELLOW: '\033[0;33m'
-  RED: '\033[0;31m'
-  RESET: '\033[0m'
-
 includes:
   infra:
     taskfile: ./tasks/infrastructure.yaml
     dir: ./infrastructure
   k8s:
     taskfile: ./tasks/kubernetes.yaml
-    dir: ./kubernetes
   cluster:
-    taskfile: ./tasks/cluster-mgmt.yaml
-    dir: ./cluster-mgmt
+    taskfile: ./tasks/cluster.yaml
 
 tasks:
   default:
@@ -29,18 +21,22 @@ tasks:
         silent: true
 
   initialize:
-    desc: "Initialize project environment (Homebrew, Python)"
+    desc: "initialize homelab project environment"
+    summary: |
+      Setup project dependencies and environment.
+      - Installs Homebrew packages (k8s-cli, tofu, omnictl, etc)
+      - Sets up Python virtualenv (.venv)
+      - Installs Python requirements (kustomize, pylint)
+      - Configures pre-commit hooks
     vars:
       FORMULAS: >-
         kubernetes-cli
         kustomize
         helm
-        opentofu
-        talosctl
-        siderolabs/tap/sidero-tools
-        cilium-cli
         argocd
-        int128/kubelogin/kubelogin
+        opentofu
+        cilium-cli
+        siderolabs/tap/sidero-tools
       PACKAGES: >-
         pre-commit
     preconditions:
@@ -53,8 +49,6 @@ tasks:
           Python3 is not installed. Please install Python3 using Homebrew:
           brew install python3
     cmds:
-      - cmd: printf "{{.BLUE}}🚀 Initializing homelab environment...{{.RESET}}\n"
-        silent: true
       # Phase 1: Install System Packages
       - for:
           var: FORMULAS
@@ -71,7 +65,3 @@ tasks:
           as: PACKAGE
         cmd: "{{.PIP}} install {{.PACKAGE}} >/dev/null 2>&1"
       - "{{.TASKFILE_DIR}}/.venv/bin/pre-commit install >/dev/null 2>&1"
-
-      # All phases complete
-      - cmd: printf "{{.GREEN}}✅ Initialization complete!{{.RESET}}\n"
-        silent: true

@@ -1,0 +1,101 @@
+---
+version: "3"
+
+vars:
+  SCRIPTS_DIR: "kubernetes/scripts"
+  BUILD_DIR: "kubernetes/build"
+  BOOTSTRAP_DIR: "kubernetes/bootstrap"
+
+tasks:
+  init:
+    desc: "generate talos schematics"
+    summary: |
+      Generate Talos Schematic IDs via Factory API.
+      Underlying command: python generate_schematics.py
+    sources:
+      - "{{.BOOTSTRAP_DIR}}/schematics.yaml"
+    generates:
+      - "{{.BUILD_DIR}}/schematicIDs.yaml"
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+      - sh: test -f {{.BOOTSTRAP_DIR}}/schematics.yaml
+        msg: "{{.BOOTSTRAP_DIR}}/schematics.yaml is missing"
+    cmds:
+      - mkdir -p {{.BUILD_DIR}}
+      - "{{.PYTHON}} {{.SCRIPTS_DIR}}/generate_schematics.py --source {{.BOOTSTRAP_DIR}}/schematics.yaml --output {{.BUILD_DIR}}/schematicIDs.yaml"
+
+  create:
+    desc: "register machine classes"
+    summary: |
+      Register Machine Classes in Omni.
+      Underlying command: omnictl apply
+      deps: [init]
+    sources:
+      - "{{.BOOTSTRAP_DIR}}/machine-classes.yaml"
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+      - sh: test -f {{.BOOTSTRAP_DIR}}/machine-classes.yaml
+        msg: "{{.BOOTSTRAP_DIR}}/machine-classes.yaml is missing"
+    cmds:
+      - omnictl apply -f {{.BOOTSTRAP_DIR}}/machine-classes.yaml
+
+  update:
+    desc: "sync cluster template [env]"
+    summary: |
+      Sync local cluster template with Omni.
+      Arguments: [env] (default: prod)
+      Underlying command: omnictl cluster template sync
+    vars:
+      ENVIRONMENT: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}prod{{end}}"
+      MANIFEST: "{{.BOOTSTRAP_DIR}}/homelab-{{.ENVIRONMENT}}.yaml"
+    requires:
+      vars:
+        - name: ENVIRONMENT
+          enum: [dev, prod]
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+      - sh: test -f "{{.MANIFEST}}"
+        msg: "Manifest not found: {{.MANIFEST}}"
+    deps: [init]
+    cmds:
+      - omnictl cluster template sync --file "{{.MANIFEST}}"
+
+  status:
+    desc: "show omni cluster status [env]"
+    summary: |
+      Show status of the cluster in Omni.
+      Arguments: [env] (default: prod)
+      Underlying command: omnictl cluster status
+    vars:
+      ENVIRONMENT: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}prod{{end}}"
+    requires:
+      vars:
+        - name: ENVIRONMENT
+          enum: [dev, prod]
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+    cmds:
+      - omnictl cluster config --cluster "homelab-{{.ENVIRONMENT}}"
+
+  show:
+    desc: "download cluster credentials [env]"
+    summary: |
+      Download kubeconfig and talosconfig.
+      Arguments: [env] (default: prod)
+      Underlying command: omnictl kubeconfig / talosconfig
+    vars:
+      ENVIRONMENT: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}prod{{end}}"
+    requires:
+      vars:
+        - name: ENVIRONMENT
+          enum: [dev, prod]
+    preconditions:
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
+    cmds:
+      - omnictl kubeconfig --cluster "homelab-{{.ENVIRONMENT}}" --grant-type authcode-keyboard
+      - omnictl talosconfig --cluster "homelab-{{.ENVIRONMENT}}"

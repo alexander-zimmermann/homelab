@@ -2,80 +2,72 @@
 version: "3"
 
 tasks:
-  prepare:
-    desc: "Initialize OpenTofu environment (tofu init)"
+  init:
+    desc: "initialize opentofu backend"
+    summary: |
+      Initialize OpenTofu environment.
+      Underlying command: tofu init
     preconditions:
       - sh: command -v tofu
         msg: "OpenTofu (tofu) is not installed"
+    status:
+      - test -d .terraform
     cmds:
-      - cmd: printf "{{.BLUE}}🏗️  Initializing OpenTofu...{{.RESET}}\n"
-        silent: true
-      - mkdir -p build
       - tofu init
-      - cmd: printf "{{.GREEN}}✅ OpenTofu initialized!{{.RESET}}\n"
-        silent: true
 
-  plan:
-    desc: "Generate infrastructure plan (tofu plan)"
-    preconditions:
-      - sh: test -d .terraform
-        msg: ".terraform directory is missing. Run 'task infra:prepare' first."
-    cmds:
-      - cmd: printf "{{.BLUE}}🕵️  Generating infrastructure plan...{{.RESET}}\n"
-        silent: true
-      - tofu plan -out tfplan
-      - cmd: printf "{{.GREEN}}✅ Plan generated (tfplan){{.RESET}}\n"
-        silent: true
-
-  apply:
-    desc: "Apply infrastructure changes (tofu apply)"
-    deps: [plan]
-    preconditions:
-      - sh: test -f tfplan
-        msg: "tfplan is missing – run 'task infra:plan' first."
-    cmds:
-      - cmd: printf "{{.BLUE}}🚀 Applying infrastructure changes...{{.RESET}}\n"
-        silent: true
-      - tofu apply tfplan
-      - cmd: printf "{{.GREEN}}✅ Infrastructure applied!{{.RESET}}\n"
-        silent: true
-
-  refresh:
-    desc: "Refresh infrastructure state (tofu refresh)"
+  create:
+    desc: "provision infrastructure resources"
+    summary: |
+      Create or update infrastructure resources.
+      Underlying command: tofu apply
+    sources:
+      - tfplan
+    generates:
+      - terraform.tfstate
     preconditions:
       - sh: command -v tofu
         msg: "OpenTofu (tofu) is not installed"
-      - sh: test -d .terraform
-        msg: ".terraform directory is missing. Run 'task infra:prepare' first."
+    deps: [init, status]
+    aliases: [update]
     cmds:
-      - cmd: printf "{{.BLUE}}🔄 Refreshing infrastructure state...{{.RESET}}\n"
-        silent: true
-      - tofu refresh
-      - cmd: printf "{{.GREEN}}✅ Infrastructure state refreshed!{{.RESET}}\n"
-        silent: true
+      - tofu apply -auto-approve tfplan
 
-  output:
-    desc: "Show infrastructure outputs (tofu output)"
+  delete:
+    desc: "destroy infrastructure resources"
+    summary: |
+      Destroy all infrastructure resources.
+      Underlying command: tofu destroy
     preconditions:
       - sh: command -v tofu
         msg: "OpenTofu (tofu) is not installed"
-      - sh: test -f terraform.tfstate
-        msg: "terraform.tfstate is missing. Run 'task infra:apply' first."
+    deps: [init]
+    prompt: "Are you sure you want to destroy the infrastructure?"
     cmds:
-      - cmd: printf "{{.BLUE}}🏗️ Showing infrastructure outputs...{{.RESET}}\n"
-        silent: true
-      - tofu output
-      - cmd: printf "{{.GREEN}}✅ Infrastructure outputs shown!{{.RESET}}\n"
-        silent: true
-
-  destroy:
-    desc: "Destroy infrastructure resources (tofu destroy)"
-    preconditions:
-      - sh: command -v tofu
-        msg: "OpenTofu (tofu) is not installed"
-    cmds:
-      - cmd: printf "{{.RED}}💥 Destroying infrastructure...{{.RESET}}\n"
-        silent: true
       - tofu destroy -auto-approve
-      - cmd: printf "{{.GREEN}}✅ Infrastructure destroyed.{{.RESET}}\n"
-        silent: true
+
+  status:
+    desc: "show infrastructure drift"
+    summary: |
+      Check for configuration drift.
+      Underlying command: tofu plan
+    generates:
+      - tfplan
+    preconditions:
+      - sh: command -v tofu
+        msg: "OpenTofu (tofu) is not installed"
+    deps: [init]
+    cmds:
+      - tofu refresh -concise > /dev/null
+      - tofu plan -concise -out tfplan
+
+  show:
+    desc: "display infrastructure output values"
+    summary: |
+      Display infrastructure outputs.
+      Underlying command: tofu output
+    preconditions:
+      - sh: command -v tofu
+        msg: "OpenTofu (tofu) is not installed"
+    deps: [init]
+    cmds:
+      - tofu output
