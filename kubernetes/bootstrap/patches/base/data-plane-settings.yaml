@@ -1,0 +1,36 @@
+###############################################################################
+## Data plane patches
+###############################################################################
+cluster:
+  ## Inject UserVolumeConfig for Longhorn Disk Partitioning
+  ## This creates the partition on the extra disk (!system_disk)
+  inlineManifests:
+    - name: longhorn-vol-config
+      contents: |
+        apiVersion: v1alpha1
+        kind: UserVolumeConfig
+        name: longhorn
+        provisioning:
+          diskSelector:
+            match: "!system_disk"
+          minSize: 10G
+        filesystem:
+          type: ext4
+
+## Data plane specific machine config
+machine:
+  ## Kubernetes Node Role Label
+  nodeLabels:
+    node-role.kubernetes.io/data-plane: ""
+
+  ## Mounts for Longhorn Storage
+  ## Binds the physical mount point into the Kubelet container
+  kubelet:
+    extraMounts:
+      - destination: /var/mnt/longhorn
+        type: bind
+        source: /var/mnt/longhorn
+        options:
+          - bind
+          - rshared
+          - rw

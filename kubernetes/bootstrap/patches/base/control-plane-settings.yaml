@@ -1,0 +1,13 @@
+###############################################################################
+## Control plane patches
+###############################################################################
+machine:
+  features:
+    ## Enable Talos API access from within Kubernetes
+    ## Required for the Talos Cloud Controller Manager (CCM) to function
+    kubernetesTalosAPIAccess:
+      enabled: true
+      allowedRoles:
+        - os:reader
+      allowedKubernetesNamespaces:
+        - kube-system

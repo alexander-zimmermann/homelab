@@ -1,0 +1,43 @@
+###############################################################################
+## Global cluster patches
+###############################################################################
+cluster:
+  network:
+    cni:
+      name: none # Disable default CNI (Flannel) to allow Cilium installation
+  proxy:
+    disabled: true # Disable KubeProxy (Cilium Replacement Mode)
+
+## Machine-level settings
+machine:
+  ## Load required kernel modules
+  kernel:
+    modules:
+      - name: zfs # Required for ZFS storage
+
+  ## Network sysctls required for Cilium
+  sysctls:
+    net.ipv4.ip_forward: "1"
+    net.ipv6.conf.all.forwarding: "1"
+
+  ## Kubelet security and bootstrap config
+  kubelet:
+    extraArgs:
+      rotate-server-certificates: "true" # Enable kubelet serving cert rotation
+    extraConfig:
+      serverTLSBootstrap: true # Allow kubelet to request TLS certs
+
+  ## NTP Time Synchronization
+  time:
+    servers:
+      - time.cloudflare.com
+      - pool.ntp.org
+
+  ## Talos specific features
+  features:
+    kubePrism:
+      enabled: true
+      port: 7445 # Localhost loadbalancer for K8s API (HA reliability)
+    hostDNS:
+      enabled: true
+      forwardKubeDNSToHost: true # Forward DNS from pods to host resolver

@@ -1,0 +1,56 @@
+---
+###############################################################################
+## Global cluster definition
+###############################################################################
+kind: Cluster
+name: homelab-dev
+kubernetes:
+  version: v1.32.0
+talos:
+  version: v1.12.0
+features:
+  diskEncryption: true
+
+patches:
+  - name: global-settings
+    file: patches/base/global-settings.yaml
+
+---
+###############################################################################
+## Control Plane definition
+###############################################################################
+kind: ControlPlane
+machineClass:
+  name: control-plane-dev
+  size: 1
+
+patches:
+  - name: control-plane-settings
+    file: patches/base/control-plane-settings.yaml
+  - name: cilium-bootstrap
+    file: patches/dev/cilium.yaml
+  - name: argocd-bootstrap
+    file: patches/dev/argocd.yaml
+
+---
+###############################################################################
+## Data plane definition
+###############################################################################
+kind: Workers
+machineClass:
+  name: data-plane-dev
+  size: 3
+
+## Update Strategies: critical for storage nodes: Ensure only one node
+## reboots at a time to maintain data availability.
+updateStrategy:
+  rolling:
+    maxParallelism: 1
+deleteStrategy:
+  type: Rolling
+  rolling:
+    maxParallelism: 1
+
+patches:
+  - name: data-plane-settings
+    file: patches/base/data-plane-settings.yaml

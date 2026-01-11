@@ -3,12 +3,10 @@ import subprocess
 import re
 import os
 import sys
+import argparse
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 
-# Configuration
-SCHEMATICS_FILE = 'manifest/schematics.yaml'
-OUTPUT_FILE = 'build/schematicIDs.yaml'
 
 @dataclass
 class SchematicConfig:
@@ -113,13 +111,18 @@ def generate_schematic_id(config: SchematicConfig) -> Optional[str]:
         return None
 
 def main():
-    if not os.path.exists(SCHEMATICS_FILE):
-        print(f"Error: {SCHEMATICS_FILE} not found.")
+    parser = argparse.ArgumentParser(description="Generate Talos Schematic IDs.")
+    parser.add_argument("--source", default="bootstrap/schematics.yaml", help="Path to schematics.yaml")
+    parser.add_argument("--output", default="build/schematicIDs.yaml", help="Path to output YAML file")
+    args = parser.parse_args()
+
+    if not os.path.exists(args.source):
+        print(f"Error: {args.source} not found.")
         sys.exit(1)
 
-    print(f"Reading schematics from {SCHEMATICS_FILE}...")
+    print(f"Reading schematics from {args.source}...")
 
-    with open(SCHEMATICS_FILE, 'r') as f:
+    with open(args.source, 'r') as f:
         docs = list(yaml.safe_load_all(f))
 
     results = {}
@@ -146,10 +149,10 @@ def main():
 
     # Write output regardless of partial failures
     if results:
-        os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
-        with open(OUTPUT_FILE, 'w') as f:
+        os.makedirs(os.path.dirname(args.output), exist_ok=True)
+        with open(args.output, 'w') as f:
             yaml.dump({'schematics': results}, f)
-        print(f"\nSuccessfully wrote {len(results)} schematics to {OUTPUT_FILE}")
+        print(f"\nSuccessfully wrote {len(results)} schematics to {args.output}")
 
     if errors > 0:
         print(f"Completed with {errors} errors.")
