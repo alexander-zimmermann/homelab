@@ -26,7 +26,7 @@ jobs:
       - name: Install Kustomize
         uses: yokawasa/action-setup-kube-tools@v0.13.1
         with:
-          kustomize-version: "5.3.0"
+          kustomize: "5.7.0"
 
       - name: Render Manifests
         run: |
