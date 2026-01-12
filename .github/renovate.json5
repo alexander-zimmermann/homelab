@@ -8,6 +8,7 @@
   ],
   labels: ["dependencies"],
   timezone: "Europe/Berlin",
+  ignorePaths: ["legacy/**"],
   packageRules: [
     {
       matchUpdateTypes: ["minor", "patch"],
