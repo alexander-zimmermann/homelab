@@ -70,8 +70,8 @@
 ### Wave 6: Home Automation
 
 - [ ] **influxdb**: Helm Chart (influxdb/influxdb2). PVC 10GB. Data migration.
-- [ ] **mosquitto**: Custom Deployment, PVC 64M. Data migration.
-  - [ ] Add fix IP from Cilium IP Pools
+- [] **mosquitto**: Custom Deployment, PVC 64M. Data migration.
+  - [x] Add fix IP from Cilium IP Pools
 - [ ] **node-red**: Helm Chart (nodered/node-red). PVC 512M. Data migration.
 - [ ] **solaredge2mqtt**: Custom Deployment. Stateless.
 
