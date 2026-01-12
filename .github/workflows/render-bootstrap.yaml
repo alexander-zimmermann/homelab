@@ -1,0 +1,52 @@
+name: Render Bootstrap Manifests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "kubernetes/components/**"
+      - ".github/workflows/render-bootstrap.yaml"
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "v3.13.1"
+
+      - name: Install Kustomize
+        uses: kubernetes-sigs/kustomize-action@v1
+        with:
+          kustomize-version: "5.3.0"
+
+      - name: Render Manifests
+        run: |
+          mkdir -p dist/prod dist/dev
+
+          echo "Rendering Prod..."
+          kustomize build --enable-helm kubernetes/components/cilium/overlays/prod > dist/prod/cilium.yaml
+          kustomize build --enable-helm kubernetes/components/gitops-controller/overlays/prod > dist/prod/argocd.yaml
+
+          echo "Rendering Dev..."
+          kustomize build --enable-helm kubernetes/components/cilium/overlays/dev > dist/dev/cilium.yaml
+          kustomize build --enable-helm kubernetes/components/gitops-controller/overlays/dev > dist/dev/argocd.yaml
+
+      - name: Deploy to Bootstrap Branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: bootstrap
+          force_orphan: true
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_message: "chore: update bootstrap manifests"
