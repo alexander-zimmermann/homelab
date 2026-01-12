@@ -15,7 +15,7 @@
       automergeType: "pr",
     },
     {
-      matchPackagePatterns: ["cilium"],
+      matchPackageNames: ["/cilium/"],
       groupName: "cilium components",
     },
   ],
@@ -36,7 +36,5 @@
     fileFilters: ["infrastructure/manifest/20-image/image.yaml"],
     executionMode: "branch",
   },
-  allowedPostUpgradeCommands: [
-    "^python3 .github/scripts/update_checksums\\.py$",
-  ],
+  allowedCommands: ["^python3 .github/scripts/update_checksums\\.py$"],
 }
