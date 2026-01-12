@@ -3,20 +3,25 @@ version: "3"
 
 tasks:
   init:
-    desc: "initialize opentofu backend"
+    desc: "initialize tofu and sync images"
     summary: |
-      Initialize OpenTofu environment.
-      Underlying command: tofu init
+      Initialize OpenTofu modules and sync Talos images.
+      Underlying command: tofu init, python update_images.py
     preconditions:
       - sh: command -v tofu
         msg: "OpenTofu (tofu) is not installed"
+      - sh: command -v omnictl
+        msg: "omnictl is not installed"
     status:
       - test -d .terraform
+    sources:
+      - infrastructure/manifest/20-image/schematics.yaml
     cmds:
       - tofu init
+      - "{{.PYTHON}} {{.SCRIPTS_DIR}}/update_images.py"
 
   create:
-    desc: "provision infrastructure resources"
+    desc: "apply infrastructure resources"
     summary: |
       Create or update infrastructure resources.
       Underlying command: tofu apply
@@ -61,7 +66,7 @@ tasks:
       - tofu plan -concise -out tfplan
 
   show:
-    desc: "display infrastructure output values"
+    desc: "show infrastructure outputs"
     summary: |
       Display infrastructure outputs.
       Underlying command: tofu output

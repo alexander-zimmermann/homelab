@@ -2,6 +2,7 @@
 version: "3"
 
 vars:
+  SCRIPTS_DIR: "{{.ROOT_DIR}}/scripts"
   PYTHON: "{{.ROOT_DIR}}/.venv/bin/python"
   PIP: "{{.ROOT_DIR}}/.venv/bin/pip"
 

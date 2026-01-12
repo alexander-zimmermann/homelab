@@ -1,22 +1,13 @@
 ---
 version: "3"
 
-vars:
-  TIMEOUT_CILIUM: "300s"
-  TIMEOUT_ARGOCD: "300s"
-
-  SCRIPTS_DIR: "kubernetes/scripts"
-  BOOTSTRAP_DIR: "kubernetes/bootstrap"
-  COMPONENTS_DIR: "kubernetes/components"
-  HELM_CMD: "/opt/homebrew/opt/helm@3/bin/helm"
-
 tasks:
   create:
-    desc: "bootstrap kubernetes cluster [env]"
+    desc: "apply sealed secrets key [env]"
     summary: |
-      Bootstrap the complete Kubernetes cluster (Zero-to-Hero).
+      Apply Sealed Secrets master key.
       Arguments: [env] (default: prod)
-      Pipeline: Render -> Sync -> Verify -> Secrets.
+      Underlying command: kubectl apply
     vars:
       ENVIRONMENT: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}prod{{end}}"
     requires:
@@ -26,28 +17,16 @@ tasks:
     preconditions:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
-      - sh: command -v cilium
-        msg: "cilium-cli is not installed"
-      - sh: test -f secrets/sealed-secrets-key.yaml
-        msg: "secrets/sealed-secrets-key.yaml not found. Cluster bootstrap requires sealed secrets key."
+      - sh: test -f kubernetes/.secrets/sealed-secrets-key.yaml
+        msg: "kubernetes/.secrets/sealed-secrets-key.yaml not found. Cluster bootstrap requires sealed secrets key."
     cmds:
-      # wait for Kubernetes API readiness
-      - until kubectl get --raw /healthz >/dev/null 2>&1; do sleep 5; done
-      # wait for Cilium readiness
-      - kubectl rollout status ds/cilium -n cilium --timeout={{.TIMEOUT_CILIUM}}
-      - kubectl rollout status deploy/cilium-operator -n cilium --timeout={{.TIMEOUT_CILIUM}}
-      - cilium status -n cilium --wait
-      # wait for ArgoCD readiness
-      - until kubectl get pods -n gitops-controller -l app.kubernetes.io/name=argocd-server >/dev/null 2>&1; do sleep 5; done
-      - kubectl -n gitops-controller wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server --timeout={{.TIMEOUT_ARGOCD}}
-      # inject sealed secrets master key
-      - kubectl apply -f .secrets/sealed-secrets-key.yaml
-      # wait for sealed secrets controller app
-      - until kubectl get application -n gitops-controller sealed-secrets-controller-{{.ENVIRONMENT}} >/dev/null 2>&1; do sleep 5; done
-      - kubectl wait application/sealed-secrets-controller-{{.ENVIRONMENT}} -n gitops-controller --for=jsonpath='{.status.health.status}'=Healthy --timeout=300s
+      # wait for Kubernetes API readiness (trigger OIDC flow if needed)
+      - kubectl cluster-info
+      # inject sealed secrets master ke
+      - kubectl apply -f kubernetes/.secrets/sealed-secrets-key.yaml
 
   delete:
-    desc: "complete cluster wipe"
+    desc: "wipe all cluster resources"
     summary: |
       Wipe all cluster resources.
       Underlying command: kubectl delete ns
@@ -80,16 +59,6 @@ tasks:
       # system component cleanup
       - kubectl delete secret hubble-tls-cert -n default --ignore-not-found=true
 
-  show:
-    desc: "show cluster credentials"
-    summary: |
-      Show important cluster secrets (ArgoCD admin).
-    preconditions:
-      - sh: command -v kubectl
-        msg: "kubectl is not installed"
-    cmds:
-      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d)"
-
   status:
     desc: "verify cluster health"
     summary: |
@@ -104,3 +73,14 @@ tasks:
       - kubectl get nodes
       - kubectl get pods -A
       - cilium status -n cilium
+
+  show:
+    desc: "show admin credentials"
+    summary: |
+      Show important cluster secrets (ArgoCD admin).
+      Underlying command: kubectl get secret
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
+    cmds:
+      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d)"
