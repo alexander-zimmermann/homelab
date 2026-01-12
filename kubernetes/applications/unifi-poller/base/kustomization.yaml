@@ -10,7 +10,7 @@ helmCharts:
   - name: unpoller
     repo: https://unpoller.github.io/helm-chart
     releaseName: unpoller
-    version: 2.14.1
+    version: 2.11.2-Chart6
     valuesFile: values.yaml
     namespace: unifi-poller
 
@@ -35,8 +35,10 @@ patches:
                         name: unifi-poller-secret
                         key: unifi-password
 
-commonLabels:
-  app.kubernetes.io/name: unifi-poller
-
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "10"
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: unifi-poller
