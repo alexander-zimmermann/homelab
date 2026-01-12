@@ -3,7 +3,7 @@
 ## Global cluster definition
 ###############################################################################
 kind: Cluster
-name: homelab-dev
+name: homelab-prod
 kubernetes:
   version: v1.32.0
 talos:
@@ -13,7 +13,9 @@ features:
 
 patches:
   - name: global-settings
-    file: patches/base/global-settings.yaml
+    file: patches/global-settings.yaml
+  - name: manifests
+    file: patches/extraManifests-prod.yaml
 
 ---
 ###############################################################################
@@ -21,24 +23,17 @@ patches:
 ###############################################################################
 kind: ControlPlane
 machineClass:
-  name: control-plane-dev
+  name: control-plane-prod
   size: 1
 
 patches:
   - name: control-plane-settings
-    file: patches/base/control-plane-settings.yaml
-  - name: cilium-bootstrap
-    file: patches/dev/cilium.yaml
-  - name: argocd-bootstrap
-    file: patches/dev/argocd.yaml
+    file: patches/control-plane-settings.yaml
 
 ---
-###############################################################################
-## Data plane definition
-###############################################################################
 kind: Workers
 machineClass:
-  name: data-plane-dev
+  name: data-plane-prod
   size: 3
 
 ## Update Strategies: critical for storage nodes: Ensure only one node
@@ -53,4 +48,4 @@ deleteStrategy:
 
 patches:
   - name: data-plane-settings
-    file: patches/base/data-plane-settings.yaml
+    file: patches/data-plane-settings.yaml

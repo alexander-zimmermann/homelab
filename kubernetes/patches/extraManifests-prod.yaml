@@ -1,0 +1,4 @@
+cluster:
+  extraManifests:
+    - "https://raw.githubusercontent.com/alexander-zimmermann/homelab/bootstrap/dist/prod/cilium.yaml"
+    - "https://raw.githubusercontent.com/alexander-zimmermann/homelab/bootstrap/dist/prod/argocd.yaml"
