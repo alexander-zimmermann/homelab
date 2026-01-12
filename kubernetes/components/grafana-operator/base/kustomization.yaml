@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: grafana-operator
+resources:
+  - ./namespace.yaml
+
+helmCharts:
+  - name: grafana-operator
+    repo: oci://ghcr.io/grafana/helm-charts/grafana-operator
+    releaseName: grafana-operator
+    version: v5.15.1
+    includeCRDs: true
+    valuesInline:
+      watchNamespace: ""
+    namespace: grafana-operator
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: grafana-operator
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-5"
