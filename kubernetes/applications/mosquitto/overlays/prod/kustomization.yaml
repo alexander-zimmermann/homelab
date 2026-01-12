@@ -4,3 +4,18 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+patches:
+  - target:
+      kind: Service
+      name: mosquitto
+    patch: |-
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: mosquitto
+        annotations:
+          io.cilium/lb-ipam-ips: "192.168.10.26"
+        labels:
+          bgp.cilium.io/ip-pool: default
+          bgp.cilium.io/advertise-service: default

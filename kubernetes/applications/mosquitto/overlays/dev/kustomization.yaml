@@ -18,3 +18,15 @@ patches:
         value:
           server: linux.zimmermann.eu.com
           share: /srv/k8s/mosquitto
+
+  - target:
+      kind: Service
+      name: mosquitto
+    patch: |-
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: mosquitto
+        labels:
+          bgp.cilium.io/ip-pool: default
+          bgp.cilium.io/advertise-service: default
