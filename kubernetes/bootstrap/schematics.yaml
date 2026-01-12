@@ -18,7 +18,7 @@ customization:
     - key: 12
       value: |
         machineLabels:
-          omni.sidero.dev/cluster: homelab
+          cluster: homelab
           environment: prod
           role: control-plane
           image-id: cp-prod
@@ -40,7 +40,7 @@ customization:
     - key: 12
       value: |
         machineLabels:
-          omni.sidero.dev/cluster: homelab
+          cluster: homelab
           environment: prod
           role: data-plane
           image-id: dp-prod
@@ -64,7 +64,7 @@ customization:
     - key: 12
       value: |
         machineLabels:
-          omni.sidero.dev/cluster: homelab
+          cluster: homelab
           environment: dev
           role: control-plane
           image-id: cp-dev
@@ -85,7 +85,7 @@ customization:
     - key: 12
       value: |
         machineLabels:
-          omni.sidero.dev/cluster: homelab
+          cluster: homelab
           environment: dev
           role: data-plane
           image-id: dp-dev
