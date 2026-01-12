@@ -78,7 +78,7 @@ dashboards:
   grafana:
     # Whether the Grafana instance should be created, charts still can be created and
     # use the selectorLabels to install the charts in an already existing Grafana.
-    create: true
+    create: false
     # the set of labels to be matched against the existing Grafana CRD, must be provided when create is false.
     selectorLabels: {}
     # Url for the grafana instance, used as .spec.external.url in the Grafana instance
@@ -342,3 +342,10 @@ upConfig: |
   #  save_rogue  = false
   #  verify_ssl  = false
   #  ssl_cert_paths = []
+
+# Disable monitoring resources until operators are installed
+serviceMonitor:
+  enabled: false
+
+podMonitor:
+  enabled: false
