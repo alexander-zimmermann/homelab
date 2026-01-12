@@ -35,10 +35,10 @@ patches:
                         name: unifi-poller-secret
                         key: unifi-password
 
-commonAnnotations:
-  argocd.argoproj.io/sync-wave: "10"
-
 labels:
   - includeSelectors: true
     pairs:
       app.kubernetes.io/name: unifi-poller
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "10"

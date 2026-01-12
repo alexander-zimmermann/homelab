@@ -16,5 +16,10 @@ helmCharts:
     includeCRDs: true
     namespace: csi-nfs-controller
 
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: csi-nfs-controller
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-2"

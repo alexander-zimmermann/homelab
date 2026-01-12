@@ -16,9 +16,6 @@ helmCharts:
     includeCRDs: true
     namespace: ingress-controller
 
-commonAnnotations:
-  argocd.argoproj.io/sync-wave: "-1"
-
 patches:
   - target:
       kind: Service
@@ -31,3 +28,11 @@ patches:
         labels:
           bgp.cilium.io/ip-pool: default
           bgp.cilium.io/advertise-service: default
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: ingress-controller
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-1"

@@ -13,5 +13,10 @@ helmCharts:
     includeCRDs: true
     namespace: kube-system
 
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: metrics-server
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-5"

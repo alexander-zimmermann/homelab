@@ -15,5 +15,10 @@ helmCharts:
     includeCRDs: true
     namespace: longhorn-system
 
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: longhorn
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-2"
