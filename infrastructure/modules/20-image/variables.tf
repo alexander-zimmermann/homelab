@@ -96,5 +96,5 @@ variable "image_upload_timeout" {
     Defaults to 600 seconds.
   EOT
   type        = number
-  default     = 600
+  default     = 1800
 }

@@ -16,26 +16,26 @@ image:
   vm_talos_1_12_0_cp-prod:
     image_type: import
     image_filename: talos-1.12.0-cp-prod-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/10d749716ab70fc86243a3d9d8e15905d48c4bb65211f2db6bc82b571483df4e/1.12.0/nocloud-amd64.raw
-    image_checksum: "47a745d64255e56d26ad4ac21ad2bfefb08def084a7e985942f8b0f025b4749d"
+    image_url: https://factory.talos.dev/image/72adf4cefaac723820a5f3499b2c8e1fee26faade426cd8208f0b8d5f40f4850/1.12.0/nocloud-amd64.raw
+    image_checksum: "feaf47ea316a478473065379b0f758a2b6a43e057820767edd841f30150ea147"
 
   vm_talos_1_12_0_dp-prod:
     image_type: import
     image_filename: talos-1.12.0-dp-prod-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/36a84144bd6b63ab0d222034d894bfadf6c97eb1b167abb326b6ed73f21fff92/1.12.0/nocloud-amd64.raw
-    image_checksum: "d60a9e03d3f65ab545164854cf3c1f9c4f7e51e2218cb6a792546b83b2d4b1b9"
+    image_url: https://factory.talos.dev/image/a541dc4e8fd4a4a22ed8f85a76a678197e4474901dbf9f78fbe5fa8256acfb43/1.12.0/nocloud-amd64.raw
+    image_checksum: "24cb9d80b4f1dde32c47198e311a1d4242c27bbae9133e96c0fbb6793541098f"
 
   vm_talos_1_12_0_cp-dev:
     image_type: import
     image_filename: talos-1.12.0-cp-dev-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/04bdc5c087e74dc43d7ca0b0ddd9a96e656653282f0232461ffc8c205d6f39c2/1.12.0/nocloud-amd64.raw
-    image_checksum: "7fe5ac401ae2a63874b5aea393e61fdbad2ab85bfa6f3598915a6c22c3226111"
+    image_url: https://factory.talos.dev/image/33cbde54091dfe44998d877a6fd441d1a2f7a6780a658790841a10a43de9748f/1.12.0/nocloud-amd64.raw
+    image_checksum: "55df39d165605d12e9526cbbea7c743437771eaa87360c1d00bb8b5e799e6277"
 
   vm_talos_1_12_0_dp-dev:
     image_type: import
     image_filename: talos-1.12.0-dp-dev-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/76f49eb5ebdca24221eb5b03889079e7147f7455e1f53be036c47e9e11679689/1.12.0/nocloud-amd64.raw
-    image_checksum: "361973ad15e0bc92e098e4481282fea07449c4aa3d072dad9c5c12bfeeb6a498"
+    image_url: https://factory.talos.dev/image/047780725f60dce4a3e5b7af81b9a436bfb887e44dd8df378fd614ca7f713536/1.12.0/nocloud-amd64.raw
+    image_checksum: "5702d84e8b079f0cffcd5ad68b1efc01c77702f54d2fa8f0a8f974e9b8da2ac3"
 
   lxc_ubuntu_plucky:
     image_type: vztmpl
