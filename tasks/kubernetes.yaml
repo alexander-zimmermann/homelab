@@ -11,40 +11,6 @@ vars:
   HELM_CMD: "/opt/homebrew/opt/helm@3/bin/helm"
 
 tasks:
-  init:
-    desc: "render kustomize manifests [env]"
-    summary: |
-      Generate inline patches for CNI and GitOps (Manifest Hydration).
-      Arguments: [env] (default: prod)
-      Underlying command: kustomize build | generate_patch.py
-    vars:
-      ENVIRONMENT: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}prod{{end}}"
-    requires:
-      vars:
-        - name: ENVIRONMENT
-          enum: [dev, prod]
-    sources:
-      - "{{.COMPONENTS_DIR}}/cilium/overlays/{{.ENVIRONMENT}}/**"
-      - "{{.COMPONENTS_DIR}}/gitops-controller/overlays/{{.ENVIRONMENT}}/**"
-    generates:
-      - "{{.BOOTSTRAP_DIR}}/patches/cilium-{{.ENVIRONMENT}}.yaml"
-      - "{{.BOOTSTRAP_DIR}}/patches/argocd-{{.ENVIRONMENT}}.yaml"
-    preconditions:
-      - sh: command -v kustomize
-        msg: "kustomize is not installed"
-      - sh: command -v {{.PYTHON}}
-        msg: "python3 is not installed"
-      - sh: test -d {{.COMPONENTS_DIR}}
-        msg: "{{.COMPONENTS_DIR}} is missing"
-    cmds:
-      - mkdir -p {{.BOOTSTRAP_DIR}}/patches/{{.ENVIRONMENT}}
-      # Cilium
-      - kustomize build --enable-helm --helm-command {{.HELM_CMD}} {{.COMPONENTS_DIR}}/cilium/overlays/{{.ENVIRONMENT}} | {{.PYTHON}} {{.SCRIPTS_DIR}}/generate_patch.py --target {{.BOOTSTRAP_DIR}}/patches/{{.ENVIRONMENT}}/cilium.yaml --name cilium
-      # ArgoCD
-      - kustomize build --enable-helm --helm-command {{.HELM_CMD}} {{.COMPONENTS_DIR}}/gitops-controller/overlays/{{.ENVIRONMENT}} | {{.PYTHON}} {{.SCRIPTS_DIR}}/generate_patch.py --target {{.BOOTSTRAP_DIR}}/patches/{{.ENVIRONMENT}}/argocd.yaml --name argocd
-      # cleanup
-      - rm -r {{.COMPONENTS_DIR}}/cilium/base/charts
-
   create:
     desc: "bootstrap kubernetes cluster [env]"
     summary: |
@@ -57,7 +23,6 @@ tasks:
       vars:
         - name: ENVIRONMENT
           enum: [dev, prod]
-    deps: [init, "cluster:update"]
     preconditions:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
