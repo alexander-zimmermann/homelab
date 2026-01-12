@@ -22,7 +22,10 @@
   - [ ] Traefik Retention.
   - [ ] InfluxDB Retention.
   - [ ] Evaluate CloudNativePG (CNPG) operator for Postgres.
-- [ ] **Omni**: use docker secrets for sensitive data.
+- [ ] **Omni**:
+  - [ ] Use docker secrets for sensitive data.
+  - [ ] Create service account for Omni.
+  - [ ] Use Public IP for Omni.
 
 ### Documentation
 
