@@ -15,10 +15,7 @@ helmCharts:
     namespace: unifi-poller
 
 patches:
-  - target:
-      kind: Deployment
-      name: unpoller
-    patch: |-
+  - patch: |-
       apiVersion: apps/v1
       kind: Deployment
       metadata:
@@ -34,6 +31,9 @@ patches:
                       secretKeyRef:
                         name: unifi-poller-secret
                         key: unifi-password
+    target:
+      kind: Deployment
+      name: unpoller
 
 labels:
   - includeSelectors: true

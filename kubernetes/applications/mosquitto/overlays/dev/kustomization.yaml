@@ -6,10 +6,7 @@ resources:
   - ../../base
 
 patches:
-  - target:
-      kind: PersistentVolume
-      name: pv-nfs-mosquitto
-    patch: |-
+  - patch: |-
       - op: replace
         path: /spec/csi/volumeHandle
         value: linux.zimmermann.eu.com/srv/k8s/mosquitto
@@ -18,11 +15,11 @@ patches:
         value:
           server: linux.zimmermann.eu.com
           share: /srv/k8s/mosquitto
+    target:
+      kind: PersistentVolume
+      name: pv-nfs-mosquitto
 
-  - target:
-      kind: Service
-      name: mosquitto
-    patch: |-
+  - patch: |-
       apiVersion: v1
       kind: Service
       metadata:
@@ -30,3 +27,6 @@ patches:
         labels:
           bgp.cilium.io/ip-pool: default
           bgp.cilium.io/advertise-service: default
+    target:
+      kind: Service
+      name: mosquitto

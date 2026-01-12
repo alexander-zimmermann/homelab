@@ -6,10 +6,10 @@ resources:
   - ../../base
 
 patches:
-  - target:
-      kind: CiliumLoadBalancerIPPool
-      name: default-bgp-ip-pool
-    patch: |-
+  - patch: |-
       - op: replace
         path: /spec/blocks/0/cidr
         value: 192.168.11.0/24
+    target:
+      kind: CiliumLoadBalancerIPPool
+      name: default-bgp-ip-pool

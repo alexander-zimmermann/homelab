@@ -6,11 +6,11 @@ resources:
   - ../../base
 
 patches:
-  - target:
-      kind: Deployment
-      name: talos-cloud-controller-manager
-      namespace: kube-system
-    patch: |-
+  - patch: |-
       - op: replace
         path: /spec/replicas
         value: 1
+    target:
+      kind: Deployment
+      name: talos-cloud-controller-manager
+      namespace: kube-system

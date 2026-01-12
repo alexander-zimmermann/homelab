@@ -6,24 +6,24 @@ resources:
   - ../../base
 
 patches:
-  - target:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
       kind: Deployment
       name: cert-manager
-    patch: |-
+  - patch: |-
       - op: replace
         path: /spec/replicas
         value: 1
-  - target:
+    target:
       kind: Deployment
       name: cert-manager-cainjector
-    patch: |-
+  - patch: |-
       - op: replace
         path: /spec/replicas
         value: 1
-  - target:
+    target:
       kind: Deployment
       name: cert-manager-webhook
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1

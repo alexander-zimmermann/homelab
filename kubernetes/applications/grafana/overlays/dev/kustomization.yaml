@@ -5,60 +5,60 @@ resources:
   - ../../base
 
 patches:
-  - target:
-      kind: IngressRoute
-      name: grafana
-    patch: |-
+  - patch: |-
       - op: replace
         path: /spec/routes/0/match
         value: Host(`grafana.zimmermann.phd`)
+    target:
+      kind: IngressRoute
+      name: grafana
 
-  - target:
-      kind: Certificate
-      name: grafana-tls-cert
-    patch: |-
+  - patch: |-
       - op: replace
         path: /spec/dnsNames/0
         value: grafana.zimmermann.phd
+    target:
+      kind: Certificate
+      name: grafana-tls-cert
 
-  - target:
-      kind: Deployment
-      name: grafana
-      namespace: grafana
-    patch: |-
+  - patch: |-
       - op: replace
         path: /spec/replicas
         value: 1
+    target:
+      kind: Deployment
+      name: grafana
+      namespace: grafana
 
-  - target:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
       kind: Deployment
       name: grafana-image-renderer
       namespace: grafana
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
 
-  - target:
-      kind: HorizontalPodAutoscaler
-      name: grafana
-      namespace: grafana
-    patch: |-
+  - patch: |-
       $patch: delete
       apiVersion: autoscaling/v2
       kind: HorizontalPodAutoscaler
       metadata:
         name: grafana
         namespace: grafana
-
-  - target:
+    target:
       kind: HorizontalPodAutoscaler
-      name: grafana-image-renderer
+      name: grafana
       namespace: grafana
-    patch: |-
+
+  - patch: |-
       $patch: delete
       apiVersion: autoscaling/v2
       kind: HorizontalPodAutoscaler
       metadata:
         name: grafana-image-renderer
         namespace: grafana
+    target:
+      kind: HorizontalPodAutoscaler
+      name: grafana-image-renderer
+      namespace: grafana
