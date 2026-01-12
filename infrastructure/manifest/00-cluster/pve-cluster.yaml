@@ -1,4 +1,3 @@
----
 pve_cluster:
   api_connection:
     api_url: "https://pve-1.zimmermann.eu.com:8006/api2/json"

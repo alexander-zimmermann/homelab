@@ -1,4 +1,3 @@
----
 ci_user_config:
   std_linux:
     - username: alexander

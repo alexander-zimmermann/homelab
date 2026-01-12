@@ -1,4 +1,3 @@
----
 ci_vendor_config:
   std_linux:
     packages: [qemu-guest-agent, htop, vim]

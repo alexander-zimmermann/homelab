@@ -1,4 +1,3 @@
----
 fleet_vm:
   ubuntu_01:
     template_id: vm_ubuntu_noble

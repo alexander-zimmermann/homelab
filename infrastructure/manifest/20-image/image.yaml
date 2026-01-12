@@ -1,4 +1,3 @@
----
 image:
   vm_debian_trixie:
     image_type: import

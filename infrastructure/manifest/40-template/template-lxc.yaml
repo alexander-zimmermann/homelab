@@ -1,4 +1,3 @@
----
 template_lxc:
   lxc_ubuntu_plucky:
     lxc_id: 15000

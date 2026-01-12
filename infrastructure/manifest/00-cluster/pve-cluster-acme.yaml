@@ -1,4 +1,3 @@
----
 pve_cluster_acme:
   target_node: "pve-1"
   account_name: "letsencrypt-prod"

@@ -1,4 +1,3 @@
----
 pve_node_core:
   pve-1:
     timezone: "Europe/Berlin"
