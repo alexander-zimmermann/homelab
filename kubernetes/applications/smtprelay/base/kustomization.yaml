@@ -9,8 +9,10 @@ resources:
   - ./service.yaml
   - ./sealedsecret.yaml
 
-commonLabels:
-  app.kubernetes.io/name: smtprelay
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: smtprelay
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "10"

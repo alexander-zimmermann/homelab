@@ -9,8 +9,10 @@ resources:
   - ./deployment.yaml
   - ./service.yaml
 
-commonLabels:
-  app.kubernetes.io/name: mosquitto
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: mosquitto
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "10"
