@@ -38,10 +38,5 @@ patches:
     target:
       kind: ClusterRoleBinding
 
-labels:
-  - includeSelectors: true
-    pairs:
-      app.kubernetes.io/name: gitops-controller
-
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "0"
