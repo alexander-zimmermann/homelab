@@ -7,9 +7,9 @@ resources:
 
 helmCharts:
   - name: grafana-operator
-    repo: https://grafana.github.io/helm-charts
+    repo: https://ghcr.io/grafana/helm-charts
     releaseName: grafana-operator
-    version: v5.15.1
+    version: v5.21.4
     includeCRDs: true
     valuesInline:
       watchNamespace: ""
