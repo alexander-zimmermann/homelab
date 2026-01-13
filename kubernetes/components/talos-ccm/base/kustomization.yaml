@@ -12,10 +12,5 @@ helmCharts:
     includeCRDs: true
     namespace: kube-system
 
-labels:
-  - includeSelectors: true
-    pairs:
-      app.kubernetes.io/name: talos-cloud-controller-manager
-
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-5"

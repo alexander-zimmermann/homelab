@@ -15,10 +15,5 @@ helmCharts:
       watchNamespace: ""
     namespace: grafana-operator
 
-labels:
-  - includeSelectors: true
-    pairs:
-      app.kubernetes.io/name: grafana-operator
-
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-5"

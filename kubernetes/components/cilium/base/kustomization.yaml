@@ -21,10 +21,5 @@ helmCharts:
     includeCRDs: true
     namespace: cilium
 
-labels:
-  - includeSelectors: true
-    pairs:
-      app.kubernetes.io/name: cilium
-
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-10"

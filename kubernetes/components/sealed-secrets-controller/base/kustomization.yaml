@@ -14,10 +14,5 @@ helmCharts:
     includeCRDs: true
     namespace: sealed-secrets-controller
 
-labels:
-  - includeSelectors: true
-    pairs:
-      app.kubernetes.io/name: sealed-secrets-controller
-
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-4"
