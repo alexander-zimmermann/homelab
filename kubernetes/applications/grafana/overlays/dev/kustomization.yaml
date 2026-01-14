@@ -12,6 +12,7 @@ patches:
     target:
       kind: IngressRoute
       name: grafana
+      namespace: grafana
 
   - patch: |-
       - op: replace
@@ -20,45 +21,13 @@ patches:
     target:
       kind: Certificate
       name: grafana-tls-cert
-
-  - patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-    target:
-      kind: Deployment
-      name: grafana
       namespace: grafana
 
   - patch: |-
       - op: replace
-        path: /spec/replicas
+        path: /spec/deployment/replicas
         value: 1
     target:
-      kind: Deployment
-      name: grafana-image-renderer
-      namespace: grafana
-
-  - patch: |-
-      $patch: delete
-      apiVersion: autoscaling/v2
-      kind: HorizontalPodAutoscaler
-      metadata:
-        name: grafana
-        namespace: grafana
-    target:
-      kind: HorizontalPodAutoscaler
+      kind: Grafana
       name: grafana
-      namespace: grafana
-
-  - patch: |-
-      $patch: delete
-      apiVersion: autoscaling/v2
-      kind: HorizontalPodAutoscaler
-      metadata:
-        name: grafana-image-renderer
-        namespace: grafana
-    target:
-      kind: HorizontalPodAutoscaler
-      name: grafana-image-renderer
       namespace: grafana

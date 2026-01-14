@@ -1,0 +1,35 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+
+metadata:
+  name: grafana
+  namespace: grafana
+  labels:
+    dashboards: "grafana"
+spec:
+  config:
+    log:
+      mode: "console"
+    security:
+      admin_user: "$__file{/etc/secrets/auth/admin-user}"
+      admin_password: "$__file{/etc/secrets/auth/admin-password}"
+    rendering:
+      server_url: http://localhost:8081/render
+      callback_url: http://localhost:3000/
+
+  deployment:
+    replicas: 2
+    containers:
+      - name: grafana-image-renderer
+        image: grafana/grafana-image-renderer:latest
+        ports:
+          - containerPort: 8081
+            name: http
+
+  secrets:
+    - name: grafana-admin-credentials
+      key: admin-user
+      mountPath: /etc/secrets/auth/admin-user
+    - name: grafana-admin-credentials
+      key: admin-password
+      mountPath: /etc/secrets/auth/admin-password

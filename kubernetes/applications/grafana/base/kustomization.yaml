@@ -4,17 +4,10 @@ kind: Kustomization
 namespace: grafana
 resources:
   - ./namespace.yaml
+  - ./sealedsecret.yaml
   - ./certificate.yaml
   - ./ingressroute.yaml
-
-helmCharts:
-  - name: grafana
-    repo: https://grafana.github.io/helm-charts
-    releaseName: grafana
-    version: 10.4.0
-    valuesFile: values.yaml
-    includeCRDs: true
-    namespace: grafana
+  - ./grafana.yaml
 
 labels:
   - includeSelectors: true
