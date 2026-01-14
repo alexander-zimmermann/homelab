@@ -6,15 +6,31 @@ resources:
 
 patches:
   - patch: |-
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: mosquitto
-        annotations:
-          io.cilium/lb-ipam-ips: "192.168.10.26"
-        labels:
-          bgp.cilium.io/ip-pool: default
-          bgp.cilium.io/advertise-service: default
+      - op: replace
+        path: /spec/csi/volumeHandle
+        value: linux.zimmermann.eu.com/srv/k8s/mosquitto-prod
+      - op: replace
+        path: /spec/csi/volumeAttributes
+        value:
+          server: linux.zimmermann.eu.com
+          share: /srv/k8s/mosquitto-prod
+    target:
+      kind: PersistentVolume
+      name: pv-nfs-mosquitto
+
+  - patch: |-
+      - op: replace
+        path: /spec/type
+        value: LoadBalancer
+      - op: add
+        path: /metadata/annotations/io.cilium~1lb-ipam-ips
+        value: "192.168.10.26"
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1ip-pool
+        value: default
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1advertise-service
+        value: default
     target:
       kind: Service
       name: mosquitto

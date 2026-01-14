@@ -19,13 +19,15 @@ patches:
       name: pv-nfs-mosquitto
 
   - patch: |-
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: mosquitto
-        labels:
-          bgp.cilium.io/ip-pool: default
-          bgp.cilium.io/advertise-service: default
+      - op: replace
+        path: /spec/type
+        value: LoadBalancer
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1ip-pool
+        value: default
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1advertise-service
+        value: default
     target:
       kind: Service
       name: mosquitto
