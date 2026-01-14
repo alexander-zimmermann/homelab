@@ -5,10 +5,7 @@ resources:
   - ../../base
 
 patches:
-  - target:
-      kind: StatefulSet
-      name: prometheus-server
-    patch: |-
+  - patch: |-
       - op: replace
         path: /spec/replicas
         value: 1
@@ -30,27 +27,44 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/args/0
         value: "--storage.tsdb.retention.time=7d"
-
-  - target:
+    target:
       kind: StatefulSet
-      name: prometheus-alertmanager
-    patch: |-
+      name: prometheus-server
+
+  - patch: |-
       - op: replace
         path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
         value: 32Mi
+    target:
+      kind: StatefulSet
+      name: prometheus-alertmanager
 
-  # - target:
-  #     kind: IngressRoute
-  #     name: prometheus
-  #   patch: |-
+  # - patch: |-
   #     - op: replace
   #       path: /spec/routes/0/match
   #       value: Host(`prometheus.zimmermann.phd`)
+  #   target:
+  #     kind: IngressRoute
+  #     name: prometheus
 
-  - target:
-      kind: Certificate
-      name: prometheus-tls-cert
-    patch: |-
+  - patch: |-
       - op: replace
         path: /spec/dnsNames/0
         value: prometheus.zimmermann.phd
+    target:
+      kind: Certificate
+      name: prometheus-tls-cert
+
+  - patch: |-
+      - op: replace
+        path: /spec/type
+        value: LoadBalancer
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1ip-pool
+        value: default
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1advertise-service
+        value: default
+    target:
+      kind: Service
+      name: prometheus-server
