@@ -15,18 +15,5 @@ helmCharts:
     includeCRDs: true
     namespace: ingress-controller
 
-patches:
-  - patch: |-
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: traefik
-        labels:
-          bgp.cilium.io/ip-pool: default
-          bgp.cilium.io/advertise-service: default
-    target:
-      kind: Service
-      name: traefik
-
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-1"
