@@ -10,27 +10,20 @@ helmCharts:
   - name: unpoller
     repo: https://unpoller.github.io/helm-chart
     releaseName: unpoller
-    version: 2.11.2-Chart6
+    version: 2.1.0
     valuesFile: values.yaml
     namespace: unifi-poller
 
 patches:
   - patch: |-
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: unpoller
-      spec:
-        template:
-          spec:
-            containers:
-              - name: unpoller
-                env:
-                  - name: UP_UNIFI_DEFAULT_PASS
-                    valueFrom:
-                      secretKeyRef:
-                        name: unifi-poller-secret
-                        key: unifi-password
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: UP_UNIFI_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: unifi-poller-secret
+              key: unifi-password
     target:
       kind: Deployment
       name: unpoller
