@@ -19,7 +19,7 @@
   - Configure UDM VLAN/DMZ.
 - [ ] **Optimizations**:
   - [ ] Prometheus Retention.
-  - [ ] Traefik Retention.
+  - [x] Traefik Retention.
   - [ ] InfluxDB Retention.
   - [ ] Evaluate CloudNativePG (CNPG) operator for Postgres.
 - [ ] **Omni**:
@@ -46,16 +46,16 @@
 
 ### Wave 2: Observability - Exporters
 
-- [ ] **unifi-poller**: Custom Deployment. Stateless
+- [o] **unifi-poller**: Custom Deployment. Stateless
 - [ ] **fritz-exporter**: Custom Deployment. Stateless
 - [ ] **alloy**: Helm Chart (alloy/alloy). Stateless.
 
 ### Wave 3: Observability - Monitoring Stack
 
-- [ ] **prometheus**: Helm Chart (prometheus-community/prometheus). PVC 5G. Data migration.
-- [ ] **grafana**: Helm Chart (grafana/grafana). PVC 256M. Data migration.
+- [o] **prometheus**: Helm Chart (prometheus-community/prometheus). PVC 5G. Data migration.
+- [o] **grafana**: Helm Chart (grafana/grafana). PVC 256M. Data migration.
 - [ ] **loki**: Helm Chart (grafana/loki). PVC 512M. No data migration.
-- [ ] **alertmanager**: Helm Chart (prometheus-community/alertmanager). PVC 16M. No data migration.
+- [o] **alertmanager**: Helm Chart (prometheus-community/alertmanager). PVC 16M. No data migration.
 
 ### Wave 4: Persistent Storage & Databases
 
@@ -90,12 +90,38 @@
 
 ## 🛠️ Implementation Strategy
 
-For each application, we follow this standard GitOps workflow:
+For each application, we follow this strict GitOps workflow:
 
 1.  **GitOps Structure**: Create `k8s-cluster/applications/<app>/`.
-2.  **Manifests**:
-    - Create `base/kustomization.yaml` (Deployment/StatefulSet, Service, PVC, ConfigMap OR Helm Chart).
-    - Create `overlays/prod/kustomization.yaml` and `overlays/dev/kustomization.yaml`.
-3.  **Secrets**: Seal sensitive env vars via `kubeseal`.
-4.  **Ingress**: Define Traefik `IngressRoute` with Authelia Middleware (if public).
-5.  **Data Migration**: `rsync` data from Docker bind-mounts to K8s PVCs (using temporary debug pods).
+
+    - `base/` : Pure application logic (Deployment, ConfigMaps, default Service type ClusterIP). **NO** environment logic here.
+    - `overlays/prod/`: Production environment (Fixed IPs, High Resources).
+    - `overlays/dev/`: Development environment (Dynamic IPs, Low Resources).
+
+2.  **Kustomize Patching (Strict JSON Patch)**:
+
+    - **Format**: ALWAYS use **JSON Patch** (`op: replace/add`) for all patches. Do NOT use Strategic Merge Patch (YAML style).
+    - **Order**: In `kustomization.yaml`, `patches:` list must observe:
+      1. App Config Patches (Args, Env, Mounts)
+      2. Ingress/Cert Patches
+      3. **Network/Service Patches (ALWAYS LAST)**
+    - **Values**: Always specify `patch:` block first, then `target:` block.
+
+3.  **Network & Cilium BGP**:
+
+    - **Service Config**: Defined **ONLY in Overlays**. Base keeps `type: ClusterIP` (or default).
+    - **Production**:
+      - `type: LoadBalancer`
+      - Annotation: `io.cilium/lb-ipam-ips: "192.168.10.XX"` (Fixed IP)
+      - Labels: `bgp.cilium.io/ip-pool: default` (Escaped: `bgp.cilium.io~1ip-pool`)
+    - **Development**:
+      - `type: LoadBalancer`
+      - **NO** Fixed IP (Dynamic allocation)
+      - Labels: `bgp.cilium.io/ip-pool: default`
+
+4.  **Ingress**:
+
+    - Use Traefik `IngressRoute`.
+    - Patch `Host(...)` and `Certificate` DNS separately in overlays.
+
+5.  **Secrets**: Seal sensitive env vars via `kubeseal` to `sealedsecret.yaml`.
