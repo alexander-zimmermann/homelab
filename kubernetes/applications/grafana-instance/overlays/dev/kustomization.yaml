@@ -5,6 +5,7 @@ resources:
   - ../../base
 
 patches:
+  # Ingress Host Patch
   - patch: |-
       - op: replace
         path: /spec/routes/0/match
@@ -14,6 +15,7 @@ patches:
       name: grafana
       namespace: grafana
 
+  # Certificate DNS Patch
   - patch: |-
       - op: replace
         path: /spec/dnsNames/0
@@ -23,6 +25,7 @@ patches:
       name: grafana-tls-cert
       namespace: grafana
 
+  # Scale Down Patch
   - patch: |-
       - op: replace
         path: /spec/deployment/replicas
@@ -32,6 +35,7 @@ patches:
       name: grafana
       namespace: grafana
 
+  # Service Patch - Dynamic LoadBalancer
   - patch: |-
       - op: replace
         path: /spec/type

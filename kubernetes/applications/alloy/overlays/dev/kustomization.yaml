@@ -5,6 +5,7 @@ resources:
   - ../../base
 
 patches:
+  # Ingress Host Patch
   # - patch: |-
   #     - op: replace
   #       path: /spec/routes/0/match
@@ -13,6 +14,7 @@ patches:
   #     kind: IngressRoute
   #     name: alloy-ui
 
+  # Certificate DNS Patch
   - patch: |-
       - op: replace
         path: /spec/dnsNames/0
@@ -21,6 +23,7 @@ patches:
       kind: Certificate
       name: alloy-ui-tls
 
+  # Service Patch - Dynamic LoadBalancer
   - patch: |-
       - op: replace
         path: /spec/type

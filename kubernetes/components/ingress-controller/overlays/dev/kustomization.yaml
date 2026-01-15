@@ -5,6 +5,7 @@ resources:
   - ../../base
 
 patches:
+  # Ingress Host Patch (Dashboard)
   - patch: |-
       - op: replace
         path: /spec/routes/0/match
@@ -12,6 +13,8 @@ patches:
     target:
       kind: IngressRoute
       name: traefik-dashboard
+
+  # Certificate DNS Patch
   - patch: |-
       - op: replace
         path: /spec/dnsNames/0
@@ -19,6 +22,8 @@ patches:
     target:
       kind: Certificate
       name: traefik-tls-cert
+
+  # Scale Down Patch
   - patch: |-
       - op: replace
         path: /spec/replicas
@@ -27,6 +32,7 @@ patches:
       kind: Deployment
       name: traefik
 
+  # Service Patch - Dynamic LoadBalancer
   - patch: |-
       - op: replace
         path: /spec/type

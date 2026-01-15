@@ -5,6 +5,7 @@ resources:
   - ../../base
 
 patches:
+  # Resources Patch (StatefulSet)
   - patch: |-
       - op: replace
         path: /spec/replicas
@@ -31,6 +32,7 @@ patches:
       kind: StatefulSet
       name: prometheus-server
 
+  # Storage Patch (Alertmanager)
   - patch: |-
       - op: replace
         path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
@@ -39,6 +41,7 @@ patches:
       kind: StatefulSet
       name: prometheus-alertmanager
 
+  # Ingress Host Patch
   # - patch: |-
   #     - op: replace
   #       path: /spec/routes/0/match
@@ -47,6 +50,7 @@ patches:
   #     kind: IngressRoute
   #     name: prometheus
 
+  # Certificate DNS Patch
   - patch: |-
       - op: replace
         path: /spec/dnsNames/0
@@ -55,6 +59,7 @@ patches:
       kind: Certificate
       name: prometheus-tls-cert
 
+  # Service Patch - Dynamic LoadBalancer
   - patch: |-
       - op: replace
         path: /spec/type

@@ -5,6 +5,7 @@ resources:
   - ../../base
 
 patches:
+  # Storage Patch (StatefulSet)
   - patch: |-
       - op: replace
         path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
@@ -12,6 +13,8 @@ patches:
     target:
       kind: StatefulSet
       name: loki
+
+  # Service Patch - Dynamic LoadBalancer
   - patch: |-
       - op: replace
         path: /spec/type

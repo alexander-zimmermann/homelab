@@ -5,6 +5,7 @@ resources:
   - ../../base
 
 patches:
+  # Service Patch - Dynamic LoadBalancer
   - patch: |-
       - op: replace
         path: /spec/type

@@ -5,6 +5,7 @@ resources:
   - ../../base
 
 patches:
+  # BGP Pool Patch (CIDR)
   - patch: |-
       - op: replace
         path: /spec/blocks/0/cidr
