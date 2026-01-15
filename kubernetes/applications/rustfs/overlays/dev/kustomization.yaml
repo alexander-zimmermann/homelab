@@ -5,7 +5,7 @@ resources:
   - ../../base
 
 patches:
-  # Ingress Host Patch
+  # Ingress host
   - patch: |-
       - op: replace
         path: /spec/routes/0/match
@@ -15,7 +15,7 @@ patches:
       name: rustfs-console
       namespace: rustfs
 
-  # Certificate DNS Patch
+  # Certificate DNS names
   - patch: |-
       - op: replace
         path: /spec/dnsNames/0
@@ -25,7 +25,7 @@ patches:
       name: rustfs-console-tls
       namespace: rustfs
 
-  # Service Patch (API) - Dynamic LoadBalancer
+  # Loadbalancer configuration
   - patch: |-
       - op: replace
         path: /spec/type
@@ -41,7 +41,7 @@ patches:
       name: rustfs-svc
       namespace: rustfs
 
-  # Storage Reduction Patches
+  # Reduce storage requests - Data
   - patch: |-
       - op: replace
         path: /spec/resources/requests/storage
@@ -51,6 +51,7 @@ patches:
       name: rustfs-data
       namespace: rustfs
 
+  # Reduce storage requests - Logs
   - patch: |-
       - op: replace
         path: /spec/resources/requests/storage

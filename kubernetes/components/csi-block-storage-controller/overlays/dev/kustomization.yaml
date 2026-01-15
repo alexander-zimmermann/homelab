@@ -5,6 +5,7 @@ resources:
   - ../../base
 
 patches:
+  # Set replicas to 1 in dev
   - patch: |-
       - op: replace
         path: /parameters/numberOfReplicas

@@ -5,7 +5,7 @@ resources:
   - ../../base
 
 patches:
-  # Set replicas to 1 in dev
+  # Scale down replicas
   - patch: |-
       - op: replace
         path: /spec/replicas

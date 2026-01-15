@@ -13,6 +13,7 @@ resources:
   - ./sealedsecret.yaml
 
 patches:
+  # Enable Helm support
   - patch: |-
       - op: add
         path: /data
@@ -22,6 +23,7 @@ patches:
       kind: ConfigMap
       name: argocd-cm
 
+  # Run server in insecure mode
   - patch: |-
       - op: add
         path: /data
@@ -31,6 +33,7 @@ patches:
       kind: ConfigMap
       name: argocd-cmd-params-cm
 
+  # Fix ClusterRoleBinding namespace
   - patch: |-
       - op: replace
         path: /subjects/0/namespace

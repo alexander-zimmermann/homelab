@@ -5,7 +5,7 @@ resources:
   - ../../base
 
 patches:
-  # PV Patch (NFS)
+  # Persistent volume configuration
   - patch: |-
       - op: replace
         path: /spec/csi/volumeHandle
@@ -19,7 +19,7 @@ patches:
       kind: PersistentVolume
       name: pv-nfs-mosquitto
 
-  # Service Patch - Fixed LoadBalancer
+  # Loadbalancer configuration
   - patch: |-
       - op: replace
         path: /spec/type

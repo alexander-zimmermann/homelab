@@ -5,6 +5,7 @@ resources:
   - ../../base
 
 patches:
+  # NFS share configuration
   - patch: |-
       - op: replace
         path: /parameters
@@ -14,6 +15,8 @@ patches:
     target:
       kind: StorageClass
       name: nfs-csi
+
+  # Scale down replicas - NFS controller
   - patch: |-
       - op: replace
         path: /spec/replicas
@@ -21,6 +24,8 @@ patches:
     target:
       kind: Deployment
       name: csi-nfs-controller
+
+  # Scale down replicas - Snapshot controller
   - patch: |-
       - op: replace
         path: /spec/replicas

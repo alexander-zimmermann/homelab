@@ -15,6 +15,7 @@ helmCharts:
     namespace: unifi-poller
 
 patches:
+  # Inject Unifi password from secret
   - patch: |-
       - op: add
         path: /spec/template/spec/containers/0/env/-

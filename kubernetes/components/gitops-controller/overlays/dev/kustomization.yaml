@@ -5,6 +5,7 @@ resources:
   - ../../base
 
 patches:
+  # Ingress host
   - patch: |-
       - op: replace
         path: /spec/routes/0/match
@@ -16,6 +17,7 @@ patches:
       kind: IngressRoute
       name: argocd-server
 
+  # Certificate DNS names
   - patch: |-
       - op: replace
         path: /spec/dnsNames/0
