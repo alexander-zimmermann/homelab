@@ -1,0 +1,19 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: alloy-ui
+  namespace: alloy
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`alloy.zimmermann.sh`)
+      priority: 10
+      services:
+        - kind: Service
+          name: alloy-alloy-metrics
+          port: 12345
+  tls:
+    secretName: alloy-ui-tls

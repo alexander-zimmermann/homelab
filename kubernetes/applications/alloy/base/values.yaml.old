@@ -1,0 +1,46 @@
+cluster:
+  name: "homelab"
+
+# Destinations: Prometheus & Loki
+destinations:
+  - name: prometheus
+    type: prometheus
+    url: http://prometheus-server.monitoring.svc.cluster.local/api/v1/write
+  - name: loki
+    type: loki
+    url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
+
+# Features (K8s Monitoring)
+clusterMetrics:
+  enabled: true
+  destinations: ["prometheus"]
+
+clusterEvents:
+  enabled: true
+  destinations: ["loki"]
+
+nodeLogs:
+  enabled: true
+  destinations: ["loki"]
+
+podLogs:
+  enabled: true
+  destinations: ["loki"]
+
+# Collectors
+alloy-metrics:
+  enabled: true
+  service:
+    enabled: true
+
+alloy-singleton:
+  enabled: true
+  service:
+    enabled: true
+
+alloy-logs:
+  enabled: true
+
+# Enable Self Reporting
+selfReporting:
+  enabled: true
