@@ -18,10 +18,11 @@
   - Deploy `traefik-internal` & `traefik-external`.
   - Configure UDM VLAN/DMZ.
 - [ ] **Optimizations**:
-  - [ ] Prometheus Retention.
-  - [x] Traefik Retention.
+  - [x] Prometheus Retention.
+  - [] Traefik Retention.
   - [ ] InfluxDB Retention.
   - [ ] Evaluate CloudNativePG (CNPG) operator for Postgres.
+- [x] **Loki**: Migrate to Scalable/Microservice Mode (MinIO Backend) when storage is ready.
 - [ ] **Omni**:
   - [ ] Use docker secrets for sensitive data.
   - [ ] Create service account for Omni.
@@ -48,20 +49,20 @@
 
 - [o] **unifi-poller**: Custom Deployment. Stateless
 - [ ] **fritz-exporter**: Custom Deployment. Stateless
-- [ ] **alloy**: Helm Chart (alloy/alloy). Stateless.
+- [/] **alloy**: Helm Chart (grafana/k8s-monitoring). Stateless.
 
 ### Wave 3: Observability - Monitoring Stack
 
-- [o] **prometheus**: Helm Chart (prometheus-community/prometheus). PVC 5G. Data migration.
-- [o] **grafana**: Helm Chart (grafana/grafana). PVC 256M. Data migration.
-- [ ] **loki**: Helm Chart (grafana/loki). PVC 512M. No data migration.
-- [o] **alertmanager**: Helm Chart (prometheus-community/alertmanager). PVC 16M. No data migration.
+- [/] **prometheus**: Helm Chart (prometheus-community/prometheus). PVC 5G. Data migration.
+- [/] **grafana**: Helm Chart (grafana/grafana). PVC 256M. Data migration.
+- [x] **loki**: Helm Chart (grafana/loki). PVC 512M. No data migration.
+- [/] **alertmanager**: Helm Chart (prometheus-community/alertmanager). PVC 16M. No data migration.
 
 ### Wave 4: Persistent Storage & Databases
 
 - [ ] **postgres**: Helm Chart (bitnami/postgresql). PVC 256M. Data migration.
 - [ ] **redis**: Helm Chart (bitnami/redis). PVC 16M. No data migration.
-- [ ] **minio**: Helm Chart (minio/minio). PVC 16M. No data migration.
+- [x] **minio**: Helm Chart (minio/minio). PVC 5G. No data migration.
 
 ### Wave 5: Web Services
 
