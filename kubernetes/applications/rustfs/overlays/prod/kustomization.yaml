@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  # Service Patch (API) - Fixed LoadBalancer
+  - patch: |-
+      - op: replace
+        path: /spec/type
+        value: LoadBalancer
+      - op: add
+        path: /metadata/annotations/io.cilium~1lb-ipam-ips
+        value: "192.168.2.32"
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1ip-pool
+        value: default
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1advertise-service
+        value: default
+    target:
+      kind: Service
+      name: rustfs-svc
+      namespace: rustfs
