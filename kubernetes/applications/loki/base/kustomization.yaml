@@ -4,6 +4,8 @@ kind: Kustomization
 namespace: loki
 resources:
   - ./namespace.yaml
+  - ./sealedsecret.yaml
+  - ./job-setup-rustfs.yaml
 
 helmCharts:
   - name: loki
@@ -12,3 +14,11 @@ helmCharts:
     releaseName: loki
     namespace: loki
     valuesFile: values.yaml
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: loki
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "0"

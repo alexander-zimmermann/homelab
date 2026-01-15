@@ -5,16 +5,61 @@ resources:
   - ../../base
 
 patches:
-  # Storage Patch (StatefulSet)
+  # Scale down replicas - Backend
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: StatefulSet
+      name: loki-backend
+
+  # Scale down replicas - Write
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: StatefulSet
+      name: loki-write
+
+  # Scale down replicas - Read
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: loki-read
+
+  # Scale down replicas - Gateway
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: loki-gateway
+
+  # Reduce storage requests - Backend
   - patch: |-
       - op: replace
         path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
         value: 128Mi
     target:
       kind: StatefulSet
-      name: loki
+      name: loki-backend
 
-  # Service Patch - Dynamic LoadBalancer
+  # Reduce storage requests - Write
+  - patch: |-
+      - op: replace
+        path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
+        value: 1Gi
+    target:
+      kind: StatefulSet
+      name: loki-write
+
+  # Loadbalancer configuration
   - patch: |-
       - op: replace
         path: /spec/type

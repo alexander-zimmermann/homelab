@@ -23,7 +23,17 @@ global:
   extraArgs: []
   # -- Common environment variables to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
-  extraEnv: []
+  extraEnv:
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: loki-s3-key
+          key: access-key-id
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: loki-s3-key
+          key: secret-access-key
   # -- Common source of environment injections to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
   # For example to inject values from a Secret, use:
@@ -56,7 +66,7 @@ imagePullSecrets: []
 # - SingleBinary<->SimpleScalable: Migrate from SingleBinary to SimpleScalable (or vice versa)
 # - SimpleScalable<->Distributed: Migrate from SimpleScalable to Distributed (or vice versa)
 # Note: SimpleScalable and Distributed REQUIRE the use of object storage.
-deploymentMode: SingleBinary
+deploymentMode: SimpleScalable
 ######################################################################################################################
 #
 # Base Loki Configs including kubernetes configurations and configurations for Loki itself,
@@ -414,6 +424,7 @@ loki:
     max_cache_freshness_per_query: 10m
     split_queries_by_interval: 15m
     query_timeout: 300s
+    allow_structured_metadata: true
     volume_enabled: true
   # -- Provides a reloadable runtime configuration file for some specific configuration
   runtimeConfig: {}
@@ -429,20 +440,20 @@ loki:
   storage:
     # Loki requires a bucket for chunks and the ruler. GEL requires a third bucket for the admin API.
     # Please provide these values if you are using object storage.
-    # bucketNames:
-    #   chunks: FIXME
-    #   ruler: FIXME
-    #   admin: FIXME
-    type: filesystem
+    bucketNames:
+      chunks: loki-chunks
+      ruler: loki-ruler
+      admin: loki-admin
+    type: s3
     s3:
       s3: null
-      endpoint: null
-      region: null
+      endpoint: http://rustfs-svc.rustfs.svc.cluster.local:9000
+      region: us-east-1
       secretAccessKey: null
       accessKeyId: null
       signatureVersion: null
-      s3ForcePathStyle: false
-      insecure: false
+      s3ForcePathStyle: true
+      insecure: true
       http_config: {}
       # -- Check https://grafana.com/docs/loki/latest/configure/#s3_storage_config for more info on how to provide a backoff_config
       backoff_config: {}
@@ -526,7 +537,15 @@ loki:
         account_key: null
 
   # -- Check https://grafana.com/docs/loki/latest/configuration/#schema_config for more info on how to configure schemas
-  schemaConfig: {}
+  schemaConfig:
+    configs:
+      - from: 2024-04-01
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
   # -- a real Loki install requires a proper schemaConfig defined above this, however for testing or playing around
   # you can enable useTestSchema
   useTestSchema: false
@@ -576,7 +595,7 @@ loki:
   compactor_grpc_client: {}
   # --  Optional pattern ingester configuration
   pattern_ingester:
-    enabled: false
+    enabled: true
   # --  Optional analytics configuration
   analytics: {}
   # --  Optional Loki UI: Provides access to a operators UI for Loki distributed. When enabled UI will be available at /ui/ of loki-gateway
@@ -589,9 +608,11 @@ loki:
   # --  Optional querier configuration
   query_range: {}
   # --  Optional querier configuration
-  querier: {}
+  querier:
+    max_concurrent: 4
   # --  Optional ingester configuration
-  ingester: {}
+  ingester:
+    chunk_encoding: snappy
   # --  Optional ingester client configuration
   ingester_client: {}
   # --  Optional block builder configuration
@@ -1443,7 +1464,7 @@ migrate:
 # Configuration for the single binary node(s)
 singleBinary:
   # -- Number of replicas for the single binary
-  replicas: 2
+  replicas: 0
   autoscaling:
     # -- Enable autoscaling
     enabled: false
@@ -1565,7 +1586,7 @@ singleBinary:
 # Configuration for the write pod(s)
 write:
   # -- Number of replicas for the write
-  replicas: 3
+  replicas: 2
   autoscaling:
     # -- Enable autoscaling for the write.
     enabled: false
@@ -1705,7 +1726,7 @@ write:
 # --  Configuration for the read pod(s)
 read:
   # -- Number of replicas for the read
-  replicas: 3
+  replicas: 2
   autoscaling:
     # -- Enable autoscaling for the read, this is only used if `queryIndex.enabled: true`
     enabled: false
@@ -1841,7 +1862,7 @@ read:
 # --  Configuration for the backend pod(s)
 backend:
   # -- Number of replicas for the backend
-  replicas: 3
+  replicas: 2
   autoscaling:
     # -- Enable autoscaling for the backend.
     enabled: false
