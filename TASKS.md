@@ -81,11 +81,11 @@
 
 ### Decommissioning
 
-- [ ] **watchtower**: Not needed (ArgoCD handles updates).
-- [ ] **portainer**: Not needed (Use ArgoCD/K9s/Lens).
-- [ ] **node-exporter**: Replaced by Alloy/Kube-Prometheus.
+- [x] **watchtower**: Not needed (ArgoCD handles updates).
+- [x] **portainer**: Not needed (Use ArgoCD/K9s/Lens).
+- [x] **node-exporter**: Replaced by Alloy/Kube-Prometheus.
 - [ ] **blackbox-exporter**: Replaced by Alloy.
-- [ ] **cadvisor**: Replaced by Alloy/Kubelet metrics.
+- [x] **cadvisor**: Replaced by Alloy/Kubelet metrics.
 
 ---
 
