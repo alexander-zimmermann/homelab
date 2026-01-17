@@ -18,14 +18,21 @@ spec:
       callback_url: http://localhost:3000/
 
   deployment:
-    replicas: 2
-    containers:
-      - name: grafana-image-renderer
-        image: grafana/grafana-image-renderer:latest
-        ports:
-          - containerPort: 8081
-            name: http
-
-  secrets:
-    - name: grafana-instance-admin-credentials
-      mountPath: /etc/secrets/auth
+    spec:
+      replicas: 2
+      template:
+        spec:
+          containers:
+            - name: grafana-image-renderer
+              image: grafana/grafana-image-renderer:latest
+              ports:
+                - containerPort: 8081
+                  name: http
+            - name: grafana
+              volumeMounts:
+                - name: grafana-auth
+                  mountPath: /etc/secrets/auth
+          volumes:
+            - name: grafana-auth
+              secret:
+                secretName: grafana-instance-admin-credentials
