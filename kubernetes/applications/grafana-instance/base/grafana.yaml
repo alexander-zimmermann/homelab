@@ -27,5 +27,5 @@ spec:
             name: http
 
   secrets:
-    - name: grafana-admin-credentials
+    - name: grafana-instance-admin-credentials
       mountPath: /etc/secrets/auth
