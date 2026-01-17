@@ -3,7 +3,7 @@ kind: IngressRoute
 
 metadata:
   name: grafana
-  namespace: grafana
+  namespace: grafana-instance
 spec:
   entryPoints:
     - websecure

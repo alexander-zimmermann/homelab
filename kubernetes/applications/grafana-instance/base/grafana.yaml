@@ -3,7 +3,7 @@ kind: Grafana
 
 metadata:
   name: grafana
-  namespace: grafana
+  namespace: grafana-instance
   labels:
     dashboards: "grafana"
 spec:
@@ -28,8 +28,4 @@ spec:
 
   secrets:
     - name: grafana-admin-credentials
-      key: admin-user
-      mountPath: /etc/secrets/auth/admin-user
-    - name: grafana-admin-credentials
-      key: admin-password
-      mountPath: /etc/secrets/auth/admin-password
+      mountPath: /etc/secrets/auth
