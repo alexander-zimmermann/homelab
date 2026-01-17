@@ -41,5 +41,23 @@ patches:
     target:
       kind: ClusterRoleBinding
 
+  # Scale up replicas - Server
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 2
+    target:
+      kind: Deployment
+      name: argocd-server
+
+  # Scale up replicas - Repo Server
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 2
+    target:
+      kind: Deployment
+      name: argocd-repo-server
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "0"

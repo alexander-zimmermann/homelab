@@ -25,3 +25,21 @@ patches:
     target:
       kind: Certificate
       name: argocd-tls-cert
+
+  # Scale down replicas - Server
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: argocd-server
+
+  # Scale down replicas - Repo Server
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: argocd-repo-server

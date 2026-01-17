@@ -221,13 +221,13 @@ csi:
   # -- kubelet root directory. When unspecified, Longhorn uses the default value.
   kubeletRootDir: ~
   # -- Replica count of the CSI Attacher. When unspecified, Longhorn uses the default value ("3").
-  attacherReplicaCount: ~
+  attacherReplicaCount: 2
   # -- Replica count of the CSI Provisioner. When unspecified, Longhorn uses the default value ("3").
-  provisionerReplicaCount: ~
+  provisionerReplicaCount: 2
   # -- Replica count of the CSI Resizer. When unspecified, Longhorn uses the default value ("3").
-  resizerReplicaCount: ~
+  resizerReplicaCount: 2
   # -- Replica count of the CSI Snapshotter. When unspecified, Longhorn uses the default value ("3").
-  snapshotterReplicaCount: ~
+  snapshotterReplicaCount: 2
 defaultSettings:
   # -- Setting that allows Longhorn to automatically attach a volume and create snapshots or backups when recurring jobs are run.
   allowRecurringJobWhileVolumeDetached: ~

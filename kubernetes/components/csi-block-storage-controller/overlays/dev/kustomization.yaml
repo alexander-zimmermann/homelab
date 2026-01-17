@@ -13,3 +13,48 @@ patches:
     target:
       kind: StorageClass
       name: longhorn
+
+  # Scale down replicas - CSI Attacher
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: csi-attacher
+
+  # Scale down replicas - CSI Provisioner
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: csi-provisioner
+
+  # Scale down replicas - CSI Resizer
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: csi-resizer
+
+  # Scale down replicas - CSI Snapshotter
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: csi-snapshotter
+
+  # Scale down replicas - Longhorn UI
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: longhorn-ui
