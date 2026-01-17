@@ -18,7 +18,7 @@ patches:
         value: default
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
-        value: 192.168.2.29
+        value: 192.168.10.29
     target:
       kind: Service
       name: loki-gateway
