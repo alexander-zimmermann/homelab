@@ -37,3 +37,12 @@ patches:
     target:
       kind: Service
       name: alloy-alloy-metrics
+
+  # Scale down replicas
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: StatefulSet
+      name: alloy-alloy-metrics
