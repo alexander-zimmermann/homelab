@@ -36,8 +36,11 @@ from typing import List, Dict, Optional
 
 
 # --- Configuration ---
-DEFAULT_SOURCE = "infrastructure/manifest/20-image/schematics.yaml"
-DEFAULT_TARGET = "infrastructure/manifest/20-image/image.yaml"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(SCRIPT_DIR)
+
+DEFAULT_SOURCE = os.path.join(REPO_ROOT, "infrastructure", "manifest", "20-image", "schematics.yaml")
+DEFAULT_TARGET = os.path.join(REPO_ROOT, "infrastructure", "manifest", "20-image", "image.yaml")
 DEFAULT_TALOS_VERSION = "1.12.0"  # Fallback version if parsing fails
 
 
