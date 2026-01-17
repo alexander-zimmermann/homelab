@@ -16,3 +16,23 @@ output "node" {
   description = "Proxmox node name where the template lives"
   value       = proxmox_virtual_environment_vm.vm_template.node_name
 }
+
+output "ci_user_data" {
+  description = "Cloud-init user-data file ID used by this template"
+  value       = var.ci_user_data
+}
+
+output "ci_vendor_data" {
+  description = "Cloud-init vendor-data file ID used by this template"
+  value       = var.ci_vendor_data
+}
+
+output "ci_network_data" {
+  description = "Cloud-init network-data file ID used by this template"
+  value       = var.ci_network_data
+}
+
+output "ci_meta_data" {
+  description = "Cloud-init meta-data file ID used by this template"
+  value       = var.ci_meta_data
+}

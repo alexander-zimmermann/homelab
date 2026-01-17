@@ -418,6 +418,14 @@ module "fleet_vm" {
   wait_for_agent = each.value.wait_for_agent
   protection     = each.value.protection
 
+  ## Cloud-init configuration (inherited from template)
+  cloud-init_override = true
+  ci_datastore        = try(each.value.target_datastore, local.defaults.block_storage)
+  ci_user_data        = module.template_vm[each.value.template_id].ci_user_data
+  ci_vendor_data      = module.template_vm[each.value.template_id].ci_vendor_data
+  ci_network_data     = module.template_vm[each.value.template_id].ci_network_data
+  ci_meta_data        = module.template_vm[each.value.template_id].ci_meta_data
+
   ## Additional disks
   disks = [
     for d in try(each.value.disks, []) : merge(d, {
@@ -443,32 +451,3 @@ module "fleet_lxc" {
   ## Startup variables
   protection = each.value.protection
 }
-
-
-###############################################################################
-##  Talos cluster
-###############################################################################
-# module "talos_cluster" {
-#   source = "./modules/60-talos-cluster"
-#
-#   ## Cluster identity
-#   cluster_name = local.talos_config.cluster_name
-#
-#   ## Talos/Kubernetes versions
-#   talos_version      = local.talos_config.talos_version
-#   kubernetes_version = local.talos_config.kubernetes_version
-#
-#   ## Node topology
-#   cluster_head  = module.fleet_vm[local.control_plane_node_ids[0]].ipv4[0]
-#   control_plane = [for id in local.control_plane_node_ids : module.fleet_vm[id].ipv4[0]]
-#   data_plane    = [for id in local.data_plane_node_ids : module.fleet_vm[id].ipv4[0]]
-#
-#   ## Network configuration
-#   dns_servers = local.talos_infra.dns_servers
-#   ntp_servers = local.talos_infra.ntp_servers
-#
-#   ## Dataplane Storage (Longhorn)
-#   longhorn_disk_selector_match = local.talos_infra.longhorn.disk_selector_match
-#   longhorn_mount_path          = local.talos_infra.longhorn.mount_path
-#   longhorn_filesystem          = local.talos_infra.longhorn.filesystem
-# }
