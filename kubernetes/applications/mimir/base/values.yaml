@@ -387,8 +387,6 @@ mimir:
       installation_mode: helm
     limits:
       compactor_blocks_retention_period: 1y
-    compactor:
-      data_retention_enabled: true
 
 # -- runtimeConfig provides a reloadable runtime configuration. Changing the runtimeConfig doesn't require a restart of all components.
 # For more infromation see https://grafana.com/docs/mimir/latest/configure/about-runtime-configuration/
