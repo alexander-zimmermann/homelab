@@ -440,10 +440,10 @@ longhornManager:
   resources:
     requests:
       cpu: 100m
-      memory: 128Mi
+      memory: 64Mi
     limits:
       cpu: 1000m
-      memory: 512Mi
+      memory: 256Mi
   # -- Annotation for the Longhorn Manager service.
   serviceAnnotations: {}
   ## If you want to set annotations for the Longhorn Manager service, delete the `{}` in the line above
@@ -473,7 +473,7 @@ longhornDriver:
   resources:
     requests:
       cpu: 100m
-      memory: 128Mi
+      memory: 64Mi
     limits:
       cpu: 500m
       memory: 256Mi
