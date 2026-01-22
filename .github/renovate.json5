@@ -38,5 +38,4 @@
     fileFilters: ["infrastructure/manifest/20-image/image.yaml"],
     executionMode: "branch",
   },
-  allowedCommands: ["^python3 .github/scripts/update_checksums\\.py$"],
 }

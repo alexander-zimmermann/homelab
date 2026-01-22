@@ -20,6 +20,7 @@ jobs:
         env:
           RENOVATE_REPOSITORIES: '["${{ github.repository }}"]'
           LOG_LEVEL: debug
+          RENOVATE_ALLOWED_COMMANDS: '["^python3 .github/scripts/update_checksums\\.py$"]'
         with:
           configurationFile: .github/renovate.json5
           token: ${{ secrets.RENOVATE_TOKEN || secrets.GITHUB_TOKEN }}
