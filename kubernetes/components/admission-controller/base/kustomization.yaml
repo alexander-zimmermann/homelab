@@ -5,6 +5,7 @@ namespace: admission-controller
 resources:
   - ./namespace.yaml
   - ./clusterpolicy-secrets.yaml
+  - ./rbac.yaml
 
 helmCharts:
   - name: kyverno
