@@ -1706,7 +1706,7 @@ write:
     # -- Enable StatefulSetAutoDeletePVC feature
     enableStatefulSetAutoDeletePVC: false
     # -- Size of persistent disk
-    size: 10Gi
+    size: 2Gi
     # -- Storage class to be used.
     # If defined, storageClassName: <storageClass>.
     # If set to "-", storageClassName: "", which disables dynamic provisioning.
@@ -1803,8 +1803,7 @@ read:
   # -- Resource requests and limits for the read
   resources: {}
   # -- liveness probe settings for read pods. If empty, applies no livenessProbe
-  livenessProbe:
-    {}
+  livenessProbe: {}
     # -- statup probe for the read pods. If empty, applies no startupProbe
   startupProbe: {}
   # -- Grace period to allow the read to shutdown before it is killed
@@ -1973,7 +1972,7 @@ backend:
     # -- Enable StatefulSetAutoDeletePVC feature
     enableStatefulSetAutoDeletePVC: true
     # -- Size of persistent disk
-    size: 10Gi
+    size: 2Gi
     # -- Storage class to be used.
     # If defined, storageClassName: <storageClass>.
     # If set to "-", storageClassName: "", which disables dynamic provisioning.
