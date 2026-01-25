@@ -17,14 +17,21 @@ helmCharts:
 patches:
   # Inject Unifi password from secret
   - patch: |-
-      - op: add
-        path: /spec/template/spec/containers/0/env/-
-        value:
-          name: UP_UNIFI_DEFAULT_PASS
-          valueFrom:
-            secretKeyRef:
-              name: unifi-poller-secret
-              key: unifi-password
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: unpoller
+      spec:
+        template:
+          spec:
+            containers:
+              - name: unpoller
+                env:
+                  - name: UP_UNIFI_DEFAULT_PASS
+                    valueFrom:
+                      secretKeyRef:
+                        name: unifi-poller-secret
+                        key: unifi-password
     target:
       kind: Deployment
       name: unpoller
