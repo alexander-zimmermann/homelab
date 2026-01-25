@@ -6,6 +6,7 @@ resources:
   - ./namespace.yaml
   - ./sealedsecret.yaml
   - ./clusterissuer.yaml
+  - ./kyverno-defaults.yaml
 
 helmCharts:
   - name: cert-manager
