@@ -50,5 +50,5 @@ spec:
           spec:
             privateKey:
               +(algorithm): ECDSA
-              +(size): 521
+              +(size): 256
               +(encoding): PKCS1
