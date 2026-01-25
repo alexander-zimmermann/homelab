@@ -12,9 +12,9 @@ helmCharts:
   - name: rustfs
     repo: https://rustfs.github.io/helm
     releaseName: rustfs
-    namespace: rustfs
     version: 0.0.79
     valuesFile: values.yaml
+    namespace: rustfs
 
 labels:
   - includeSelectors: true

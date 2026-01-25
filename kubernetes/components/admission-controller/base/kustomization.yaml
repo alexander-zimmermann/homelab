@@ -11,10 +11,10 @@ helmCharts:
   - name: kyverno
     repo: https://kyverno.github.io/kyverno/
     releaseName: kyverno
-    namespace: admission-controller
     version: 3.6.2
-    includeCRDs: true
     valuesFile: values.yaml
+    includeCRDs: true
+    namespace: admission-controller
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-2"

@@ -11,10 +11,10 @@ helmCharts:
   - name: mimir-distributed
     repo: https://grafana.github.io/helm-charts
     releaseName: mimir
-    namespace: mimir
     version: 6.0.5
     valuesFile: values.yaml
     includeCRDs: true
+    namespace: mimir
 
 labels:
   - includeSelectors: true

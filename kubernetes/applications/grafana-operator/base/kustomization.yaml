@@ -12,9 +12,9 @@ helmCharts:
     version: 5.21.4
     valuesFile: values.yaml
     includeCRDs: true
+    namespace: grafana-operator
     valuesInline:
       watchNamespace: ""
-    namespace: grafana-operator
 
 labels:
   - includeSelectors: true
