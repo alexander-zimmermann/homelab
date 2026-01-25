@@ -1586,7 +1586,7 @@ singleBinary:
 # Configuration for the write pod(s)
 write:
   # -- Number of replicas for the write
-  replicas: 2
+  replicas: 1
   autoscaling:
     # -- Enable autoscaling for the write.
     enabled: false
@@ -1726,7 +1726,7 @@ write:
 # --  Configuration for the read pod(s)
 read:
   # -- Number of replicas for the read
-  replicas: 2
+  replicas: 1
   autoscaling:
     # -- Enable autoscaling for the read, this is only used if `queryIndex.enabled: true`
     enabled: false
@@ -1861,7 +1861,7 @@ read:
 # --  Configuration for the backend pod(s)
 backend:
   # -- Number of replicas for the backend
-  replicas: 2
+  replicas: 1
   autoscaling:
     # -- Enable autoscaling for the backend.
     enabled: false

@@ -926,7 +926,7 @@ ingester:
   # If ingester.zoneAwareReplication.enabled=false, this number is taken as is.
   # Otherwise each zone starts `ceil(replicas / number_of_zones)` number of pods.
   #   E.g. if 'replicas' is set to 4 and there are 3 zones, then 4/3=1.33 and after rounding up it means 2 pods per zone are started.
-  replicas: 3
+  replicas: 1
 
   statefulSet:
     enabled: true
@@ -1413,7 +1413,7 @@ ruler_querier:
     # repository: grafana/mimir
     # tag: 2.16.0
 
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: null
 
   # -- [Experimental] Configure autoscaling via KEDA (https://keda.sh). This requires having
@@ -1655,7 +1655,7 @@ ruler_query_scheduler:
     # repository: grafana/mimir
     # tag: 2.16.0
 
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: null
 
   service:
@@ -1749,7 +1749,7 @@ querier:
     # repository: grafana/mimir
     # tag: 2.16.0
 
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: null
 
   # -- [Experimental] Configure autoscaling via KEDA (https://keda.sh). This requires having
@@ -2009,7 +2009,7 @@ query_scheduler:
     # repository: grafana/mimir
     # tag: 2.16.0
 
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: null
 
   service:
