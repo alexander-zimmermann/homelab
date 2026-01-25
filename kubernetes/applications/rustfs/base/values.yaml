@@ -45,6 +45,7 @@ config:
     # volumes: "/data/rustfs0,/data/rustfs1,/data/rustfs2,/data/rustfs3"
     # volumes: "http://rustfs-{0...3}.rustfs-headless:9000/data/rustfs{0...3}"
     volumes: ""
+    server_domains: "rustfs-svc.rustfs.svc.cluster.local"
     address: ":9000"
     console_enable: "true"
     console_address: ":9001"

@@ -28,6 +28,7 @@ spec:
               mc mb --ignore-existing rustfs/loki-chunks
               mc mb --ignore-existing rustfs/loki-ruler
               mc mb --ignore-existing rustfs/loki-admin
+              mc mb --ignore-existing rustfs/loki-data
 
               echo "Done."
           env:
