@@ -319,7 +319,7 @@ defaultSettings:
   # -- Number of seconds that Longhorn waits before downloading a backing image file again when the status of all image disk files changes to "failed" or "unknown".
   backingImageRecoveryWaitInterval: ~
   # -- Percentage of the total allocatable CPU resources on each node to be reserved for each instance manager pod. The default value is {"v1":"12","v2":"12"}.
-  guaranteedInstanceManagerCPU: ~
+  guaranteedInstanceManagerCPU: 4
   # -- Setting that notifies Longhorn that the cluster is using the Kubernetes Cluster Autoscaler.
   kubernetesClusterAutoscalerEnabled: ~
   # -- Enables Longhorn to automatically delete orphaned resources and their associated data or processes (e.g., stale replicas). Orphaned resources on failed or unknown nodes are not automatically cleaned up.
@@ -479,7 +479,7 @@ longhornDriver:
       memory: 256Mi
 longhornUI:
   # -- Replica count for Longhorn UI.
-  replicas: 2
+  replicas: 1
   # -- PriorityClass for Longhorn UI.
   priorityClass: *defaultPriorityClassNameRef
   # -- Affinity for Longhorn UI pods. Specify the affinity you want to use for Longhorn UI.
