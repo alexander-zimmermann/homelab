@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: grafana-instance
 resources:
   - ./namespace.yaml
+  - ./datasources.yaml
   - ./sealedsecret.yaml
   - ./certificate.yaml
   - ./ingressroute.yaml
