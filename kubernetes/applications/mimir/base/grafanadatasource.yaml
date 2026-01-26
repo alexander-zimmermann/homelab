@@ -1,0 +1,31 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: mimir
+  namespace: mimir
+spec:
+  valuesFrom:
+    - targetPath: "basicAuthUser"
+      valueFrom:
+        secretKeyRef:
+          name: grafana-admin-credentials
+          key: admin-user
+          optional: true
+    - targetPath: "basicAuthPassword"
+      valueFrom:
+        secretKeyRef:
+          name: grafana-admin-credentials
+          key: admin-password
+          optional: true
+  datasource:
+    name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://mimir-gateway.mimir.svc:8080/prometheus
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: "30s"
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
