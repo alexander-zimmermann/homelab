@@ -6,6 +6,7 @@ resources:
   - ./namespace.yaml
   - ./sealedsecret.yaml
   - ./job-setup-rustfs.yaml
+  - ./grafanadatasource.yaml
 
 helmCharts:
   - name: loki
