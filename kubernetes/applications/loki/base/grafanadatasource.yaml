@@ -25,6 +25,7 @@ spec:
     url: http://loki-gateway.loki.svc:80
     isDefault: false
     editable: false
+  allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
       dashboards: grafana

@@ -27,6 +27,7 @@ spec:
     editable: false
     jsonData:
       timeInterval: "30s"
+  allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
       dashboards: grafana
