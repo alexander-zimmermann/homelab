@@ -10,9 +10,7 @@ spec:
   config:
     log:
       mode: "console"
-    security:
-      admin_user: "$__file{/etc/secrets/auth/admin-user}"
-      admin_password: "$__file{/etc/secrets/auth/admin-password}"
+
     rendering:
       server_url: http://localhost:8081/render
       callback_url: http://localhost:3000/

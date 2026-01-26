@@ -1,5 +1,6 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
+
 metadata:
   name: mimir
   namespace: grafana-instance
@@ -29,9 +30,11 @@ spec:
   instanceSelector:
     matchLabels:
       dashboards: grafana
+
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
+
 metadata:
   name: loki
   namespace: grafana-instance
