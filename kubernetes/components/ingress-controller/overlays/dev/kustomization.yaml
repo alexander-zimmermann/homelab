@@ -5,15 +5,6 @@ resources:
   - ../../base
 
 patches:
-  # Scale down replicas
-  - patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-    target:
-      kind: Deployment
-      name: traefik
-
   # Ingress host
   - patch: |-
       - op: replace
