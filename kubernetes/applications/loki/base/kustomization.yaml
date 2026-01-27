@@ -4,7 +4,6 @@ kind: Kustomization
 namespace: loki
 resources:
   - ./namespace.yaml
-  - ./sealedsecret.yaml
 
 helmCharts:
   - name: loki
