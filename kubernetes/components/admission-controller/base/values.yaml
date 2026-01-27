@@ -838,7 +838,7 @@ admissionController:
   createSelfSignedCert: false
 
   # -- (int) Desired number of pods
-  replicas: 2
+  replicas: 1
 
   # -- The number of revisions to keep
   revisionHistoryLimit: 10
@@ -1331,7 +1331,7 @@ backgroundController:
     # - secretName
 
   # -- (int) Desired number of pods
-  replicas: 2
+  replicas: 1
 
   # -- The number of revisions to keep
   revisionHistoryLimit: 10
@@ -1614,7 +1614,7 @@ cleanupController:
     # - secretName
 
   # -- (int) Desired number of pods
-  replicas: 2
+  replicas: 1
 
   # -- The number of revisions to keep
   revisionHistoryLimit: 10
@@ -1946,7 +1946,7 @@ reportsController:
     # - secretName
 
   # -- (int) Desired number of pods
-  replicas: 2
+  replicas: 1
 
   # -- The number of revisions to keep
   revisionHistoryLimit: 10
