@@ -537,7 +537,7 @@ server:
 
   ## Use a StatefulSet if replicaCount needs to be greater than 1 (see below)
   ##
-  replicaCount: 2
+  replicaCount: 1
 
   ## Number of old history to retain to allow rollback
   ## Default Kubernetes value is set to 10
