@@ -52,7 +52,7 @@ kubeletDir: /var/lib/kubelet
 
 controller:
   name: csi-nfs-controller
-  replicas: 2
+  replicas: 1
   strategyType: Recreate
   runOnMaster: false
   runOnControlPlane: false
@@ -150,7 +150,7 @@ externalSnapshotter:
   priorityClassName: system-cluster-critical
   deletionPolicy: Delete
   controller:
-    replicas: 2
+    replicas: 1
   resources:
     limits:
       memory: 300Mi

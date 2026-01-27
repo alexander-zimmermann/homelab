@@ -15,21 +15,3 @@ patches:
     target:
       kind: StorageClass
       name: nfs-csi
-
-  # Scale down replicas - NFS controller
-  - patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-    target:
-      kind: Deployment
-      name: csi-nfs-controller
-
-  # Scale down replicas - Snapshot controller
-  - patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-    target:
-      kind: Deployment
-      name: snapshot-controller
