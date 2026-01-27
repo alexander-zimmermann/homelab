@@ -10,7 +10,7 @@ helmCharts:
   - name: traefik
     repo: https://helm.traefik.io/traefik
     releaseName: traefik
-    version: 38.0.1
+    version: 38.0.2
     valuesFile: values.yaml
     namespace: ingress-controller
     includeCRDs: true
