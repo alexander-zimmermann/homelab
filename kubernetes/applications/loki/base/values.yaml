@@ -1443,7 +1443,7 @@ migrate:
 # Configuration for the single binary node(s)
 singleBinary:
   # -- Number of replicas for the single binary
-  replicas: 2
+  replicas: 1
   autoscaling:
     # -- Enable autoscaling
     enabled: false
@@ -1782,8 +1782,7 @@ read:
   # -- Resource requests and limits for the read
   resources: {}
   # -- liveness probe settings for read pods. If empty, applies no livenessProbe
-  livenessProbe:
-    {}
+  livenessProbe: {}
     # -- statup probe for the read pods. If empty, applies no startupProbe
   startupProbe: {}
   # -- Grace period to allow the read to shutdown before it is killed
