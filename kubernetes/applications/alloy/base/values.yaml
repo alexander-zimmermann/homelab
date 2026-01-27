@@ -51,9 +51,9 @@ global:
 # See the [destinations documentation](https://github.com/grafana/k8s-monitoring-helm/blob/main/charts/k8s-monitoring/docs/destinations/README.md) for more information.
 # @section -- Destinations
 destinations:
-  - name: mimir
+  - name: prometheus
     type: prometheus
-    url: http://mimir-gateway.mimir.svc.cluster.local:80/api/v1/push
+    url: http://prometheus-operated.prometheus:9090/api/v1/write
   - name: loki
     type: loki
     url: http://loki-gateway.loki.svc.cluster.local/loki/api/v1/push
@@ -79,7 +79,7 @@ clusterMetrics:
 
   # -- The destinations where cluster metrics will be sent. If empty, all metrics-capable destinations will be used.
   # @section -- Features - Cluster Metrics
-  destinations: ["mimir"]
+  destinations: ["prometheus"]
 
   # -- Which collector to assign this feature to. Do not change this unless you are sure of what you are doing.
   # @section -- Features - Cluster Metrics
