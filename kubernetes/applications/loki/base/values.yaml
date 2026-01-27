@@ -23,17 +23,7 @@ global:
   extraArgs: []
   # -- Common environment variables to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
-  extraEnv:
-    - name: AWS_ACCESS_KEY_ID
-      valueFrom:
-        secretKeyRef:
-          name: loki-s3-token
-          key: access-key-id
-    - name: AWS_SECRET_ACCESS_KEY
-      valueFrom:
-        secretKeyRef:
-          name: loki-s3-token
-          key: secret-access-key
+  extraEnv: []
   # -- Common source of environment injections to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
   # For example to inject values from a Secret, use:
@@ -66,7 +56,7 @@ imagePullSecrets: []
 # - SingleBinary<->SimpleScalable: Migrate from SingleBinary to SimpleScalable (or vice versa)
 # - SimpleScalable<->Distributed: Migrate from SimpleScalable to Distributed (or vice versa)
 # Note: SimpleScalable and Distributed REQUIRE the use of object storage.
-deploymentMode: SimpleScalable
+deploymentMode: SingleBinary
 ######################################################################################################################
 #
 # Base Loki Configs including kubernetes configurations and configurations for Loki itself,
@@ -424,7 +414,6 @@ loki:
     max_cache_freshness_per_query: 10m
     split_queries_by_interval: 15m
     query_timeout: 300s
-    allow_structured_metadata: true
     volume_enabled: true
   # -- Provides a reloadable runtime configuration file for some specific configuration
   runtimeConfig: {}
@@ -440,20 +429,20 @@ loki:
   storage:
     # Loki requires a bucket for chunks and the ruler. GEL requires a third bucket for the admin API.
     # Please provide these values if you are using object storage.
-    bucketNames:
-      chunks: loki-chunks
-      ruler: loki-ruler
-      admin: loki-admin
-    type: s3
+    # bucketNames:
+    #   chunks: FIXME
+    #   ruler: FIXME
+    #   admin: FIXME
+    type: filesystem
     s3:
       s3: null
-      endpoint: http://rustfs-svc.rustfs.svc.cluster.local:9000
-      region: us-east-1
+      endpoint: null
+      region: null
       secretAccessKey: null
       accessKeyId: null
       signatureVersion: null
-      s3ForcePathStyle: true
-      insecure: true
+      s3ForcePathStyle: false
+      insecure: false
       http_config: {}
       # -- Check https://grafana.com/docs/loki/latest/configure/#s3_storage_config for more info on how to provide a backoff_config
       backoff_config: {}
@@ -537,15 +526,7 @@ loki:
         account_key: null
 
   # -- Check https://grafana.com/docs/loki/latest/configuration/#schema_config for more info on how to configure schemas
-  schemaConfig:
-    configs:
-      - from: 2024-04-01
-        store: tsdb
-        object_store: s3
-        schema: v13
-        index:
-          prefix: index_
-          period: 24h
+  schemaConfig: {}
   # -- a real Loki install requires a proper schemaConfig defined above this, however for testing or playing around
   # you can enable useTestSchema
   useTestSchema: false
@@ -595,7 +576,7 @@ loki:
   compactor_grpc_client: {}
   # --  Optional pattern ingester configuration
   pattern_ingester:
-    enabled: true
+    enabled: false
   # --  Optional analytics configuration
   analytics: {}
   # --  Optional Loki UI: Provides access to a operators UI for Loki distributed. When enabled UI will be available at /ui/ of loki-gateway
@@ -608,11 +589,9 @@ loki:
   # --  Optional querier configuration
   query_range: {}
   # --  Optional querier configuration
-  querier:
-    max_concurrent: 4
+  querier: {}
   # --  Optional ingester configuration
-  ingester:
-    chunk_encoding: snappy
+  ingester: {}
   # --  Optional ingester client configuration
   ingester_client: {}
   # --  Optional block builder configuration
@@ -1464,7 +1443,7 @@ migrate:
 # Configuration for the single binary node(s)
 singleBinary:
   # -- Number of replicas for the single binary
-  replicas: 0
+  replicas: 2
   autoscaling:
     # -- Enable autoscaling
     enabled: false
@@ -1586,14 +1565,14 @@ singleBinary:
 # Configuration for the write pod(s)
 write:
   # -- Number of replicas for the write
-  replicas: 1
+  replicas: 3
   autoscaling:
     # -- Enable autoscaling for the write.
     enabled: false
     # -- Minimum autoscaling replicas for the write.
-    minReplicas: 1
+    minReplicas: 2
     # -- Maximum autoscaling replicas for the write.
-    maxReplicas: 3
+    maxReplicas: 6
     # -- Target CPU utilisation percentage for the write.
     targetCPUUtilizationPercentage: 60
     # -- Target memory utilization percentage for the write.
@@ -1706,7 +1685,7 @@ write:
     # -- Enable StatefulSetAutoDeletePVC feature
     enableStatefulSetAutoDeletePVC: false
     # -- Size of persistent disk
-    size: 2Gi
+    size: 10Gi
     # -- Storage class to be used.
     # If defined, storageClassName: <storageClass>.
     # If set to "-", storageClassName: "", which disables dynamic provisioning.
@@ -1726,14 +1705,14 @@ write:
 # --  Configuration for the read pod(s)
 read:
   # -- Number of replicas for the read
-  replicas: 1
+  replicas: 3
   autoscaling:
     # -- Enable autoscaling for the read, this is only used if `queryIndex.enabled: true`
     enabled: false
     # -- Minimum autoscaling replicas for the read
-    minReplicas: 1
+    minReplicas: 2
     # -- Maximum autoscaling replicas for the read
-    maxReplicas: 3
+    maxReplicas: 6
     # -- Target CPU utilisation percentage for the read
     targetCPUUtilizationPercentage: 60
     # -- Target memory utilisation percentage for the read
@@ -1803,7 +1782,8 @@ read:
   # -- Resource requests and limits for the read
   resources: {}
   # -- liveness probe settings for read pods. If empty, applies no livenessProbe
-  livenessProbe: {}
+  livenessProbe:
+    {}
     # -- statup probe for the read pods. If empty, applies no startupProbe
   startupProbe: {}
   # -- Grace period to allow the read to shutdown before it is killed
@@ -1861,14 +1841,14 @@ read:
 # --  Configuration for the backend pod(s)
 backend:
   # -- Number of replicas for the backend
-  replicas: 1
+  replicas: 3
   autoscaling:
     # -- Enable autoscaling for the backend.
     enabled: false
     # -- Minimum autoscaling replicas for the backend.
-    minReplicas: 1
+    minReplicas: 3
     # -- Maximum autoscaling replicas for the backend.
-    maxReplicas: 1
+    maxReplicas: 6
     # -- Target CPU utilization percentage for the backend.
     targetCPUUtilizationPercentage: 60
     # -- Target memory utilization percentage for the backend.
@@ -1972,7 +1952,7 @@ backend:
     # -- Enable StatefulSetAutoDeletePVC feature
     enableStatefulSetAutoDeletePVC: true
     # -- Size of persistent disk
-    size: 2Gi
+    size: 10Gi
     # -- Storage class to be used.
     # If defined, storageClassName: <storageClass>.
     # If set to "-", storageClassName: "", which disables dynamic provisioning.
@@ -3783,7 +3763,7 @@ chunksCache:
   # -- Port of the chunks-cache service
   port: 11211
   # -- Amount of memory allocated to chunks-cache for object storage (in MB).
-  allocatedMemory: 256
+  allocatedMemory: 8192
   # -- Maximum item memory for chunks-cache (in MB).
   maxItemMemory: 5
   # -- Maximum number of connections allowed
