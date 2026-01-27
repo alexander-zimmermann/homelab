@@ -1552,7 +1552,7 @@ imageRenderer:
   revisionHistoryLimit: 10
   networkPolicy:
     # Enable a NetworkPolicy to limit inbound traffic to only the created grafana pods
-    limitIngress: true
+    limitIngress: false
     # Enable a NetworkPolicy to limit outbound traffic to only the created grafana pods
     limitEgress: false
     # Allow additional services to access image-renderer (eg. Prometheus operator when ServiceMonitor is enabled)
