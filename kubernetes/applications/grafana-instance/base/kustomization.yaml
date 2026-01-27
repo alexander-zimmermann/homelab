@@ -23,5 +23,16 @@ labels:
     pairs:
       app.kubernetes.io/name: grafana
 
+patches:
+  # Service Patch - Fix Selector Collision
+  - patch: |-
+      - op: replace
+        path: /spec/selector
+        value:
+          component: grafana-server
+    target:
+      kind: Service
+      name: grafana
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "10"

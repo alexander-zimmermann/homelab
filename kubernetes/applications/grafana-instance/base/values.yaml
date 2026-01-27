@@ -215,7 +215,8 @@ downloadDashboards:
 # argocd.argoproj.io/sync-options: Replace=true
 
 ## Pod Labels
-# podLabels: {}
+podLabels:
+  component: grafana-server
 
 podPortName: grafana
 gossipPortName: gossip
