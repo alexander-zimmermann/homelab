@@ -9,8 +9,8 @@ helmCharts:
     releaseName: talos-cloud-controller-manager
     version: 0.5.2
     valuesFile: values.yaml
-    includeCRDs: true
     namespace: kube-system
+    includeCRDs: true
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-5"

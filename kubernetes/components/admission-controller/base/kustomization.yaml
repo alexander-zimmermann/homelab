@@ -13,8 +13,8 @@ helmCharts:
     releaseName: kyverno
     version: 3.6.2
     valuesFile: values.yaml
-    includeCRDs: true
     namespace: admission-controller
+    includeCRDs: true
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-2"
