@@ -4,7 +4,6 @@ kind: Deployment
 metadata:
   name: mosquitto
 spec:
-  automountServiceAccountToken: false
   selector:
     matchLabels:
       app.kubernetes.io/name: mosquitto
@@ -16,6 +15,7 @@ spec:
       labels:
         app: mosquitto
     spec:
+      automountServiceAccountToken: false
       securityContext:
         fsGroup: 1883
       volumes:
