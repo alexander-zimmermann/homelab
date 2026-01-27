@@ -11,8 +11,8 @@ helmCharts:
     releaseName: sealed-secrets
     version: 2.18.0
     valuesFile: values.yaml
-    includeCRDs: true
     namespace: sealed-secrets-controller
+    includeCRDs: true
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-4"
