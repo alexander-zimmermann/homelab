@@ -4,6 +4,7 @@ kind: Deployment
 metadata:
   name: mosquitto
 spec:
+  automountServiceAccountToken: false
   selector:
     matchLabels:
       app.kubernetes.io/name: mosquitto
