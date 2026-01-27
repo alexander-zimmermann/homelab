@@ -13,7 +13,7 @@ patches:
     target:
       kind: IngressRoute
       name: grafana
-      namespace: grafana
+      namespace: grafana-instance
 
   # Certificate DNS Patch
   - patch: |-
@@ -23,17 +23,7 @@ patches:
     target:
       kind: Certificate
       name: grafana-tls-cert
-      namespace: grafana
-
-  # Scale Down Patch
-  - patch: |-
-      - op: replace
-        path: /spec/deployment/replicas
-        value: 1
-    target:
-      kind: Grafana
-      name: grafana
-      namespace: grafana
+      namespace: grafana-instance
 
   # Service Patch - Dynamic LoadBalancer
   - patch: |-

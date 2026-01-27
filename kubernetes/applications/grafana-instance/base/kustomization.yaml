@@ -8,7 +8,15 @@ resources:
   - ./sealedsecret.yaml
   - ./certificate.yaml
   - ./ingressroute.yaml
-  - ./grafana.yaml
+
+helmCharts:
+  - name: grafana
+    repo: oci://ghcr.io/grafana/helm-charts
+    releaseName: grafana
+    version: 8.6.4
+    valuesFile: values.yaml
+    namespace: grafana-instance
+    includeCRDs: true
 
 labels:
   - includeSelectors: true
