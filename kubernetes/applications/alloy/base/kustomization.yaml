@@ -13,8 +13,8 @@ helmCharts:
     releaseName: alloy
     version: 3.7.2
     valuesFile: values.yaml
-    includeCRDs: true
     namespace: alloy
+    includeCRDs: true
 
 labels:
   - includeSelectors: true
