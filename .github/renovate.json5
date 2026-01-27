@@ -18,6 +18,10 @@
       matchPackageNames: ["/cilium/"],
       groupName: "cilium components",
     },
+    {
+      matchPackageNames: ["siderolabs/talos"],
+      groupName: "Talos OS",
+    },
   ],
   customManagers: [
     {
