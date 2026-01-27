@@ -8,8 +8,8 @@ resources:
 helmCharts:
   - name: loki
     repo: oci://ghcr.io/grafana/helm-charts
-    version: 6.49.0
     releaseName: loki
+    version: 6.49.0
     valuesFile: values.yaml
     namespace: loki
 

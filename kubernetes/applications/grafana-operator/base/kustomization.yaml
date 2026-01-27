@@ -11,10 +11,10 @@ helmCharts:
     releaseName: grafana-operator
     version: 5.21.4
     valuesFile: values.yaml
-    includeCRDs: true
     namespace: grafana-operator
     valuesInline:
       watchNamespace: ""
+    includeCRDs: true
 
 labels:
   - includeSelectors: true
