@@ -8,12 +8,25 @@ spec:
     matchLabels:
       app.kubernetes.io/name: mosquitto
   replicas: 1
+  strategy:
+    type: Recreate
   template:
+    metadata:
+      labels:
+        app: mosquitto
     spec:
+      securityContext:
+        fsGroup: 1883
       volumes:
-        - name: persistent-storage
+        - name: mosquitto-config
+          configMap:
+            name: mosquitto-config
+        - name: mosquitto-data
           persistentVolumeClaim:
-            claimName: pvc-nfs-static
+            claimName: mosquitto-data
+        - name: mosquitto-secret
+          secret:
+            secretName: mosquitto-secret
       containers:
         - name: mosquitto
           image: docker.io/library/eclipse-mosquitto:2.0.21
@@ -24,10 +37,10 @@ spec:
               value: "Australia/Sydney"
           resources:
             requests:
-              memory: "100Mi"
+              memory: "128Mi"
               cpu: "10m"
             limits:
-              memory: "750Mi"
+              memory: "512Mi"
               cpu: "200m"
           ports:
             - name: "web"
@@ -47,9 +60,11 @@ spec:
             periodSeconds: 60
             failureThreshold: 5
           volumeMounts:
-            - name: persistent-storage
-              subPath: config/mosquitto.conf
+            - name: mosquitto-config
+              subPath: mosquitto.conf
               mountPath: "/mosquitto/config/mosquitto.conf"
-            - name: persistent-storage
-              subPath: data
+            - name: mosquitto-data
               mountPath: "/mosquitto/data"
+            - name: mosquitto-secret
+              mountPath: "/run/secrets"
+              readOnly: true

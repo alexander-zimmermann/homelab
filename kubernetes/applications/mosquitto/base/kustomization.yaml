@@ -7,6 +7,12 @@ resources:
   - ./persistentvolume.yaml
   - ./deployment.yaml
   - ./service.yaml
+  - ./sealedsecret.yaml
+
+configMapGenerator:
+  - name: mosquitto-config
+    files:
+      - mosquitto.conf
 
 labels:
   - includeSelectors: true

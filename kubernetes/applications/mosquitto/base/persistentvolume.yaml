@@ -1,36 +1,26 @@
 apiVersion: v1
-kind: PersistentVolume
-
-metadata:
-  name: pv-nfs-mosquitto
-spec:
-  capacity:
-    storage: 100Mi
-  accessModes:
-    - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: nfs-csi
-  mountOptions:
-    - nolock
-    - nfsvers=3
-  csi:
-    driver: nfs.csi.k8s.io
-    volumeHandle: storage.zimmermann.eu.com/srv/k8s/mosquitto
-    volumeAttributes:
-      server: storage.zimmermann.eu.com
-      share: /srv/k8s/mosquitto
-
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 
 metadata:
-  name: pvc-nfs-static
+  name: mosquitto-data
+  namespace: mosquitto
 spec:
-  storageClassName: nfs-csi
-  volumeName: pv-nfs-mosquitto
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
+      storage: 2Gi
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+
+metadata:
+  name: mosquitto-config
+  namespace: mosquitto
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Mi
