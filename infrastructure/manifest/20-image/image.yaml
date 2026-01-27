@@ -3,37 +3,37 @@ image:
     image_type: import
     image_filename: debian-13-genericcloud-amd64.qcow2
     image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
-    image_checksum: "e5563c7bb388eebf7df385e99ee36c83cd16ba8fad4bd07f4c3fd725a6f1cf1cb9f54c6673d4274a856974327a5007a69ff24d44f9b21f7f920e1938a19edf7e"
-    image_checksum_algorithm: "sha512"
+    image_checksum: "ff30b54d70c1292f9ff1115b2ba95d171e067e784b72d02a1d4bc9d8a6a25ed9"
+image_checksum_algorithm: "sha256"
 
   vm_ubuntu_noble:
     image_type: import
     image_filename: ubuntu-noble-server-cloudimg-amd64.qcow2
     image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
-    image_checksum: "2b5f90ffe8180def601c021c874e55d8303e8bcbfc66fee2b94414f43ac5eb1f"
+    image_checksum: "00786c0936a7dd91a6b07941ca60bb56652975e0e72f9dacf73c887ada420966"
 
   vm_talos_1_12_0_cp-prod:
     image_type: import
     image_filename: talos-1.12.0-cp-prod-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/72adf4cefaac723820a5f3499b2c8e1fee26faade426cd8208f0b8d5f40f4850/1.12.0/nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/72adf4cefaac723820a5f3499b2c8e1fee26faade426cd8208f0b8d5f40f4850/1.12.2/nocloud-amd64.raw
     image_checksum: "feaf47ea316a478473065379b0f758a2b6a43e057820767edd841f30150ea147"
 
   vm_talos_1_12_0_dp-prod:
     image_type: import
     image_filename: talos-1.12.0-dp-prod-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/a541dc4e8fd4a4a22ed8f85a76a678197e4474901dbf9f78fbe5fa8256acfb43/1.12.0/nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/a541dc4e8fd4a4a22ed8f85a76a678197e4474901dbf9f78fbe5fa8256acfb43/1.12.2/nocloud-amd64.raw
     image_checksum: "24cb9d80b4f1dde32c47198e311a1d4242c27bbae9133e96c0fbb6793541098f"
 
   vm_talos_1_12_0_cp-dev:
     image_type: import
     image_filename: talos-1.12.0-cp-dev-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/33cbde54091dfe44998d877a6fd441d1a2f7a6780a658790841a10a43de9748f/1.12.0/nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/33cbde54091dfe44998d877a6fd441d1a2f7a6780a658790841a10a43de9748f/1.12.2/nocloud-amd64.raw
     image_checksum: "55df39d165605d12e9526cbbea7c743437771eaa87360c1d00bb8b5e799e6277"
 
   vm_talos_1_12_0_dp-dev:
     image_type: import
     image_filename: talos-1.12.0-dp-dev-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/047780725f60dce4a3e5b7af81b9a436bfb887e44dd8df378fd614ca7f713536/1.12.0/nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/047780725f60dce4a3e5b7af81b9a436bfb887e44dd8df378fd614ca7f713536/1.12.2/nocloud-amd64.raw
     image_checksum: "5702d84e8b079f0cffcd5ad68b1efc01c77702f54d2fa8f0a8f974e9b8da2ac3"
 
   lxc_ubuntu_plucky:
