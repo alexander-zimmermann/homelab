@@ -14,8 +14,8 @@ helmCharts:
     releaseName: cert-manager
     version: v1.19.2
     valuesFile: values.yaml
-    includeCRDs: true
     namespace: cert-manager
+    includeCRDs: true
 
 patches:
   # https://github.com/cert-manager/cert-manager/pull/6192

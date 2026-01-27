@@ -11,8 +11,8 @@ helmCharts:
     releaseName: longhorn
     version: 1.10.1
     valuesFile: values.yaml
-    includeCRDs: true
     namespace: longhorn-system
+    includeCRDs: true
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-2"

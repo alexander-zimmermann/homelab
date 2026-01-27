@@ -18,8 +18,8 @@ helmCharts:
     releaseName: cilium
     version: 1.18.5
     valuesFile: values.yaml
-    includeCRDs: true
     namespace: cilium
+    includeCRDs: true
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-10"

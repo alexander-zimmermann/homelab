@@ -12,8 +12,8 @@ helmCharts:
     releaseName: traefik
     version: 38.0.1
     valuesFile: values.yaml
-    includeCRDs: true
     namespace: ingress-controller
+    includeCRDs: true
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-1"

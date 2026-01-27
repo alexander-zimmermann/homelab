@@ -12,8 +12,8 @@ helmCharts:
     releaseName: csi-driver-nfs
     version: 4.12.1
     valuesFile: values.yaml
-    includeCRDs: true
     namespace: csi-nfs-controller
+    includeCRDs: true
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-2"
