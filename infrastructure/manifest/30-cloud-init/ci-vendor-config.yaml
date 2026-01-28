@@ -22,7 +22,11 @@ ci_vendor_config:
         - ["install", "lego", "--classic"]
 
     disk_setup:
-      /dev/sdb:
+      /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi2:
+        table_type: gpt
+        layout: true
+        overwrite: false
+      /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1:
         table_type: gpt
         layout: true
         overwrite: false
@@ -30,11 +34,16 @@ ci_vendor_config:
     fs_setup:
       - label: omni_data
         filesystem: ext4
-        device: /dev/sdb
+        device: /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi2
+        partition: auto
+      - label: swap
+        filesystem: swap
+        device: /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1
         partition: auto
 
     mounts:
       - ["LABEL=omni_data", "/mnt/omni"]
+      - ["LABEL=swap", "none", "swap", "sw", "0", "0"]
       - [
           "storage.zimmermann.eu.com:/srv/mgmt",
           "/mnt/backup",

@@ -9,6 +9,8 @@ fleet_vm:
     disks:
       - disk_interface: scsi1
         disk_size: 16
+      - disk_interface: scsi2
+        disk_size: 8
 
   windows_01:
     template_id: vm_windows_11_25h2
