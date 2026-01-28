@@ -157,7 +157,14 @@ def calculate_checksum(url: str) -> Optional[str]:
     print(f"    Downloading to calculate checksum: {url}")
     sha256_hash = hashlib.sha256()
     try:
-        with urllib.request.urlopen(url) as response:
+        req = urllib.request.Request(
+            url,
+            data=None,
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
+            }
+        )
+        with urllib.request.urlopen(req) as response:
             while chunk := response.read(65536):  # 64KB chunks
                 sha256_hash.update(chunk)
         return sha256_hash.hexdigest()
