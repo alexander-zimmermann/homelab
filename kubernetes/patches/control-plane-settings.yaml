@@ -11,3 +11,8 @@ machine:
         - os:reader
       allowedKubernetesNamespaces:
         - kube-system
+
+  kubelet:
+    ## Configure the kubelet to look for an external cloud provider (Talos CCM)
+    extraArgs:
+      cloud-provider: external

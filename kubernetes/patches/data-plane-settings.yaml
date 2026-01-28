@@ -21,11 +21,15 @@ cluster:
 machine:
   ## Kubernetes Node Role Label
   nodeLabels:
-    node-role.kubernetes.io/data-plane: ""
+    node-role.kubernetes.io/worker: ""
 
-  ## Mounts for Longhorn Storage
-  ## Binds the physical mount point into the Kubelet container
   kubelet:
+    ## Configure the kubelet to look for an external cloud provider (Talos CCM)
+    extraArgs:
+      cloud-provider: external
+
+    ## Mounts for Longhorn Storage
+    ## Binds the physical mount point into the Kubelet container
     extraMounts:
       - destination: /var/mnt/longhorn
         type: bind
