@@ -7,7 +7,7 @@ metadata:
   namespace: default
 spec:
   matchlabels:
-    - "omni.sidero.dev/cluster = homelab, environment = prod, role = control-plane"
+    - "cluster = homelab, environment = prod, role = control-plane"
 ---
 metadata:
   id: data-plane-prod
@@ -15,7 +15,7 @@ metadata:
   namespace: default
 spec:
   matchlabels:
-    - "omni.sidero.dev/cluster = homelab, environment = prod, role = data-plane"
+    - "cluster = homelab, environment = prod, role = data-plane"
 
 ---
 ###############################################################################
@@ -27,7 +27,7 @@ metadata:
   namespace: default
 spec:
   matchlabels:
-    - "omni.sidero.dev/cluster = homelab, environment = dev, role = control-plane"
+    - "cluster = homelab, environment = dev, role = control-plane"
 ---
 metadata:
   id: data-plane-dev
@@ -35,4 +35,4 @@ metadata:
   namespace: default
 spec:
   matchlabels:
-    - "omni.sidero.dev/cluster = homelab, environment = dev, role = data-plane"
+    - "cluster = homelab, environment = dev, role = data-plane"
