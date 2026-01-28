@@ -13,7 +13,7 @@ helmCharts:
   - name: grafana
     repo: oci://ghcr.io/grafana/helm-charts
     releaseName: grafana
-    version: 8.6.4
+    version: 8.15.0
     valuesFile: values.yaml
     namespace: grafana-instance
     includeCRDs: true
