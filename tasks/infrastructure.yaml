@@ -15,6 +15,7 @@ tasks:
       - test -d .terraform
     sources:
       - infrastructure/manifest/20-image/schematics.yaml
+      - infrastructure/manifest/20-image/image.yaml
     cmds:
       - tofu init
       - "{{.PYTHON}} {{.SCRIPTS_DIR}}/update_images.py"
