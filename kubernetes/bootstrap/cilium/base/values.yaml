@@ -1509,6 +1509,11 @@ hubble:
     # -- Enable Network Policy for Hubble Relay
     networkPolicy:
       enabled: true
+      ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  k8s-app: hubble-ui
     # -- Roll out Hubble Relay pods automatically when configmap is updated.
     rollOutPods: false
     # -- Hubble-relay container image.
@@ -1737,6 +1742,14 @@ hubble:
     # -- Enable Network Policy for Hubble UI
     networkPolicy:
       enabled: true
+      ingress:
+        - from:
+            - namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: ingress-controller
+              podSelector:
+                matchLabels:
+                  app.kubernetes.io/name: traefik
     standalone:
       # -- When true, it will allow installing the Hubble UI only, without checking dependencies.
       # It is useful if a cluster already has cilium and Hubble relay installed and you just
