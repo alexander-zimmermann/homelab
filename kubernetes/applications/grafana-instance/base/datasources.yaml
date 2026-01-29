@@ -5,19 +5,7 @@ metadata:
   name: prometheus
   namespace: grafana-instance
 spec:
-  valuesFrom:
-    - targetPath: "basicAuthUser"
-      valueFrom:
-        secretKeyRef:
-          name: grafana-admin-credentials
-          key: admin-user
-          optional: true
-    - targetPath: "basicAuthPassword"
-      valueFrom:
-        secretKeyRef:
-          name: grafana-admin-credentials
-          key: admin-password
-          optional: true
+  valuesFrom: []
   datasource:
     name: Prometheus
     type: prometheus
@@ -39,19 +27,7 @@ metadata:
   name: loki
   namespace: grafana-instance
 spec:
-  valuesFrom:
-    - targetPath: "basicAuthUser"
-      valueFrom:
-        secretKeyRef:
-          name: grafana-admin-credentials
-          key: admin-user
-          optional: true
-    - targetPath: "basicAuthPassword"
-      valueFrom:
-        secretKeyRef:
-          name: grafana-admin-credentials
-          key: admin-password
-          optional: true
+  valuesFrom: []
   datasource:
     name: Loki
     type: loki

@@ -28,13 +28,13 @@ rbac:
   # - apiGroups: []
   #   resources: []
   #   verbs: []
-  extraClusterRoleRules: []
-  # - apiGroups: []
-  #   resources: []
-  #   verbs: []
+  extraClusterRoleRules:
+    - apiGroups: [""]
+      resources: ["services", "endpoints", "pods"]
+      verbs: ["get", "list", "watch"]
 serviceAccount:
   create: true
-  name:
+  name: grafana
   nameTest:
   ## ServiceAccount labels.
   labels: {}
@@ -499,7 +499,7 @@ adminUser: admin
 # Use an existing secret for the admin user.
 admin:
   ## Name of the secret. Can be templated.
-  existingSecret: "grafana-admin-credentials"
+  existingSecret: ""
   userKey: admin-user
   passwordKey: admin-password
 
@@ -589,37 +589,12 @@ enableServiceLinks: true
 
 ## Additional grafana server secret mounts
 # Defines additional mounts with secrets. Secrets must be manually created in the namespace.
-extraSecretMounts: []
-  # - name: secret-files
-  #   mountPath: /etc/secrets
-  #   secretName: grafana-secret-files
-  #   readOnly: true
-  #   optional: false
-  #   subPath: ""
-  #
-  # for AWS EKS (cloudwatch) use the following (see also instruction in env: above)
-  # - name: aws-iam-token
-  #   mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
-  #   readOnly: true
-  #   projected:
-  #     defaultMode: 420
-  #     sources:
-  #       - serviceAccountToken:
-  #           audience: sts.amazonaws.com
-  #           expirationSeconds: 86400
-  #           path: token
-  #
-  # for CSI e.g. Azure Key Vault use the following
-  # - name: secrets-store-inline
-  #  mountPath: /run/secrets
-  #  readOnly: true
-  #  csi:
-  #    driver: secrets-store.csi.k8s.io
-  #    readOnly: true
-  #    volumeAttributes:
-  #      secretProviderClass: "akv-grafana-spc"
-  #    nodePublishSecretRef:                       # Only required when using service principal mode
-  #       name: grafana-akv-creds                  # Only required when using service principal mode
+extraSecretMounts:
+  - name: grafana-admin-credentials
+    secretName: grafana-admin-credentials
+    defaultMode: 0440
+    mountPath: /etc/grafana/secrets
+    readOnly: true
 
 ## Additional grafana server volume mounts
 # Defines additional volume mounts.
@@ -884,6 +859,9 @@ grafana.ini:
     logs: /var/log/grafana
     plugins: /var/lib/grafana/plugins
     provisioning: /etc/grafana/provisioning
+  security:
+    admin_user: admin
+    admin_password_file: /etc/grafana/secrets/admin-password
   analytics:
     check_for_updates: true
   log:
