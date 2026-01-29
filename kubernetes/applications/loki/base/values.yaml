@@ -897,16 +897,23 @@ rbac:
 ######################################################################################################################
 networkPolicy:
   # -- Specifies whether Network Policies should be created
-  enabled: false
+  enabled: true
   # -- Specifies whether the policies created will be standard Network Policies (flavor: kubernetes)
   # or Cilium Network Policies (flavor: cilium)
-  flavor: kubernetes
+  flavor: cilium
   metrics:
     # -- Specifies the Pods which are allowed to access the metrics port.
     # As this is cross-namespace communication, you also need the namespaceSelector.
     podSelector: {}
     # -- Specifies the namespaces which are allowed to access the metrics port
-    namespaceSelector: {}
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - prometheus
+            - alloy
+            - loki
     # -- Specifies specific network CIDRs which are allowed to access the metrics port.
     # In case you use namespaceSelector, you also have to specify your kubelet networks here.
     # The metrics ports are also used for probes.
@@ -916,7 +923,15 @@ networkPolicy:
     # As this is cross-namespace communication, you also need the namespaceSelector.
     podSelector: {}
     # -- Specifies the namespaces which are allowed to access the http port
-    namespaceSelector: {}
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - grafana-instance
+            - prometheus
+            - alloy
+            - loki
   alertmanager:
     # -- Specify the alertmanager port used for alerting
     port: 9093
