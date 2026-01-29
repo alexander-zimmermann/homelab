@@ -18,24 +18,16 @@ spec:
         - name: smtprelay
           image: grafana/smtprelay:latest
           args:
-            - "-listen=:2525"
-            - "-allowed_nets=10.0.0.0/8 192.168.0.0/16 127.0.0.0/8"
-            - "-remote_host=smtp.mail.me.com:587"
-            - "-remote_user=$(REMOTE_USER)"
-            - "-remote_pass=$(REMOTE_PASS)"
+            - "-config=/etc/smtprelay/config/smtprelay.ini"
           env:
             - name: OTEL_SDK_DISABLED
               value: "true"
-            - name: REMOTE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: smtprelay-secrets
-                  key: REMOTE_USER
-            - name: REMOTE_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: smtprelay-secrets
-                  key: REMOTE_PASS
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/smtprelay/config
+            - name: secret-volume
+              mountPath: /etc/smtprelay/secrets
+              readOnly: true
           resources:
             requests:
               cpu: "10m"
@@ -46,3 +38,10 @@ spec:
           ports:
             - containerPort: 2525
               name: smtp
+      volumes:
+        - name: config-volume
+          configMap:
+            name: smtprelay-config
+        - name: secret-volume
+          secret:
+            secretName: smtprelay-icloud-credentials

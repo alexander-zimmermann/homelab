@@ -6,7 +6,12 @@ resources:
   - ./namespace.yaml
   - ./deployment.yaml
   - ./service.yaml
-  - ./sealedsecret.yaml
+  - ./sealed-secret.yaml
+
+configMapGenerator:
+  - name: smtprelay-config
+    files:
+      - smtprelay.ini
 
 labels:
   - includeSelectors: true
