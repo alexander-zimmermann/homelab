@@ -1577,7 +1577,7 @@ imageRenderer:
 networkPolicy:
   ## @param networkPolicy.enabled Enable creation of NetworkPolicy resources. Only Ingress traffic is filtered for now.
   ##
-  enabled: false
+  enabled: true
   ## @param networkPolicy.allowExternal Don't require client label for connections
   ## The Policy model to apply. When set to false, only pods with the correct
   ## client label will have network access to  grafana port defined.
@@ -1588,7 +1588,7 @@ networkPolicy:
   ## @param networkPolicy.ingress When true enables the creation
   ## an ingress network policy
   ##
-  allowExternal: true
+  allowExternal: false
   ## @param networkPolicy.explicitNamespacesSelector A Kubernetes LabelSelector to explicitly select namespaces from which traffic could be allowed
   ## If explicitNamespacesSelector is missing or set to {}, only client Pods that are in the networkPolicy's namespace
   ## and that match other criteria, the ones that have the good label, can reach the grafana.
@@ -1602,13 +1602,13 @@ networkPolicy:
   ##   matchExpressions:
   ##    - {key: role, operator: In, values: [frontend]}
   ##
-  explicitNamespacesSelector: {}
-  ##
-  ##
-  ##
-  ##
-  ##
-  ##
+  explicitNamespacesSelector:
+    matchExpressions:
+      - key: kubernetes.io/metadata.name
+        operator: In
+        values:
+          - ingress-controller
+
   egress:
     ## @param networkPolicy.egress.enabled When enabled, an egress network policy will be
     ## created allowing grafana to connect to external data sources from kubernetes cluster.
