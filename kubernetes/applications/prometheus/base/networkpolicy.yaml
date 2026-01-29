@@ -1,5 +1,6 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
+
 metadata:
   name: prometheus-server-access
   namespace: prometheus
@@ -22,6 +23,7 @@ spec:
                   - grafana-instance
                   - alloy
                   - prometheus
+                  - ingress-controller
   egress:
     # Allow all egress (needed for scraping)
     - {}
