@@ -405,7 +405,10 @@ collectorCommon:
   # -- Settings to apply to all Alloy instances created by this Helm chart. This includes Alloy instances created by
   # enabling Tail Sampling or Service Graph Metrics.
   # @section -- Collectors - Common
-  alloy: {}
+  alloy:
+    networkPolicy:
+      enabled: true
+      flavor: kubernetes
 
 # The Alloy Operator is a Kubernetes Operator that manages Alloy instances and their lifecycle.
 # To see all valid settings, please see the [Alloy Operator documentation](https://github.com/grafana/alloy-operator/tree/main/charts/alloy-operator).
