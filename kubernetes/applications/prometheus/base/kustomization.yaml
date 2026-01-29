@@ -5,6 +5,7 @@ namespace: prometheus
 resources:
   - ./namespace.yaml
   - ./certificate.yaml
+  - ./networkpolicy.yaml
   #- ./ingressroute.yaml
 
 helmCharts:
