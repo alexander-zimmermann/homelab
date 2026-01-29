@@ -49,7 +49,6 @@ global:
 
   # -- Common labels for the all resources
   additionalLabels:
-    app.kubernetes.io/instance: argocd
     # app: argo-cd
 
   # -- Number of old deployment ReplicaSets to retain. The rest will be garbage collected.
