@@ -1506,6 +1506,9 @@ hubble:
   relay:
     # -- Enable Hubble Relay (requires hubble.enabled=true)
     enabled: true
+    # -- Enable Network Policy for Hubble Relay
+    networkPolicy:
+      enabled: true
     # -- Roll out Hubble Relay pods automatically when configmap is updated.
     rollOutPods: false
     # -- Hubble-relay container image.
@@ -1731,6 +1734,9 @@ hubble:
   ui:
     # -- Whether to enable the Hubble UI.
     enabled: true
+    # -- Enable Network Policy for Hubble UI
+    networkPolicy:
+      enabled: true
     standalone:
       # -- When true, it will allow installing the Hubble UI only, without checking dependencies.
       # It is useful if a cluster already has cilium and Hubble relay installed and you just
