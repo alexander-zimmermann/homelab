@@ -27,7 +27,7 @@ spec:
             claimName: mosquitto-data
         - name: mosquitto-secret
           secret:
-            secretName: mosquitto-secret
+            secretName: mosquitto-users-credentials
       containers:
         - name: mosquitto
           image: docker.io/library/eclipse-mosquitto:2.0.21
@@ -67,5 +67,5 @@ spec:
             - name: mosquitto-data
               mountPath: "/mosquitto/data"
             - name: mosquitto-secret
-              mountPath: "/run/secrets"
+              mountPath: "/etc/mosquitto/secrets"
               readOnly: true
