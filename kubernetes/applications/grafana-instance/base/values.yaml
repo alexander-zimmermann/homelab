@@ -499,7 +499,7 @@ adminUser: admin
 # Use an existing secret for the admin user.
 admin:
   ## Name of the secret. Can be templated.
-  existingSecret: "grafana-instance-admin-credentials"
+  existingSecret: "grafana-admin-credentials"
   userKey: admin-user
   passwordKey: admin-password
 
@@ -1675,10 +1675,10 @@ extraObjects:
       external:
         url: "http://grafana.grafana-instance.svc.cluster.local:80"
         adminUser:
-          name: grafana-instance-admin-credentials
+          name: grafana-admin-credentials
           key: admin-user
         adminPassword:
-          name: grafana-instance-admin-credentials
+          name: grafana-admin-credentials
           key: admin-password
 # Examples:
 # extraObjects:
