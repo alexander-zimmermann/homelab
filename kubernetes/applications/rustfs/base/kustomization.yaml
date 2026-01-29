@@ -6,7 +6,7 @@ resources:
   - ./namespace.yaml
   - ./ingressroute.yaml
   - ./certificate.yaml
-  - ./sealedsecret.yaml
+  - ./sealed-secret.yaml
 
 helmCharts:
   - name: rustfs

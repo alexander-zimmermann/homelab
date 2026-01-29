@@ -34,7 +34,7 @@ mode:
     enabled: false
 
 secret:
-  existingSecret: "rustfs-secret"
+  existingSecret: "rustfs-admin-credentials"
   rustfs:
     access_key: ""
     secret_key: ""
