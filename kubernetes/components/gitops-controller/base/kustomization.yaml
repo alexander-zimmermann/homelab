@@ -5,7 +5,7 @@ namespace: gitops-controller
 resources:
   - ./certificate.yaml
   - ./ingressroute.yaml
-  - ./sealedsecret.yaml
+  - ./sealed-secret.yaml
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "0"
