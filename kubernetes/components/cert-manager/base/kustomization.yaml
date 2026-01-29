@@ -4,8 +4,8 @@ kind: Kustomization
 namespace: cert-manager
 resources:
   - ./namespace.yaml
-  - ./sealedsecret.yaml
-  - ./clusterissuer.yaml
+  - ./sealed-secret.yaml
+  - ./cluster-issuer.yaml
   - ./kyverno-defaults.yaml
 
 helmCharts:

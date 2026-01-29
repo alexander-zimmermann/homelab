@@ -14,5 +14,5 @@ spec:
           cloudflare:
             email: alexander@zimmermann.eu.com
             apiTokenSecretRef:
-              name: cloudflare-api-token-cert-manager
+              name: cert-manager-cf-credentials
               key: api-token
