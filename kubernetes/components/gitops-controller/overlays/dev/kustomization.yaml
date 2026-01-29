@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - ../../../../bootstrap/gitops-controller/overlays/dev/
 
 patches:
   # Ingress host

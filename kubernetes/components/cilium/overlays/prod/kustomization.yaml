@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - ../../../../bootstrap/cilium/overlays/prod/

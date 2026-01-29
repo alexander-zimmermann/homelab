@@ -3,61 +3,9 @@ kind: Kustomization
 
 namespace: gitops-controller
 resources:
-  - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-  - ./namespace.yaml
-  - ./appset-applications.yaml
-  - ./appset-components.yaml
-  - ./appproject.yaml
   - ./certificate.yaml
   - ./ingressroute.yaml
   - ./sealedsecret.yaml
-
-patches:
-  # Enable Helm support
-  - patch: |-
-      - op: add
-        path: /data
-        value:
-          kustomize.buildOptions: --enable-helm
-    target:
-      kind: ConfigMap
-      name: argocd-cm
-
-  # Run server in insecure mode
-  - patch: |-
-      - op: add
-        path: /data
-        value:
-          server.insecure: "true"
-    target:
-      kind: ConfigMap
-      name: argocd-cmd-params-cm
-
-  # Fix ClusterRoleBinding namespace
-  - patch: |-
-      - op: replace
-        path: /subjects/0/namespace
-        value: gitops-controller
-    target:
-      kind: ClusterRoleBinding
-
-  # Scale up replicas - Server
-  - patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-    target:
-      kind: Deployment
-      name: argocd-server
-
-  # Scale up replicas - Repo Server
-  - patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-    target:
-      kind: Deployment
-      name: argocd-repo-server
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "0"

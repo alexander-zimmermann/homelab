@@ -1,0 +1,18 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: gitops-controller
+resources:
+  - ./namespace.yaml
+  - ./appset-applications.yaml
+  - ./appset-components.yaml
+  - ./appproject.yaml
+
+helmCharts:
+  - name: argo-cd
+    repo: https://argoproj.github.io/argo-helm
+    releaseName: argocd
+    version: 9.3.7
+    valuesFile: values.yaml
+    namespace: gitops-controller
