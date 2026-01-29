@@ -1165,7 +1165,7 @@ admissionController:
   networkPolicy:
     # -- When true, use a NetworkPolicy to allow ingress to the webhook
     # This is useful on clusters using Calico and/or native k8s network policies in a default-deny setup.
-    enabled: false
+    enabled: true
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
     ingressFrom: []
 
@@ -1493,7 +1493,7 @@ backgroundController:
   networkPolicy:
     # -- When true, use a NetworkPolicy to allow ingress to the webhook
     # This is useful on clusters using Calico and/or native k8s network policies in a default-deny setup.
-    enabled: false
+    enabled: true
 
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
     ingressFrom: []
@@ -1826,7 +1826,7 @@ cleanupController:
   networkPolicy:
     # -- When true, use a NetworkPolicy to allow ingress to the webhook
     # This is useful on clusters using Calico and/or native k8s network policies in a default-deny setup.
-    enabled: false
+    enabled: true
 
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
     ingressFrom: []
@@ -2133,7 +2133,7 @@ reportsController:
   networkPolicy:
     # -- When true, use a NetworkPolicy to allow ingress to the webhook
     # This is useful on clusters using Calico and/or native k8s network policies in a default-deny setup.
-    enabled: false
+    enabled: true
 
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
     ingressFrom: []
