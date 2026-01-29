@@ -11,7 +11,7 @@ helmCharts:
   - name: prometheus
     repo: oci://ghcr.io/prometheus-community/charts
     releaseName: prometheus
-    version: 25.11.0
+    version: 25.30.2
     valuesFile: values.yaml
     namespace: prometheus
 
