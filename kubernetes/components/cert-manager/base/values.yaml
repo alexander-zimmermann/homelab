@@ -973,7 +973,7 @@ webhook:
   # Enables default network policies for webhooks.
   networkPolicy:
     # Create network policies for the webhooks.
-    enabled: false
+    enabled: true
 
     # Ingress rule for the webhook network policy. By default, it allows all
     # inbound traffic.
