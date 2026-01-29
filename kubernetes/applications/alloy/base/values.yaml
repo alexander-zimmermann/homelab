@@ -409,6 +409,15 @@ collectorCommon:
     networkPolicy:
       enabled: true
       flavor: kubernetes
+      ingress:
+        - from:
+            - namespaceSelector:
+                matchExpressions:
+                  - key: kubernetes.io/metadata.name
+                    operator: In
+                    values:
+                      - ingress-controller
+                      - prometheus
 
 # The Alloy Operator is a Kubernetes Operator that manages Alloy instances and their lifecycle.
 # To see all valid settings, please see the [Alloy Operator documentation](https://github.com/grafana/alloy-operator/tree/main/charts/alloy-operator).
