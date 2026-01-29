@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "kubernetes/components/**"
+      - "kubernetes/bootstrap/**"
       - ".github/workflows/render-bootstrap.yaml"
 
 permissions:
@@ -33,12 +33,12 @@ jobs:
           mkdir -p dist/prod dist/dev
 
           echo "Rendering Prod..."
-          kustomize build --enable-helm kubernetes/components/cilium/overlays/prod > dist/prod/cilium.yaml
-          kustomize build --enable-helm kubernetes/components/gitops-controller/overlays/prod > dist/prod/argocd.yaml
+          kustomize build --enable-helm kubernetes/bootstrap/cilium/overlays/prod > dist/prod/cilium.yaml
+          kustomize build --enable-helm kubernetes/bootstrap/gitops-controller/overlays/prod > dist/prod/argocd.yaml
 
           echo "Rendering Dev..."
-          kustomize build --enable-helm kubernetes/components/cilium/overlays/dev > dist/dev/cilium.yaml
-          kustomize build --enable-helm kubernetes/components/gitops-controller/overlays/dev > dist/dev/argocd.yaml
+          kustomize build --enable-helm kubernetes/bootstrap/cilium/overlays/dev > dist/dev/cilium.yaml
+          kustomize build --enable-helm kubernetes/bootstrap/gitops-controller/overlays/dev > dist/dev/argocd.yaml
 
       - name: Deploy to Bootstrap Branch
         uses: peaceiris/actions-gh-pages@v3
