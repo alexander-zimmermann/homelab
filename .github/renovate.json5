@@ -1,7 +1,7 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: ["config:recommended", ":dependencyDashboard", ":semanticCommits"],
-  schedule: ["after 2pm on friday"],
+  schedule: ["after 2pm on friday and before 10pm on sunday"],
   prHourlyLimit: 0,
   prConcurrentLimit: 0,
   prCreation: "immediate",
