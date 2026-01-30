@@ -20,7 +20,7 @@ terraform {
     random = {
       ## https://search.opentofu.org/provider/hashicorp/random/latest
       source  = "hashicorp/random"
-      version = "=3.7.2"
+      version = "3.8.1"
     }
     tls = {
       ## https://search.opentofu.org/provider/hashicorp/tls/latest
