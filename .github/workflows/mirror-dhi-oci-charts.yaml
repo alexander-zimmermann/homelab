@@ -32,7 +32,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Quell- und Ziel-Repos (1:1 übernehmen)
+          # Source and destination repositories (1:1 mapping)
           SRC_REPOS=(
             "dhi.io/redis-chart"
             "dhi.io/sealed-secrets-chart"
@@ -43,7 +43,7 @@ jobs:
 
           DST_PREFIX="ghcr.io/${OWNER}/charts"
 
-          # Hilfsfunktion: Liste normalisieren/sortieren
+          # Helper function: Normalize/sort list
           norm() { sed 's/^\s*//; s/\s*$//' | grep -v '^$' | sort -u; }
 
           TMP_DIR="$(mktemp -d)"
@@ -53,19 +53,19 @@ jobs:
             NAME="$(basename "$SRC")"
             DST="${DST_PREFIX}/${NAME}"
 
-            # Alle Tags in Quelle/Ziel ermitteln
+            # Fetch all tags from source/destination
             SRC_TAGS="$(oras repo tags "$SRC" || true)"
             DST_TAGS="$(oras repo tags "$DST" || true)"
 
             printf "%s\n" "$SRC_TAGS" | norm > "${TMP_DIR}/src.txt"
             printf "%s\n" "$DST_TAGS" | norm > "${TMP_DIR}/dst.txt"
 
-            # Fehlende Tags bestimmen
+            # Determine missing tags
             comm -23 "${TMP_DIR}/src.txt" "${TMP_DIR}/dst.txt" > "${TMP_DIR}/to_copy.txt" || true
 
             if [ -s "${TMP_DIR}/to_copy.txt" ]; then
               while read -r TAG; do
-                # Items als JSON-Objekte anfügen
+                # Items as JSON objects
                 ITEMS_JSON=$(jq -c \
                   --arg src "$SRC" \
                   --arg dst "$DST" \
@@ -76,13 +76,13 @@ jobs:
             fi
           done
 
-          # Falls nichts zu kopieren, leere Matrix zurückgeben
+          # If nothing to copy, return empty matrix
           echo "matrix=$(jq -c '{include: .}' <<< "${ITEMS_JSON}")" >> "$GITHUB_OUTPUT"
 
   mirror:
     name: Copy missing tags (max 3 in parallel)
     needs: discover
-    if: ${{ fromJson(needs.discover.outputs.matrix).include != null && (fromJson(needs.discover.outputs.matrix).include | length) > 0 }}
+    if: ${{ fromJson(needs.discover.outputs.matrix).include[0] != null }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
