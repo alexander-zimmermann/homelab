@@ -10,7 +10,7 @@ helmCharts:
   - name: redis
     repo: oci://registry-1.docker.io/bitnamicharts
     releaseName: redis
-    version: 20.7.0
+    version: 24.1.2
     valuesFile: values.yaml
     namespace: redis
     includeCRDs: true
