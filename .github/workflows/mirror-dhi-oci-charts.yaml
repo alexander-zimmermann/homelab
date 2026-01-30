@@ -1,0 +1,109 @@
+name: Mirror DHI OCI Helm charts → GHCR (all tags)
+
+on:
+  schedule: [{ cron: "00 2 * * *" }] # every day at 02:00
+  workflow_dispatch:
+
+env:
+  OWNER: alexander-zimmermann
+
+jobs:
+  discover:
+    name: Discover missing tags per chart
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      matrix: ${{ steps.make-matrix.outputs.matrix }}
+    steps:
+      - name: Install ORAS CLI
+        uses: oras-project/setup-oras@v1
+
+      - name: Login source (dhi.io)
+        run: oras login dhi.io -u "${{ secrets.DHI_USER }}" -p "${{ secrets.DHI_PASS }}"
+
+      - name: Login GHCR
+        run: echo "${{ github.token }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - id: make-matrix
+        name: Build JSON matrix of (src,dst,tag) to copy
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Quell- und Ziel-Repos (1:1 übernehmen)
+          SRC_REPOS=(
+            "dhi.io/redis-chart"
+            "dhi.io/sealed-secrets-chart"
+            "dhi.io/cert-manager-chart"
+            "dhi.io/metrics-server-chart"
+            "dhi.io/external-dns-chart"
+          )
+
+          DST_PREFIX="ghcr.io/${OWNER}/charts"
+
+          # Hilfsfunktion: Liste normalisieren/sortieren
+          norm() { sed 's/^\s*//; s/\s*$//' | grep -v '^$' | sort -u; }
+
+          TMP_DIR="$(mktemp -d)"
+          ITEMS_JSON="[]"
+
+          for SRC in "${SRC_REPOS[@]}"; do
+            NAME="$(basename "$SRC")"
+            DST="${DST_PREFIX}/${NAME}"
+
+            # Alle Tags in Quelle/Ziel ermitteln
+            SRC_TAGS="$(oras repo tags "$SRC" || true)"
+            DST_TAGS="$(oras repo tags "$DST" || true)"
+
+            printf "%s\n" "$SRC_TAGS" | norm > "${TMP_DIR}/src.txt"
+            printf "%s\n" "$DST_TAGS" | norm > "${TMP_DIR}/dst.txt"
+
+            # Fehlende Tags bestimmen
+            comm -23 "${TMP_DIR}/src.txt" "${TMP_DIR}/dst.txt" > "${TMP_DIR}/to_copy.txt" || true
+
+            if [ -s "${TMP_DIR}/to_copy.txt" ]; then
+              while read -r TAG; do
+                # Items als JSON-Objekte anfügen
+                ITEMS_JSON=$(jq -c \
+                  --arg src "$SRC" \
+                  --arg dst "$DST" \
+                  --arg tag "$TAG" \
+                  '. + [{src:$src, dst:$dst, tag:$tag}]' \
+                  <<< "${ITEMS_JSON}")
+              done < "${TMP_DIR}/to_copy.txt"
+            fi
+          done
+
+          # Falls nichts zu kopieren, leere Matrix zurückgeben
+          echo "matrix=$(jq -c '{include: .}' <<< "${ITEMS_JSON}")" >> "$GITHUB_OUTPUT"
+
+  mirror:
+    name: Copy missing tags (max 3 in parallel)
+    needs: discover
+    if: ${{ fromJson(needs.discover.outputs.matrix).include != null && (fromJson(needs.discover.outputs.matrix).include | length) > 0 }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+    steps:
+      - name: Install ORAS CLI
+        uses: oras-project/setup-oras@v1
+
+      - name: Login source (dhi.io)
+        run: oras login dhi.io -u "${{ secrets.DHI_USER }}" -p "${{ secrets.DHI_PASS }}"
+
+      - name: Login GHCR
+        run: echo "${{ github.token }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Copy ${{ matrix.tag }} from ${{ matrix.src }} → ${{ matrix.dst }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # -r: Referrers (z. B. Signaturen/SBOM-Attestations) mitkopieren
+          oras cp -r "${{ matrix.src }}:${{ matrix.tag }}" "${{ matrix.dst }}:${{ matrix.tag }}"
