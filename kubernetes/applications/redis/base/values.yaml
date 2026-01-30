@@ -1,4 +1,3 @@
-# Copyright Broadcom, Inc. All Rights Reserved.
 # SPDX-License-Identifier: APACHE-2.0
 
 ## @section Global parameters
@@ -12,7 +11,6 @@
 ## @param global.defaultStorageClass Global default StorageClass for Persistent Volume(s)
 ## @param global.storageClass DEPRECATED: use global.defaultStorageClass instead
 ## @param global.redis.password Global Redis(R) password (overrides `auth.password`)
-## @param global.defaultFips Default value for the FIPS configuration (allowed values: '', restricted, relaxed, off). Can be overriden by the 'fips' object
 ##
 global:
   imageRegistry: ""
@@ -39,10 +37,6 @@ global:
       ## @param global.compatibility.openshift.adaptSecurityContext Adapt the securityContext sections of the deployment to make them compatible with Openshift restricted-v2 SCC: remove runAsUser, runAsGroup and fsGroup and let the platform use their allowed default IDs. Possible values: auto (apply if the detected running cluster is Openshift), force (perform the adaptation always), disabled (do not perform adaptation)
       ##
       adaptSecurityContext: auto
-  ##  Configure FIPS mode: '', 'restricted', 'relaxed', 'off'
-  ##
-  defaultFips: restricted
-
 ## @section Common parameters
 ##
 
@@ -102,12 +96,10 @@ diagnosticMode:
   ##
   args:
     - infinity
-
 ## @section Redis(R) Image parameters
 ##
 
-## Bitnami Redis(R) image
-## ref: https://hub.docker.com/r/bitnami/redis/tags/
+## Redis(R) image
 ## @param image.registry [default: REGISTRY_NAME] Redis(R) image registry
 ## @param image.repository [default: REPOSITORY_NAME/redis] Redis(R) image repository
 ## @skip image.tag Redis(R) image tag (immutable tags are recommended)
@@ -117,10 +109,10 @@ diagnosticMode:
 ## @param image.debug Enable image debug mode
 ##
 image:
-  registry: registry-1.docker.io
-  repository: bitnami/redis
-  tag: latest
-  digest: ""
+  registry: dhi.io
+  repository: redis
+  tag: 8.2.3-debian13-compat
+  digest: "sha256:5f091601d2ee04bd5297e2783e9a97ae99ac29f0619f4c5d7837fefd91948bed"
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
   ##
@@ -136,15 +128,12 @@ image:
   ## Enable debug mode
   ##
   debug: false
-## @section Redis(R) common configuration parameters
-## https://github.com/bitnami/containers/tree/main/bitnami/redis#configuration
 ##
 
 ## @param architecture Redis(R) architecture. Allowed values: `standalone` or `replication`
 ##
 architecture: standalone
 ## Redis(R) Authentication parameters
-## ref: https://github.com/bitnami/containers/tree/main/bitnami/redis#setting-the-server-password-on-first-run
 ##
 auth:
   ## @param auth.enabled Enable password authentication
@@ -198,9 +187,6 @@ auth:
 ## ref: https://redis.io/topics/config
 ##
 commonConfiguration: |-
-  # Enable ReJSON y Redisearch
-  loadmodule /opt/bitnami/redis/lib/redis/modules/redisearch.so
-  loadmodule /opt/bitnami/redis/lib/redis/modules/rejson.so
   # Enable AOF https://redis.io/topics/persistence#append-only-file
   appendonly yes
   # Disable RDB persistence, AOF persistence already enabled.
@@ -320,7 +306,7 @@ master:
   ## Redis(R) master resource requests and limits
   ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   ## @param master.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if master.resources is set (master.resources is recommended for production).
-  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+  ## More information: https://github.com/docker-hardened-images/helm-charts/blob/main/common/templates/_resources.tpl#L15
   ##
   resourcesPreset: "nano"
   ## @param master.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
@@ -334,10 +320,6 @@ master:
   ##     memory: 1024Mi
   ##
   resources: {}
-  ## @param master.fips.openssl Configure OpenSSL FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
-  ##
-  fips:
-    openssl: ""
   ## Configure Pods Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   ## @param master.podSecurityContext.enabled Enabled Redis(R) master pods' Security Context
@@ -351,7 +333,7 @@ master:
     fsGroupChangePolicy: Always
     sysctls: []
     supplementalGroups: []
-    fsGroup: 1001
+    fsGroup: 65532
   ## Configure Container Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   ## @param master.containerSecurityContext.enabled Enabled Redis(R) master containers' Security Context
@@ -367,8 +349,8 @@ master:
   containerSecurityContext:
     enabled: true
     seLinuxOptions: {}
-    runAsUser: 1001
-    runAsGroup: 1001
+    runAsUser: 65532
+    runAsGroup: 65532
     runAsNonRoot: true
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -384,9 +366,6 @@ master:
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
   schedulerName: ""
-  ## @param master.runtimeClassName Name of the runtime class to be used by master pod(s)
-  ##
-  runtimeClassName: ""
   ## @param master.updateStrategy.type Redis(R) master statefulset strategy type
   ## @skip master.updateStrategy.rollingUpdate
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
@@ -646,7 +625,7 @@ master:
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
     ##
     sessionAffinity: None
-    ## @param master.service.sessionAffinityConfig Additional settings for the sessionAffinity. Ignored if `master.service.sessionAffinity` is `None`
+    ## @param master.service.sessionAffinityConfig Additional settings for the sessionAffinity
     ## sessionAffinityConfig:
     ##   clientIP:
     ##     timeoutSeconds: 300
@@ -812,7 +791,7 @@ replica:
   ## Redis(R) replicas resource requests and limits
   ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   ## @param replica.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if replica.resources is set (replica.resources is recommended for production).
-  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+  ## More information: https://github.com/docker-hardened-images/helm-charts/blob/main/common/templates/_resources.tpl#L15
   ##
   resourcesPreset: "nano"
   ## @param replica.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
@@ -826,10 +805,6 @@ replica:
   ##     memory: 1024Mi
   ##
   resources: {}
-  ## @param replica.fips.openssl Configure OpenSSL FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
-  ##
-  fips:
-    openssl: ""
   ## Configure Pods Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   ## @param replica.podSecurityContext.enabled Enabled Redis(R) replicas pods' Security Context
@@ -843,7 +818,7 @@ replica:
     fsGroupChangePolicy: Always
     sysctls: []
     supplementalGroups: []
-    fsGroup: 1001
+    fsGroup: 65532
   ## Configure Container Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   ## @param replica.containerSecurityContext.enabled Enabled Redis(R) replicas containers' Security Context
@@ -859,8 +834,8 @@ replica:
   containerSecurityContext:
     enabled: true
     seLinuxOptions: {}
-    runAsUser: 1001
-    runAsGroup: 1001
+    runAsUser: 65532
+    runAsGroup: 65532
     runAsNonRoot: true
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -872,9 +847,6 @@ replica:
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
   schedulerName: ""
-  ## @param replica.runtimeClassName Name of the runtime class to be used by replica pod(s)
-  ##
-  runtimeClassName: ""
   ## @param replica.updateStrategy.type Redis(R) replicas statefulset strategy type
   ## @skip replica.updateStrategy.rollingUpdate
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
@@ -1126,7 +1098,7 @@ replica:
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
     ##
     sessionAffinity: None
-    ## @param replica.service.sessionAffinityConfig Additional settings for the sessionAffinity. Ignored if `replica.service.sessionAffinity` is `None`
+    ## @param replica.service.sessionAffinityConfig Additional settings for the sessionAffinity
     ## sessionAffinityConfig:
     ##   clientIP:
     ##     timeoutSeconds: 300
@@ -1195,8 +1167,7 @@ sentinel:
   ## create a single Redis(R) service exposing both the Redis and Sentinel ports
   ##
   enabled: false
-  ## Bitnami Redis(R) Sentinel image version
-  ## ref: https://hub.docker.com/r/bitnami/redis-sentinel/tags/
+  ## Redis(R) Sentinel image version
   ## @param sentinel.image.registry [default: REGISTRY_NAME] Redis(R) Sentinel image registry
   ## @param sentinel.image.repository [default: REPOSITORY_NAME/redis-sentinel] Redis(R) Sentinel image repository
   ## @skip sentinel.image.tag Redis(R) Sentinel image tag (immutable tags are recommended)
@@ -1206,10 +1177,10 @@ sentinel:
   ## @param sentinel.image.debug Enable image debug mode
   ##
   image:
-    registry: registry-1.docker.io
-    repository: bitnami/redis-sentinel
-    tag: latest
-    digest: ""
+    registry: dhi.io
+    repository: redis
+    tag: 8.2.3-debian13-compat
+    digest: "sha256:5f091601d2ee04bd5297e2783e9a97ae99ac29f0619f4c5d7837fefd91948bed"
     ## Specify a imagePullPolicy
     ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
     ##
@@ -1403,7 +1374,7 @@ sentinel:
   ## Redis(R) Sentinel resource requests and limits
   ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   ## @param sentinel.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if sentinel.resources is set (sentinel.resources is recommended for production).
-  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+  ## More information: https://github.com/docker-hardened-images/helm-charts/blob/main/common/templates/_resources.tpl#L15
   ##
   resourcesPreset: "nano"
   ## @param sentinel.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
@@ -1417,10 +1388,6 @@ sentinel:
   ##     memory: 1024Mi
   ##
   resources: {}
-  ## @param sentinel.fips.openssl Configure OpenSSL FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
-  ##
-  fips:
-    openssl: ""
   ## Configure Container Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   ## @param sentinel.containerSecurityContext.enabled Enabled Redis(R) Sentinel containers' Security Context
@@ -1436,8 +1403,8 @@ sentinel:
   containerSecurityContext:
     enabled: true
     seLinuxOptions: {}
-    runAsUser: 1001
-    runAsGroup: 1001
+    runAsUser: 65532
+    runAsGroup: 65532
     runAsNonRoot: true
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -1490,7 +1457,6 @@ sentinel:
     ## NOTE: rbac.create need to be set to true
     ##
     createMaster: false
-
     ## @param sentinel.service.loadBalancerIP Redis(R) Sentinel service Load Balancer IP
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
     ##
@@ -1514,7 +1480,7 @@ sentinel:
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
     ##
     sessionAffinity: None
-    ## @param sentinel.service.sessionAffinityConfig Additional settings for the sessionAffinity. Ignored if `sentinel.service.sessionAffinity` is `None`
+    ## @param sentinel.service.sessionAffinityConfig Additional settings for the sessionAffinity
     ## sessionAffinityConfig:
     ##   clientIP:
     ##     timeoutSeconds: 300
@@ -1590,7 +1556,7 @@ sentinel:
     ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
     ##
     sessionAffinity: None
-    ## @param sentinel.masterService.sessionAffinityConfig Additional settings for the sessionAffinity. Ignored if `sentinel.masterService.sessionAffinity` is `None`
+    ## @param sentinel.masterService.sessionAffinityConfig Additional settings for the sessionAffinity
     ## sessionAffinityConfig:
     ##   clientIP:
     ##     timeoutSeconds: 300
@@ -1602,7 +1568,6 @@ sentinel:
   ## @param sentinel.extraPodSpec Optionally specify extra PodSpec for the Redis(R) Sentinel pod(s)
   ##
   extraPodSpec: {}
-
   externalAccess:
     ## @param sentinel.externalAccess.enabled Enable external access to the Redis
     ##
@@ -1618,7 +1583,6 @@ sentinel:
       ## @param sentinel.externalAccess.service.redisPort Port for the services used to expose redis-server
       ##
       redisPort: 6379
-
       ## @param sentinel.externalAccess.service.sentinelPort Port for the services used to expose redis-sentinel
       ##
       sentinelPort: 26379
@@ -1639,7 +1603,6 @@ sentinel:
       ## @param sentinel.externalAccess.service.annotations Annotations to add to the services used to expose every Pod of the Redis(R) Cluster
       ##
       annotations: {}
-
 ## @section Other Parameters
 ##
 
@@ -1806,8 +1769,7 @@ metrics:
   ## @param metrics.enabled Start a sidecar prometheus exporter to expose Redis(R) metrics
   ##
   enabled: false
-  ## Bitnami Redis(R) Exporter image
-  ## ref: https://hub.docker.com/r/bitnami/redis-exporter/tags/
+  ## Redis(R) Exporter image
   ## @param metrics.image.registry [default: REGISTRY_NAME] Redis(R) Exporter image registry
   ## @param metrics.image.repository [default: REPOSITORY_NAME/redis-exporter] Redis(R) Exporter image repository
   ## @skip metrics.image.tag Redis(R) Exporter image tag (immutable tags are recommended)
@@ -1816,10 +1778,10 @@ metrics:
   ## @param metrics.image.pullSecrets Redis(R) Exporter image pull secrets
   ##
   image:
-    registry: registry-1.docker.io
-    repository: bitnami/redis-exporter
-    tag: latest
-    digest: ""
+    registry: dhi.io
+    repository: redis-exporter
+    tag: 1.80.2-debian13-compat
+    digest: "sha256:bbe38624021bdace38007244310595d5ccecb317e698bb20a8480ae3f35a511a"
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -1921,8 +1883,8 @@ metrics:
   containerSecurityContext:
     enabled: true
     seLinuxOptions: {}
-    runAsUser: 1001
-    runAsGroup: 1001
+    runAsUser: 65532
+    runAsGroup: 65532
     runAsNonRoot: true
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -1939,7 +1901,7 @@ metrics:
   ## Redis(R) exporter resource requests and limits
   ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   ## @param metrics.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if metrics.resources is set (metrics.resources is recommended for production).
-  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+  ## More information: https://github.com/docker-hardened-images/helm-charts/blob/main/common/templates/_resources.tpl#L15
   ##
   resourcesPreset: "nano"
   ## @param metrics.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
@@ -1953,12 +1915,6 @@ metrics:
   ##     memory: 1024Mi
   ##
   resources: {}
-  ## @param metrics.fips.openssl Configure OpenSSL FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
-  ## @param metrics.fips.golang Configure Golang FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
-  ##
-  fips:
-    openssl: ""
-    golang: restricted
   ## @param metrics.podLabels Extra labels for Redis(R) exporter pods
   ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
   ##
@@ -2191,7 +2147,6 @@ volumePermissions:
   ##
   enabled: false
   ## OS Shell + Utility image
-  ## ref: https://hub.docker.com/r/bitnami/os-shell/tags/
   ## @param volumePermissions.image.registry [default: REGISTRY_NAME] OS Shell + Utility image registry
   ## @param volumePermissions.image.repository [default: REPOSITORY_NAME/os-shell] OS Shell + Utility image repository
   ## @skip volumePermissions.image.tag OS Shell + Utility image tag (immutable tags are recommended)
@@ -2200,10 +2155,10 @@ volumePermissions:
   ## @param volumePermissions.image.pullSecrets OS Shell + Utility image pull secrets
   ##
   image:
-    registry: registry-1.docker.io
-    repository: bitnami/os-shell
-    tag: latest
-    digest: ""
+    registry: dhi.io
+    repository: bash
+    tag: 5.2.37-debian13
+    digest: "sha256:f4a446ed86875dce4b449b082ad5742a292a5222238429ca23e22335c0bd4466"
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -2216,7 +2171,7 @@ volumePermissions:
   ## Init container's resource requests and limits
   ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   ## @param volumePermissions.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if volumePermissions.resources is set (volumePermissions.resources is recommended for production).
-  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+  ## More information: https://github.com/docker-hardened-images/helm-charts/blob/main/common/templates/_resources.tpl#L15
   ##
   resourcesPreset: "nano"
   ## @param volumePermissions.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
@@ -2230,10 +2185,6 @@ volumePermissions:
   ##     memory: 1024Mi
   ##
   resources: {}
-  ## @param volumePermissions.fips.openssl Configure OpenSSL FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
-  ##
-  fips:
-    openssl: ""
   ## Init container Container Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
   ## @param volumePermissions.containerSecurityContext.seLinuxOptions [object,nullable] Set SELinux options in container
@@ -2245,7 +2196,6 @@ volumePermissions:
   containerSecurityContext:
     seLinuxOptions: {}
     runAsUser: 0
-
   ## @param volumePermissions.extraEnvVars Array with extra environment variables to add to volume permissions init container.
   ## e.g:
   ## extraEnvVars:
@@ -2253,13 +2203,11 @@ volumePermissions:
   ##     value: "bar"
   ##
   extraEnvVars: []
-
 ## Kubectl InitContainer
 ## used by Sentinel to update the isMaster label on the Redis(TM) pods
 ##
 kubectl:
-  ## Bitnami Kubectl image version
-  ## ref: https://hub.docker.com/r/bitnami/kubectl/tags/
+  ## Kubectl image version
   ## @param kubectl.image.registry [default: REGISTRY_NAME] Kubectl image registry
   ## @param kubectl.image.repository [default: REPOSITORY_NAME/kubectl] Kubectl image repository
   ## @skip kubectl.image.tag Kubectl image tag (immutable tags are recommended), by default, using the current version
@@ -2268,10 +2216,10 @@ kubectl:
   ## @param kubectl.image.pullSecrets Kubectl pull secrets
   ##
   image:
-    registry: registry-1.docker.io
-    repository: bitnami/kubectl
-    tag: latest
-    digest: ""
+    registry: dhi.io
+    repository: kubectl
+    tag: 1.34.3-debian13
+    digest: "sha256:4764749d32d0312dc2d9f82b3309d691cea656f098810caaaa9e0156714c0da0"
     ## Specify a imagePullPolicy
     ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
     ##
@@ -2286,7 +2234,7 @@ kubectl:
     pullSecrets: []
   ## @param kubectl.command kubectl command to execute
   ##
-  command: ["/opt/bitnami/scripts/kubectl-scripts/update-master-label.sh"]
+  command: ["/opt/docker/scripts/kubectl-scripts/update-master-label.sh"]
   ## Configure Container Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
   ## @param kubectl.containerSecurityContext.enabled Enabled kubectl containers' Security Context
@@ -2302,8 +2250,8 @@ kubectl:
   containerSecurityContext:
     enabled: true
     seLinuxOptions: {}
-    runAsUser: 1001
-    runAsGroup: 1001
+    runAsUser: 65532
+    runAsGroup: 65532
     runAsNonRoot: true
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -2311,7 +2259,7 @@ kubectl:
       type: RuntimeDefault
     capabilities:
       drop: ["ALL"]
-  ## Bitnami Kubectl resource requests and limits
+  ## Kubectl resource requests and limits
   ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   ## @param kubectl.resources.limits The resources limits for the kubectl containers
   ## @param kubectl.resources.requests The requested resources for the kubectl containers
@@ -2319,13 +2267,6 @@ kubectl:
   resources:
     limits: {}
     requests: {}
-  ## @param kubectl.fips.openssl Configure OpenSSL FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
-  ## @param kubectl.fips.golang Configure Golang FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
-  ##
-  fips:
-    openssl: ""
-    golang: relaxed
-
 ## init-sysctl container parameters
 ## used to perform sysctl operation to modify Kernel settings (needed sometimes to avoid warnings)
 ##
@@ -2334,7 +2275,6 @@ sysctl:
   ##
   enabled: false
   ## OS Shell + Utility image
-  ## ref: https://hub.docker.com/r/bitnami/os-shell/tags/
   ## @param sysctl.image.registry [default: REGISTRY_NAME] OS Shell + Utility image registry
   ## @param sysctl.image.repository [default: REPOSITORY_NAME/os-shell] OS Shell + Utility image repository
   ## @skip sysctl.image.tag OS Shell + Utility image tag (immutable tags are recommended)
@@ -2343,10 +2283,10 @@ sysctl:
   ## @param sysctl.image.pullSecrets OS Shell + Utility image pull secrets
   ##
   image:
-    registry: registry-1.docker.io
-    repository: bitnami/os-shell
-    tag: latest
-    digest: ""
+    registry: dhi.io
+    repository: bash
+    tag: 5.2.37-debian13
+    digest: "sha256:f4a446ed86875dce4b449b082ad5742a292a5222238429ca23e22335c0bd4466"
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -2365,7 +2305,7 @@ sysctl:
   ## Init container's resource requests and limits
   ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   ## @param sysctl.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if sysctl.resources is set (sysctl.resources is recommended for production).
-  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+  ## More information: https://github.com/docker-hardened-images/helm-charts/blob/main/common/templates/_resources.tpl#L15
   ##
   resourcesPreset: "nano"
   ## @param sysctl.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
@@ -2379,10 +2319,6 @@ sysctl:
   ##     memory: 1024Mi
   ##
   resources: {}
-  ## @param sysctl.fips.openssl Configure OpenSSL FIPS mode: '', 'restricted', 'relaxed', 'off'. If empty (""), 'global.defaultFips' would be used
-  ##
-  fips:
-    openssl: ""
 ## @section useExternalDNS Parameters
 ##
 ## @param useExternalDNS.enabled Enable various syntax that would enable external-dns to work.  Note this requires a working installation of `external-dns` to be usable.
