@@ -1,11 +1,11 @@
-name: Mirror DHI OCI Helm charts → GHCR (all tags)
+name: Mirror DHI OCI Helm charts → GHCR
 
 on:
-  schedule: [{ cron: "00 2 * * *" }] # every day at 02:00
+  schedule: [{ cron: "00 2 * * *" }]
   workflow_dispatch:
 
 env:
-  OWNER: alexander-zimmermann
+  OWNER: ${{ github.repository_owner }}
 
 jobs:
   discover:
@@ -24,7 +24,16 @@ jobs:
         run: oras login dhi.io -u "${{ secrets.DHI_USER }}" -p "${{ secrets.DHI_PASS }}"
 
       - name: Login GHCR
-        run: echo "${{ github.token }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
+        run: echo "${{ github.token }}" | oras login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
+
+      - name: "Preflight: Assert GHCR namespace is publishable"
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${OWNER}" != "${{ github.repository_owner }}" ] && [ -z "${{ secrets.GHCR_PAT }}" ]; then
+            echo "::error::To publish to ghcr.io/${OWNER}, provide a GHCR_PAT secret with write:packages and log in with it."
+            exit 1
+          fi
 
       - id: make-matrix
         name: Build JSON matrix of (src,dst,tag) to copy
@@ -32,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Source and destination repositories (1:1 mapping)
+          # Source repositories (1:1 mapping to destination path)
           SRC_REPOS=(
             "dhi.io/redis-chart"
             "dhi.io/sealed-secrets-chart"
@@ -41,9 +50,10 @@ jobs:
             "dhi.io/external-dns-chart"
           )
 
+          # Destination path prefix in GHCR
           DST_PREFIX="ghcr.io/${OWNER}/charts"
 
-          # Helper function: Normalize/sort list
+          # Helper: normalize & sort (trim whitespace, drop empty lines, unique)
           norm() { sed 's/^\s*//; s/\s*$//' | grep -v '^$' | sort -u; }
 
           TMP_DIR="$(mktemp -d)"
@@ -53,19 +63,24 @@ jobs:
             NAME="$(basename "$SRC")"
             DST="${DST_PREFIX}/${NAME}"
 
-            # Fetch all tags from source/destination
-            SRC_TAGS="$(oras repo tags "$SRC" || true)"
-            DST_TAGS="$(oras repo tags "$DST" || true)"
+            # Query tags; surface any source errors clearly
+            if ! SRC_TAGS="$(oras repo tags "$SRC" 2>/tmp/src.err)"; then
+              echo "::error::Failed to read source tags for $SRC: $(cat /tmp/src.err)"
+              exit 1
+            fi
+
+            # Destination tag listing may fail if package doesn't exist yet → tolerate
+            DST_TAGS="$(oras repo tags "$DST" 2>/tmp/dst.err || true)"
 
             printf "%s\n" "$SRC_TAGS" | norm > "${TMP_DIR}/src.txt"
             printf "%s\n" "$DST_TAGS" | norm > "${TMP_DIR}/dst.txt"
 
-            # Determine missing tags
+            # Compute missing tags (present in source, absent in destination)
             comm -23 "${TMP_DIR}/src.txt" "${TMP_DIR}/dst.txt" > "${TMP_DIR}/to_copy.txt" || true
 
+            # Build the copy plan as a JSON array of objects
             if [ -s "${TMP_DIR}/to_copy.txt" ]; then
               while read -r TAG; do
-                # Items as JSON objects
                 ITEMS_JSON=$(jq -c \
                   --arg src "$SRC" \
                   --arg dst "$DST" \
@@ -76,7 +91,7 @@ jobs:
             fi
           done
 
-          # If nothing to copy, return empty matrix
+          # Expose matrix for the next job (GitHub Actions matrix format)
           echo "matrix=$(jq -c '{include: .}' <<< "${ITEMS_JSON}")" >> "$GITHUB_OUTPUT"
 
   mirror:
@@ -99,11 +114,11 @@ jobs:
         run: oras login dhi.io -u "${{ secrets.DHI_USER }}" -p "${{ secrets.DHI_PASS }}"
 
       - name: Login GHCR
-        run: echo "${{ github.token }}" | oras login ghcr.io -u "${{ github.actor }}" --password-stdin
+        run: echo "${{ github.token }}" | oras login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
 
       - name: Copy ${{ matrix.tag }} from ${{ matrix.src }} → ${{ matrix.dst }}
         shell: bash
         run: |
           set -euo pipefail
-          # -r: Referrers (z. B. Signaturen/SBOM-Attestations) mitkopieren
+          # '-r': also copy referrers (e.g., signatures/SBOM attestations) if present
           oras cp -r "${{ matrix.src }}:${{ matrix.tag }}" "${{ matrix.dst }}:${{ matrix.tag }}"

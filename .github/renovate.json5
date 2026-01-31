@@ -1,12 +1,16 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: ["config:recommended", ":dependencyDashboard", ":semanticCommits"],
-  schedule: ["after 2pm on friday and before 10pm on sunday"],
+  timezone: "Europe/Berlin",
+  schedule: [
+    "* 14-23 * * 5", // Friday 14:00–23:59
+    "* * * * 6", // Saturday all day
+    "* 0-21 * * 0", // Sunday 00:00–21:59
+  ],
   prHourlyLimit: 0,
   prConcurrentLimit: 0,
   prCreation: "immediate",
   labels: ["dependencies"],
-  timezone: "Europe/Berlin",
   ignorePaths: ["legacy/**"],
   packageRules: [
     {
