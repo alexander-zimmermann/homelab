@@ -9,7 +9,7 @@ resources:
 
 helmCharts:
   - name: kyverno
-    repo: https://kyverno.github.io/kyverno/
+    repo: oci://ghcr.io/kyverno/charts
     releaseName: kyverno
     version: 3.6.2
     valuesFile: values.yaml
