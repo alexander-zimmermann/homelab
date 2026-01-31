@@ -3,17 +3,15 @@
 # Declare variables to be passed into your templates.
 
 image:
-  repository: registry.k8s.io/metrics-server/metrics-server
+  repository: dhi.io/metrics-server
   # Overrides the image tag whose default is v{{ .Chart.AppVersion }}
-  tag: ""
+  tag: "0.8.1-debian13@sha256:28e3201020ed80b7a2bb375fac24337864b59f32742a8f143ddf5014d08ec437"
   pullPolicy: IfNotPresent
-
-imagePullSecrets: []
-# - name: registrySecretName
+imagePullSecrets:
+  - name: dhi-registry-secret
 
 nameOverride: ""
 fullnameOverride: ""
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -25,13 +23,11 @@ serviceAccount:
   # The list of secrets mountable by this service account.
   # See https://kubernetes.io/docs/reference/labels-annotations-taints/#enforce-mountable-secrets
   secrets: []
-
 rbac:
   # Specifies whether RBAC resources should be created
   create: true
   # Note: PodSecurityPolicy will not be created when Kubernetes version is 1.25 or later.
   pspEnabled: false
-
 apiService:
   # Specifies if the v1beta1.metrics.k8s.io API service should be created.
   #
@@ -45,13 +41,10 @@ apiService:
   insecureSkipTLSVerify: true
   # The PEM encoded CA bundle for TLS verification
   caBundle: ""
-
 commonLabels: {}
 podLabels: {}
 podAnnotations: {}
-
 podSecurityContext: {}
-
 securityContext:
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
@@ -62,11 +55,8 @@ securityContext:
   capabilities:
     drop:
       - ALL
-
 priorityClassName: system-cluster-critical
-
 containerPort: 10250
-
 hostNetwork:
   # Specifies if metrics-server should be started in hostNetwork mode.
   #
@@ -74,11 +64,8 @@ hostNetwork:
   # API server unable to communicate with metrics-server. As an example, this is required
   # if you use Weave network on EKS
   enabled: false
-
 replicas: 1
-
 revisionHistoryLimit:
-
 updateStrategy: {}
 #   type: RollingUpdate
 #   rollingUpdate:
@@ -91,15 +78,12 @@ podDisruptionBudget:
   minAvailable:
   maxUnavailable:
   unhealthyPodEvictionPolicy:
-
 defaultArgs:
   - --cert-dir=/tmp
   - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
   - --kubelet-use-node-status-port
   - --metric-resolution=15s
-
 args: []
-
 livenessProbe:
   httpGet:
     path: /livez
@@ -108,7 +92,6 @@ livenessProbe:
   initialDelaySeconds: 0
   periodSeconds: 10
   failureThreshold: 3
-
 readinessProbe:
   httpGet:
     path: /readyz
@@ -117,7 +100,6 @@ readinessProbe:
   initialDelaySeconds: 20
   periodSeconds: 10
   failureThreshold: 3
-
 service:
   type: ClusterIP
   port: 443
@@ -126,11 +108,10 @@ service:
   #  Add these labels to have metrics-server show up in `kubectl cluster-info`
   #  kubernetes.io/cluster-service: "true"
   #  kubernetes.io/name: "Metrics-server"
-
 addonResizer:
   enabled: false
   image:
-    repository: registry.k8s.io/autoscaling/addon-resizer
+    repository: "#THIS IMAGE IS NOT IN THE DHI CATALOG YET, PLEASE CONTACT THE DOCKER TEAM IF NEEDED"
     tag: 1.8.23
   securityContext:
     allowPrivilegeEscalation: false
@@ -157,10 +138,8 @@ addonResizer:
     minClusterSize: 100
     pollPeriod: 300000
     threshold: 5
-
 metrics:
   enabled: false
-
 serviceMonitor:
   enabled: false
   additionalLabels: {}
@@ -168,7 +147,6 @@ serviceMonitor:
   scrapeTimeout: 10s
   metricRelabelings: []
   relabelings: []
-
 # See https://github.com/kubernetes-sigs/metrics-server#scaling
 resources:
   requests:
@@ -177,29 +155,18 @@ resources:
     # limits:
     #   cpu:
     #   memory:
-
 extraVolumeMounts: []
-
 extraVolumes: []
-
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}
-
 topologySpreadConstraints: []
-
 dnsConfig: {}
-
 # Annotations to add to the deployment
 deploymentAnnotations: {}
-
 schedulerName: ""
-
 tmpVolume:
   emptyDir: {}
-
 tls:
   # Set the TLS method to use. Supported values:
   # - `metrics-server` : Metrics-server will generate a self-signed certificate
@@ -209,7 +176,6 @@ tls:
   type: "metrics-server"
   # Kubernetes cluster domain. Used to configure Subject Alt Names for the certificate
   clusterDomain: cluster.local
-
   certManager:
     # Automatically add the cert-manager.io/inject-ca-from annotation to the APIService resource.
     # See https://cert-manager.io/docs/concepts/ca-injector
@@ -231,13 +197,11 @@ tls:
     annotations: {}
     # Add extra labels to the Certificate resource
     labels: {}
-
   helm:
     # Use helm lookup function to reuse Secret created in previous helm install
     lookup: true
     # Cert validity duration in days
     certDurationDays: 365
-
   existingSecret:
     # Name of the existing Secret to use for TLS
     name: ""
