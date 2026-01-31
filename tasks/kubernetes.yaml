@@ -29,6 +29,8 @@ tasks:
       - kubectl create namespace sealed-secrets-controller --dry-run=client -o yaml | kubectl apply -f -
       - kubectl apply -f kubernetes/.secrets/dhi-registry-credentials.yaml
       - kubectl annotate secret dhi-registry-secret -n sealed-secrets-controller sealed-secrets.bitnami.com/managed="true" --overwrite
+      # inject dhi registry credentials into kube-system (needed for metrics-server, as Kyverno excludes this ns)
+      - "cat kubernetes/.secrets/dhi-registry-credentials.yaml | sed 's/namespace: sealed-secrets-controller/namespace: kube-system/' | kubectl apply -f -"
 
   delete:
     desc: "wipe all cluster resources"
