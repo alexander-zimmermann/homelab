@@ -1,4 +1,6 @@
 ## @section Common parameters
+## @param replicaCount Number of sealed-secrets-controller replicas to deploy
+##
 replicaCount: 2
 
 ## @param kubeVersion Override Kubernetes version
@@ -13,7 +15,6 @@ fullnameOverride: ""
 ## @param namespace Namespace where to deploy the Sealed Secrets controller
 ##
 namespace: "sealed-secrets-controller"
-
 ## @param extraDeploy [array] Array of extra objects to deploy with the release
 ##
 extraDeploy: []
@@ -21,12 +22,10 @@ extraDeploy: []
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 ##
 commonAnnotations: {}
-
 ## @param commonLabels [object] Labels to add to all deployed resources
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 ##
 commonLabels: {}
-
 ## @section Sealed Secrets Parameters
 
 ## Sealed Secrets image
@@ -38,9 +37,9 @@ commonLabels: {}
 ## @param image.pullSecrets [array]  Sealed Secrets image pull secrets
 ##
 image:
-  registry: docker.io
-  repository: bitnami/sealed-secrets-controller
-  tag: 0.34.0
+  registry: dhi.io
+  repository: sealed-secrets-controller
+  tag: 0.34.0-debian13@sha256:c2b0008967c05af36d5afcd2168fa3faf4fd6617855dcdfa6b6662907c426aac
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
   ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -53,7 +52,8 @@ image:
   ## pullSecrets:
   ##   - myRegistryKeySecretName
   ##
-  pullSecrets: []
+  pullSecrets:
+    - dhi-registry-secret
 ## @param revisionHistoryLimit Number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10)
 ## e.g:
 revisionHistoryLimit: ""
@@ -217,7 +217,6 @@ containerSecurityContext:
   capabilities:
     drop:
       - ALL
-
 ## @param podLabels [object] Extra labels for Sealed Secret pods
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 ##
@@ -270,7 +269,6 @@ containerPorts:
 hostPorts:
   http: ""
   metrics: ""
-
 ## @param dnsPolicy Sealed Secrets pods' dnsPolicy
 dnsPolicy: ""
 ## @section Traffic Exposure Parameters
@@ -376,13 +374,13 @@ ingress:
   ## secrets:
   ##   - name: sealed-secrets.local-tls
   ##     key: |-
-  ##       -----BEGIN RSA ... -----
+  ##       -----BEGIN RSA ... KEY-----
   ##       ...
-  ##       -----END RSA ... -----
+  ##       -----END RSA ... KEY-----
   ##     certificate: |-
-  ##       -----BEGIN CERT ... -----
+  ##       -----BEGIN CERT...-----
   ##       ...
-  ##       -----END CERT ... -----
+  ##       -----END CERT...-----
   ##
   secrets: []
 ## Network policies
@@ -404,7 +402,6 @@ networkPolicy:
     ## @param networkPolicy.egress.kubeapiPort Specifies the kubeapiPort, which is the only egress allowed. If not set, kubeapiPort will be found using Helm lookup
     ##
     kubeapiPort: ""
-
 ## @section Other Parameters
 
 ## ServiceAccount configuration
@@ -439,7 +436,7 @@ rbac:
   ## @param rbac.namespacedRoles Specifies whether the namespaced Roles should be created (in each of the specified additionalNamespaces)
   ##
   namespacedRoles: false
-  ## @param rbac.namespacedRolesName Specifies the name for the namesapced Role resource
+  ## @param rbac.namespacedRolesName Specifies the name for the namespaced Role resource
   ##
   namespacedRolesName: "secrets-unsealer"
   ## @param rbac.labels Extra labels to be added to RBAC resources
@@ -464,9 +461,7 @@ rbac:
       - apiGroup: rbac.authorization.k8s.io
         kind: Group
         name: system:authenticated
-
 ## @section Metrics parameters
-
 metrics:
   ## Prometheus Operator ServiceMonitor configuration
   ##
@@ -518,7 +513,6 @@ metrics:
     ## @param metrics.dashboards.namespace Namespace where Grafana dashboard ConfigMap is deployed
     ##
     namespace: ""
-
   ## Sealed Secret Metrics service parameters
   ##
   service:
@@ -540,9 +534,7 @@ metrics:
     ## @param metrics.service.annotations [object] Additional custom annotations for Sealed Secret Metrics service
     ##
     annotations: {}
-
 ## @section PodDisruptionBudget Parameters
-
 pdb:
   ## @param pdb.create Specifies whether a PodDisruptionBudget should be created
   ##

@@ -10,7 +10,7 @@ helmCharts:
   - name: sealed-secrets-chart
     repo: oci://ghcr.io/alexander-zimmermann/charts
     releaseName: sealed-secrets
-    version: 2.17.9
+    version: 0.34.0
     valuesFile: values.yaml
     namespace: sealed-secrets-controller
     includeCRDs: true
