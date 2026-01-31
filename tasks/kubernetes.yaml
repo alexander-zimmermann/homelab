@@ -18,11 +18,17 @@ tasks:
         msg: "kubectl is not installed"
       - sh: test -f kubernetes/.secrets/sealed-secrets-key.yaml
         msg: "kubernetes/.secrets/sealed-secrets-key.yaml not found. Cluster bootstrap requires sealed secrets key."
+      - sh: test -f kubernetes/.secrets/dhi-registry-credentials.yaml
+        msg: "kubernetes/.secrets/dhi-registry-credentials.yaml not found. Cluster bootstrap requires DHI credentials."
     cmds:
       # wait for Kubernetes API readiness (trigger OIDC flow if needed)
       - kubectl cluster-info
-      # inject sealed secrets master ke
+      # inject sealed secrets master key
       - kubectl apply -f kubernetes/.secrets/sealed-secrets-key.yaml
+      # inject dhi registry credentials (needed for sealed-secrets-controller bootstrap)
+      - kubectl create namespace sealed-secrets-controller --dry-run=client -o yaml | kubectl apply -f -
+      - kubectl apply -f kubernetes/.secrets/dhi-registry-credentials.yaml
+      - kubectl annotate secret dhi-registry-secret -n sealed-secrets-controller sealed-secrets.bitnami.com/managed="true" --overwrite
 
   delete:
     desc: "wipe all cluster resources"
