@@ -11,7 +11,7 @@ kubeVersion: ""
 nameOverride: ""
 ## @param fullnameOverride String to fully override sealed-secrets.fullname
 ##
-fullnameOverride: ""
+fullnameOverride: "sealed-secrets-controller"
 ## @param namespace Namespace where to deploy the Sealed Secrets controller
 ##
 namespace: "sealed-secrets-controller"
