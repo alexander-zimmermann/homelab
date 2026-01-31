@@ -90,6 +90,14 @@ jobs:
             printf "%s\n" "$SRC_TAGS" | norm > "${TMP_DIR}/src.txt"
             printf "%s\n" "$DST_TAGS" | norm > "${TMP_DIR}/dst.txt"
 
+            echo "::group::Debug tags for $NAME"
+            echo "Source tags (dhi.io):"
+            cat "${TMP_DIR}/src.txt"
+            echo "----------------"
+            echo "Dest tags (ghcr.io):"
+            cat "${TMP_DIR}/dst.txt"
+            echo "::endgroup::"
+
             # Compute missing tags (present in source, absent in destination)
             comm -23 "${TMP_DIR}/src.txt" "${TMP_DIR}/dst.txt" > "${TMP_DIR}/to_copy.txt" || true
 
