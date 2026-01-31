@@ -8,7 +8,7 @@ resources:
 
 helmCharts:
   - name: traefik
-    repo: oci://ghcr.io/traefik/helm/traefik
+    repo: oci://ghcr.io/traefik/helm
     releaseName: traefik
     version: 38.0.1
     valuesFile: values.yaml
