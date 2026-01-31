@@ -11,7 +11,7 @@ imagePullSecrets:
   - name: dhi-registry-secret
 
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: "metrics-server"
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
