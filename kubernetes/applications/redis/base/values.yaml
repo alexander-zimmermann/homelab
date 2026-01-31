@@ -18,7 +18,8 @@ global:
   ## imagePullSecrets:
   ##   - myRegistryKeySecretName
   ##
-  imagePullSecrets: []
+  imagePullSecrets:
+    - dhi-registry-secret
   defaultStorageClass: ""
   storageClass: ""
   ## Security parameters

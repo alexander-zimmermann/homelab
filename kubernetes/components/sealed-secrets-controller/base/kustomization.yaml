@@ -4,12 +4,13 @@ kind: Kustomization
 namespace: sealed-secrets-controller
 resources:
   - ./namespace.yaml
+  - ./sealed-secret.yaml
 
 helmCharts:
-  - name: sealed-secrets
-    repo: https://bitnami-labs.github.io/sealed-secrets
+  - name: sealed-secrets-chart
+    repo: oci://ghcr.io/alexander-zimmermann/charts
     releaseName: sealed-secrets
-    version: 2.18.0
+    version: 2.17.9
     valuesFile: values.yaml
     namespace: sealed-secrets-controller
     includeCRDs: true
