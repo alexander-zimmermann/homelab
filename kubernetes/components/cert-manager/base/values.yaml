@@ -905,20 +905,7 @@ webhook:
     # outbound traffic to ports 80 and 443, as well as DNS ports.
     # +docs:property
     egress:
-      - ports:
-          - port: 80
-            protocol: TCP
-          - port: 443
-            protocol: TCP
-          - port: 53
-            protocol: TCP
-          - port: 53
-            protocol: UDP
-          # On OpenShift and OKD, the Kubernetes API server listens on.
-          # port 6443.
-          - port: 6443
-            protocol: TCP
-        to:
+      - to:
           - ipBlock:
               cidr: 0.0.0.0/0
           - ipBlock:
