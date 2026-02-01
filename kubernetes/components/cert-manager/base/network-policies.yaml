@@ -15,11 +15,4 @@ spec:
         - port: 9402 # Metrics
         - port: 9443 # Webhook
   egress:
-    - to:
-        - ipBlock:
-            cidr: 0.0.0.0/0 # Allow egress to API server and DNS (refine if needed)
-    - ports:
-        - port: 53
-          protocol: UDP
-        - port: 443
-          protocol: TCP
+    - {} # Allow all egress traffic

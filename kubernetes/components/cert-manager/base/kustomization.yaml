@@ -7,7 +7,7 @@ resources:
   - ./sealed-secret.yaml
   - ./cluster-issuer.yaml
   - ./kyverno-defaults.yaml
-  # - ./network-policies.yaml
+  - ./network-policies.yaml
 
 helmCharts:
   - name: cert-manager-chart
