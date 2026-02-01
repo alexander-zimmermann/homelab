@@ -3,5 +3,3 @@ kind: Namespace
 
 metadata:
   name: cert-manager
-  labels:
-    secrets.dhi.io/sync: "true"
