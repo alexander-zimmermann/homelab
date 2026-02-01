@@ -9,10 +9,6 @@ spec:
     - Ingress
     - Egress
   ingress:
-    - from:
-        - podSelector: {} # Allow internal traffic within namespace
-    - ports:
-        - port: 9402 # Metrics
-        - port: 9443 # Webhook
+    - {} # Allow all ingress traffic
   egress:
     - {} # Allow all egress traffic
