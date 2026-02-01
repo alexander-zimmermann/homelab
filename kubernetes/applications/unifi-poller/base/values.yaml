@@ -30,12 +30,10 @@ podAnnotations:
 
 podLabels: {}
 
-podSecurityContext:
-  {}
+podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext:
-  {}
+securityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -43,8 +41,7 @@ securityContext:
   # runAsNonRoot: true
   # runAsUser: 1000
 
-resources:
-  {}
+resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -80,7 +77,7 @@ serviceMonitor:
   enabled: false
 
 podMonitor:
-  enabled: false
+  enabled: true
 
 # section to configure he unpoller dashboards, relaying on the CRDs from grafana operator. https://github.com/grafana/grafana-operator
 dashboards:
@@ -130,8 +127,8 @@ upConfig: |
     dynamic = false
   [[unifi.controller]]
     url = "https://udm-pro.zimmermann.eu.com"
-    user = "unifipoller"
-    pass = "unifipoller"
+    user = "unifi-poller"
+    pass = "file:///etc/unifi-poller/secrets/unifi-password"
     sites = ["all"]
     save_ids = false
     save_events = false
@@ -140,3 +137,13 @@ upConfig: |
     save_dpi = false
     save_rogue = false
     verify_ssl = false
+
+extraVolumes:
+  - name: unifi-creds
+    secret:
+      secretName: unpoller-unifi-credentials
+
+extraVolumeMounts:
+  - name: unifi-creds
+    mountPath: /etc/unifi-poller/secrets
+    readOnly: true

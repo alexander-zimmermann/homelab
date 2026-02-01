@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: unifi-poller
 resources:
   - ./namespace.yaml
-  - ./sealedsecret.yaml
+  - ./sealed-secret.yaml
 
 helmCharts:
   - name: unpoller
@@ -13,28 +13,6 @@ helmCharts:
     version: 2.1.0
     valuesFile: values.yaml
     namespace: unifi-poller
-
-patches:
-  # Inject Unifi password from secret
-  - patch: |-
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: unpoller
-      spec:
-        template:
-          spec:
-            containers:
-              - name: unpoller
-                env:
-                  - name: UP_UNIFI_DEFAULT_PASS
-                    valueFrom:
-                      secretKeyRef:
-                        name: unifi-poller-secret
-                        key: unifi-password
-    target:
-      kind: Deployment
-      name: unpoller
 
 labels:
   - includeSelectors: true
