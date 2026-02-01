@@ -22,120 +22,6 @@ x-default-logging:
     options:
       tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
 
-# ============================================================================
-# Volumes
-# ============================================================================
-
-volumes:
-  traefik_acme:
-  traefik_log:
-  crowdsec_data:
-  crowdsec_config:
-  node-red_data:
-  mosquitto_data:
-  mosquitto_log:
-  influx_data:
-  grafana_data:
-  loki_data:
-  redis_data:
-  prometheus_data:
-  alertmanager_data:
-  authelia_log:
-  postgres_data:
-  homepage_log:
-  gollum_data:
-  minio_data:
-
-# ============================================================================
-# Secrets
-# ============================================================================
-
-secrets:
-  cloudflare_dns_api_token:
-    file: ./.secrets/cloudflare_dns_api_token
-  crowdsec_lapi_key:
-    file: ./.secrets/crowdsec_lapi_key
-  basic_auth_users:
-    file: ./.secrets/basic_auth_users
-  influxdb_init_username:
-    file: ./.secrets/influxdb_init_username
-  influxdb_init_password:
-    file: ./.secrets/influxdb_init_password
-  influxdb_init_admin_token:
-    file: ./.secrets/influxdb_init_admin_token
-  mosquitto_users:
-    file: ./.secrets/mosquitto_users
-  telegraf_influxdb_token:
-    file: ./.secrets/telegraf_influxdb_token
-  telegraf_mqtt_password:
-    file: ./.secrets/telegraf_mqtt_password
-  authelia_jwt_secret:
-    file: ./.secrets/authelia_jwt_secret
-  authelia_session_secret:
-    file: ./.secrets/authelia_session_secret
-  authelia_storage_encryption_key:
-    file: ./.secrets/authelia_storage_encryption_key
-  authelia_storage_password:
-    file: ./.secrets/authelia_storage_password
-  authelia_notifier_smtp_password:
-    file: ./.secrets/authelia_notifier_smtp_password
-  authelia_users:
-    file: ./.secrets/authelia_users
-  smtprelay_remote_user:
-    file: ./.secrets/smtprelay_remote_user
-  smtprelay_remote_pass:
-    file: ./.secrets/smtprelay_remote_pass
-  prometheus_users:
-    file: ./.secrets/prometheus_users
-  prometheus_scrape_user_password:
-    file: ./.secrets/prometheus_scrape_user_password
-  se2mqtt_mqtt__username:
-    file: ./.secrets/se2mqtt_mqtt_user
-  se2mqtt_mqtt__password:
-    file: ./.secrets/se2mqtt_mqtt_password
-  alertmanager_pushover_user_key:
-    file: ./.secrets/alertmanager_pushover_user_key
-  alertmanager_pushover_token:
-    file: ./.secrets/alertmanager_pushover_token
-  fritz-exporter_user_password:
-    file: ./.secrets/fritz-exporter_user_password
-  postgres_password:
-    file: ./.secrets/postgres_root_password
-  unifi_pass:
-    file: ./.secrets/unifi_pass
-  homepage_unifi_key:
-    file: ./.secrets/homepage_unifi_key
-  homepage_proxmox_username:
-    file: ./.secrets/homepage_proxmox_username
-  homepage_proxmox_password:
-    file: ./.secrets/homepage_proxmox_password
-  homepage_traefik_username:
-    file: ./.secrets/homepage_traefik_username
-  homepage_traefik_password:
-    file: ./.secrets/homepage_traefik_password
-  homepage_crowdsec_username:
-    file: ./.secrets/homepage_crowdsec_username
-  homepage_crowdsec_lapi_key:
-    file: ./.secrets/homepage_crowdsec_lapi_key
-  homepage_prometheus_username:
-    file: ./.secrets/homepage_prometheus_username
-  homepage_prometheus_password:
-    file: ./.secrets/homepage_prometheus_password
-  guacamole_postgres_user:
-    file: ./.secrets/guacamole_postgres_user
-  guacamole_postgres_password:
-    file: ./.secrets/guacamole_postgres_password
-  minio_root_user:
-    file: ./.secrets/minio_root_user
-  minio_root_password:
-    file: ./.secrets/minio_root_password
-  minio_scrape_token:
-    file: ./.secrets/minio_scrape_token
-
-# ============================================================================
-# Services
-# ============================================================================
-
 services:
   # --------------------------------------------------------------------------
   # Traefik
@@ -300,34 +186,6 @@ services:
       - homepage.widget.url=http://crowdsec.zimmermann.eu.com:8808
       - homepage.widget.username={{HOMEPAGE_FILE_CROWDSEC_USERNAME}}
       - homepage.widget.password={{HOMEPAGE_FILE_CROWDSEC_LAPI_KEY}}
-
-    logging:
-      <<: *default-logging
-
-    depends_on:
-      - traefik
-      - authelia
-
-  # --------------------------------------------------------------------------
-  # Whoami
-  # --------------------------------------------------------------------------
-  whoami:
-    image: traefik/whoami
-    container_name: whoami
-    hostname: whoami
-    restart: unless-stopped
-
-    environment:
-      <<: *default-environment
-
-    labels:
-      # traefik
-      - traefik.enable=true
-      - traefik.http.routers.whoami.rule=Host(`whoami.zimmermann.sh`)
-      - traefik.http.routers.whoami.entrypoints=websecure
-      - traefik.http.routers.whoami.tls=true
-      - traefik.http.routers.whoami.tls.certresolver=cloudflare
-      - traefik.http.routers.whoami.middlewares=chain-add-2FA-MFA-BSC@file
 
     logging:
       <<: *default-logging
@@ -629,31 +487,6 @@ services:
       <<: *default-logging
 
   # --------------------------------------------------------------------------
-  # Unifi-poller
-  # --------------------------------------------------------------------------
-  unpoller:
-    image: golift/unifi-poller
-    container_name: unifi-poller
-    hostname: unifi-poller
-    restart: unless-stopped
-
-    ports:
-      - 9130:9130
-
-    volumes:
-      - ./appconfig/unifi-poller/unpoller.conf:/etc/unpoller/up.conf
-
-    environment:
-      <<: *default-environment
-      UP_UNIFI_DEFAULT_PASS: file:///run/secrets/unifi_pass
-
-    secrets:
-      - unifi_pass
-
-    logging:
-      <<: *default-logging
-
-  # --------------------------------------------------------------------------
   # fritz-exporter
   # --------------------------------------------------------------------------
   fritz-exporter:
@@ -920,27 +753,6 @@ services:
       - fritz-exporter
       - unpoller
       - alertmanager
-
-  # --------------------------------------------------------------------------
-  # Redis
-  # --------------------------------------------------------------------------
-  redis:
-    image: redis
-    container_name: redis
-    hostname: redis
-    restart: unless-stopped
-
-    ports:
-      - 6379:6379
-
-    volumes:
-      - redis_data:/data
-
-    environment:
-      <<: *default-environment
-
-    logging:
-      <<: *default-logging
 
   # --------------------------------------------------------------------------
   # Postgres

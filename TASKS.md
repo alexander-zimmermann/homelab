@@ -19,22 +19,13 @@
   - Configure UDM VLAN/DMZ.
 - [ ] **Optimizations**:
   - [x] Prometheus Retention.
-  - [] Traefik Retention.
+  - [ ] Traefik Retention.
   - [ ] InfluxDB Retention.
   - [ ] Evaluate CloudNativePG (CNPG) operator for Postgres.
-- [x] **Loki**: Migrate to Scalable/Microservice Mode (MinIO Backend) when storage is ready.
 - [ ] **Omni**:
   - [ ] Use docker secrets for sensitive data.
   - [ ] Create service account for Omni.
   - [ ] Use Public IP for Omni.
-
-### Documentation
-
-- [ ] **README.md**: Cluster Specs (1 CP + 3 Workers), Bootstrap Procedure, Network Architecture Diagram.
-- [ ] **Backup Strategy**: Document Talos machine-config backups, etcd snapshots, Longhorn snapshots, Velero strategy.
-- [ ] **Disaster Recovery**: Document recovery procedures (Full Cluster Rebuild, Single Node Recovery, Data Restore).
-
----
 
 ## 🐳 Docker Migration Plan
 
@@ -42,14 +33,14 @@
 
 - [ ] **homepage**: Custom Deployment. Stateless.
 - [ ] **gollum**: Custom Deployment. PVC 64M. Data migration required.
-- [ ] **whoami**: Custom Deployment. Stateless.
+- [x] **whoami**: Custom Deployment. Stateless.
 - [x] **smtprelay**: Custom Deployment. Stateless.
 
 ### Wave 2: Observability - Exporters
 
-- [o] **unifi-poller**: Custom Deployment. Stateless
+- [x] **unifi-poller**: Custom Deployment. Stateless
 - [ ] **fritz-exporter**: Custom Deployment. Stateless
-- [/] **alloy**: Helm Chart (grafana/k8s-monitoring). Stateless.
+- [o] **alloy**: Helm Chart (grafana/k8s-monitoring). Stateless.
 
 ### Wave 3: Observability - Monitoring Stack
 
@@ -61,21 +52,20 @@
 ### Wave 4: Persistent Storage & Databases
 
 - [ ] **postgres**: Helm Chart (bitnami/postgresql). PVC 256M. Data migration.
-- [ ] **redis**: Helm Chart (bitnami/redis). PVC 16M. No data migration.
+- [x] **redis**: Helm Chart (bitnami/redis). PVC 16M. No data migration.
 - [x] **minio**: Helm Chart (minio/minio). PVC 5G. No data migration.
 
 ### Wave 5: Web Services
 
 - [ ] **crowdsec**: Helm Chart (crowdsecurity/crowdsec). PVC 256M. Data migration.
-- [ ] **traefik**: Helm Chart (traefik/traefik). PVC 32M. No data migration.
+- [o] **traefik**: Helm Chart (traefik/traefik). PVC 32M. No data migration.
 - [ ] **authelia**: Helm Chart (authelia/authelia). Stateless.
 - [ ] **guacamole**: Custom Deployment. Stateless.
 
 ### Wave 6: Home Automation
 
 - [ ] **influxdb**: Helm Chart (influxdb/influxdb2). PVC 10GB. Data migration.
-- [] **mosquitto**: Custom Deployment, PVC 64M. Data migration.
-  - [x] Add fix IP from Cilium IP Pools
+- [o] **mosquitto**: Custom Deployment, PVC 64M. Data migration.
 - [ ] **node-red**: Helm Chart (nodered/node-red). PVC 512M. Data migration.
 - [ ] **solaredge2mqtt**: Custom Deployment. Stateless.
 
@@ -94,13 +84,11 @@
 For each application, we follow this strict GitOps workflow:
 
 1.  **GitOps Structure**: Create `k8s-cluster/applications/<app>/`.
-
     - `base/` : Pure application logic (Deployment, ConfigMaps, default Service type ClusterIP). **NO** environment logic here.
     - `overlays/prod/`: Production environment (Fixed IPs, High Resources).
     - `overlays/dev/`: Development environment (Dynamic IPs, Low Resources).
 
 2.  **Kustomize Patching (Strict JSON Patch)**:
-
     - **Format**: ALWAYS use **JSON Patch** (`op: replace/add`) for all patches. Do NOT use Strategic Merge Patch (YAML style).
     - **Order**: In `kustomization.yaml`, `patches:` list must observe:
       1. App Config Patches (Args, Env, Mounts)
@@ -109,7 +97,6 @@ For each application, we follow this strict GitOps workflow:
     - **Values**: Always specify `patch:` block first, then `target:` block.
 
 3.  **Network & Cilium BGP**:
-
     - **Service Config**: Defined **ONLY in Overlays**. Base keeps `type: ClusterIP` (or default).
     - **Production**:
       - `type: LoadBalancer`
@@ -121,7 +108,6 @@ For each application, we follow this strict GitOps workflow:
       - Labels: `bgp.cilium.io/ip-pool: default`
 
 4.  **Ingress**:
-
     - Use Traefik `IngressRoute`.
     - Patch `Host(...)` and `Certificate` DNS separately in overlays.
 
