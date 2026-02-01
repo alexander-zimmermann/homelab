@@ -7,12 +7,13 @@ resources:
   - ./sealed-secret.yaml
   - ./cluster-issuer.yaml
   - ./kyverno-defaults.yaml
+  - ./network-policies.yaml
 
 helmCharts:
-  - name: cert-manager
-    repo: https://charts.jetstack.io
+  - name: cert-manager-chart
+    repo: oci://ghcr.io/alexander-zimmermann/charts
     releaseName: cert-manager
-    version: v1.19.2
+    version: 1.19.2
     valuesFile: values.yaml
     namespace: cert-manager
     includeCRDs: true
