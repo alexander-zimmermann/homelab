@@ -81,14 +81,15 @@ podMonitor:
 
 # section to configure he unpoller dashboards, relaying on the CRDs from grafana operator. https://github.com/grafana/grafana-operator
 dashboards:
-  create: false
+  create: true
   # Configures the Grafana instance (grafana.integreatly.org/v1beta1)
   grafana:
     # Whether the Grafana instance should be created, charts still can be created and
     # use the selectorLabels to install the charts in an already existing Grafana.
-    create: true
+    create: false
     # the set of labels to be matched against the existing Grafana CRD, must be provided when create is false.
-    selectorLabels: {}
+    selectorLabels:
+      app.kubernetes.io/name: grafana
     # Url for the grafana instance, used as .spec.external.url in the Grafana instance
     url: ""
     # Configuration for the username/password of grafana
