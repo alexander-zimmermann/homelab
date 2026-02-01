@@ -118,7 +118,7 @@ upConfig: |
     disable = true
   [loki]
     disable = false
-    url = "http://loki.zimmermann.eu.com:3100"
+    url = "http://loki-gateway.loki.svc:80"
     verify_ssl = false
   [datadog]
     disable = true
