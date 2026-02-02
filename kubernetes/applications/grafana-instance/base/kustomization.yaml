@@ -7,7 +7,7 @@ resources:
   - ./datasources.yaml
   - ./sealed-secret.yaml
   - ./certificate.yaml
-  - ./ingressroute.yaml
+  - ./ingress-route.yaml
 
 helmCharts:
   - name: grafana

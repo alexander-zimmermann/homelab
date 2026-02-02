@@ -4,6 +4,9 @@ kind: IngressRoute
 metadata:
   name: argocd-server
   namespace: gitops-controller
+  annotations:
+    external-dns.alpha.kubernetes.io/target: argocd.zimmermann.sh
+    kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:
     - websecure

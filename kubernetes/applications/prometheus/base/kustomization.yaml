@@ -5,7 +5,7 @@ namespace: prometheus
 resources:
   - ./namespace.yaml
   - ./certificate.yaml
-  #- ./ingressroute.yaml
+  #- ./ingress-route.yaml
 
 helmCharts:
   - name: kube-prometheus-stack

@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: gitops-controller
 resources:
   - ./certificate.yaml
-  - ./ingressroute.yaml
+  - ./ingress-route.yaml
   - ./sealed-secret.yaml
 
 commonAnnotations:

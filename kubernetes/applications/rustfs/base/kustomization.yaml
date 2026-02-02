@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: rustfs
 resources:
   - ./namespace.yaml
-  - ./ingressroute.yaml
+  - ./ingress-route.yaml
   - ./certificate.yaml
   - ./sealed-secret.yaml
 
