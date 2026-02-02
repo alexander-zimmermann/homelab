@@ -6,6 +6,13 @@ on:
 
 env:
   OWNER: ${{ github.repository_owner }}
+  MIRROR_CHARTS: >-
+    dhi.io/redis-chart
+    dhi.io/sealed-secrets-chart
+    dhi.io/cert-manager-chart
+    dhi.io/metrics-server-chart
+    dhi.io/external-dns-chart
+    dhi.io/cloudnative-pg-chart
 
 jobs:
   discover:
@@ -57,13 +64,8 @@ jobs:
           export LC_ALL=C
 
           # Source repositories (1:1 mapping to destination path)
-          SRC_REPOS=(
-            "dhi.io/redis-chart"
-            "dhi.io/sealed-secrets-chart"
-            "dhi.io/cert-manager-chart"
-            "dhi.io/metrics-server-chart"
-            "dhi.io/external-dns-chart"
-          )
+          # Source repositories from env
+          SRC_REPOS=($MIRROR_CHARTS)
 
           # Destination path prefix in GHCR
           DST_PREFIX="ghcr.io/${OWNER}/charts"
