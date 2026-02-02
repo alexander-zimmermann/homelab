@@ -5,7 +5,7 @@ metadata:
   name: rustfs-console
   namespace: rustfs
   annotations:
-    external-dns.alpha.kubernetes.io/target: console.rustfs.zimmermann.sh
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:

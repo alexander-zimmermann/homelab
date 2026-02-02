@@ -5,7 +5,7 @@ metadata:
   name: alloy-ui
   namespace: alloy
   annotations:
-    external-dns.alpha.kubernetes.io/target: alloy.zimmermann.sh
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:
