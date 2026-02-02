@@ -1612,14 +1612,28 @@ networkPolicy:
   egress:
     ## @param networkPolicy.egress.enabled When enabled, an egress network policy will be
     ## created allowing grafana to connect to external data sources from kubernetes cluster.
-    enabled: false
+    enabled: true
     ##
     ## @param networkPolicy.egress.blockDNSResolution When enabled, DNS resolution will be blocked
     ## for all pods in the grafana namespace.
     blockDNSResolution: false
     ##
     ## @param networkPolicy.egress.ports Add individual ports to be allowed by the egress
-    ports: []
+    ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
+      - port: 8081
+        protocol: TCP
+      - port: 80
+        protocol: TCP
+      - port: 443
+        protocol: TCP
+      - port: 9090
+        protocol: TCP
+      - port: 3100
+        protocol: TCP
     ## Add ports to the egress by specifying - port: <port number>
     ## E.X.
     ## - port: 80
