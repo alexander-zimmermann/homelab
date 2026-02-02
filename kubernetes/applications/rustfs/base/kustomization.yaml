@@ -22,4 +22,4 @@ labels:
       app.kubernetes.io/name: rustfs
 
 commonAnnotations:
-  argocd.argoproj.io/sync-wave: "4"
+  argocd.argoproj.io/sync-wave: "8"

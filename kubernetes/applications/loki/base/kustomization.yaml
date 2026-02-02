@@ -19,4 +19,4 @@ labels:
       app.kubernetes.io/name: loki
 
 commonAnnotations:
-  argocd.argoproj.io/sync-wave: "0"
+  argocd.argoproj.io/sync-wave: "4"

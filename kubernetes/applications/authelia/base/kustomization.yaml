@@ -5,3 +5,11 @@ namespace: authelia
 resources:
   - ./namespace.yaml
   - ./database.yaml
+
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: authelia
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "4"
