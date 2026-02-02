@@ -1,0 +1,27 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+
+metadata:
+  name: authelia-db
+  namespace: authelia
+spec:
+  instances: 2
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.1
+  storage:
+    size: 256Mi
+  bootstrap:
+    initdb:
+      database: authelia
+      owner: authelia
+  # Enable backup later when RustFS is fully integrated
+  # backup:
+  #   barmanObjectStore:
+  #     destinationPath: s3://postgres-backups/
+  #     endpointURL: http://rustfs.rustfs.svc.cluster.local:9000
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: rustfs-creds
+  #         key: accessKey
+  #       secretAccessKey:
+  #         name: rustfs-creds
+  #         key: secretKey
