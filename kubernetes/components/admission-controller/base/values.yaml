@@ -1167,7 +1167,9 @@ admissionController:
     # This is useful on clusters using Calico and/or native k8s network policies in a default-deny setup.
     enabled: true
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
-    ingressFrom: []
+    ingressFrom:
+      - ipBlock:
+          cidr: 192.168.1.0/24
 
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
@@ -1496,7 +1498,9 @@ backgroundController:
     enabled: true
 
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
-    ingressFrom: []
+    ingressFrom:
+      - ipBlock:
+          cidr: 192.168.1.0/24
 
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
@@ -1829,7 +1833,9 @@ cleanupController:
     enabled: true
 
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
-    ingressFrom: []
+    ingressFrom:
+      - ipBlock:
+          cidr: 192.168.1.0/24
 
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
@@ -2136,7 +2142,9 @@ reportsController:
     enabled: true
 
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
-    ingressFrom: []
+    ingressFrom:
+      - ipBlock:
+          cidr: 192.168.1.0/24
 
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
