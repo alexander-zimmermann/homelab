@@ -10,7 +10,7 @@ spec:
     - name: dhi-registry-secret
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1
   storage:
-    size: 128Mi
+    size: 256Mi
   bootstrap:
     initdb:
       database: authelia
