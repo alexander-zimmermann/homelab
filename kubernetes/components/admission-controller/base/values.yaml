@@ -1165,11 +1165,9 @@ admissionController:
   networkPolicy:
     # -- When true, use a NetworkPolicy to allow ingress to the webhook
     # This is useful on clusters using Calico and/or native k8s network policies in a default-deny setup.
-    enabled: true
+    enabled: false
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
-    ingressFrom:
-      - ipBlock:
-          cidr: 0.0.0.0/0
+    ingressFrom: []
 
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
@@ -1495,12 +1493,10 @@ backgroundController:
   networkPolicy:
     # -- When true, use a NetworkPolicy to allow ingress to the webhook
     # This is useful on clusters using Calico and/or native k8s network policies in a default-deny setup.
-    enabled: true
+    enabled: false
 
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
-    ingressFrom:
-      - ipBlock:
-          cidr: 0.0.0.0/0
+    ingressFrom: []
 
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
@@ -1830,12 +1826,10 @@ cleanupController:
   networkPolicy:
     # -- When true, use a NetworkPolicy to allow ingress to the webhook
     # This is useful on clusters using Calico and/or native k8s network policies in a default-deny setup.
-    enabled: true
+    enabled: false
 
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
-    ingressFrom:
-      - ipBlock:
-          cidr: 0.0.0.0/0
+    ingressFrom: []
 
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
@@ -2139,12 +2133,10 @@ reportsController:
   networkPolicy:
     # -- When true, use a NetworkPolicy to allow ingress to the webhook
     # This is useful on clusters using Calico and/or native k8s network policies in a default-deny setup.
-    enabled: true
+    enabled: false
 
     # -- A list of valid from selectors according to https://kubernetes.io/docs/concepts/services-networking/network-policies.
-    ingressFrom:
-      - ipBlock:
-          cidr: 0.0.0.0/0
+    ingressFrom: []
 
   serviceMonitor:
     # -- Create a `ServiceMonitor` to collect Prometheus metrics.
