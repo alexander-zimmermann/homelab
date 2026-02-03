@@ -19,9 +19,10 @@ spec:
       # Segment 2 is application name (k8s-cluster/applications/NAME/base/kustomization.yaml)
       name: "{{index .path.segments 2}}-prod"
       annotations:
-        # Read sync-wave from base if present
+        # Read common annotations from base if present
         argocd.argoproj.io/sync-wave: '{{ index .commonAnnotations "argocd.argoproj.io/sync-wave" | default "0" }}'
         argocd.argoproj.io/compare-options: '{{ index .commonAnnotations "argocd.argoproj.io/compare-options" | default "" }}'
+        argocd.argoproj.io/sync-options: '{{ index .commonAnnotations "argocd.argoproj.io/sync-options" | default "" }}'
     spec:
       project: default
       source:
