@@ -1608,6 +1608,7 @@ networkPolicy:
         operator: In
         values:
           - ingress-controller
+          - grafana-operator
 
   egress:
     ## @param networkPolicy.egress.enabled When enabled, an egress network policy will be
