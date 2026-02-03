@@ -1577,7 +1577,7 @@ imageRenderer:
 networkPolicy:
   ## @param networkPolicy.enabled Enable creation of NetworkPolicy resources. Only Ingress traffic is filtered for now.
   ##
-  enabled: true
+  enabled: false
   ## @param networkPolicy.allowExternal Don't require client label for connections
   ## The Policy model to apply. When set to false, only pods with the correct
   ## client label will have network access to  grafana port defined.
