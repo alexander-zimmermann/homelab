@@ -7,7 +7,6 @@ on:
 env:
   OWNER: ${{ github.repository_owner }}
   MIRROR_CHARTS: >-
-    dhi.io/redis-chart
     dhi.io/sealed-secrets-chart
     dhi.io/cert-manager-chart
     dhi.io/metrics-server-chart
