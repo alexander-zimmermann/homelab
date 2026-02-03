@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: authelia
+namespace: authentik
 resources:
   - ./namespace.yaml
   - ./database.yaml
@@ -9,7 +9,7 @@ resources:
 labels:
   - includeSelectors: true
     pairs:
-      app.kubernetes.io/name: authelia
+      app.kubernetes.io/name: authentik
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "4"

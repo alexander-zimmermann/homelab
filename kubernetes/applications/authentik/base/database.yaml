@@ -2,8 +2,8 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 
 metadata:
-  name: authelia-db
-  namespace: authelia
+  name: authentik-db
+  namespace: authentik
 spec:
   instances: 2
   imagePullSecrets:
@@ -13,8 +13,8 @@ spec:
     size: 256Mi
   bootstrap:
     initdb:
-      database: authelia
-      owner: authelia
+      database: authentik
+      owner: authentik
   # Enable backup later when RustFS is fully integrated
   # backup:
   #   barmanObjectStore:
