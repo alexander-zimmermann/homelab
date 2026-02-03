@@ -724,16 +724,6 @@ configs:
 # -- Array of extra K8s manifests to deploy
 ## Note: Supports use of custom Helm templates
 extraObjects:
-  - apiVersion: networking.k8s.io/v1
-    kind: NetworkPolicy
-    metadata:
-      name: argocd-allow-all-egress
-    spec:
-      podSelector: {}
-      policyTypes:
-        - Egress
-      egress:
-        - {}
   # - apiVersion: secrets-store.csi.x-k8s.io/v1
   #   kind: SecretProviderClass
   #   metadata:
