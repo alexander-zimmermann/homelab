@@ -16,6 +16,11 @@ helmCharts:
     namespace: prometheus
     includeCRDs: true
 
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: prometheus
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "4"
   argocd.argoproj.io/compare-options: ServerSideDiff=true
