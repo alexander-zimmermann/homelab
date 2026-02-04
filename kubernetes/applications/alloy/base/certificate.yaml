@@ -3,6 +3,7 @@ kind: Certificate
 
 metadata:
   name: alloy-ui-tls
+  namespace: alloy
 spec:
   secretName: alloy-ui-tls
   issuerRef:

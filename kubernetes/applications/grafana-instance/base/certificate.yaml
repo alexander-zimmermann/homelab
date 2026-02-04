@@ -3,6 +3,7 @@ kind: Certificate
 
 metadata:
   name: grafana-tls-cert
+  namespace: grafana-instance
 spec:
   secretName: grafana-tls-cert
   issuerRef:

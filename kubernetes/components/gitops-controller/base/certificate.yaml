@@ -3,6 +3,7 @@ kind: Certificate
 
 metadata:
   name: argocd-tls-cert
+  namespace: gitops-controller
 spec:
   secretName: argocd-tls-cert
   issuerRef:
