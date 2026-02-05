@@ -19,7 +19,7 @@ helmCharts:
 labels:
   - includeSelectors: false
     pairs:
-      app.kubernetes.io/name: prometheus
+      homelab.app: prometheus
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "4"
