@@ -14,9 +14,9 @@ helmCharts:
     namespace: cloudnative-pg
 
 labels:
-  - includeSelectors: true
+  - includeSelectors: false
     pairs:
-      app.kubernetes.io/name: cloudnative-pg
+      homelab.app: cloudnative-pg
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "1"

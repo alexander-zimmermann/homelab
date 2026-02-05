@@ -17,9 +17,9 @@ helmCharts:
     includeCRDs: true
 
 labels:
-  - includeSelectors: true
+  - includeSelectors: false
     pairs:
-      app.kubernetes.io/name: alloy
+      homelab.app: alloy
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "10"

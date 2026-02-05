@@ -14,9 +14,9 @@ configMapGenerator:
       - smtprelay.ini
 
 labels:
-  - includeSelectors: true
+  - includeSelectors: false
     pairs:
-      app.kubernetes.io/name: smtprelay
+      homelab.app: smtprelay
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "10"

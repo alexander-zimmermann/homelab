@@ -14,9 +14,9 @@ helmCharts:
     namespace: loki
 
 labels:
-  - includeSelectors: true
+  - includeSelectors: false
     pairs:
-      app.kubernetes.io/name: loki
+      homelab.app: loki
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "4"

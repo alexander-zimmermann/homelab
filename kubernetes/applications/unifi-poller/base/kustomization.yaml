@@ -15,9 +15,9 @@ helmCharts:
     namespace: unifi-poller
 
 labels:
-  - includeSelectors: true
+  - includeSelectors: false
     pairs:
-      app.kubernetes.io/name: unifi-poller
+      homelab.app: unifi-poller
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "10"

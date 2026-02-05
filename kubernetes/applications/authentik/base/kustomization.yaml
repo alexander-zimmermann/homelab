@@ -19,9 +19,9 @@ helmCharts:
     includeCRDs: true
 
 labels:
-  - includeSelectors: true
+  - includeSelectors: false
     pairs:
-      app.kubernetes.io/name: authentik
+      homelab.app: authentik
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "4"

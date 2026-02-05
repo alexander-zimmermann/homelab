@@ -17,9 +17,9 @@ helmCharts:
     namespace: rustfs
 
 labels:
-  - includeSelectors: true
+  - includeSelectors: false
     pairs:
-      app.kubernetes.io/name: rustfs
+      homelab.app: rustfs
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "8"
