@@ -1,0 +1,34 @@
+global:
+  # Environment variables for all components (Server, Worker, etc.)
+  env:
+    # Database Password from CNPG Secret (authentik-db-app is created by the Cluster resource)
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-db-app
+          key: password
+    # Internal Secret Key for Authentik (Signatures, Encryptions)
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-credentials
+          key: AUTHENTIK_SECRET_KEY
+    # Initial Admin Password for 'akadmin' bootstrap
+    - name: AUTHENTIK_BOOTSTRAP_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-credentials
+          key: AUTHENTIK_BOOTSTRAP_PASSWORD
+
+authentik:
+  # SMTP configuration for notifications and password resets
+  email:
+    # Using internal SMTP relay
+    host: smtprelay.smtprelay.svc.cluster.local
+    port: 25
+    from: "Authentik <admin@zimmermann.sh>"
+
+  # Connect to external CloudNativePG Database
+  postgresql:
+    # host matches the CNPG Cluster name + suffix '-db-rw'
+    host: "{{ .Release.Name }}-db-rw"

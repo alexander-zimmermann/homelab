@@ -3,3 +3,28 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+patches:
+  # Certificate DNS Patch
+  - patch: |-
+      - op: replace
+        path: /spec/dnsNames/0
+        value: auth.zimmermann.phd
+    target:
+      kind: Certificate
+      name: authentik-tls
+
+  # Service Patch - Dynamic LoadBalancer
+  - patch: |-
+      - op: replace
+        path: /spec/type
+        value: LoadBalancer
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1ip-pool
+        value: default
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1advertise-service
+        value: default
+    target:
+      kind: Service
+      name: authentik-server

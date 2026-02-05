@@ -1,0 +1,24 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: authentik
+  namespace: authentik
+  labels:
+  annotations:
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`auth.zimmermann.sh`)
+      priority: 10
+      services:
+        - kind: Service
+          name: authentik-server
+          port: 80
+  tls:
+    secretName: authentik-tls
