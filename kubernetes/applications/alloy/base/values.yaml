@@ -38,21 +38,16 @@ podLogs:
 prometheusOperatorObjects:
   enabled: true
 
-# Collector Instances (Alloy Deployments)
+# Collectors (Alloy instances)
+# An Alloy instance for collecting metrics.
 alloy-metrics:
   enabled: true
-  controller:
-    replicas: 2
-  alloy:
-    clustering:
-      enabled: true
-    listenAddr: 0.0.0.0
-    listenPort: 12345
-    extraPorts: []
 
+# An Alloy instance for data sources required to be deployed on a single replica.
 alloy-singleton:
   enabled: true
 
+# An Alloy instance for collecting log data.
 alloy-logs:
   enabled: true
 
