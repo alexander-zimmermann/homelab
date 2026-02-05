@@ -34,10 +34,6 @@ podLogs:
   destinations:
     - loki
 
-# Support for Prometheus Operator CRDs (ServiceMonitors, etc.)
-prometheusOperatorObjects:
-  enabled: true
-
 # Collectors (Alloy instances)
 # An Alloy instance for collecting metrics.
 alloy-metrics:
