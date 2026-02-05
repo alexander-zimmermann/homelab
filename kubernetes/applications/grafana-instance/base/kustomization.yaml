@@ -34,5 +34,17 @@ patches:
       kind: Service
       name: grafana
 
+  # Deployment Patch - Allow immutable selector changes on chart upgrades
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: grafana-image-renderer
+        annotations:
+          argocd.argoproj.io/sync-options: Replace=true
+    target:
+      kind: Deployment
+      name: grafana-image-renderer
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "10"
