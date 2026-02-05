@@ -17,7 +17,7 @@ helmCharts:
     includeCRDs: true
 
 labels:
-  - includeSelectors: true
+  - includeSelectors: false
     pairs:
       app.kubernetes.io/name: prometheus
 
