@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       labels:
-        app: mosquitto
+        app.kubernetes.io/name: mosquitto
     spec:
       automountServiceAccountToken: false
       securityContext:

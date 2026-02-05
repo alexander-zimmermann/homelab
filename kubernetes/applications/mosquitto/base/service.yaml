@@ -6,6 +6,8 @@ metadata:
   annotations:
     coredns.io/hostname: mqtt.${INT_FQDN_I-$DEFAULT_FQDN}
 spec:
+  selector:
+    app.kubernetes.io/name: mosquitto
   type: LoadBalancer
   ports:
     - name: web
