@@ -11,11 +11,21 @@ serviceAccount:
   # Explicit name for the ServiceAccount for better traceability
   name: grafana
 
-
 # Pod Metadata
 podLabels:
   # Additional label for consistent selectors in services and network policies
   component: grafana-server
+
+## Resources
+# Container resources: requests influence scheduling/QoS; limits enforce a hard cap.
+resources:
+  # Resources for the main Grafana container.
+  requests:
+    cpu: 50m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
 
 # Administrator Access
 admin:
@@ -41,6 +51,14 @@ grafana.ini:
 
 # Sidecar Configuration (Auto-import)
 sidecar:
+  # Resources for the sidecar containers (dashboards/datasources, etc.).
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
   dashboards:
     enabled: true
     searchNamespace: ALL
@@ -51,41 +69,16 @@ sidecar:
 # Image Rendering (PNG Exports)
 imageRenderer:
   enabled: true
+  # Resources for the image renderer Deployment.
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
   networkPolicy:
     limitIngress: false
-
-# Network Security
-networkPolicy:
-  enabled: true
-  # Disallow external access not coming through the ingress controller
-  allowExternal: false
-  # Allow access only from defined namespaces (Ingress, Operator, Instance-local)
-  explicitNamespacesSelector:
-    matchExpressions:
-      - key: kubernetes.io/metadata.name
-        operator: In
-        values:
-          - ingress-controller
-          - grafana-operator
-          - grafana-instance
-  # Define allowed egress for DNS, metrics (Prometheus), and logs (Loki)
-  egress:
-    enabled: true
-    ports:
-      - port: 53
-        protocol: UDP
-      - port: 53
-        protocol: TCP
-      - port: 8081
-        protocol: TCP
-      - port: 80
-        protocol: TCP
-      - port: 443
-        protocol: TCP
-      - port: 9090
-        protocol: TCP
-      - port: 3100
-        protocol: TCP
 
 extraObjects:
   # Register the Grafana instance with the Grafana Operator for advanced management
