@@ -1,19 +1,19 @@
 global:
-  # Environment variables for all components (Server, Worker, etc.)
+  # Environment variables applied to all chart components (server, worker, etc.).
   env:
-    # Database Password from CNPG Secret (authentik-db-app is created by the Cluster resource)
+    # Database password from a Secret created by the CloudNativePG Cluster.
     - name: AUTHENTIK_POSTGRESQL__PASSWORD
       valueFrom:
         secretKeyRef:
           name: authentik-db-app
           key: password
-    # Internal Secret Key for Authentik (Signatures, Encryptions)
+    # Authentik internal secret key (signing/encryption).
     - name: AUTHENTIK_SECRET_KEY
       valueFrom:
         secretKeyRef:
           name: authentik-credentials
           key: AUTHENTIK_SECRET_KEY
-    # Initial Admin Password for 'akadmin' bootstrap
+    # Initial bootstrap admin password.
     - name: AUTHENTIK_BOOTSTRAP_PASSWORD
       valueFrom:
         secretKeyRef:
@@ -21,14 +21,35 @@ global:
           key: AUTHENTIK_BOOTSTRAP_PASSWORD
 
 authentik:
-  # SMTP configuration for notifications and password resets
+  # Authentik application settings.
   email:
-    # Using internal SMTP relay
+    # SMTP configuration for notifications and password resets.
     host: smtprelay.smtprelay.svc.cluster.local
     port: 25
     from: "Authentik <admin@zimmermann.sh>"
 
-  # Connect to external CloudNativePG Database
+  # PostgreSQL connection settings (external DB via CloudNativePG).
   postgresql:
-    # host matches the CNPG Cluster name + suffix '-db-rw'
+    # Host matches the CNPG Cluster service name ("<release>-db-rw").
     host: "{{ .Release.Name }}-db-rw"
+
+## Resources
+server:
+  # Resources for the Authentik server Deployment.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 768Mi
+
+worker:
+  # Resources for the Authentik worker Deployment.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 768Mi
