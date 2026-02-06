@@ -35,7 +35,7 @@ authentik:
 
 ## Resources
 server:
-  # Resources for the Authentik server Deployment.
+  # Authentik server resources: requests influence scheduling/QoS; limits enforce a hard cap.
   resources:
     requests:
       cpu: 100m
@@ -45,7 +45,7 @@ server:
       memory: 768Mi
 
 worker:
-  # Resources for the Authentik worker Deployment.
+  # Authentik worker resources: requests influence scheduling/QoS; limits enforce a hard cap.
   resources:
     requests:
       cpu: 100m

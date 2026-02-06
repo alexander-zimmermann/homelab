@@ -19,7 +19,7 @@ podLabels:
 ## Resources
 # Container resources: requests influence scheduling/QoS; limits enforce a hard cap.
 resources:
-  # Resources for the main Grafana container.
+  # Grafana main container resources: requests influence scheduling/QoS; limits enforce a hard cap.
   requests:
     cpu: 50m
     memory: 256Mi
@@ -51,7 +51,7 @@ grafana.ini:
 
 # Sidecar Configuration (Auto-import)
 sidecar:
-  # Resources for the sidecar containers (dashboards/datasources, etc.).
+  # Grafana sidecar resources: requests influence scheduling/QoS; limits enforce a hard cap.
   resources:
     requests:
       cpu: 10m
@@ -69,7 +69,7 @@ sidecar:
 # Image Rendering (PNG Exports)
 imageRenderer:
   enabled: true
-  # Resources for the image renderer Deployment.
+  # Grafana image renderer resources: requests influence scheduling/QoS; limits enforce a hard cap.
   resources:
     requests:
       cpu: 20m

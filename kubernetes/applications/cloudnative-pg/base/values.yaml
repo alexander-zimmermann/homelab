@@ -3,7 +3,7 @@ imagePullSecrets:
   - name: dhi-registry-secret
 
 resources:
-  # Container resources for the CloudNativePG operator Deployment.
+  # CloudNativePG operator resources: requests influence scheduling/QoS; limits enforce a hard cap.
   requests:
     cpu: 50m
     memory: 128Mi

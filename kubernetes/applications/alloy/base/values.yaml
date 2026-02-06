@@ -17,7 +17,7 @@ clusterMetrics:
   enabled: true
   destinations:
     - prometheus
-  # Resource settings for the bundled exporters.
+  # Kube-state-metrics resources: requests influence scheduling/QoS; limits enforce a hard cap.
   kube-state-metrics:
     resources:
       requests:
@@ -26,6 +26,7 @@ clusterMetrics:
       limits:
         cpu: 200m
         memory: 256Mi
+  # Node exporter resources: requests influence scheduling/QoS; limits enforce a hard cap.
   node-exporter:
     resources:
       requests:
@@ -53,7 +54,7 @@ podLogs:
     - loki
 
 ## Collectors (Alloy instances)
-# Each block configures an Alloy instance; nested `alloy.resources` sets container requests/limits.
+# Alloy Metrics instance resources: requests influence scheduling/QoS; limits enforce a hard cap.
 alloy-metrics:
   enabled: true
   alloy:
@@ -65,8 +66,8 @@ alloy-metrics:
         cpu: 500m
         memory: 512Mi
 
-## Singleton instance
-# Intended for components that should run as a single replica.
+## Singleton instance: intended for components that should run as a single replica (e.g. log processing).
+# Alloy Singleton instance resources: requests influence scheduling/QoS; limits enforce a hard cap.
 alloy-singleton:
   enabled: true
   alloy:
@@ -79,7 +80,7 @@ alloy-singleton:
         memory: 256Mi
 
 ## Log instance
-# Collects log data and ships it to the configured destination(s).
+# Alloy Log instance resources: requests influence scheduling/QoS; limits enforce a hard cap.
 alloy-logs:
   enabled: true
   alloy:
@@ -92,7 +93,7 @@ alloy-logs:
         memory: 384Mi
 
 ## Operator
-# Resources for the Alloy Operator Deployment.
+# Alloy Operator resources: requests influence scheduling/QoS; limits enforce a hard cap.
 alloy-operator:
   resources:
     requests:
