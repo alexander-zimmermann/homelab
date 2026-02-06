@@ -16,6 +16,23 @@ clusterMetrics:
   enabled: true
   destinations:
     - prometheus
+  # Ensure kube-state-metrics and node-exporter are not BestEffort.
+  kube-state-metrics:
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+  node-exporter:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 100m
+        memory: 64Mi
 
 # Features - Cluster Events
 clusterEvents:
@@ -35,30 +52,48 @@ podLogs:
     - loki
 
 # Collectors (Alloy instances)
-# An Alloy instance for collecting metrics.
+# Alloy instance for collecting metrics.
 alloy-metrics:
   enabled: true
+  alloy:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
 
-# An Alloy instance for data sources required to be deployed on a single replica.
+# Alloy instance for data sources required to be deployed on a single replica.
 alloy-singleton:
   enabled: true
+  alloy:
+    resources:
+      requests:
+        cpu: 25m
+        memory: 128Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi
 
-# An Alloy instance for collecting log data.
+# Alloy instance for collecting log data.
 alloy-logs:
   enabled: true
-
-# Common Network Policies for all Alloy instances
-collectorCommon:
   alloy:
-    networkPolicy:
-      enabled: true
-      flavor: kubernetes
-      ingress:
-        - from:
-            - namespaceSelector:
-                matchExpressions:
-                  - key: kubernetes.io/metadata.name
-                    operator: In
-                    values:
-                      - ingress-controller
-                      - prometheus
+    resources:
+      requests:
+        cpu: 25m
+        memory: 128Mi
+      limits:
+        cpu: 300m
+        memory: 384Mi
+
+# Ensure the Alloy Operator itself is not BestEffort.
+alloy-operator:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
