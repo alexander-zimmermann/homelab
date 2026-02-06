@@ -28,4 +28,6 @@ fleet_vm:
     vm_id_start: 2001
     disks:
       - disk_interface: scsi1
-        disk_size: 96
+        disk_size: 128
+      - disk_interface: scsi2
+        disk_size: 4

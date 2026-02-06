@@ -35,7 +35,7 @@ template_vm:
     os_type: l26
     ## Resources
     memory: 2048
-    cores: 2
+    cores: 4
     disk_size: 16
     vnic_bridge: vmbr0
     ## Cloud-init
@@ -59,9 +59,9 @@ template_vm:
     image_id: vm_talos_1_12_2_dp-prod
     os_type: l26
     ## Resources
-    memory: 4048 #8192
+    memory: 6144 #8192
     cores: 6
-    disk_size: 48
+    disk_size: 64
     vnic_bridge: vmbr0
 
   vm_talos_1_12_2_cp-dev:
@@ -79,9 +79,9 @@ template_vm:
     image_id: vm_talos_1_12_2_dp-dev
     os_type: l26
     ## Resources
-    memory: 4048 #8192
+    memory: 6144 #8192
     cores: 6
-    disk_size: 48
+    disk_size: 64
     vnic_bridge: vmbr0
 
   vm_windows_11_25h2:

@@ -15,17 +15,24 @@ machine:
     modules:
       - name: zfs # Required for ZFS storage
 
-  ## Network sysctls required for Cilium
+  ## Sysctl settings
   sysctls:
+    ## Network sysctls required for Cilium
     net.ipv4.ip_forward: "1"
     net.ipv6.conf.all.forwarding: "1"
+
+    ## Swap tuning
+    vm.swappiness: "130" # Default is 60; higher values make the kernel more willing to swap
+    vm.page-cluster: "0" # Disable swap read-ahead to reduce unnecessary I/O on non-rotational devices
 
   ## Kubelet security and bootstrap config
   kubelet:
     extraArgs:
       rotate-server-certificates: "true" # Enable kubelet serving cert rotation
     extraConfig:
-      serverTLSBootstrap: true # Allow kubelet to request TLS certs
+      serverTLSBootstrap: true # Allow kubelet to request TLS certs)
+      memorySwap: # Kubernetes swap support (K8s 1.32+)
+        swapBehavior: LimitedSwap
 
   ## NTP Time Synchronization
   time:
@@ -41,3 +48,17 @@ machine:
     hostDNS:
       enabled: true
       forwardKubeDNSToHost: true # Forward DNS from pods to host resolver
+
+---
+## Disable Talos userspace OOM controller (Talos v1.12.x mitigation)
+apiVersion: v1alpha1
+kind: OOMConfig
+triggerExpression: "false"
+cgroupRankingExpression: "0.0"
+sampleInterval: "5s"
+
+---
+## Enable zswap (compressed swap cache). Requires swap to be enabled to have effect.
+apiVersion: v1alpha1
+kind: ZswapConfig
+maxPoolPercent: 20
