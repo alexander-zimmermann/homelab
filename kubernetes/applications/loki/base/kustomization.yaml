@@ -20,14 +20,3 @@ labels:
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "4"
-  argocd.argoproj.io/compare-options: IgnoreExtraneous
-  argocd.argoproj.io/sync-options: ServerSideApply=true
-
-patches:
-  - target:
-      kind: StatefulSet
-      name: loki
-    patch: |-
-      - op: add
-        path: /metadata/labels/homelab.app
-        value: loki

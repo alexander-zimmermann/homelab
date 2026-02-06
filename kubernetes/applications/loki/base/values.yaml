@@ -44,13 +44,69 @@ read:
 backend:
   replicas: 0
 
-# Cache memory allocation (in MB)
+# Chunks cache resources: requests influence scheduling/QoS; limits enforce a hard cap.
 chunksCache:
   allocatedMemory: 256
+  resources:
+    requests:
+      cpu: 50m
+      memory: 307Mi
+    limits:
+      cpu: 200m
+      memory: 307Mi
+
+# Results cache resources: requests influence scheduling/QoS; limits enforce a hard cap.
+resultsCache:
+  allocatedMemory: 256
+  resources:
+    requests:
+      cpu: 50m
+      memory: 307Mi
+    limits:
+      cpu: 200m
+      memory: 307Mi
+
+# Memcached exporter resources: requests influence scheduling/QoS; limits enforce a hard cap.
+memcachedExporter:
+  resources:
+    requests:
+      cpu: 5m
+      memory: 16Mi
+    limits:
+      cpu: 50m
+      memory: 64Mi
+
+# Gateway resources: requests influence scheduling/QoS; limits enforce a hard cap.
+gateway:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+# Loki canary resources: requests influence scheduling/QoS; limits enforce a hard cap.
+lokiCanary:
+  resources:
+    requests:
+      cpu: 5m
+      memory: 16Mi
+    limits:
+      cpu: 50m
+      memory: 64Mi
 
 # Persistence configuration for SingleBinary mode
 singleBinary:
   replicas: 1
+  # Loki single-binary resources: requests influence scheduling/QoS; limits enforce a hard cap.
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
   persistence:
     # Automatic StatefulSet recreation for PVC expansion
     enableStatefulSetRecreationForSizeChange: true
@@ -58,25 +114,12 @@ singleBinary:
     size: 5Gi
     storageClass: longhorn
 
-# Network policy and traffic rules
-networkPolicy:
-  enabled: true
-  metrics:
-    namespaceSelector:
-      matchExpressions:
-        - key: kubernetes.io/metadata.name
-          operator: In
-          values:
-            - prometheus
-            - alloy
-            - loki
-  ingress:
-    namespaceSelector:
-      matchExpressions:
-        - key: kubernetes.io/metadata.name
-          operator: In
-          values:
-            - grafana-instance
-            - prometheus
-            - alloy
-            - loki
+# Rules sidecar resources: requests influence scheduling/QoS; limits enforce a hard cap.
+sidecar:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
