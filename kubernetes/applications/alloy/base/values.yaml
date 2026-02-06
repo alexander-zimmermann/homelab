@@ -1,8 +1,9 @@
 cluster:
-  # The cluster name used in labels and metadata
+  # Cluster name used in labels and metadata.
   name: homelab
 
-# Telemetry Destinations
+## Destinations
+# Remote write / push endpoints for metrics and logs.
 destinations:
   - name: prometheus
     type: prometheus
@@ -11,12 +12,12 @@ destinations:
     type: loki
     url: http://loki-gateway.loki.svc.cluster.local/loki/api/v1/push
 
-# Features - Cluster Monitoring
+## Cluster metrics
 clusterMetrics:
   enabled: true
   destinations:
     - prometheus
-  # Ensure kube-state-metrics and node-exporter are not BestEffort.
+  # Resource settings for the bundled exporters.
   kube-state-metrics:
     resources:
       requests:
@@ -34,13 +35,13 @@ clusterMetrics:
         cpu: 100m
         memory: 64Mi
 
-# Features - Cluster Events
+## Cluster events
 clusterEvents:
   enabled: true
   destinations:
     - loki
 
-# Features - Node & Pod Logs
+## Node and pod logs
 nodeLogs:
   enabled: true
   destinations:
@@ -51,8 +52,8 @@ podLogs:
   destinations:
     - loki
 
-# Collectors (Alloy instances)
-# Alloy instance for collecting metrics.
+## Collectors (Alloy instances)
+# Each block configures an Alloy instance; nested `alloy.resources` sets container requests/limits.
 alloy-metrics:
   enabled: true
   alloy:
@@ -64,7 +65,8 @@ alloy-metrics:
         cpu: 500m
         memory: 512Mi
 
-# Alloy instance for data sources required to be deployed on a single replica.
+## Singleton instance
+# Intended for components that should run as a single replica.
 alloy-singleton:
   enabled: true
   alloy:
@@ -76,7 +78,8 @@ alloy-singleton:
         cpu: 250m
         memory: 256Mi
 
-# Alloy instance for collecting log data.
+## Log instance
+# Collects log data and ships it to the configured destination(s).
 alloy-logs:
   enabled: true
   alloy:
@@ -88,7 +91,8 @@ alloy-logs:
         cpu: 300m
         memory: 384Mi
 
-# Ensure the Alloy Operator itself is not BestEffort.
+## Operator
+# Resources for the Alloy Operator Deployment.
 alloy-operator:
   resources:
     requests:
