@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
-              value: "Australia/Sydney"
+              value: "Europe/Berlin"
           resources:
             requests:
               cpu: 5m
