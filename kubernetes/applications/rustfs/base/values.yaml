@@ -1,202 +1,39 @@
-# Default values for rustfs.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-# This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+# Standalone mode (single replica) for homelab usage.
 replicaCount: 1
-
-# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
-image:
-  repository: rustfs/rustfs
-  # This sets the pull policy for images.
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: 1.0.0-alpha.79
-
-# This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets: []
-
-imageRegistryCredentials:
-  enabled: false
-  registry: ""
-  username: ""
-  password: ""
-  email: ""
-
-# This is to override the chart name.
-nameOverride: ""
-fullnameOverride: ""
-
 mode:
   standalone:
     enabled: true
   distributed:
     enabled: false
 
+# Credentials are provided via SealedSecret; the chart reads them from the
+# referenced Secret.
 secret:
-  existingSecret: "rustfs-admin-credentials"
+  existingSecret: rustfs-admin-credentials
   rustfs:
     access_key: ""
     secret_key: ""
 
 config:
   rustfs:
-    # Examples
-    # volumes: "/data/rustfs0,/data/rustfs1,/data/rustfs2,/data/rustfs3"
-    # volumes: "http://rustfs-{0...3}.rustfs-headless:9000/data/rustfs{0...3}"
-    volumes: ""
-    server_domains: "rustfs-svc.rustfs.svc.cluster.local"
-    address: ":9000"
-    console_enable: "true"
-    console_address: ":9001"
-    log_level: "debug"
-    rust_log: "debug"
-    region: "us-east-1"
-    obs_log_directory: "/logs"
-    obs_environment: "develop"
+    # Service DNS used for internal access.
+    server_domains: rustfs-svc.rustfs.svc.cluster.local
 
-# This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Automatically mount a ServiceAccount's API credentials?
-  automount: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
-
-# This is for setting Kubernetes Annotations to a Pod.
-# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-podAnnotations: {}
-
-# This is for setting Kubernetes Labels to a Pod.
-# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-podLabels: {}
-
-# Labels to add to all deployed objects
-commonLabels: {}
-
-podSecurityContext:
-  fsGroup: 10001
-  runAsUser: 10001
-  runAsGroup: 10001
-
-containerSecurityContext:
-  capabilities:
-    drop:
-      - ALL
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-
-service:
-  type: ClusterIP
-  endpoint:
-    port: 9000
-    nodePort: 32000
-  console:
-    port: 9001
-    nodePort: 32001
-
-# This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
+# Ingress is managed outside of the chart (Traefik IngressRoute manifests).
 ingress:
   enabled: false
-  className: "nginx" # Specify the classname, traefik or nginx. Different classname has different annotations for session sticky.
-  traefikAnnotations:
-    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
-    traefik.ingress.kubernetes.io/service.sticky.cookie.httponly: "true"
-    traefik.ingress.kubernetes.io/service.sticky.cookie.name: rustfs
-    traefik.ingress.kubernetes.io/service.sticky.cookie.samesite: none
-    traefik.ingress.kubernetes.io/service.sticky.cookie.secure: "true"
-  nginxAnnotations:
-    nginx.ingress.kubernetes.io/affinity: cookie
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
-    nginx.ingress.kubernetes.io/session-cookie-expires: "3600"
-    nginx.ingress.kubernetes.io/session-cookie-hash: sha1
-    nginx.ingress.kubernetes.io/session-cookie-max-age: "3600"
-    nginx.ingress.kubernetes.io/session-cookie-name: rustfs
-  customAnnotations: # Specify custom annotations
-    {} # Customize annotations
-  hosts:
-    - host: example.rustfs.com
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    enabled: false # Enable tls and access rustfs via https.
-    certManager:
-      enabled: false # Enable certmanager to generate certificate for rustfs, default false.
-    secretName: secret-tls
-    crt: tls.crt
-    key: tls.key
 
+# RustFS resources: requests influence scheduling/QoS; limits enforce a hard cap.
 resources:
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  limits:
-    cpu: 200m
-    memory: 512Mi
   requests:
     cpu: 100m
     memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 512Mi
 
-# This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-livenessProbe:
-  httpGet:
-    path: /health
-    port: endpoint
-  initialDelaySeconds: 10
-  periodSeconds: 5
-  timeoutSeconds: 3
-  successThreshold: 1
-  failureThreshold: 3
-
-readinessProbe:
-  httpGet:
-    path: /health
-    port: endpoint
-  initialDelaySeconds: 30
-  periodSeconds: 5
-  timeoutSeconds: 3
-  successThreshold: 1
-  failureThreshold: 3
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity:
-  podAntiAffinity:
-    enabled: true
-    topologyKey: kubernetes.io/hostname
-  nodeAffinity: {}
-
+# Persist data on Longhorn.
 storageclass:
   name: longhorn
   dataStorageSize: 5Gi
   logStorageSize: 1Gi
-
-# Init container parameters.
-initStep:
-  image:
-    repository: busybox
-    pullPolicy: IfNotPresent
-    tag: "latest"
-  containerSecurityContext:
-    runAsUser: 0
-    runAsGroup: 0
-
-pdb:
-  create: false
-  # Minimum number/percentage of pods that should remain scheduled
-  minAvailable: ""
-  # Maximum number/percentage of pods that may be made unavailable
-  maxUnavailable: 1
-
-# Whether information about services should be injected into pod's environment variable
-enableServiceLinks: false
-
-extraManifests: []
