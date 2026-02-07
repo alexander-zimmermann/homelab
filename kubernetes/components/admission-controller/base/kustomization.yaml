@@ -16,6 +16,11 @@ helmCharts:
     namespace: admission-controller
     includeCRDs: true
 
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: admission-controller
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-2"
   argocd.argoproj.io/compare-options: ServerSideDiff=true

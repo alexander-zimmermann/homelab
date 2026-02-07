@@ -7,5 +7,10 @@ resources:
   - ./ingress-route.yaml
   - ./sealed-secret.yaml
 
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: gitops-controller
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "0"

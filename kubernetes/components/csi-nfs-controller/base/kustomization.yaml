@@ -15,5 +15,10 @@ helmCharts:
     namespace: csi-nfs-controller
     includeCRDs: true
 
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: csi-nfs-controller
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-2"

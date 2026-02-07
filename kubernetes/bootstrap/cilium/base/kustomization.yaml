@@ -13,3 +13,8 @@ helmCharts:
     valuesFile: values.yaml
     namespace: cilium
     includeCRDs: true
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: cilium

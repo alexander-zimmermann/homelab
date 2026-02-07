@@ -3,3 +3,79 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+patches:
+  # Longhorn Manager resources: requests influence scheduling/QoS; limits enforce a hard cap.
+  - target:
+      group: apps
+      version: v1
+      kind: DaemonSet
+      name: longhorn-manager
+      namespace: csi-block-storage-controller
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: longhorn-manager
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: pre-pull-share-manager-image
+      - op: add
+        path: /spec/template/spec/containers/1/resources
+        value:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
+
+  # Longhorn UI resources: requests influence scheduling/QoS; limits enforce a hard cap.
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: longhorn-ui
+      namespace: csi-block-storage-controller
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: longhorn-ui
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+
+  # Longhorn Driver Deployer resources: requests influence scheduling/QoS; limits enforce a hard cap.
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: longhorn-driver-deployer
+      namespace: csi-block-storage-controller
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: longhorn-driver-deployer
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi

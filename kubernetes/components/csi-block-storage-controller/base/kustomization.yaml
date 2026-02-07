@@ -14,5 +14,10 @@ helmCharts:
     namespace: csi-block-storage-controller
     includeCRDs: true
 
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: csi-block-storage-controller
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-2"

@@ -15,5 +15,10 @@ helmCharts:
     namespace: ingress-controller
     includeCRDs: true
 
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: ingress-controller
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-1"

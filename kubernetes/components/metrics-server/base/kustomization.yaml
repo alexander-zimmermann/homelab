@@ -12,5 +12,10 @@ helmCharts:
     namespace: kube-system
     includeCRDs: true
 
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: metrics-server
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-5"

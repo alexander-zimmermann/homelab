@@ -11,5 +11,10 @@ resources:
   - ./bgp-advertisement.yaml
   - ./bgp-lb-ip-pool.yaml
 
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: cilium
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-10"

@@ -15,5 +15,10 @@ helmCharts:
     namespace: sealed-secrets-controller
     includeCRDs: true
 
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: sealed-secrets-controller
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-4"

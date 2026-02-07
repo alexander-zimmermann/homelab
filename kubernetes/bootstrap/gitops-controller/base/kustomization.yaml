@@ -15,3 +15,8 @@ helmCharts:
     version: 9.3.7
     valuesFile: values.yaml
     namespace: gitops-controller
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: gitops-controller

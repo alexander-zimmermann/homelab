@@ -15,5 +15,10 @@ helmCharts:
     namespace: external-dns
     includeCRDs: true
 
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: external-dns
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-2"
