@@ -5,15 +5,6 @@ resources:
   - ../../base
 
 patches:
-  # Reduce storage requests
-  - patch: |-
-      - op: replace
-        path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
-        value: 128Mi
-    target:
-      kind: StatefulSet
-      name: loki
-
   # Loadbalancer configuration
   - patch: |-
       - op: replace
