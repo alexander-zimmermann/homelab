@@ -4,3 +4,21 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+replacements:
+  - sourceValue: "prod"
+    targets:
+      - select:
+          kind: ApplicationSet
+        fieldPaths:
+          - spec.generators.0.git.files.0.path
+        options:
+          delimiter: "/"
+          index: 3
+      - select:
+          kind: ApplicationSet
+        fieldPaths:
+          - spec.template.metadata.name
+        options:
+          delimiter: "-"
+          index: 1

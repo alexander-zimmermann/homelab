@@ -5,21 +5,20 @@ kind: Kustomization
 resources:
   - ../../base
 
-patches:
-  # Patch for 'applications' (Business Apps) - uses File Generator + Base
-  - patch: |-
-      - op: replace
-        path: /spec/template/spec/source/path
-        value: kubernetes/applications/{{index .path.segments 2}}/overlays/dev
-    target:
-      kind: ApplicationSet
-      name: applications
-
-  # Patch for 'cluster' (Infra Components) - uses File Generator + Base
-  - patch: |-
-      - op: replace
-        path: /spec/template/spec/source/path
-        value: kubernetes/components/{{index .path.segments 2}}/overlays/dev
-    target:
-      kind: ApplicationSet
-      name: cluster
+replacements:
+  - sourceValue: "dev"
+    targets:
+      - select:
+          kind: ApplicationSet
+        fieldPaths:
+          - spec.generators.0.git.files.0.path
+        options:
+          delimiter: "/"
+          index: 3
+      - select:
+          kind: ApplicationSet
+        fieldPaths:
+          - spec.template.metadata.name
+        options:
+          delimiter: "-"
+          index: 1
