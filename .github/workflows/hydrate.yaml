@@ -38,7 +38,7 @@ jobs:
             local type=$1
             local path=$2
             local name=$(basename $(dirname $(dirname $path)))
-            local env=$(basename $(dirname $path))
+            local env=$(basename $path)
 
             # Only process "prod" overlays for now
             if [[ "$env" == "prod" ]]; then
