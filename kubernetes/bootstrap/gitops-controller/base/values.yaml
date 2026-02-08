@@ -36,7 +36,6 @@ controller:
     - name: ARGOCD_CALC_DIFF_VIA_RECONCILIATION
       value: "true"
     # Set GOMEMLIMIT to 90% of the container limit (1024Mi * 0.9 = 966367641 bytes).
-    # Must be in bytes or specific format (e.g. 922MiB not 922Mi). Using bytes for safety.
     - name: GOMEMLIMIT
       value: "966367641"
 
