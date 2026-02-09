@@ -1,26 +1,44 @@
+---
 name: Renovate
+
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - .renovaterc.json5
+      - .renovate/**.json5
   schedule:
-    - cron: "0 */4 * * *"
+    - cron: '0 * * * *' # Every hour
   workflow_dispatch:
+    inputs:
+      dryRun:
+        description: Dry Run
+        type: boolean
+        default: false
+      logLevel:
+        description: Log Level
+        default: debug
+      version:
+        description: Renovate Version
+        default: latest
 
 jobs:
   renovate:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      issues: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Self-hosted Renovate
-        uses: renovatebot/github-action@v41.0.22
+      - name: Renovate
+        uses: renovatebot/github-action@v41.0.7
         env:
-          RENOVATE_REPOSITORIES: '["${{ github.repository }}"]'
-          LOG_LEVEL: debug
-          RENOVATE_ALLOWED_COMMANDS: '["^python3 .github/scripts/update_checksums\\.py$"]'
+          LOG_LEVEL: ${{ inputs.logLevel || 'debug' }}
+          RENOVATE_AUTODISCOVER: true
+          RENOVATE_AUTODISCOVER_FILTER: ${{ github.repository }}
+          RENOVATE_DRY_RUN: ${{ inputs.dryRun }}
+          RENOVATE_PLATFORM: github
+          RENOVATE_PLATFORM_COMMIT: true
         with:
-          configurationFile: .github/renovate.json5
-          token: ${{ secrets.RENOVATE_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          renovate-version: ${{ inputs.version || 'latest' }}

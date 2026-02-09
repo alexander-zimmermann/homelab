@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "docker:enableMajor",
+    "helpers:pinGitHubActionDigests",
+    "local>.renovate/autoMerge.json5",
+    "local>.renovate/customManagers.json5",
+    "local>.renovate/grafanaDashboards.json5",
+    "local>.renovate/groups.json5",
+    "local>.renovate/labels.json5",
+    "local>.renovate/semanticCommits.json5",
+    ":dependencyDashboard",
+    ":disableRateLimiting",
+    ":gitSignOff",
+    ":semanticCommits",
+    ":timezone(Europe/Berlin)"
+  ],
+  "dependencyDashboardTitle": "Renovate Dashboard 🤖",
+  "suppressNotifications": ["prEditedNotification", "prIgnoreNotification"],
+  "ignorePaths": ["**/resources/**", "**/deprecated/**"],
+  "kubernetes": {
+    "fileMatch": ["\\.yaml$"]
+  },
+  "flux": {
+    "fileMatch": ["\\.yaml$"]
+  },
+  "postUpgradeTasks": {
+    "commands": ["python3 .github/scripts/update_checksums.py"],
+    "fileFilters": ["infrastructure/manifest/20-image/image.yaml"],
+    "executionMode": "branch"
+  }
+}
