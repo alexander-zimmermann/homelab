@@ -16,6 +16,23 @@ helmCharts:
     valuesFile: values.yaml
     namespace: rustfs
 
+patches:
+  # Configure LoadBalancer with Cilium BGP advertisement
+  - patch: |-
+      - op: replace
+        path: /spec/type
+        value: LoadBalancer
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1ip-pool
+        value: default
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1advertise-service
+        value: default
+    target:
+      kind: Service
+      name: rustfs-svc
+      namespace: rustfs
+
 labels:
   - includeSelectors: false
     pairs:

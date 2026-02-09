@@ -4,58 +4,60 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject domain name into the Certificate and IngressRoute
+  - sourceValue: console.rustfs.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: rustfs-console-tls
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: rustfs-console
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
-  # Ingress host
+  # Reduced developer footprint for RustFS server
   - patch: |-
       - op: replace
-        path: /spec/routes/0/match
-        value: Host(`console.rustfs.zimmermann.phd`)
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
     target:
-      kind: IngressRoute
-      name: rustfs-console
-      namespace: rustfs
+      kind: Deployment
+      name: rustfs
 
-  # Certificate DNS names
-  - patch: |-
-      - op: replace
-        path: /spec/dnsNames/0
-        value: console.rustfs.zimmermann.phd
-    target:
-      kind: Certificate
-      name: rustfs-console-tls
-      namespace: rustfs
-
-  # Loadbalancer configuration
-  - patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
-      name: rustfs-svc
-      namespace: rustfs
-
-  # Reduce storage requests - Data
+  # Developer storage for RustFS data and logs
   - patch: |-
       - op: replace
         path: /spec/resources/requests/storage
         value: 512Mi
+      - op: replace
+        path: /spec/storageClassName
+        value: longhorn
     target:
       kind: PersistentVolumeClaim
       name: rustfs-data
       namespace: rustfs
 
-  # Reduce storage requests - Logs
   - patch: |-
       - op: replace
         path: /spec/resources/requests/storage
         value: 128Mi
+      - op: replace
+        path: /spec/storageClassName
+        value: longhorn
     target:
       kind: PersistentVolumeClaim
       name: rustfs-logs
