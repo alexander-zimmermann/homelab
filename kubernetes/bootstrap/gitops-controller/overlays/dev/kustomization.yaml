@@ -15,7 +15,7 @@ replacements:
           - spec.generators.0.git.files.0.path
         options:
           delimiter: "/"
-          index: 3
+          index: 0
       - select:
           kind: ApplicationSet
         fieldPaths:
