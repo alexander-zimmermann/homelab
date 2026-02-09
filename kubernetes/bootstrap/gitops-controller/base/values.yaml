@@ -23,21 +23,10 @@ configs:
 
 # ArgoCD controller manages state of Applications, and performs sync/health checks.
 controller:
-  resources:
-    requests:
-      cpu: 250m
-      memory: 512Mi
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-
   env:
     # Reduce memory usage by enabling diff calculation via reconciliation.
     - name: ARGOCD_CALC_DIFF_VIA_RECONCILIATION
       value: "true"
-    # Set GOMEMLIMIT to 90% of the container limit (1024Mi * 0.9 = 966367641 bytes).
-    - name: GOMEMLIMIT
-      value: "966367641"
 
   metrics:
     # Exposes application sync status and controller performance metrics to Prometheus.
@@ -45,31 +34,8 @@ controller:
     serviceMonitor:
       enabled: true
 
-# ArgoCD API/UI server
-server:
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 250m
-      memory: 256Mi
-
-  env:
-    # Set GOMEMLIMIT to 90% of the container limit (256Mi * 0.9 = 241172480 bytes).
-    - name: GOMEMLIMIT
-      value: "241172480"
-
 # ArgoCD Repo-server renders/manages repos/Helm/Kustomize.
 repoServer:
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
-
   env:
     # Limit concurrent manifest generation to reduce memory spikes.
     - name: ARGOCD_REPO_SERVER_MAX_CONCURRENT_REQUESTS
@@ -77,11 +43,8 @@ repoServer:
     # Limit concurrent helm/kustomize processes (forking) to save RAM.
     - name: ARGOCD_REPO_SERVER_PARALLELISM_LIMIT
       value: "2"
-    # Set GOMEMLIMIT to 90% of the container limit (512Mi * 0.9 = 482344960 bytes).
-    - name: GOMEMLIMIT
-      value: "482344960"
 
-# ApplicationSet controller generates Applications from generators (e.g. Git, List, Cluster, etc.)
+# ApplicationSet controller generates Applications from generators (e.g. Git, List, Cluster, etc.).
 applicationSet:
   resources:
     requests:
