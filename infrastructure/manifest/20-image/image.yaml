@@ -15,25 +15,25 @@ image:
   vm_talos_1_12_2_cp-prod:
     image_type: import
     image_filename: talos-1.12.2-cp-prod-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/59fde51b82473c0eb57059149c67a6058327247cd7ffe13af97355856a5315e6/1.12.2/nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/59fde51b82473c0eb57059149c67a6058327247cd7ffe13af97355856a5315e6/1.12.3/nocloud-amd64.raw
     image_checksum: 2eddc924a7ee81dbb83daf282c6c3ca412854478c4ce2550b12052bf523b8277
 
   vm_talos_1_12_2_dp-prod:
     image_type: import
     image_filename: talos-1.12.2-dp-prod-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/aa15fdd6a7f2c756e252f4720e4d0d2a7b3bd26b3163f3e1e6fbb188f511297b/1.12.2/nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/aa15fdd6a7f2c756e252f4720e4d0d2a7b3bd26b3163f3e1e6fbb188f511297b/1.12.3/nocloud-amd64.raw
     image_checksum: dfe3b34a2761811b90c3bc6ac195ad2db872e8fe14f3612ce574d0be02e7bbc9
 
   vm_talos_1_12_2_cp-dev:
     image_type: import
     image_filename: talos-1.12.2-cp-dev-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/577869ee5d2e8ec0ba2cedd209bd19158f2fbb0720efa288107de4c6d95f5b14/1.12.2/nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/577869ee5d2e8ec0ba2cedd209bd19158f2fbb0720efa288107de4c6d95f5b14/1.12.3/nocloud-amd64.raw
     image_checksum: 5fcde1a12f268a5949553bfcd1530de1b1122c00585fcf3333ad7549ccf6f923
 
   vm_talos_1_12_2_dp-dev:
     image_type: import
     image_filename: talos-1.12.2-dp-dev-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/a3680b2d6cfcd2fcee1aeefd9ec5da9502bcc516c0b4ae7f83d63e1b72596b54/1.12.2/nocloud-amd64.raw
+    image_url: https://factory.talos.dev/image/a3680b2d6cfcd2fcee1aeefd9ec5da9502bcc516c0b4ae7f83d63e1b72596b54/1.12.3/nocloud-amd64.raw
     image_checksum: 2969eb54c9a3a3fb3991de0c770b007f8a3f43be2e8b0fbaab6aa181f7de86cd
 
   lxc_ubuntu_plucky:
