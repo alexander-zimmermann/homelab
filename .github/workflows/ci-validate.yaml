@@ -1,0 +1,84 @@
+---
+name: CI Validate
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Manifests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Kustomize
+        uses: fluxcd/pkg/actions/kustomize@main
+
+      - name: Validate All Overlays
+        run: |
+          set -euo pipefail
+          # Find all kustomization.yaml files in overlays (prod/dev)
+          OVERLAYS=$(find kubernetes -type f -name "kustomization.yaml" | grep "overlays/")
+
+          for kfile in $OVERLAYS; do
+            dir=$(dirname "$kfile")
+            echo "::group::Validating $dir"
+            kustomize build --enable-helm "$dir" > /dev/null
+            echo "✅ $dir builds successfully."
+            echo "::endgroup::"
+          done
+
+  oci-check:
+    name: Validate OCI Images
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup ORAS
+        uses: oras-project/setup-oras@v1
+
+      - name: Extract Images
+        id: extract
+        run: |
+          # Use the helper script to get all images
+          ./.github/scripts/ci-extract-images.sh kubernetes images.json
+          echo "matrix=$(jq -c '{image: .}' images.json)" >> $GITHUB_OUTPUT
+
+    outputs:
+      matrix: ${{ steps.extract.outputs.matrix }}
+
+  image-exists:
+    name: Check ${{ matrix.image }}
+    needs: oci-check
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.oci-check.outputs.matrix) }}
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify Image Existence
+        run: |
+          # Use oras to check if the manifest exists without pulling
+          if [[ "${{ matrix.image }}" == dhi.io/* ]]; then
+            # Requires DHI credentials if private
+            echo "Skipping private DHI check for now or implement login"
+            exit 0
+          fi
+
+          echo "Checking ${{ matrix.image }}..."
+          oras manifest fetch ${{ matrix.image }} > /dev/null

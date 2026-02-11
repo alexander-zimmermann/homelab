@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "kubernetes/bootstrap/**"
-      - ".github/workflows/render-bootstrap.yaml"
+      - ".github/workflows/ops-render-bootstrap.yaml"
 
 permissions:
   contents: write

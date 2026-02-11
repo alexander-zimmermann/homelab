@@ -7,7 +7,7 @@ on:
     paths:
       - "kubernetes/applications/**"
       - "kubernetes/components/**"
-      - ".github/workflows/hydrate.yaml"
+      - ".github/workflows/ops-hydrate.yaml"
 
 permissions:
   contents: write

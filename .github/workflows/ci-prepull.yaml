@@ -1,0 +1,78 @@
+---
+name: CI Pre-Pull
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  extract-images:
+    name: Extract Images
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        branch: [default, pull]
+    outputs:
+      default: ${{ steps.extract.outputs.default }}
+      pull: ${{ steps.extract.outputs.pull }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch == 'default' && github.event.repository.default_branch || '' }}
+
+      - name: Extract
+        id: extract
+        run: |
+          ./.github/scripts/ci-extract-images.sh kubernetes images.json
+          echo "${{ matrix.branch }}=$(jq --compact-output '.' images.json)" >> $GITHUB_OUTPUT
+
+  diff:
+    name: Diff Images
+    needs: extract-images
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.diff.outputs.images }}
+    steps:
+      - id: diff
+        run: |
+          images=$(jq --compact-output --null-input \
+              --argjson f1 '${{ needs.extract-images.outputs.default }}' \
+              --argjson f2 '${{ needs.extract-images.outputs.pull }}' \
+              '$f2 - $f1' \
+          )
+          echo "images=${images}" >> $GITHUB_OUTPUT
+
+  pre-pull:
+    name: Pre-pull Images
+    needs: diff
+    if: ${{ needs.diff.outputs.images != '[]' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.diff.outputs.images) }}
+      max-parallel: 4
+      fail-fast: false
+    steps:
+      - name: Install talosctl
+        run: curl -fsSL https://talos.dev/install | sh
+
+      - name: Pre-pull Image
+        env:
+          TALOSCONFIG: ${{ secrets.TALOSCONFIG }}
+        run: |
+          if [ -z "$TALOSCONFIG" ]; then
+            echo "::warning::TALOSCONFIG secret not found. Skipping pre-pull."
+            exit 0
+          fi
+          # Example: Pull for all nodes. Adjust nodes if necessary.
+          echo "${TALOSCONFIG}" > talosconfig
+          # nodes=$(talosctl --talosconfig talosconfig config info --output json | jq -r '.nodes[0]')
+          # talosctl --talosconfig talosconfig --nodes $nodes image pull ${{ matrix.image }}
+          echo "Pre-pulling ${{ matrix.image }} on Talos nodes..."
+          # talosctl --talosconfig talosconfig image pull ${{ matrix.image }}

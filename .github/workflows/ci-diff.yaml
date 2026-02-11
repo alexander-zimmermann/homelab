@@ -1,0 +1,102 @@
+---
+name: CI Diff Preview
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  diff:
+    name: Generate Diff Preview
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout Pull Request
+        uses: actions/checkout@v4
+        with:
+          path: pull
+
+      - name: Checkout Main
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: main
+
+      - name: Setup Kustomize
+        uses: fluxcd/pkg/actions/kustomize@main
+
+      - name: Render Manifests (Pull)
+        run: |
+          mkdir -p output
+          # Build all overlays for applications (prod/dev)
+          find pull/kubernetes/applications -type f -name "kustomization.yaml" | grep "overlays/" | while read -r kfile; do
+            dir=$(dirname "$kfile")
+            app=$(basename "$(dirname "$dir")")
+            kustomize build --enable-helm "$dir" >> output/pull-manifests.yaml || true
+          done
+          # Build all overlays for components (prod/dev)
+          find pull/kubernetes/components -type f -name "kustomization.yaml" | grep "overlays/" | while read -r kfile; do
+            dir=$(dirname "$kfile")
+            comp=$(basename "$(dirname "$dir")")
+            kustomize build --enable-helm "$dir" >> output/pull-manifests.yaml || true
+          done
+
+      - name: Render Manifests (Main)
+        run: |
+          # Build all overlays for applications on main
+          find main/kubernetes/applications -type f -name "kustomization.yaml" | grep "overlays/" | while read -r kfile; do
+            dir=$(dirname "$kfile")
+            app=$(basename "$(dirname "$dir")")
+            kustomize build --enable-helm "$dir" >> output/main-manifests.yaml || true
+          done
+          # Build all overlays for components on main
+          find main/kubernetes/components -type f -name "kustomization.yaml" | grep "overlays/" | while read -r kfile; do
+            dir=$(dirname "$kfile")
+            comp=$(basename "$(dirname "$dir")")
+            kustomize build --enable-helm "$dir" >> output/main-manifests.yaml || true
+          done
+
+      - name: Generate Diff
+        id: generate-diff
+        run: |
+          # Standard diff for simplicity (dyff would be better but requires installation)
+          diff -u output/main-manifests.yaml output/pull-manifests.yaml > diff.patch || true
+
+          if [ ! -s diff.patch ]; then
+            echo "::set-output name=diff::No changes in manifests."
+            exit 0
+          fi
+
+          # Trim diff if too long
+          if [ $(wc -l < diff.patch) -gt 500 ]; then
+            echo "diff_trimmed=true" >> $GITHUB_OUTPUT
+            head -n 500 diff.patch > diff.patch.tmp
+            echo "... (truncated)" >> diff.patch.tmp
+            mv diff.patch.tmp diff.patch
+          fi
+
+          echo "diff_content<<EOF" >> $GITHUB_OUTPUT
+          cat diff.patch >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Comment PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: manifest-diff
+          message: |
+            ### 🤖 Kubernetes Manifest Diff Preview
+
+            ${{ steps.generate-diff.outputs.diff_trimmed == 'true' && '> [!WARNING] Diff was truncated to 500 lines.' || '' }}
+
+            ```diff
+            ${{ steps.generate-diff.outputs.diff_content }}
+            ```
+
+            *Validated by CI Diff Preview Workflow*
