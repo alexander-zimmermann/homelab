@@ -25,7 +25,7 @@ terraform {
     tls = {
       ## https://search.opentofu.org/provider/hashicorp/tls/latest
       source  = "hashicorp/tls"
-      version = "=4.1.0"
+      version = "4.2.1"
     }
   }
 }
