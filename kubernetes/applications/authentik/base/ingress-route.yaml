@@ -14,7 +14,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`auth.zimmermann.sh`)
+      match: Host(`PLACEHOLDER`)
       priority: 10
       services:
         - kind: Service

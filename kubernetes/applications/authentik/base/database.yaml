@@ -15,15 +15,23 @@ spec:
     initdb:
       database: authentik
       owner: authentik
-  # Enable backup later when RustFS is fully integrated
-  # backup:
-  #   barmanObjectStore:
-  #     destinationPath: s3://postgres-backups/
-  #     endpointURL: http://rustfs.rustfs.svc.cluster.local:9000
-  #     s3Credentials:
-  #       accessKeyId:
-  #         name: rustfs-creds
-  #         key: accessKey
-  #       secretAccessKey:
-  #         name: rustfs-creds
-  #         key: secretKey
+  postgresql:
+    parameters:
+      # Memory-optimized settings
+      shared_buffers: "128MB"
+      work_mem: "8MB"
+      maintenance_work_mem: "128MB"
+      wal_buffers: "8MB"
+      effective_cache_size: "512MB"
+      autovacuum_work_mem: "128MB"
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://authentik-backups/
+      endpointURL: http://rustfs-svc.rustfs.svc.cluster.local:9000
+      s3Credentials:
+        accessKeyId:
+          name: rustfs-creds
+          key: access-key
+        secretAccessKey:
+          name: rustfs-creds
+          key: secret-key

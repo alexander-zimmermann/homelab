@@ -1,19 +1,18 @@
 global:
-  # Environment variables applied to all chart components (server, worker, etc.).
   env:
-    # Database password from a Secret created by the CloudNativePG Cluster.
+    # Database password from a Secret created by the CloudNativePG Cluster
     - name: AUTHENTIK_POSTGRESQL__PASSWORD
       valueFrom:
         secretKeyRef:
           name: authentik-db-app
           key: password
-    # Authentik internal secret key (signing/encryption).
+    # Authentik internal secret key (signing/encryption)
     - name: AUTHENTIK_SECRET_KEY
       valueFrom:
         secretKeyRef:
           name: authentik-credentials
           key: AUTHENTIK_SECRET_KEY
-    # Initial bootstrap admin password.
+    # Initial bootstrap admin password
     - name: AUTHENTIK_BOOTSTRAP_PASSWORD
       valueFrom:
         secretKeyRef:
@@ -21,35 +20,25 @@ global:
           key: AUTHENTIK_BOOTSTRAP_PASSWORD
 
 authentik:
-  # Authentik application settings.
+  # Optimization: Fewer workers and no preloading saves RAM in small setups
+  env:
+    - name: AUTHENTIK_WEB__WORKERS
+      value: "2"
+    - name: AUTHENTIK_WEB__PRELOAD
+      value: "false"
+    - name: AUTHENTIK_WORKER__WORKERS
+      value: "2"
+    - name: AUTHENTIK_WORKER__PREFETCH_MULTIPLIER
+      value: "1"
+    - name: AUTHENTIK_WORKER__MAX_MEMORY_PER_CHILD
+      value: "300000" # ~300 MiB limit per process
+
+  # SMTP configuration for notifications and password resets
   email:
-    # SMTP configuration for notifications and password resets.
     host: smtprelay.smtprelay.svc.cluster.local
     port: 25
     from: "Authentik <admin@zimmermann.sh>"
 
-  # PostgreSQL connection settings (external DB via CloudNativePG).
+  # PostgreSQL connection settings (external DB via CloudNativePG)
   postgresql:
-    # Host matches the CNPG Cluster service name ("<release>-db-rw").
     host: "{{ .Release.Name }}-db-rw"
-
-## Resources
-server:
-  # Authentik server resources: requests influence scheduling/QoS; limits enforce a hard cap.
-  resources:
-    requests:
-      cpu: 100m
-      memory: 512Mi
-    limits:
-      cpu: 1000m
-      memory: 768Mi
-
-worker:
-  # Authentik worker resources: requests influence scheduling/QoS; limits enforce a hard cap.
-  resources:
-    requests:
-      cpu: 100m
-      memory: 512Mi
-    limits:
-      cpu: 1000m
-      memory: 768Mi

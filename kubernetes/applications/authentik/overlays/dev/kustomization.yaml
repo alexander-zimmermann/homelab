@@ -4,27 +4,66 @@ kind: Kustomization
 resources:
   - ../../base
 
-patches:
-  # Certificate DNS Patch
-  - patch: |-
-      - op: replace
-        path: /spec/dnsNames/0
-        value: auth.zimmermann.phd
-    target:
-      kind: Certificate
-      name: authentik-tls
+replacements:
+  # Inject domain name into the Certificate and IngressRoute
+  - sourceValue: auth.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: authentik-tls
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: authentik
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
 
-  # Service Patch - Dynamic LoadBalancer
-  - patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
+patches:
+  # Authentik server manages API access and primary logic
+  - target:
+      kind: Deployment
       name: authentik-server
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+  # Authentik worker handles background tasks and async operations
+  - target:
+      kind: Deployment
+      name: authentik-worker
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+  # PostgreSQL Cluster resources optimized for stability
+  - target:
+      kind: Cluster
+      name: authentik-db
+    patch: |-
+      - op: add
+        path: /spec/resources
+        value:
+          requests:
+            cpu: 20m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 192Mi
