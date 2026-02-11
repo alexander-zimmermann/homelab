@@ -24,7 +24,10 @@ replacements:
 
 patches:
   # RustFS server manages distributed storage and API access
-  - patch: |-
+  - target:
+      kind: Deployment
+      name: rustfs
+    patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/resources
         value:
@@ -34,39 +37,35 @@ patches:
           limits:
             cpu: 200m
             memory: 512Mi
-    target:
-      kind: Deployment
-      name: rustfs
 
-  # Production storage for RustFS data and logs using Longhorn
-  - patch: |-
+  # Storage for RustFS data and logs using Longhorn
+  - target:
+      kind: PersistentVolumeClaim
+      name: rustfs-data
+    patch: |-
       - op: replace
         path: /spec/resources/requests/storage
         value: 5Gi
       - op: replace
         path: /spec/storageClassName
         value: longhorn
-    target:
-      kind: PersistentVolumeClaim
-      name: rustfs-data
 
-  - patch: |-
+  - target:
+      kind: PersistentVolumeClaim
+      name: rustfs-logs
+    patch: |-
       - op: replace
         path: /spec/resources/requests/storage
         value: 1Gi
       - op: replace
         path: /spec/storageClassName
         value: longhorn
-    target:
-      kind: PersistentVolumeClaim
-      name: rustfs-logs
 
   # RustFS API service with static IP and BGP advertisement
-  - patch: |-
+  - target:
+      kind: Service
+      name: rustfs-svc
+    patch: |-
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.32"
-    target:
-      kind: Service
-      name: rustfs-svc
-      namespace: rustfs

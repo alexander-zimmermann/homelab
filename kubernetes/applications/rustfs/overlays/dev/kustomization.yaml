@@ -23,8 +23,11 @@ replacements:
           index: 1
 
 patches:
-  # Reduced developer footprint for RustFS server
-  - patch: |-
+  # RustFS server manages distributed storage and API access
+  - target:
+      kind: Deployment
+      name: rustfs
+    patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/resources
         value:
@@ -34,31 +37,26 @@ patches:
           limits:
             cpu: 100m
             memory: 256Mi
-    target:
-      kind: Deployment
-      name: rustfs
 
-  # Developer storage for RustFS data and logs
-  - patch: |-
+  # Storage for RustFS data and logs using Longhorn
+  - target:
+      kind: PersistentVolumeClaim
+      name: rustfs-data
+    patch: |-
       - op: replace
         path: /spec/resources/requests/storage
         value: 512Mi
       - op: replace
         path: /spec/storageClassName
         value: longhorn
-    target:
-      kind: PersistentVolumeClaim
-      name: rustfs-data
-      namespace: rustfs
 
-  - patch: |-
+  - target:
+      kind: PersistentVolumeClaim
+      name: rustfs-logs
+    patch: |-
       - op: replace
         path: /spec/resources/requests/storage
         value: 128Mi
       - op: replace
         path: /spec/storageClassName
         value: longhorn
-    target:
-      kind: PersistentVolumeClaim
-      name: rustfs-logs
-      namespace: rustfs
