@@ -3,3 +3,19 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+patches:
+  # Unpoller: Lightweight Go application, mostly idle
+  - target:
+      kind: Deployment
+      name: unpoller
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi

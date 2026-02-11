@@ -1,40 +1,30 @@
-# Add Prometheus scrape hints (also works without ServiceMonitor).
+# Add Prometheus scrape hints
 podAnnotations:
   prometheus.io/scrape: "true"
   prometheus.io/port: "9130"
 
-# Enable PodMonitor (Prometheus Operator) instead of ServiceMonitor.
+# Enable PodMonitor (Prometheus Operator) instead of ServiceMonitor
 podMonitor:
   enabled: true
 
-# Keep ServiceMonitor explicitly off (we rely on PodMonitor).
+# Keep ServiceMonitor explicitly off (we rely on PodMonitor)
 serviceMonitor:
   enabled: false
 
-# Expose the metrics port inside the cluster.
+# Expose the metrics port inside the cluster
 service:
   enabled: true
   type: ClusterIP
   port: 9130
 
-# Use Grafana Operator dashboards, but target an existing Grafana instance.
+# Use Grafana Operator dashboards, but target an existing Grafana instance
 dashboards:
   grafana:
     create: false
     selectorLabels:
       homelab.app: grafana-instance
 
-# Unifi-poller resources: requests influence scheduling/QoS; limits enforce a hard cap.
-resources:
-  requests:
-    cpu: 10m
-    memory: 32Mi
-  limits:
-    cpu: 200m
-    memory: 128Mi
-
-# Unpoller configuration.
-# Secrets are referenced via file path inside the container.
+# Unpoller configuration
 upConfig: |
   [poller]
     debug = false
@@ -69,7 +59,7 @@ upConfig: |
     save_rogue = false
     verify_ssl = false
 
-# Mount credentials secret into the container.
+# Mount credentials secret into the container
 extraVolumes:
   - name: unifi-creds
     secret:
