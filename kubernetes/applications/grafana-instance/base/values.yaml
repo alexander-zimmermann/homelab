@@ -1,4 +1,3 @@
-# RBAC & Permissions
 rbac:
   # Allows Grafana to retrieve metadata about services and pods for service discovery
   extraClusterRoleRules:
@@ -6,35 +5,20 @@ rbac:
       resources: ["services", "endpoints", "pods"]
       verbs: ["get", "list", "watch"]
 
-# Service Account
 serviceAccount:
   # Explicit name for the ServiceAccount for better traceability
   name: grafana
 
-# Pod Metadata
 podLabels:
   # Additional label for consistent selectors in services and network policies
   component: grafana-server
 
-## Resources
-# Container resources: requests influence scheduling/QoS; limits enforce a hard cap.
-resources:
-  # Grafana main container resources: requests influence scheduling/QoS; limits enforce a hard cap.
-  requests:
-    cpu: 50m
-    memory: 256Mi
-  limits:
-    cpu: 1000m
-    memory: 1Gi
-
-# Administrator Access
 admin:
-  # Reference to a SealedSecret containing the username and password
+  # Reference to a SealedSecret containing the username and password for admin access
   existingSecret: "grafana-admin-credentials"
   userKey: admin-user
   passwordKey: admin-password
 
-# Secret Mounts
 extraSecretMounts:
   # Mount the admin credentials secret into the container for grafana.ini access
   - name: grafana-admin-credentials
@@ -51,14 +35,6 @@ grafana.ini:
 
 # Sidecar Configuration (Auto-import)
 sidecar:
-  # Grafana sidecar resources: requests influence scheduling/QoS; limits enforce a hard cap.
-  resources:
-    requests:
-      cpu: 10m
-      memory: 32Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
   dashboards:
     enabled: true
     searchNamespace: ALL
@@ -69,14 +45,6 @@ sidecar:
 # Image Rendering (PNG Exports)
 imageRenderer:
   enabled: true
-  # Grafana image renderer resources: requests influence scheduling/QoS; limits enforce a hard cap.
-  resources:
-    requests:
-      cpu: 20m
-      memory: 64Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
   networkPolicy:
     limitIngress: false
 

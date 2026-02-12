@@ -18,21 +18,37 @@ helmCharts:
     namespace: grafana-instance
     includeCRDs: true
 
-labels:
-  - includeSelectors: false
-    pairs:
-      homelab.app: grafana-instance
 
 patches:
+  # Configure LoadBalancer with Cilium BGP advertisement
+  - target:
+      kind: Service
+      name: grafana
+    patch: |-
+      - op: replace
+        path: /spec/type
+        value: LoadBalancer
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1ip-pool
+        value: default
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1advertise-service
+        value: default
+
   # Service Patch - Fix Selector Collision
-  - patch: |-
+  - target:
+      kind: Service
+      name: grafana
+    patch: |-
       - op: replace
         path: /spec/selector
         value:
           component: grafana-server
-    target:
-      kind: Service
-      name: grafana
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.app: grafana-instance
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "10"
