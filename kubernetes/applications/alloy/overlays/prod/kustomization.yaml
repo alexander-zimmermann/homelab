@@ -86,7 +86,7 @@ patches:
         path: /spec/alloy/env
         value:
           - name: GOMEMLIMIT
-            value: "429916160"
+            value: "483183821"
 
   # Alloy Singleton: Per-cluster tasks like event processing
   - target:
@@ -106,7 +106,7 @@ patches:
         path: /spec/alloy/env
         value:
           - name: GOMEMLIMIT
-            value: "214958080"
+            value: "241591910"
 
   # Alloy Logs: Collects and forwards logs to Loki
   - target:
@@ -126,7 +126,7 @@ patches:
         path: /spec/alloy/env
         value:
           - name: GOMEMLIMIT
-            value: "321912832"
+            value: "362387866"
 
   # Alloy metrics service with static IP and BGP advertisement
 
