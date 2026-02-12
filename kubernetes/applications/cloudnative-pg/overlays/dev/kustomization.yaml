@@ -3,3 +3,19 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+patches:
+  # Configure resources for the CloudNativePG operator deployment
+  - target:
+      kind: Deployment
+      name: cloudnative-pg
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
