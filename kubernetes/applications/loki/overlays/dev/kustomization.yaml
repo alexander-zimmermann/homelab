@@ -5,17 +5,166 @@ resources:
   - ../../base
 
 patches:
-  # Loadbalancer configuration
-  - patch: |-
+  # Loki SingleBinary (StatefulSet)
+  - target:
+      kind: StatefulSet
+      name: loki
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: loki
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: loki-sc-rules
+      - op: test
+        path: /spec/volumeClaimTemplates/0/metadata/name
+        value: storage
+
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+      - op: add
+        path: /spec/template/spec/containers/0/env
+        value:
+          - name: GOMEMLIMIT
+            value: "483183820"
+
+      - op: add
+        path: /spec/template/spec/containers/1/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+      - op: add
+        path: /spec/template/spec/containers/1/env/-
+        value:
+          name: GOMEMLIMIT
+          value: "120795955"
+
       - op: replace
-        path: /spec/type
-        value: LoadBalancer
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
+        path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
+        value: 500Mi
+
+  # Loki Gateway (Deployment)
+  - target:
+      kind: Deployment
       name: loki-gateway
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: nginx
+
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+
+  # Loki Chunks Cache (StatefulSet)
+  - target:
+      kind: StatefulSet
+      name: loki-chunks-cache
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: memcached
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: exporter
+
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+      - op: add
+        path: /spec/template/spec/containers/1/resources
+        value:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
+      - op: add
+        path: /spec/template/spec/containers/1/env
+        value:
+          - name: GOMEMLIMIT
+            value: "60397977"
+
+  # Loki Results Cache (StatefulSet)
+  - target:
+      kind: StatefulSet
+      name: loki-results-cache
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: memcached
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: exporter
+
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+      - op: add
+        path: /spec/template/spec/containers/1/resources
+        value:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
+      - op: add
+        path: /spec/template/spec/containers/1/env
+        value:
+          - name: GOMEMLIMIT
+            value: "60397977"
+
+  # Loki Canary (DaemonSet)
+  - target:
+      kind: DaemonSet
+      name: loki-canary
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: loki-canary
+
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: GOMEMLIMIT
+          value: "60397977"
