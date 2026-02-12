@@ -10,4 +10,4 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - alloy.zimmermann.sh
+    - PLACEHOLDER

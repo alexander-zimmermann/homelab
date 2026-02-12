@@ -4,36 +4,111 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject domain name into the Certificate and IngressRoute
+  - sourceValue: alloy.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: alloy-ui-tls
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: alloy-ui
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
-  # Ingress host
-  # - patch: |-
-  #     - op: replace
-  #       path: /spec/routes/0/match
-  #       value: Host(`alloy.zimmermann.phd`)
-  #   target:
-  #     kind: IngressRoute
-  #     name: alloy-ui
-
-  # Certificate DNS names
-  - patch: |-
-      - op: replace
-        path: /spec/dnsNames/0
-        value: alloy.zimmermann.phd
-    target:
-      kind: Certificate
-      name: alloy-ui-tls
-
-  # Loadbalancer configuration
-  - patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
+  # Alloy Operator: Manages the lifecycle of Alloy instances
+  - target:
+      kind: Deployment
+      name: alloy-alloy-operator
+    patch: |-
       - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 5m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+
+  # Kube-State-Metrics: Exposes cluster-level metrics
+  - target:
+      kind: Deployment
+      name: alloy-kube-state-metrics
+    patch: |-
       - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+
+  # Node Exporter: Collects hardware and OS metrics from nodes
+  - target:
+      kind: DaemonSet
+      name: alloy-node-exporter
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 32Mi
+
+  # Alloy Metrics: Handles cluster and application metrics
+  - target:
+      kind: Alloy
       name: alloy-alloy-metrics
+    patch: |-
+      - op: add
+        path: /spec/alloy/resources
+        value:
+          requests:
+            cpu: 25m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+
+  # Alloy Singleton: Per-cluster tasks like event processing
+  - target:
+      kind: Alloy
+      name: alloy-alloy-singleton
+    patch: |-
+      - op: add
+        path: /spec/alloy/resources
+        value:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+
+  # Alloy Logs: Collects and forwards logs to Loki
+  - target:
+      kind: Alloy
+      name: alloy-alloy-logs
+    patch: |-
+      - op: add
+        path: /spec/alloy/resources
+        value:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
