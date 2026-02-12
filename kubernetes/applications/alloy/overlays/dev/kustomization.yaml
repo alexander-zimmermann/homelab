@@ -28,6 +28,9 @@ patches:
       kind: Deployment
       name: alloy-alloy-operator
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: alloy-operator
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -43,6 +46,9 @@ patches:
       kind: Deployment
       name: alloy-kube-state-metrics
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: kube-state-metrics
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -58,6 +64,9 @@ patches:
       kind: DaemonSet
       name: alloy-node-exporter
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: node-exporter
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
