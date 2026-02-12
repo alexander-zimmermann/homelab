@@ -12,8 +12,6 @@ helmCharts:
     version: 5.21.4
     valuesFile: values.yaml
     namespace: grafana-operator
-    valuesInline:
-      watchNamespace: ""
     includeCRDs: true
 
 labels:
