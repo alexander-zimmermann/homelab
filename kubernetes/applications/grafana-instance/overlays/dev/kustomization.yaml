@@ -28,6 +28,16 @@ patches:
       kind: Deployment
       name: grafana
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: grafana-sc-dashboard
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: grafana-sc-datasources
+      - op: test
+        path: /spec/template/spec/containers/2/name
+        value: grafana
+
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -61,6 +71,10 @@ patches:
       kind: Deployment
       name: grafana-image-renderer
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: grafana-image-renderer
+
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
