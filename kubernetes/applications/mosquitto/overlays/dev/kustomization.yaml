@@ -5,31 +5,16 @@ resources:
   - ../../base
 
 patches:
-  # PV Patch (NFS)
-  - patch: |-
+  # Persistent volume configuration
+  - target:
+      kind: PersistentVolume
+      name: pv-nfs-mosquitto
+    patch: |-
       - op: replace
         path: /spec/csi/volumeHandle
-        value: linux.zimmermann.eu.com/srv/k8s/mosquitto
+        value: linux.zimmermann.eu.com/srv/k8s/mosquitto-dev
       - op: replace
         path: /spec/csi/volumeAttributes
         value:
           server: linux.zimmermann.eu.com
           share: /srv/k8s/mosquitto
-    target:
-      kind: PersistentVolume
-      name: pv-nfs-mosquitto
-
-  # Service Patch - Dynamic LoadBalancer
-  - patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
-      name: mosquitto

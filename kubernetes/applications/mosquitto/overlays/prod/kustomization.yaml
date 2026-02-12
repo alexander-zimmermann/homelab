@@ -6,7 +6,10 @@ resources:
 
 patches:
   # Persistent volume configuration
-  - patch: |-
+  - target:
+      kind: PersistentVolume
+      name: pv-nfs-mosquitto
+    patch: |-
       - op: replace
         path: /spec/csi/volumeHandle
         value: linux.zimmermann.eu.com/srv/k8s/mosquitto-prod
@@ -15,24 +18,12 @@ patches:
         value:
           server: linux.zimmermann.eu.com
           share: /srv/k8s/mosquitto-prod
-    target:
-      kind: PersistentVolume
-      name: pv-nfs-mosquitto
 
-  # Loadbalancer configuration
-  - patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
+  # Mosquitto service with static IP and BGP advertisement
+  - target:
+      kind: Service
+      name: mosquitto
+    patch: |-
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.26"
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
-      name: mosquitto
