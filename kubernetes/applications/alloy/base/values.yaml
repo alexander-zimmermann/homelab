@@ -34,7 +34,12 @@ nodeLogs:
     - loki
 
 podLogs:
-  enabled: false
+  enabled: true
+  # Use the stable volumes-based pod log collection (renders `loki.source.file "pod_logs"`)
+  gatherMethod: volumes
+  # Start reading at the end of existing log files (no backfill); only new lines after Alloy starts are shipped
+  volumeGatherSettings:
+    onlyGatherNewLogLines: true
   destinations:
     - loki
 
@@ -49,35 +54,3 @@ alloy-singleton:
 # Alloy Logs: Collects and forwards logs to Loki
 alloy-logs:
   enabled: true
-  alloy:
-    extraConfig: |
-      local.file_match "pod_logs_custom" {
-        path_targets = [{
-          __path__ = "/var/log/pods/*/*/*.log",
-        }]
-      }
-
-      loki.source.file "pod_logs_custom" {
-        targets    = local.file_match.pod_logs_custom.targets
-        forward_to = [loki.process.pod_logs_custom.receiver]
-        tail_from_end = true
-      }
-
-      loki.process "pod_logs_custom" {
-        stage.cri {}
-
-        stage.regex {
-          expression = "^/var/log/pods/(?P<namespace>[^/]+)_(?P<pod>[^/]+)_(?P<uid>[^/]+)/(?P<container>[^/]+)/(?P<restart_count>[^/]+)\\.log$"
-          source     = "filename"
-        }
-
-        stage.labels {
-          values = {
-            namespace = "",
-            pod       = "",
-            container = "",
-          }
-        }
-
-        forward_to = [loki.write.loki.receiver]
-      }
