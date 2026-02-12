@@ -1,6 +1,9 @@
 cluster:
   name: homelab
 
+global:
+  scrapeInterval: 60s
+
 # Remote write / push endpoints for metrics and logs.
 destinations:
   - name: prometheus
@@ -9,6 +12,9 @@ destinations:
   - name: loki
     type: loki
     url: http://loki-gateway.loki.svc.cluster.local/loki/api/v1/push
+    header:
+      batchSize: 256KiB
+      batchWait: 1s
 
 # Cluster metrics & events
 clusterMetrics:
@@ -28,7 +34,7 @@ nodeLogs:
     - loki
 
 podLogs:
-  enabled: true
+  enabled: false
   destinations:
     - loki
 
@@ -43,3 +49,35 @@ alloy-singleton:
 # Alloy Logs: Collects and forwards logs to Loki
 alloy-logs:
   enabled: true
+  alloy:
+    extraConfig: |
+      local.file_match "pod_logs_custom" {
+        path_targets = [{
+          __path__ = "/var/log/pods/*/*/*.log",
+        }]
+      }
+
+      loki.source.file "pod_logs_custom" {
+        targets    = local.file_match.pod_logs_custom.targets
+        forward_to = [loki.process.pod_logs_custom.receiver]
+        tail_from_end = true
+      }
+
+      loki.process "pod_logs_custom" {
+        stage.cri {}
+
+        stage.regex {
+          expression = "^/var/log/pods/(?P<namespace>[^/]+)_(?P<pod>[^/]+)_(?P<uid>[^/]+)/(?P<container>[^/]+)/(?P<restart_count>[^/]+)\\.log$"
+          source     = "filename"
+        }
+
+        stage.labels {
+          values = {
+            namespace = "",
+            pod       = "",
+            container = "",
+          }
+        }
+
+        forward_to = [loki.write.loki.receiver]
+      }

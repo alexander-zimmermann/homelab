@@ -82,6 +82,11 @@ patches:
           limits:
             cpu: 500m
             memory: 512Mi
+      - op: add
+        path: /spec/alloy/env
+        value:
+          - name: GOMEMLIMIT
+            value: "429916160"
 
   # Alloy Singleton: Per-cluster tasks like event processing
   - target:
@@ -97,6 +102,11 @@ patches:
           limits:
             cpu: 250m
             memory: 256Mi
+      - op: add
+        path: /spec/alloy/env
+        value:
+          - name: GOMEMLIMIT
+            value: "214958080"
 
   # Alloy Logs: Collects and forwards logs to Loki
   - target:
@@ -112,6 +122,13 @@ patches:
           limits:
             cpu: 300m
             memory: 384Mi
+      - op: add
+        path: /spec/alloy/env
+        value:
+          - name: GOMEMLIMIT
+            value: "321912832"
+
+  # Alloy metrics service with static IP and BGP advertisement
 
   # Alloy metrics service with static IP and BGP advertisement
   - target:
