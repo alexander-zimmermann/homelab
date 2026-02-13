@@ -141,8 +141,6 @@ patches:
             value: "362387866"
 
   # Alloy metrics service with static IP and BGP advertisement
-
-  # Alloy metrics service with static IP and BGP advertisement
   - target:
       kind: Service
       name: alloy-alloy-metrics
