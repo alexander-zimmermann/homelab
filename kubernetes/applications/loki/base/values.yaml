@@ -10,7 +10,6 @@ singleBinary:
     size: 5Gi
     storageClass: longhorn
 
-
 # Scalability settings for distributed components
 write:
   replicas: 0
