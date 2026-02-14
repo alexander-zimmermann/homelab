@@ -1,0 +1,683 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    homelab.app: authentik
+  name: authentik
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: serviceAccount
+    app.kubernetes.io/part-of: authentik
+    app.kubernetes.io/version: 2.1.0
+    helm.sh/chart: serviceAccount-2.1.0
+    homelab.app: authentik
+  name: authentik
+  namespace: authentik
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: serviceAccount
+    app.kubernetes.io/part-of: authentik
+    app.kubernetes.io/version: 2.1.0
+    helm.sh/chart: serviceAccount-2.1.0
+    homelab.app: authentik
+  name: authentik
+  namespace: authentik
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - services
+  - configmaps
+  verbs:
+  - get
+  - create
+  - delete
+  - list
+  - patch
+- apiGroups:
+  - extensions
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - create
+  - delete
+  - list
+  - patch
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - create
+  - delete
+  - list
+  - patch
+- apiGroups:
+  - traefik.containo.us
+  - traefik.io
+  resources:
+  - middlewares
+  verbs:
+  - get
+  - create
+  - delete
+  - list
+  - patch
+- apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - httproutes
+  verbs:
+  - get
+  - create
+  - delete
+  - list
+  - patch
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - servicemonitors
+  verbs:
+  - get
+  - create
+  - delete
+  - list
+  - patch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: serviceAccount
+    app.kubernetes.io/part-of: authentik
+    app.kubernetes.io/version: 2.1.0
+    helm.sh/chart: serviceAccount-2.1.0
+    homelab.app: authentik
+  name: authentik-authentik
+rules:
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: serviceAccount
+    app.kubernetes.io/part-of: authentik
+    app.kubernetes.io/version: 2.1.0
+    helm.sh/chart: serviceAccount-2.1.0
+    homelab.app: authentik
+  name: authentik
+  namespace: authentik
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: authentik
+subjects:
+- kind: ServiceAccount
+  name: authentik
+  namespace: authentik
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: serviceAccount
+    app.kubernetes.io/part-of: authentik
+    app.kubernetes.io/version: 2.1.0
+    helm.sh/chart: serviceAccount-2.1.0
+    homelab.app: authentik
+  name: authentik-authentik
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: authentik-authentik
+subjects:
+- kind: ServiceAccount
+  name: authentik
+  namespace: authentik
+---
+apiVersion: v1
+data:
+  AUTHENTIK_EMAIL__FROM: QXV0aGVudGlrIDxhZG1pbkB6aW1tZXJtYW5uLnNoPg==
+  AUTHENTIK_EMAIL__HOST: c210cHJlbGF5LnNtdHByZWxheS5zdmMuY2x1c3Rlci5sb2NhbA==
+  AUTHENTIK_EMAIL__PORT: MjU=
+  AUTHENTIK_EMAIL__TIMEOUT: MzA=
+  AUTHENTIK_EMAIL__USE_SSL: ZmFsc2U=
+  AUTHENTIK_EMAIL__USE_TLS: ZmFsc2U=
+  AUTHENTIK_ENABLED: dHJ1ZQ==
+  AUTHENTIK_ENV: W21hcFtuYW1lOkFVVEhFTlRJS19XRUJfX1dPUktFUlMgdmFsdWU6Ml0gbWFwW25hbWU6QVVUSEVOVElLX1dFQl9fUFJFTE9BRCB2YWx1ZTpmYWxzZV0gbWFwW25hbWU6QVVUSEVOVElLX1dPUktFUl9fV09SS0VSUyB2YWx1ZToyXSBtYXBbbmFtZTpBVVRIRU5USUtfV09SS0VSX19QUkVGRVRDSF9NVUxUSVBMSUVSIHZhbHVlOjFdIG1hcFtuYW1lOkFVVEhFTlRJS19XT1JLRVJfX01BWF9NRU1PUllfUEVSX0NISUxEIHZhbHVlOjMwMDAwMF1d
+  AUTHENTIK_ERROR_REPORTING__ENABLED: ZmFsc2U=
+  AUTHENTIK_ERROR_REPORTING__ENVIRONMENT: azhz
+  AUTHENTIK_ERROR_REPORTING__SEND_PII: ZmFsc2U=
+  AUTHENTIK_EVENTS__CONTEXT_PROCESSORS__ASN: L2dlb2lwL0dlb0xpdGUyLUFTTi5tbWRi
+  AUTHENTIK_EVENTS__CONTEXT_PROCESSORS__GEOIP: L2dlb2lwL0dlb0xpdGUyLUNpdHkubW1kYg==
+  AUTHENTIK_LOG_LEVEL: aW5mbw==
+  AUTHENTIK_OUTPOSTS__CONTAINER_IMAGE_BASE: Z2hjci5pby9nb2F1dGhlbnRpay8lKHR5cGUpczolKHZlcnNpb24pcw==
+  AUTHENTIK_POSTGRESQL__HOST: YXV0aGVudGlrLWRiLXJ3
+  AUTHENTIK_POSTGRESQL__NAME: YXV0aGVudGlr
+  AUTHENTIK_POSTGRESQL__PORT: NTQzMg==
+  AUTHENTIK_POSTGRESQL__USER: YXV0aGVudGlr
+  AUTHENTIK_WEB__PATH: Lw==
+kind: Secret
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: authentik
+    app.kubernetes.io/part-of: authentik
+    app.kubernetes.io/version: 2025.12.4
+    helm.sh/chart: authentik-2025.12.4
+    homelab.app: authentik
+  name: authentik
+  namespace: authentik
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: authentik
+    app.kubernetes.io/part-of: authentik
+    app.kubernetes.io/version: 2025.12.4
+    bgp.cilium.io/advertise-service: default
+    bgp.cilium.io/ip-pool: default
+    helm.sh/chart: authentik-2025.12.4
+    homelab.app: authentik
+  name: authentik-server
+  namespace: authentik
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 9000
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 9443
+  selector:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/name: authentik
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: authentik
+    app.kubernetes.io/part-of: authentik
+    app.kubernetes.io/version: 2025.12.4
+    helm.sh/chart: authentik-2025.12.4
+    homelab.app: authentik
+  name: authentik-server
+  namespace: authentik
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: server
+      app.kubernetes.io/instance: authentik
+      app.kubernetes.io/name: authentik
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "4"
+        checksum/secret: 9e55de1cb369badc2bc000352161b820c9b2c6ff793575bc90ab0cb82f5a4576
+      labels:
+        app.kubernetes.io/component: server
+        app.kubernetes.io/instance: authentik
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: authentik
+        app.kubernetes.io/part-of: authentik
+        app.kubernetes.io/version: 2025.12.4
+        helm.sh/chart: authentik-2025.12.4
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: server
+                  app.kubernetes.io/instance: authentik
+                  app.kubernetes.io/name: authentik
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - args:
+        - server
+        env:
+        - name: AUTHENTIK_POSTGRESQL__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: authentik-db-app
+        - name: AUTHENTIK_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AUTHENTIK_SECRET_KEY
+              name: authentik-credentials
+        - name: AUTHENTIK_BOOTSTRAP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: AUTHENTIK_BOOTSTRAP_PASSWORD
+              name: authentik-credentials
+        - name: AUTHENTIK_LISTEN__HTTP
+          value: 0.0.0.0:9000
+        - name: AUTHENTIK_LISTEN__HTTPS
+          value: 0.0.0.0:9443
+        - name: AUTHENTIK_LISTEN__METRICS
+          value: 0.0.0.0:9300
+        envFrom:
+        - secretRef:
+            name: authentik
+        image: ghcr.io/goauthentik/server:2025.12.4
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /-/health/live/
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: server
+        ports:
+        - containerPort: 9000
+          name: http
+          protocol: TCP
+        - containerPort: 9443
+          name: https
+          protocol: TCP
+        - containerPort: 9300
+          name: metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /-/health/ready/
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 50m
+            memory: 256Mi
+        startupProbe:
+          failureThreshold: 60
+          httpGet:
+            path: /-/health/live/
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+      enableServiceLinks: true
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app.kubernetes.io/component: worker
+    app.kubernetes.io/instance: authentik
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: authentik
+    app.kubernetes.io/part-of: authentik
+    app.kubernetes.io/version: 2025.12.4
+    helm.sh/chart: authentik-2025.12.4
+    homelab.app: authentik
+  name: authentik-worker
+  namespace: authentik
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: worker
+      app.kubernetes.io/instance: authentik
+      app.kubernetes.io/name: authentik
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "4"
+        checksum/secret: 9e55de1cb369badc2bc000352161b820c9b2c6ff793575bc90ab0cb82f5a4576
+      labels:
+        app.kubernetes.io/component: worker
+        app.kubernetes.io/instance: authentik
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: authentik
+        app.kubernetes.io/part-of: authentik
+        app.kubernetes.io/version: 2025.12.4
+        helm.sh/chart: authentik-2025.12.4
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: worker
+                  app.kubernetes.io/instance: authentik
+                  app.kubernetes.io/name: authentik
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - args:
+        - worker
+        env:
+        - name: AUTHENTIK_POSTGRESQL__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: authentik-db-app
+        - name: AUTHENTIK_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AUTHENTIK_SECRET_KEY
+              name: authentik-credentials
+        - name: AUTHENTIK_BOOTSTRAP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: AUTHENTIK_BOOTSTRAP_PASSWORD
+              name: authentik-credentials
+        - name: AUTHENTIK_LISTEN__HTTP
+          value: 0.0.0.0:9000
+        - name: AUTHENTIK_LISTEN__METRICS
+          value: 0.0.0.0:9300
+        envFrom:
+        - secretRef:
+            name: authentik
+        image: ghcr.io/goauthentik/server:2025.12.4
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - ak
+            - healthcheck
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: worker
+        ports:
+        - containerPort: 9000
+          name: http
+          protocol: TCP
+        - containerPort: 9300
+          name: metrics
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - ak
+            - healthcheck
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 50m
+            memory: 256Mi
+        startupProbe:
+          exec:
+            command:
+            - ak
+            - healthcheck
+          failureThreshold: 60
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+      enableServiceLinks: true
+      serviceAccountName: authentik
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    homelab.app: authentik
+  name: create-authentik-backup-bucket
+  namespace: authentik
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "4"
+    spec:
+      containers:
+      - args:
+        - |
+          set -euo pipefail
+          mc alias set rustfs http://rustfs-svc.rustfs.svc.cluster.local:9000 "$ACCESS_KEY" "$SECRET_KEY"
+          mc mb rustfs/authentik-backups --ignore-existing
+          mc version enable rustfs/authentik-backups
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: access-key
+              name: rustfs-creds
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secret-key
+              name: rustfs-creds
+        image: minio/mc:latest
+        imagePullPolicy: IfNotPresent
+        name: mc
+        resources:
+          limits:
+            cpu: 200m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+      initContainers:
+      - args:
+        - |
+          until curl -sSf http://rustfs-svc.rustfs.svc.cluster.local:9000/health >/dev/null; do
+            echo "Warte auf S3 Endpoint..."
+            sleep 3
+          done
+        command:
+        - /bin/sh
+        - -c
+        image: curlimages/curl:8.9.1
+        name: wait-for-s3
+      restartPolicy: OnFailure
+      serviceAccountName: default
+  ttlSecondsAfterFinished: 3600
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    homelab.app: authentik
+  name: authentik-credentials
+  namespace: authentik
+spec:
+  encryptedData:
+    AUTHENTIK_BOOTSTRAP_PASSWORD: AgAQ3gavyNQsfRDgBLckIw52y3oJjtAmjEhi5Gi/w4+ckYdz1C5r4Kt4jdT+l3DO9GXgnrUEFonaExzcvT/uRxOKqqRpuVXI5ho4fZAXIcUOV1Ni6Rd2VrdpJ4O29PIwQyhuTRK7E/rvMaz68pLqw19EzJwpCpTXMz/elrWbHCuh7YtaVK+jS6AeJBsihrLO6YN9PTbi7GWymuRuEPwWzFelKLU2i1+J/t/zQNLzxDFrNTsAV7iwNqDZy6XnxXfqAHzrTAiltcCAFcytGVowkLyDbTIW96v7ERk0pNtjSJ3oRckKjDZKd4O6gSSEmocQU+gFDG1FwkCsZJSZe21b3rE5yi9DSKzjWJjsd+JK2zLA1Na9mC2FvbnSbOvNK+gCV7b2itkt5CqLTRiPIJIZGeX9jofC6MMqRkGdO+vwt3JSzO0NbjWN9fj2EjCTMNHax/iUW8EtnxD9bgR67yupXu/f6diFx/xdI/FXiZD42keBF3tSS7Q2xy8gEPuZchyNioQkFTq4THKzyC0R0p0Bljb8k2WcToovI+dd3dCS6FiU8m5BWNwsN/VDXmukzHX5Y35ON9rSdIHSukA6nDpCVOymr6T9v0wUm4tvCRcRASC52AkuG62ub/+dJ/K/nDFZctbiSUeyPAsSxD7Fifv/Hm5sWe9+yWL6mVGOQfywuTSiutdUm7L8qCzrwvwnHhLBf+i1BUV2i5maIjMSDlsH6HWBUxj+jEKQt1wAiYICmvirAO4v20LJBesAyzwq1T9dT2g=
+    AUTHENTIK_SECRET_KEY: AgCnOG0U4G6uWwb5OxcXTeG3k4yRV4rgASTyf1zbuYiC9pVDQ73uF9hqp4kvCBZnTo4IyQktyH8G0lqeDXcKP9FVSNnnB36VmMJO7fU/xy8doNIDLXmpWuGkIJRisftFyssxRG6RqJtiZ/3CgKdaBJBE7J1m3O6N6/dbfcpWtk5uaDX0Z4eDLnz3SKEJcq83Qe3szKQTM4LzEHqSTFhl2xFexZQNqk8gwUq68l5ZDbR1yoHvoAkLc/n4TpvtIK7vCA6M7rSJrkIrZe1fF++nWkj1hMtSf81YtIseRf6PEreVbtJRPJpAvCZQtp+xlceKgfWSWnW0dchKkyPW/v3dde2Iko8irEC6H3kSCioq5VaFtFvjnpGajNA8NJlhkX1UBm5nxldvN9oFyrXs2m+YweADU9wNUj/UECjCOz+aqkVxekdXb/k4HsT7upKdUSFLyrV9vs9JYZKqHo/XJAim/IbAUGztgAHEHoOKObKSMY8ayhy1gS4XFpszRw9ZL3hglPMGZ/ryHJ0FwkapaMP1u38V+g2BcPt385R2iHXLtlNbCmzkPa2dBgF7J0nK/s8Sr5KEmglko18S4z+emjbofAFjFy7B9An/CzphsszQcGdF9D9y7taenhbiPUpttOgWMu0rgnKyBCEbO7tIRuF+ErnoX7tud8OlqkiR6NaaWB6p0CsKdMm/BrzZMvrcLtWGmarDY0ey4Wsv2Hup3EGoR3k+xjK+ir/2qeWsBJul21//LPK70O4r/n6m9ScFAqxEcaU=
+  template:
+    metadata:
+      name: authentik-credentials
+      namespace: authentik
+    type: Opaque
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    homelab.app: authentik
+  name: authentik-tls
+  namespace: authentik
+spec:
+  dnsNames:
+  - auth.zimmermann.phd
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns01-issuer
+  secretName: authentik-tls
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    homelab.app: authentik
+  name: authentik-db
+  namespace: authentik
+spec:
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://authentik-backups/
+      endpointURL: http://rustfs-svc.rustfs.svc.cluster.local:9000
+      s3Credentials:
+        accessKeyId:
+          key: access-key
+          name: rustfs-creds
+        secretAccessKey:
+          key: secret-key
+          name: rustfs-creds
+  bootstrap:
+    initdb:
+      database: authentik
+      owner: authentik
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.1
+  imagePullSecrets:
+  - name: dhi-registry-secret
+  instances: 2
+  postgresql:
+    parameters:
+      autovacuum_work_mem: 128MB
+      effective_cache_size: 512MB
+      maintenance_work_mem: 128MB
+      shared_buffers: 128MB
+      wal_buffers: 8MB
+      work_mem: 8MB
+  resources:
+    limits:
+      cpu: 250m
+      memory: 192Mi
+    requests:
+      cpu: 20m
+      memory: 128Mi
+  storage:
+    size: 1Gi
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    kubernetes.io/ingress.class: traefik
+  labels:
+    homelab.app: authentik
+  name: authentik
+  namespace: authentik
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`auth.zimmermann.phd`)
+    priority: 10
+    services:
+    - kind: Service
+      name: authentik-server
+      port: 80
+  tls:
+    secretName: authentik-tls
