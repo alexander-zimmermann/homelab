@@ -4,14 +4,19 @@ kind: Kustomization
 resources:
   - ../../base
 
-patches:
-  # NFS share configuration
-  - patch: |-
-      - op: replace
-        path: /parameters
-        value:
-          server: linux.zimmermann.eu.com
-          share: /srv/k8s
-    target:
-      kind: StorageClass
-      name: nfs-csi
+replacements:
+  # Inject domain name and path into the StorageClass
+  - sourceValue: linux.zimmermann.eu.com
+    targets:
+      - select:
+          kind: StorageClass
+          name: nfs-csi
+        fieldPaths:
+          - parameters.server
+  - sourceValue: /srv/k8s
+    targets:
+      - select:
+          kind: StorageClass
+          name: nfs-csi
+        fieldPaths:
+          - parameters.share
