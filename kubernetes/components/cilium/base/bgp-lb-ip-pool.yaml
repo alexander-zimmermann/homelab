@@ -5,8 +5,7 @@ metadata:
   name: default-bgp-ip-pool
 spec:
   blocks:
-    - start: 192.168.10.10
-      stop: 192.168.10.254
+    - cidr: PLACEHOLDER
   serviceSelector:
     matchLabels:
       bgp.cilium.io/ip-pool: default

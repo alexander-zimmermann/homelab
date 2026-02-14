@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: cilium
 resources:
   - ./certificate.yaml
-  #- ./ingress-route.yaml
+  - ./ingress-route.yaml
   - ./sealed-secret.yaml
   - ./bgp-cluster-config.yaml
   - ./bgp-peer-config.yaml
