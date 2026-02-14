@@ -1,5 +1,6 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
+
 metadata:
   name: mutate-certificates
   annotations:
@@ -10,7 +11,8 @@ metadata:
       This policy sets default values for cert-manager Certificate resources
       if they are not specified.
 spec:
-  failurePolicy: Ignore # Non-blocking to prevent outages if webhook fails
+  # Non-blocking to prevent outages if webhook fails
+  failurePolicy: Ignore
   rules:
     # Set a sane default for the history field if not already present
     - name: set-revisionHistoryLimit
