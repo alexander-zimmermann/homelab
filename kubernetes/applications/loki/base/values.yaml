@@ -6,8 +6,7 @@ singleBinary:
   persistence:
     # Automatic StatefulSet recreation for PVC expansion
     enableStatefulSetRecreationForSizeChange: true
-    # Persistent Volume Claim storage size
-    size: 5Gi
+    # Persistent Volume Claim
     storageClass: longhorn
 
 # Scalability settings for distributed components

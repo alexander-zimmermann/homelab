@@ -94,6 +94,7 @@ patches:
           limits:
             cpu: 200m
             memory: 128Mi
+
       - op: add
         path: /spec/template/spec/containers/1/resources
         value:

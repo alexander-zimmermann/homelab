@@ -16,6 +16,9 @@ patches:
       - op: test
         path: /spec/template/spec/containers/1/name
         value: loki-sc-rules
+      - op: test
+        path: /spec/volumeClaimTemplates/0/metadata/name
+        value: storage
 
       - op: add
         path: /spec/template/spec/containers/0/resources
@@ -46,6 +49,10 @@ patches:
         value:
           name: GOMEMLIMIT
           value: "120795955"
+
+      - op: replace
+        path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
+        value: 5Gi
 
   # Loki Gateway (Deployment)
   - target:
