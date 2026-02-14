@@ -16,6 +16,22 @@ helmCharts:
     namespace: prometheus
     includeCRDs: true
 
+patches:
+  # Configure LoadBalancer with Cilium BGP advertisement
+  - target:
+      kind: Service
+      name: prometheus-server
+    patch: |-
+      - op: replace
+        path: /spec/type
+        value: LoadBalancer
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1ip-pool
+        value: default
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1advertise-service
+        value: default
+
 labels:
   - includeSelectors: false
     pairs:

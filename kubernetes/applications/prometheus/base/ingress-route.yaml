@@ -13,7 +13,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`prometheus.zimmermann.sh`)
+      match: Host(`PLACEHOLDER`)
       priority: 10
       services:
         - kind: Service
