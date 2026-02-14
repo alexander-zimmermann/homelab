@@ -5,7 +5,7 @@ resources:
   - ../../base
 
 replacements:
-# Inject domain name into the Certificate and IngressRoute
+  # Inject domain name into the Certificate and IngressRoute
   - sourceValue: alloy.zimmermann.sh
     targets:
       - select:
