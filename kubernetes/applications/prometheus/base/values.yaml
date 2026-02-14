@@ -30,7 +30,19 @@ prometheus:
     # Required for remote_write receiver (e.g. for agent-based ingestion)
     enableRemoteWriteReceiver: true
 
-    # Persist TSDB data.
+    # Reduces TSDB disk usage by approx. 30-40% with minimal CPU overhead
+    walCompression: true
+
+    # Stability guards to prevent OOM kills from heavy queries or dashboards
+    additionalArgs:
+      - name: query.max-concurrency
+        value: "5"
+      - name: query.timeout
+        value: "30s"
+      - name: query.max-samples
+        value: "5000000"
+
+    # Persist TSDB data
     storageSpec:
       volumeClaimTemplate:
         spec:
