@@ -3,3 +3,23 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+patches:
+  # Talos Cloud Controller Manager: Manages cloud resources for Talos Linux
+  - target:
+      kind: Deployment
+      name: talos-cloud-controller-manager
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: talos-cloud-controller-manager
+
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            cpu: 50m
+            memory: 128Mi

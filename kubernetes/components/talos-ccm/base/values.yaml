@@ -1,5 +1,5 @@
 transformations:
-  # Identify Talos data-plane nodes by hostname and set the conventional worker role label.
+  # Identify Talos data-plane nodes by hostname and set the conventional worker role label
   - name: worker-role
     nodeSelector:
       - matchExpressions:
@@ -10,7 +10,7 @@ transformations:
     labels:
       node-role.kubernetes.io/worker: ""
 
-  # CCM-applied label used by Longhorn for node selection (and disk gating).
+  # CCM-applied label used by Longhorn for node selection (and disk gating)
   - name: longhorn-storage
     nodeSelector:
       - matchExpressions:
@@ -20,12 +20,3 @@ transformations:
               - ^talos-dp-.*$
     labels:
       node.longhorn.io/create-default-disk: "true"
-
-# Talos CCM resources: requests influence scheduling/QoS; limits enforce a hard cap.
-resources:
-  requests:
-    cpu: 10m
-    memory: 64Mi
-  limits:
-    cpu: 100m
-    memory: 128Mi
