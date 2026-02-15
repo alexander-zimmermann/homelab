@@ -13,6 +13,8 @@ helmCharts:
     valuesFile: values.yaml
     namespace: cilium
     includeCRDs: true
+    apiVersions:
+      - monitoring.coreos.com/v1
 
 labels:
   - includeSelectors: false
