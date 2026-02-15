@@ -116,6 +116,8 @@ prometheus:
   enabled: true
   serviceMonitor:
     enabled: true
+    labels:
+      release: prometheus
 
 # Operator: Manage Cilium state
 operator:
@@ -126,6 +128,8 @@ operator:
     enabled: true
     serviceMonitor:
       enabled: true
+      labels:
+        release: prometheus
 
   # Grafana Dashboards for Operator
   dashboards:

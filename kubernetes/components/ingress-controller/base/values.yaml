@@ -43,3 +43,11 @@ ports:
     http:
       tls:
         enabled: true
+
+# Prometheus Metrics (Opt-In)
+metrics:
+  prometheus:
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: prometheus

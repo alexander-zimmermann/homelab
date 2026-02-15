@@ -13,3 +13,11 @@ crds:
 
 # Use a stable, short name for all rendered resources
 fullnameOverride: "cert-manager"
+
+# Prometheus Monitoring (Opt-In)
+prometheus:
+  enabled: true
+  servicemonitor:
+    enabled: true
+    labels:
+      release: prometheus

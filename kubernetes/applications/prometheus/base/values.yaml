@@ -30,6 +30,18 @@ prometheus:
     # Required for remote_write receiver (e.g. for agent-based ingestion)
     enableRemoteWriteReceiver: true
 
+    # Opt-In Model: Only scrape ServiceMonitors/PodMonitors with 'release: prometheus'
+    serviceMonitorSelector:
+      matchLabels:
+        release: prometheus
+    podMonitorSelector:
+      matchLabels:
+        release: prometheus
+
+    # Apply this label to all resources created by the operator (including default monitors)
+    commonLabels:
+      release: prometheus
+
     # Reduces TSDB disk usage by approx. 30-40% with minimal CPU overhead
     walCompression: true
 

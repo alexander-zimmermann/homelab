@@ -86,3 +86,10 @@ chunksCache:
 # Results cache resources are configured in overlays
 resultsCache:
   allocatedMemory: 256
+
+# Prometheus Monitoring (Opt-In)
+monitoring:
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: prometheus

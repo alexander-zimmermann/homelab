@@ -37,3 +37,10 @@ defaultSettings:
 
   # Reserve CPU for each instance manager pod (percent of allocatable CPU)
   guaranteedInstanceManagerCPU: 4
+
+# Prometheus Metrics (Opt-In)
+metrics:
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: prometheus

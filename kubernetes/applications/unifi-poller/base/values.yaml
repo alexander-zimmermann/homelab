@@ -6,6 +6,8 @@ podAnnotations:
 # Enable PodMonitor (Prometheus Operator) instead of ServiceMonitor
 podMonitor:
   enabled: true
+  labels:
+    release: prometheus
 
 # Keep ServiceMonitor explicitly off (we rely on PodMonitor)
 serviceMonitor:

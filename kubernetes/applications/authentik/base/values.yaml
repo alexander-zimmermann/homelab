@@ -42,3 +42,10 @@ authentik:
   # PostgreSQL connection settings (external DB via CloudNativePG)
   postgresql:
     host: "{{ .Release.Name }}-db-rw"
+
+# Prometheus Monitoring (Opt-In)
+prometheus:
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: prometheus

@@ -33,6 +33,8 @@ controller:
     enabled: true
     serviceMonitor:
       enabled: true
+      labels:
+        release: prometheus
 
 # ArgoCD Repo-server renders/manages repos/Helm/Kustomize.
 repoServer:

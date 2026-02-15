@@ -53,3 +53,9 @@ rbac:
     - apiGroups: ["traefik.io", "traefik.containo.us"]
       resources: ["ingressroutes", "ingressroutetcps", "ingressrouteudps"]
       verbs: ["get", "watch", "list"]
+
+# Prometheus Metrics (Opt-In)
+serviceMonitor:
+  enabled: true
+  labels:
+    release: prometheus
