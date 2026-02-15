@@ -1,3 +1,3 @@
 imagePullSecrets:
-  # Secret used by Kubernetes to authenticate when pulling the operator image.
+  # Required for pulling images from the private DHI registry
   - name: dhi-registry-secret
