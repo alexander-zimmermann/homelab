@@ -1,4 +1,4 @@
-name: CI Pre-Pull
+name: "CI: Pre-Pull Images"
 
 on:
   pull_request:

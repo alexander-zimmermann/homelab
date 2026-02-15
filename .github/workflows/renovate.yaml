@@ -1,5 +1,4 @@
----
-name: Renovate
+name: "Maint: Renovate"
 
 on:
   push:

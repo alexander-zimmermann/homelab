@@ -1,4 +1,4 @@
-name: Hydrate App & Component Manifests
+name: "CD: Hydrate Manifests"
 
 on:
   push:

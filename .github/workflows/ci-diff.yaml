@@ -1,4 +1,4 @@
-name: CI Diff Preview
+name: "CI: Preview Manifest Changes"
 
 on:
   pull_request:

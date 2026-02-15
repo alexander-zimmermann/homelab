@@ -1,4 +1,4 @@
-name: Mirror DHI OCI Helm charts
+name: "CD: Mirror OCI Charts"
 
 on:
   schedule: [{ cron: "00 2 * * *" }]
