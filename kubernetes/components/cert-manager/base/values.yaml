@@ -11,5 +11,5 @@ global:
 crds:
   enabled: true
 
-# Release name overrides
+# Use a stable, short name for all rendered resources
 fullnameOverride: "cert-manager"
