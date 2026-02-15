@@ -13,14 +13,14 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`argocd.zimmermann.sh`)
+      match: Host(`PLACEHOLDER`)
       priority: 10
       services:
         - kind: Service
           name: argocd-server
           port: 80
     - kind: Rule
-      match: Host(`argocd.zimmermann.sh`) && Header(`Content-Type`, `application/grpc`)
+      match: Host(`PLACEHOLDER`) && Header(`Content-Type`, `application/grpc`)
       priority: 11
       services:
         - kind: Service

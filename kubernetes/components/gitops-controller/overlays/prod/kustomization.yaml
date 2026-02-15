@@ -4,3 +4,22 @@ kind: Kustomization
 resources:
   - ../../base
   - ../../../../bootstrap/gitops-controller/overlays/prod/
+
+replacements:
+# Inject domain name into the Certificate and IngressRoute
+  - sourceValue: argocd.zimmermann.sh
+    targets:
+      - select:
+          kind: IngressRoute
+          name: argocd-server
+        fieldPaths:
+          - spec.routes.0.match
+          - spec.routes.1.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: Certificate
+          name: argocd-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
