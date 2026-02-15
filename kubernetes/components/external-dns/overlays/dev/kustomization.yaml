@@ -3,16 +3,3 @@ kind: Kustomization
 
 resources:
   - ../../base
-
-patches:
-  - patch: |-
-      - op: replace
-        path: /spec/values/domainFilters
-        value:
-          - zimmermann.phd
-      - op: replace
-        path: /spec/values/txtSuffix
-        value: -dev
-    target:
-      kind: HelmRelease
-      name: external-dns
