@@ -24,7 +24,7 @@ patches:
   - target:
       kind: Service
       name: authentik-server
-    patch: |
+    patch: |-
       - op: replace
         path: /spec/type
         value: LoadBalancer

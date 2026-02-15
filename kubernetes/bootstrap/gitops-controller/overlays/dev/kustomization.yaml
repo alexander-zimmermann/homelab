@@ -29,7 +29,7 @@ patches:
   - target:
       kind: StatefulSet
       name: argocd-application-controller
-    patch: |
+    patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/resources
         value:
@@ -49,7 +49,7 @@ patches:
   - target:
       kind: Deployment
       name: argocd-server
-    patch: |
+    patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/resources
         value:
@@ -69,7 +69,7 @@ patches:
   - target:
       kind: Deployment
       name: argocd-repo-server
-    patch: |
+    patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/resources
         value:
