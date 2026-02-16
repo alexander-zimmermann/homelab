@@ -5,20 +5,6 @@ resources:
   - ../../base
 
 patches:
-  # Persistent volume configuration
-  - target:
-      kind: PersistentVolume
-      name: pv-nfs-mosquitto
-    patch: |-
-      - op: replace
-        path: /spec/csi/volumeHandle
-        value: linux.zimmermann.eu.com/srv/k8s/mosquitto-prod
-      - op: replace
-        path: /spec/csi/volumeAttributes
-        value:
-          server: linux.zimmermann.eu.com
-          share: /srv/k8s/mosquitto-prod
-
   # Mosquitto service with static IP and BGP advertisement
   - target:
       kind: Service
