@@ -9,6 +9,13 @@ serviceAccount:
   # Explicit name for the ServiceAccount for better traceability
   name: grafana
 
+service:
+  # Expose Grafana service via Cilium/BGP-announced LoadBalancer
+  type: LoadBalancer
+  labels:
+    bgp.cilium.io/ip-pool: default
+    bgp.cilium.io/advertise-service: default
+
 podLabels:
   # Additional label for consistent selectors in services and network policies
   component: grafana-server

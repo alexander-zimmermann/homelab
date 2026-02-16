@@ -18,28 +18,18 @@ helmCharts:
     namespace: grafana-instance
     includeCRDs: true
 
-
 patches:
-  # Configure LoadBalancer with Cilium BGP advertisement
-  - target:
-      kind: Service
-      name: grafana
-    patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-
   # Service Patch - Fix Selector Collision
   - target:
       kind: Service
       name: grafana
     patch: |-
+      - op: test
+        path: /spec/selector
+        value:
+          app.kubernetes.io/instance: grafana
+          app.kubernetes.io/name: grafana
+
       - op: replace
         path: /spec/selector
         value:
