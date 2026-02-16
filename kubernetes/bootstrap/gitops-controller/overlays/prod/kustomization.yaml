@@ -30,6 +30,10 @@ patches:
       kind: StatefulSet
       name: argocd-application-controller
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/resources
+        value: {}
+
       - op: replace
         path: /spec/template/spec/containers/0/resources
         value:
@@ -50,6 +54,10 @@ patches:
       kind: Deployment
       name: argocd-server
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/resources
+        value: {}
+
       - op: replace
         path: /spec/template/spec/containers/0/resources
         value:
@@ -70,6 +78,10 @@ patches:
       kind: Deployment
       name: argocd-repo-server
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/resources
+        value: {}
+
       - op: replace
         path: /spec/template/spec/containers/0/resources
         value:
