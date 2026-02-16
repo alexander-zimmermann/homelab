@@ -19,6 +19,9 @@ patches:
       - op: test
         path: /spec/volumeClaimTemplates/0/metadata/name
         value: storage
+      - op: test
+        path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
+        value: 10Gi
 
       - op: add
         path: /spec/template/spec/containers/0/resources

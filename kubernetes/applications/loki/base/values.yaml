@@ -9,6 +9,14 @@ singleBinary:
     # Persistent Volume Claim
     storageClass: longhorn
 
+gateway:
+  # Expose Loki Gateway service via Cilium/BGP-announced LoadBalancer
+  service:
+    type: LoadBalancer
+    labels:
+      bgp.cilium.io/ip-pool: default
+      bgp.cilium.io/advertise-service: default
+
 # Scalability settings for distributed components
 write:
   replicas: 0
