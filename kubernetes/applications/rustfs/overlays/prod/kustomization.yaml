@@ -28,6 +28,9 @@ patches:
       kind: Deployment
       name: rustfs
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/resources
+        value: {}
       - op: replace
         path: /spec/template/spec/containers/0/resources
         value:
@@ -43,9 +46,15 @@ patches:
       kind: PersistentVolumeClaim
       name: rustfs-data
     patch: |-
+      - op: test
+        path: /spec/resources/requests/storage
+        value: 256Mi
       - op: replace
         path: /spec/resources/requests/storage
         value: 5Gi
+      - op: test
+        path: /spec/storageClassName
+        value: local-path
       - op: replace
         path: /spec/storageClassName
         value: longhorn
@@ -54,9 +63,15 @@ patches:
       kind: PersistentVolumeClaim
       name: rustfs-logs
     patch: |-
+      - op: test
+        path: /spec/resources/requests/storage
+        value: 256Mi
       - op: replace
         path: /spec/resources/requests/storage
         value: 1Gi
+      - op: test
+        path: /spec/storageClassName
+        value: local-path
       - op: replace
         path: /spec/storageClassName
         value: longhorn

@@ -17,11 +17,15 @@ helmCharts:
     namespace: rustfs
 
 patches:
-  # Configure LoadBalancer with Cilium BGP advertisement
+  # Expose RustFS service via Cilium/BGP-announced LoadBalancer
   - target:
       kind: Service
       name: rustfs-svc
     patch: |-
+      - op: test
+        path: /spec/type
+        value: ClusterIP
+
       - op: replace
         path: /spec/type
         value: LoadBalancer
