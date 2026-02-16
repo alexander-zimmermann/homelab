@@ -55,6 +55,9 @@ patches:
       - op: test
         path: /metadata/name
         value: prometheus
+      - op: test
+        path: /spec/retention
+        value: 10d
 
       - op: add
         path: /spec/resources

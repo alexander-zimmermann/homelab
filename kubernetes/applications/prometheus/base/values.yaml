@@ -26,6 +26,13 @@ alertmanager:
             - ReadWriteOnce
 
 prometheus:
+  # Expose Prometheus service via Cilium/BGP-announced LoadBalancer
+  service:
+    type: LoadBalancer
+    labels:
+      bgp.cilium.io/ip-pool: default
+      bgp.cilium.io/advertise-service: default
+
   prometheusSpec:
     # Required for remote_write receiver (e.g. for agent-based ingestion)
     enableRemoteWriteReceiver: true
