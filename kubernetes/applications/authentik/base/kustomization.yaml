@@ -18,22 +18,8 @@ helmCharts:
     valuesFile: values.yaml
     namespace: authentik
     includeCRDs: true
-
-patches:
-  # Configure LoadBalancer with Cilium BGP advertisement
-  - target:
-      kind: Service
-      name: authentik-server
-    patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
+    apiVersions:
+      - monitoring.coreos.com/v1
 
 labels:
   - includeSelectors: false

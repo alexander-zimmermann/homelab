@@ -43,9 +43,18 @@ authentik:
   postgresql:
     host: "{{ .Release.Name }}-db-rw"
 
-# Prometheus Monitoring (Opt-In)
-prometheus:
-  serviceMonitor:
-    enabled: true
+server:
+  # Expose Authentik service via Cilium/BGP-announced LoadBalancer
+  service:
+    type: LoadBalancer
     labels:
-      release: prometheus
+      bgp.cilium.io/ip-pool: default
+      bgp.cilium.io/advertise-service: default
+
+  # Prometheus Monitoring (Opt-In)
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: prometheus
