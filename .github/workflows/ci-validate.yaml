@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Kustomize
-        uses: kustomize-everything/action-kustomize@v2
+        uses: kustomize-everything/action-kustomize@v2.1.0
         with:
           version: "5.8.0"
 
