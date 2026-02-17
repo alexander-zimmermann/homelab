@@ -44,3 +44,7 @@ metrics:
     enabled: true
     labels:
       release: prometheus
+
+# Reduce Longhorn UI replicas
+longhornUI:
+  replicas: 1

@@ -4,53 +4,17 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject the desired replica count into the embedded StorageClass YAML string
+  - sourceValue: "1"
+    targets:
+      - select:
+          kind: ConfigMap
+          name: longhorn-storageclass
+        fieldPaths:
+          - 'data.storageclass\.yaml.parameters.numberOfReplicas'
+
 patches:
-  # StorageClass: Single Replica (No Redundancy) & Delete Policy (Cleanup on PVC deletion)
-  - target:
-      kind: StorageClass
-      name: longhorn
-    patch: |-
-      - op: replace
-        path: /parameters/numberOfReplicas
-        value: "1"
-
-      - op: replace
-        path: /reclaimPolicy
-        value: Delete
-
-  # CSI Attacher / CSI Provisioner / CSI Resizer / CSI Snapshotter
-  - target:
-      kind: Deployment
-      name: csi-attacher
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-
-  - target:
-      kind: Deployment
-      name: csi-provisioner
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-
-  - target:
-      kind: Deployment
-      name: csi-resizer
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-
-  - target:
-      kind: Deployment
-      name: csi-snapshotter
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-
   # Longhorn Manager resources
   - target:
       kind: DaemonSet
@@ -88,14 +52,6 @@ patches:
       kind: Deployment
       name: longhorn-ui
     patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: longhorn-ui
-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:

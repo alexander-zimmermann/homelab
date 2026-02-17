@@ -4,53 +4,26 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject the desired replica count into the embedded StorageClass YAML string
+  - sourceValue: "2"
+    targets:
+      - select:
+          kind: ConfigMap
+          name: longhorn-storageclass
+        fieldPaths:
+          - 'data.storageclass\.yaml.parameters.numberOfReplicas'
+
+  # Inject the Reclaim Policy into the embedded StorageClass YAML string
+  - sourceValue: "Retain"
+    targets:
+      - select:
+          kind: ConfigMap
+          name: longhorn-storageclass
+        fieldPaths:
+          - 'data.storageclass\.yaml.reclaimPolicy'
+
 patches:
-  # StorageClass: Ensure data redundancy (2 Replicas) & Delete Policy (Retain on PVC deletion)
-  - target:
-      kind: StorageClass
-      name: longhorn
-    patch: |-
-      - op: replace
-        path: /parameters/numberOfReplicas
-        value: "2"
-
-      - op: replace
-        path: /reclaimPolicy
-        value: Retain
-
-  # CSI Attacher / CSI Provisioner / CSI Resizer / CSI Snapshotter
-  - target:
-      kind: Deployment
-      name: csi-attacher
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 2
-
-  - target:
-      kind: Deployment
-      name: csi-provisioner
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 2
-
-  - target:
-      kind: Deployment
-      name: csi-resizer
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 2
-
-  - target:
-      kind: Deployment
-      name: csi-snapshotter
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 2
-
   # Longhorn Manager resources
   - target:
       kind: DaemonSet
@@ -88,14 +61,6 @@ patches:
       kind: Deployment
       name: longhorn-ui
     patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: longhorn-ui
-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
