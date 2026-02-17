@@ -13,6 +13,9 @@ jobs:
   extract-images:
     name: Extract Images
     runs-on: ubuntu-latest
+    outputs:
+      default: ${{ steps.extract-default.outputs.default }}
+      pull: ${{ steps.extract-pull.outputs.pull }}
     steps:
       - name: Checkout Default Branch
         uses: actions/checkout@v4
