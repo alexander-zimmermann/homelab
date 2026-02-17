@@ -4,45 +4,30 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject the domain name into the Certificate and IngressRoute
+  - sourceValue: traefik.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: traefik-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: traefik-dashboard
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
-  # Ingress host
-  - patch: |-
-      - op: replace
-        path: /spec/routes/0/match
-        value: Host(`traefik.zimmermann.phd`)
-    target:
-      kind: IngressRoute
-      name: traefik-dashboard
-
-  # Certificate DNS names
-  - patch: |-
-      - op: replace
-        path: /spec/dnsNames/0
-        value: traefik.zimmermann.phd
-    target:
-      kind: Certificate
-      name: traefik-tls-cert
-
-  # Scale down replicas
+  # Use a single replica to save resources in development
   - patch: |-
       - op: replace
         path: /spec/replicas
         value: 1
     target:
       kind: Deployment
-      name: traefik
-
-  # Loadbalancer configuration
-  - patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
       name: traefik
