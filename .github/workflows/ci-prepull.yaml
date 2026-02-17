@@ -13,23 +13,29 @@ jobs:
   extract-images:
     name: Extract Images
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        branch: [default, pull]
-    outputs:
-      default: ${{ steps.extract.outputs.default }}
-      pull: ${{ steps.extract.outputs.pull }}
     steps:
-      - name: Checkout
+      - name: Checkout Default Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ matrix.branch == 'default' && github.event.repository.default_branch || '' }}
+          ref: ${{ github.event.repository.default_branch }}
+          path: default
 
-      - name: Extract
-        id: extract
+      - name: Extract Default Images
+        id: extract-default
         run: |
-          ./.github/scripts/ci-extract-images.sh kubernetes images.json
-          echo "${{ matrix.branch }}=$(jq --compact-output '.' images.json)" >> $GITHUB_OUTPUT
+          ./.github/scripts/ci-extract-images.sh default default_images.json
+          echo "default=$(jq --compact-output '.' default_images.json)" >> $GITHUB_OUTPUT
+
+      - name: Checkout Pull Request Branch
+        uses: actions/checkout@v4
+        with:
+          path: pull
+
+      - name: Extract Pull Images
+        id: extract-pull
+        run: |
+          ./.github/scripts/ci-extract-images.sh pull pull_images.json
+          echo "pull=$(jq --compact-output '.' pull_images.json)" >> $GITHUB_OUTPUT
 
   diff:
     name: Diff Images
@@ -39,10 +45,13 @@ jobs:
       images: ${{ steps.diff.outputs.images }}
     steps:
       - id: diff
+        env:
+          DEFAULT_IMAGES: ${{ needs.extract-images.outputs.default }}
+          PULL_IMAGES: ${{ needs.extract-images.outputs.pull }}
         run: |
           images=$(jq --compact-output --null-input \
-              --argjson f1 '${{ needs.extract-images.outputs.default }}' \
-              --argjson f2 '${{ needs.extract-images.outputs.pull }}' \
+              --argjson f1 "$DEFAULT_IMAGES" \
+              --argjson f2 "$PULL_IMAGES" \
               '$f2 - $f1' \
           )
           echo "images=${images}" >> $GITHUB_OUTPUT
