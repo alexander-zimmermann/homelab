@@ -17,8 +17,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Kustomize
-        uses: fluxcd/pkg/actions/kustomize@main
+      - name: Install Kustomize
+        uses: kustomize-everything/action-kustomize@v1
+        with:
+          kustomize: "5.8.0"
 
       - name: Validate All Overlays
         run: |

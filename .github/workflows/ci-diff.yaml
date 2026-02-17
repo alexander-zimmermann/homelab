@@ -28,8 +28,10 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           path: main
 
-      - name: Setup Kustomize
-        uses: fluxcd/pkg/actions/kustomize@main
+      - name: Install Kustomize
+        uses: kustomize-everything/action-kustomize@v1
+        with:
+          kustomize: "5.8.0"
 
       - name: Render Manifests (Pull)
         run: |
