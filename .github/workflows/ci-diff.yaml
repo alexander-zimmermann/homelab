@@ -29,9 +29,9 @@ jobs:
           path: main
 
       - name: Install Kustomize
-        uses: kustomize-everything/action-kustomize@v1
+        uses: kustomize-everything/action-kustomize@v2
         with:
-          kustomize: "5.8.0"
+          version: "5.8.0"
 
       - name: Render Manifests (Pull)
         run: |
