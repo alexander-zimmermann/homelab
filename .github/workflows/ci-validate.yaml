@@ -58,7 +58,7 @@ jobs:
         run: |
           ./.github/scripts/ci-extract-images.py . images.json
           echo "matrix=$(jq -nc '{include: [range(8) | {shard: .}]}')" >> $GITHUB_OUTPUT
-          echo "images=$(cat images.json)" >> $GITHUB_OUTPUT
+          echo "images=$(jq -c . images.json)" >> $GITHUB_OUTPUT
 
   check-images:
     name: Verify Images
