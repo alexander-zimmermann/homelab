@@ -36,6 +36,7 @@ jobs:
 
       - name: Render Manifests (Pull)
         run: |
+          set -euo pipefail
           mkdir -p output
           # Build all overlays for applications (prod/dev)
           find pull/kubernetes/applications -type f -name "kustomization.yaml" | grep "overlays/" | while read -r kfile; do
@@ -52,6 +53,7 @@ jobs:
 
       - name: Render Manifests (Main)
         run: |
+          set -euo pipefail
           # Build all overlays for applications on main
           find main/kubernetes/applications -type f -name "kustomization.yaml" | grep "overlays/" | while read -r kfile; do
             dir=$(dirname "$kfile")
@@ -78,6 +80,7 @@ jobs:
       - name: Generate Diff
         id: generate-diff
         run: |
+          set -euo pipefail || true # Allow diff exit code 1
           # Standard diff for simplicity (dyff would be better but requires installation)
           diff -u output/main-manifests.yaml output/pull-manifests.yaml > diff.patch || true
 

@@ -28,6 +28,7 @@ jobs:
 
       - name: Hydrate Manifests
         run: |
+          set -euo pipefail
           mkdir -p dist/applications dist/components
 
           # Helper function to hydrate
@@ -39,11 +40,18 @@ jobs:
 
             # Process both prod and dev overlays
             if [[ "$env" == "prod" || "$env" == "dev" ]]; then
-              echo "Hydrating $type/$name ($env)..."
+              echo "::group::Hydrating $name ($env)"
               # Clean output directory to ensure determinism (remove stale files)
               rm -rf dist/$env/$type/$name
               mkdir -p dist/$env/$type/$name
-              kustomize build --enable-helm $path > dist/$env/$type/$name/manifest.yaml || echo "Failed to hydrate $name"
+
+              if kustomize build --enable-helm $path > dist/$env/$type/$name/manifest.yaml; then
+                echo "✅ Hydrated $type/$name ($env)"
+              else
+                echo "::error::Failed to hydrate $name"
+                exit 1
+              fi
+              echo "::endgroup::"
             fi
           }
 

@@ -1,53 +1,99 @@
 #!/usr/bin/env python3
-import sys
-import re
+"""
+This script parses a YAML file containing image URLs and checksums, downloads the latest
+version of each image, calculates its checksum, and updates the YAML file in-place.
+
+It uses a regex-based approach to preserve comments and file structure (which standard
+YAML parsers might destroy).
+
+Usage:
+    ./update_checksums.py [file_path] [--algorithm sha256] [--verbose]
+"""
+
+import argparse
 import hashlib
-import urllib.request
+import logging
 import os
+import re
+import sys
+import urllib.request
+from typing import Dict, List, Optional, Tuple, Callable
 
-IMAGE_YAML_PATH = "infrastructure/manifest/20-image/image.yaml"
-DEFAULT_ALGO = "sha256"
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s: %(message)s"
+)
+logger = logging.getLogger(__name__)
 
-def get_hash_func(algo):
-    """Return a hashlib function for the given algorithm name."""
-    try:
-        return getattr(hashlib, algo)()
-    except AttributeError:
-        print(f"Error: Unsupported algorithm '{algo}'")
+DEFAULT_IMAGE_YAML_PATH = "infrastructure/manifest/20-image/image.yaml"
+
+def get_hash_func(algo: str) -> Optional[Callable[[], hashlib._Hash]]:
+    """
+    Return a hashlib function constructor for the given algorithm name.
+
+    Args:
+        algo: Hash algorithm name (e.g., "sha256", "md5").
+
+    Returns:
+        Hash constructor or None if unsupported.
+    """
+    if hasattr(hashlib, algo):
+        return getattr(hashlib, algo) # type: ignore
+
+    logger.error(f"Unsupported algorithm '{algo}'")
+    return None
+
+def calculate_checksum(url: str, algo: str) -> Optional[str]:
+    """
+    Download the file from URL and calculate its checksum.
+
+    Args:
+        url: URL to download.
+        algo: Hash algorithm to use.
+
+    Returns:
+        Hex digest of the checksum, or None if failed.
+    """
+    logger.info(f"Downloading {url} with {algo}...")
+    hash_constructor = get_hash_func(algo)
+    if not hash_constructor:
         return None
 
-def calculate_checksum(url, algo=DEFAULT_ALGO):
-    """Download the file from URL and calculate its checksum."""
-    print(f"Downloading {url} with {algo}...")
-    hash_func = get_hash_func(algo)
-    if not hash_func:
-        return None
-
+    hash_obj = hash_constructor()
     try:
+        # standard timeout to avoid hanging indefinitely
         with urllib.request.urlopen(url, timeout=30) as response:
             while True:
                 chunk = response.read(8192)
                 if not chunk:
                     break
-                hash_func.update(chunk)
-        return hash_func.hexdigest()
+                hash_obj.update(chunk)
+        return hash_obj.hexdigest()
     except Exception as e:
-        print(f"Error downloading {url}: {e}")
+        logger.error(f"Error downloading {url}: {e}")
         return None
 
-def parse_algorithms(lines):
+def parse_algorithms(lines: List[str]) -> Dict[str, str]:
     """
     Scan lines to map URLs to their specified checksum algorithms.
-    Returns a dict: {url: algorithm}
+
+    Args:
+        lines: List of lines from the file.
+
+    Returns:
+        Dict mapping URL -> algorithm name.
     """
-    algorithms = {}
-    temp_url = None
+    algorithms: Dict[str, str] = {}
+    temp_url: Optional[str] = None
 
     for line in lines:
+        # Match "image_url: https://..."
         url_match = re.search(r'image_url:\s*(https?://\S+)', line)
         if url_match:
             temp_url = url_match.group(1)
 
+        # Match "image_checksum_algorithm: "sha256""
         algo_match = re.search(r'image_checksum_algorithm:\s*"(.*)"', line)
         if algo_match and temp_url:
             algorithms[temp_url] = algo_match.group(1)
@@ -55,17 +101,24 @@ def parse_algorithms(lines):
 
     return algorithms
 
-def update_lines(lines, algorithms):
+def update_lines(lines: List[str], algorithms: Dict[str, str], default_algo: str) -> Tuple[List[str], bool]:
     """
     Process lines and update checksums where applicable.
-    Returns: (new_lines, success_boolean)
+
+    Args:
+        lines: Original file lines.
+        algorithms: Map of URL to algorithm.
+        default_algo: Fallback algorithm.
+
+    Returns:
+        Tuple of (new_lines list, success boolean).
     """
-    new_lines = []
-    current_url = None
+    new_lines: List[str] = []
+    current_url: Optional[str] = None
     success = True
 
     for line in lines:
-        # Preserve existing algorithm lines (don't overwrite or duplicate)
+        # Preserve lines that define the algorithm (don't overwrite or duplicate logic)
         if re.search(r'image_checksum_algorithm:\s*".*"', line):
             new_lines.append(line)
             continue
@@ -77,24 +130,27 @@ def update_lines(lines, algorithms):
             new_lines.append(line)
             continue
 
-        # Update Checksum
+        # Find and Update Checksum
+        # Look for 'image_checksum: "..."'
         checksum_match = re.search(r'(image_checksum:\s*)"([a-f0-9]*)"', line)
         if checksum_match and current_url:
             prefix = checksum_match.group(1)
             old_checksum = checksum_match.group(2)
 
-            algo = algorithms.get(current_url, DEFAULT_ALGO)
+            algo = algorithms.get(current_url, default_algo)
             new_checksum = calculate_checksum(current_url, algo)
 
             if new_checksum:
                 if new_checksum != old_checksum:
-                    print(f"  Change: {old_checksum[:8]} -> {new_checksum[:8]}")
+                    logger.info(f"  Change: {old_checksum[:8]} -> {new_checksum[:8]}")
+                    # Reconstruct line with new checksum
                     new_line = f'{line[:checksum_match.start(1)]}{prefix}"{new_checksum}"\n'
                     new_lines.append(new_line)
                 else:
+                    logger.debug("  No change.")
                     new_lines.append(line)
             else:
-                print("  Failed to calculate checksum!")
+                logger.error("  Failed to calculate checksum!")
                 success = False
                 new_lines.append(line)
 
@@ -104,23 +160,38 @@ def update_lines(lines, algorithms):
 
     return new_lines, success
 
-def main():
-    if not os.path.exists(IMAGE_YAML_PATH):
-        print(f"File not found: {IMAGE_YAML_PATH}")
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Update checksums in a YAML file.")
+    parser.add_argument("file_path", nargs="?", default=DEFAULT_IMAGE_YAML_PATH,
+                        help=f"Path to the YAML file (default: {DEFAULT_IMAGE_YAML_PATH})")
+    parser.add_argument("--algorithm", default="sha256",
+                        help="Default hash algorithm if not specified in file (default: sha256)")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
+
+    args = parser.parse_args()
+
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
+
+    if not os.path.exists(args.file_path):
+        logger.error(f"File not found: {args.file_path}")
         sys.exit(1)
 
-    with open(IMAGE_YAML_PATH, 'r') as f:
+    logger.info(f"Processing {args.file_path}...")
+    with open(args.file_path, 'r') as f:
         lines = f.readlines()
 
     algorithms = parse_algorithms(lines)
-    new_lines, success = update_lines(lines, algorithms)
+    new_lines, success = update_lines(lines, algorithms, args.algorithm)
 
     if not success:
-        print("Script failed due to errors.")
+        logger.error("Script failed due to errors during checksum calculation.")
         sys.exit(1)
 
-    with open(IMAGE_YAML_PATH, 'w') as f:
+    with open(args.file_path, 'w') as f:
         f.writelines(new_lines)
+
+    logger.info("Successfully updated checksums.")
 
 if __name__ == "__main__":
     main()
