@@ -37,7 +37,7 @@ jobs:
           done
 
   extract-images:
-    name: Extract OCI Images
+    name: Extract Images
     needs: validate-kustomize
     runs-on: ubuntu-latest
     outputs:
@@ -57,11 +57,11 @@ jobs:
         id: extract
         run: |
           ./.github/scripts/ci-extract-images.py . images.json
-          echo "matrix=$(jq -c '{include: map({shard: .})}' <<< "$(seq 0 7)")" >> $GITHUB_OUTPUT
+          echo "matrix=$(jq -nc '{include: [range(8) | {shard: .}]}')" >> $GITHUB_OUTPUT
           echo "images=$(cat images.json)" >> $GITHUB_OUTPUT
 
   check-images:
-    name: Verify Images (Shard ${{ matrix.shard }})
+    name: Verify Images
     needs: extract-images
     runs-on: ubuntu-latest
     strategy:
