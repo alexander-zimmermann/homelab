@@ -25,6 +25,9 @@
   "flux": {
     "fileMatch": ["\\.yaml$"]
   },
+  "allowedPostUpgradeCommands": [
+    "^python3 .github/scripts/update_checksums.py$"
+  ],
   "postUpgradeTasks": {
     "commands": ["python3 .github/scripts/update_checksums.py"],
     "fileFilters": ["infrastructure/manifest/20-image/image.yaml"],
