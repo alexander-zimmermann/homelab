@@ -27,15 +27,20 @@ jobs:
 
       - name: Render Manifests
         run: |
+          set -euo pipefail
           mkdir -p dist/prod dist/dev
 
-          echo "Rendering Prod..."
+          echo "::group::Rendering Prod"
           kustomize build --enable-helm kubernetes/bootstrap/cilium/overlays/prod > dist/prod/cilium.yaml
           kustomize build --enable-helm kubernetes/bootstrap/gitops-controller/overlays/prod > dist/prod/argocd.yaml
+          echo "✅ Prod successful"
+          echo "::endgroup::"
 
-          echo "Rendering Dev..."
+          echo "::group::Rendering Dev"
           kustomize build --enable-helm kubernetes/bootstrap/cilium/overlays/dev > dist/dev/cilium.yaml
           kustomize build --enable-helm kubernetes/bootstrap/gitops-controller/overlays/dev > dist/dev/argocd.yaml
+          echo "✅ Dev successful"
+          echo "::endgroup::"
 
       - name: Deploy to Bootstrap Branch
         uses: peaceiris/actions-gh-pages@v3

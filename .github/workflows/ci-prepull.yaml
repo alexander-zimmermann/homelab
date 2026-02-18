@@ -34,17 +34,22 @@ jobs:
           kustomize: v5.8.1
           yq: v4.40.5
 
+      - name: Install Python Dependencies
+        run: pip install pyyaml
+
       - name: Extract Default Images
         id: extract-default
         run: |
-          ./default/.github/scripts/ci-extract-images.sh default default_images.json
+          ./pull/.github/scripts/ci-extract-images.py default default_images.json
           echo "default=$(jq --compact-output '.' default_images.json)" >> $GITHUB_OUTPUT
+          echo "✅ Extracted default images"
 
       - name: Extract Pull Images
         id: extract-pull
         run: |
-          ./pull/.github/scripts/ci-extract-images.sh pull pull_images.json
+          ./pull/.github/scripts/ci-extract-images.py pull pull_images.json
           echo "pull=$(jq --compact-output '.' pull_images.json)" >> $GITHUB_OUTPUT
+          echo "✅ Extracted pull images"
 
   diff-images:
     name: Diff Images
@@ -58,6 +63,7 @@ jobs:
           DEFAULT_IMAGES: ${{ needs.extract-images.outputs.default }}
           PULL_IMAGES: ${{ needs.extract-images.outputs.pull }}
         run: |
+          set -euo pipefail
           images=$(jq --compact-output --null-input \
               --argjson f1 "$DEFAULT_IMAGES" \
               --argjson f2 "$PULL_IMAGES" \
@@ -95,3 +101,4 @@ jobs:
           # talosctl --talosconfig talosconfig --nodes $nodes image pull ${{ matrix.image }}
           echo "Pre-pulling ${{ matrix.image }} on Talos nodes..."
           # talosctl --talosconfig talosconfig image pull ${{ matrix.image }}
+          echo "✅ Pre-pulled ${{ matrix.image }}"
