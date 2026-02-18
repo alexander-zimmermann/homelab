@@ -65,6 +65,20 @@ jobs:
             kustomize build --enable-helm "$dir" >> output/main-manifests.yaml || true
           done
 
+      - name: Install yq
+        run: |
+          wget https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64 -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+
+      - name: Filter Non-Deterministic Secrets
+        run: |
+          # Remove Helm-generated secrets that change on every build to avoid diff noise
+          for file in output/*.yaml; do
+            if [ -f "$file" ]; then
+              yq -i 'del(select(.kind == "Secret" and (.metadata.name == "cilium-ca" or .metadata.name == "hubble-server-certs" or .metadata.name == "hubble-relay-client-certs")))' "$file"
+            fi
+          done
+
       - name: Generate Diff
         id: generate-diff
         run: |
