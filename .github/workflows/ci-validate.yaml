@@ -52,34 +52,39 @@ jobs:
         run: |
           # Use the helper script to get all images
           ./.github/scripts/ci-extract-images.sh kubernetes images.json
-          echo "matrix=$(jq -c '{image: .}' images.json)" >> $GITHUB_OUTPUT
+          echo "images=$(jq -c '.' images.json)" >> $GITHUB_OUTPUT
 
     outputs:
-      matrix: ${{ steps.extract.outputs.matrix }}
+      images: ${{ steps.extract.outputs.images }}
 
   check-images:
-    name: Verify ${{ matrix.image }}
+    name: Verify Images (Shard ${{ matrix.shard }})
     needs: extract-images
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.extract-images.outputs.matrix) }}
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Verify Image Existence
+      - name: Validate Images
+        env:
+            IMAGES: ${{ needs.extract-images.outputs.images }}
+            SHARD: ${{ matrix.shard }}
+            TOTAL_SHARDS: 8
         run: |
-          # Use oras to check if the manifest exists without pulling
-          if [[ "${{ matrix.image }}" == dhi.io/* ]]; then
-            # Requires DHI credentials if private
-            echo "Skipping private DHI check for now or implement login"
-            exit 0
-          fi
+            # Filter images for this shard using jq
+            # We use to_entries to get indices, select based on modulo, and map back to values
+            echo "$IMAGES" | jq -r --argjson shard "$SHARD" --argjson total "$TOTAL_SHARDS" \
+                'to_entries | map(select(.key % $total == $shard)) | map(.value) | .[]' | while read -r image; do
 
-          echo "Checking ${{ matrix.image }}..."
-          oras manifest fetch ${{ matrix.image }} > /dev/null
+                if [[ "$image" == dhi.io/* ]]; then
+                    echo "Skipping private DHI check for $image"
+                    continue
+                fi
+
+                echo "Checking $image..."
+                if ! oras manifest fetch "$image" > /dev/null; then
+                    echo "::error::Image $image not found!"
+                    exit 1
+                fi
+            done
