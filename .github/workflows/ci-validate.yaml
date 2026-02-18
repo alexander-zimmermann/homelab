@@ -66,6 +66,9 @@ jobs:
       matrix:
         shard: [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
+      - name: Setup ORAS CLI
+        uses: oras-project/setup-oras@v1
+
       - name: Validate Images
         env:
             IMAGES: ${{ needs.extract-images.outputs.images }}
