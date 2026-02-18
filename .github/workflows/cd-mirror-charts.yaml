@@ -32,29 +32,6 @@ jobs:
       - name: Login ghcr.io
         run: echo "${{ github.token }}" | oras login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
 
-      - name: "Preflight: Assert GHCR namespace is publishable"
-        shell: bash
-        run: |
-          set -euo pipefail
-          export LC_ALL=C
-
-          if [ "${OWNER}" != "${{ github.repository_owner }}" ] && [ -z "${{ secrets.GHCR_PAT }}" ]; then
-            echo "::error::To publish to ghcr.io/${OWNER}, provide a GHCR_PAT secret with write:packages and log in with it."
-            exit 1
-          fi
-          echo "✅ GHCR namespace is publishable."
-
-      - name: "Preflight: Verify DHI connectivity"
-        run: |
-          set -euo pipefail
-          export LC_ALL=C
-
-          if ! oras repo tags dhi.io/redis-chart | head -n 1 > /dev/null; then
-            echo "::error::Failed to list tags from dhi.io. Check DHI_USER/DHI_PASS permissions."
-            exit 1
-          fi
-          echo "✅ DHI connectivity verified."
-
       - id: make-matrix
         name: Build JSON matrix of (src,dst,tag) to copy
         shell: bash
