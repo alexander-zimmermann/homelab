@@ -43,7 +43,7 @@ jobs:
           RENOVATE_DRY_RUN: ${{ inputs.dryRun }}
           RENOVATE_PLATFORM: github
           RENOVATE_PLATFORM_COMMIT: "true"
-          RENOVATE_ALLOW_POST_UPGRADE_COMMANDS: "true"
+          RENOVATE_ALLOWED_POST_UPGRADE_COMMANDS: '["^python3 .github/scripts/update_checksums.py$"]'
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           renovate-version: ${{ inputs.version || 'latest' }}
