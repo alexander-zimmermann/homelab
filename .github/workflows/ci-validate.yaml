@@ -40,6 +40,9 @@ jobs:
     name: Extract OCI Images
     needs: validate-kustomize
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.extract.outputs.matrix }}
+      images: ${{ steps.extract.outputs.images }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -47,15 +50,15 @@ jobs:
       - name: Setup ORAS CLI
         uses: oras-project/setup-oras@v1
 
+      - name: Install Python Dependencies
+        run: pip install pyyaml
+
       - name: Extract Images
         id: extract
         run: |
-          # Use the helper script to get all images
-          ./.github/scripts/ci-extract-images.sh kubernetes images.json
-          echo "images=$(jq -c '.' images.json)" >> $GITHUB_OUTPUT
-
-    outputs:
-      images: ${{ steps.extract.outputs.images }}
+          ./.github/scripts/ci-extract-images.py . images.json
+          echo "matrix=$(jq -c '{include: map({shard: .})}' <<< "$(seq 0 7)")" >> $GITHUB_OUTPUT
+          echo "images=$(cat images.json)" >> $GITHUB_OUTPUT
 
   check-images:
     name: Verify Images (Shard ${{ matrix.shard }})
@@ -64,7 +67,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+        include: ${{ fromJson(needs.extract-images.outputs.matrix).include }}
     steps:
       - name: Setup ORAS CLI
         uses: oras-project/setup-oras@v1
@@ -73,11 +76,10 @@ jobs:
         env:
             IMAGES: ${{ needs.extract-images.outputs.images }}
             SHARD: ${{ matrix.shard }}
-            TOTAL_SHARDS: 8
         run: |
             # Filter images for this shard using jq
             # We use to_entries to get indices, select based on modulo, and map back to values
-            echo "$IMAGES" | jq -r --argjson shard "$SHARD" --argjson total "$TOTAL_SHARDS" \
+            echo "$IMAGES" | jq -r --argjson shard "$SHARD" --argjson total 8 \
                 'to_entries | map(select(.key % $total == $shard)) | map(.value) | .[]' | while read -r image; do
 
                 if [[ "$image" == dhi.io/* ]]; then
