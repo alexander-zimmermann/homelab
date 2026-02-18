@@ -15,7 +15,8 @@ echo "Gathering images from $SEARCH_DIR..." >&2
 # We include both 'prod' and 'dev' to ensure all environment images are captured
 MAP_FILES=$(find "$SEARCH_DIR" -type f -name "kustomization.yaml" | grep "overlays/")
 
-IMAGES=()
+# Create a temporary file for collecting images to avoid shell array limit/splitting issues
+TEMP_IMAGES=$(mktemp)
 
 for kfile in $MAP_FILES; do
     dir=$(dirname "$kfile")
@@ -25,22 +26,28 @@ for kfile in $MAP_FILES; do
         continue
     fi
 
-    # Extract images using yq (assuming v4)
-    # It looks for .image in containers, initContainers, etc.
-    extracted=$(echo "$manifest" | yq eval-all '.. | select(has("image")) | .image' - | sed '/^---$/d' | sed '/^$/d')
-
-    if [ -n "$extracted" ]; then
-        while read -r img; do
-            IMAGES+=("$img")
-        done <<< "$extracted"
-    fi
+    # Extract images using yq
+    # 1. Select only documents that are NOT CustomResourceDefinitions (avoids schema descriptions)
+    # 2. Recursive descent to find 'image' keys
+    # 3. Ensure the value is a string (avoids objects/arrays)
+    # 4. Filter out common garbage (empty, simple dash, values with spaces which are likely docs)
+    echo "$manifest" | yq eval-all 'select(.kind != "CustomResourceDefinition") | .. | select(has("image")) | .image | select(tag == "!!str")' - \
+        | grep -v '^---$' \
+        | grep -v '^null$' \
+        | grep -v ' ' \
+        | grep . >> "$TEMP_IMAGES"
 done
 
 # Deduplicate and format as JSON array
-# shellcheck disable=SC2207
-UNIQUE_IMAGES=($(printf "%s\n" "${IMAGES[@]}" | sort -u))
+if [ -s "$TEMP_IMAGES" ]; then
+    # Sort, unique, and compile to JSON array
+    # jq -R works on raw strings, -s slurps them into an array
+    sort -u "$TEMP_IMAGES" | jq -R . | jq -s -c . > "$OUTPUT_FILE"
+else
+    echo "[]" > "$OUTPUT_FILE"
+fi
 
-# Build JSON array using jq
-printf "%s\n" "${UNIQUE_IMAGES[@]}" | jq -R . | jq -s -c . > "$OUTPUT_FILE"
+TOTAL=$(jq length "$OUTPUT_FILE")
+echo "Found $TOTAL unique images. Saved to $OUTPUT_FILE" >&2
 
-echo "Found ${#UNIQUE_IMAGES[@]} unique images. Saved to $OUTPUT_FILE" >&2
+rm -f "$TEMP_IMAGES"
