@@ -18,29 +18,35 @@ jobs:
       pull: ${{ steps.extract-pull.outputs.pull }}
     steps:
       - name: Checkout Default Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.repository.default_branch }}
           path: default
 
+      - name: Checkout Pull Request Branch
+        uses: actions/checkout@v6
+        with:
+          path: pull
+
+      - name: Install CLI Tools
+        uses: alexellis/arkade-get@master
+        with:
+          kustomize: v5.8.1
+          yq: v4.40.5
+
       - name: Extract Default Images
         id: extract-default
         run: |
-          ./.github/scripts/ci-extract-images.sh default default_images.json
+          ./default/.github/scripts/ci-extract-images.sh default default_images.json
           echo "default=$(jq --compact-output '.' default_images.json)" >> $GITHUB_OUTPUT
-
-      - name: Checkout Pull Request Branch
-        uses: actions/checkout@v4
-        with:
-          path: pull
 
       - name: Extract Pull Images
         id: extract-pull
         run: |
-          ./.github/scripts/ci-extract-images.sh pull pull_images.json
+          ./pull/.github/scripts/ci-extract-images.sh pull pull_images.json
           echo "pull=$(jq --compact-output '.' pull_images.json)" >> $GITHUB_OUTPUT
 
-  diff:
+  diff-images:
     name: Diff Images
     needs: extract-images
     runs-on: ubuntu-latest
@@ -59,19 +65,21 @@ jobs:
           )
           echo "images=${images}" >> $GITHUB_OUTPUT
 
-  pre-pull:
-    name: Pre-pull Images
-    needs: diff
-    if: ${{ needs.diff.outputs.images != '[]' }}
+  pre-pull-images:
+    name: Pre-Pull Images
+    needs: diff-images
+    if: ${{ needs.diff-images.outputs.images != '[]' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: ${{ fromJSON(needs.diff.outputs.images) }}
+        image: ${{ fromJSON(needs.diff-images.outputs.images) }}
       max-parallel: 4
       fail-fast: false
     steps:
-      - name: Install talosctl
-        run: curl -fsSL https://talos.dev/install | sh
+      - name: Install CLI Tools
+        uses: alexellis/arkade-get@master
+        with:
+          talosctl: v1.12.2
 
       - name: Pre-pull Image
         env:

@@ -10,18 +10,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
+  validate-kustomize:
     name: Validate Manifests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Install Kustomize
-        uses: kustomize-everything/action-kustomize@v2.1.0
+      - name: Install CLI Tools
+        uses: alexellis/arkade-get@master
         with:
-          version: "5.8.1"
-          sha256-checksum: "029a7f0f4e1932c52a0476cf02a0fd855c0bb85694b82c338fc648dcb53a819d"
+          kustomize: v5.8.1
 
       - name: Validate All Overlays
         run: |
@@ -37,15 +36,15 @@ jobs:
             echo "::endgroup::"
           done
 
-  oci-check:
-    name: Validate OCI Images
-    needs: validate
+  extract-images:
+    name: Extract OCI Images
+    needs: validate-kustomize
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup ORAS
+      - name: Setup ORAS CLI
         uses: oras-project/setup-oras@v1
 
       - name: Extract Images
@@ -58,13 +57,13 @@ jobs:
     outputs:
       matrix: ${{ steps.extract.outputs.matrix }}
 
-  image-exists:
-    name: Check ${{ matrix.image }}
-    needs: oci-check
+  check-images:
+    name: Verify ${{ matrix.image }}
+    needs: extract-images
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.oci-check.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.extract-images.outputs.matrix) }}
     steps:
       - name: Login to GHCR
         uses: docker/login-action@v3

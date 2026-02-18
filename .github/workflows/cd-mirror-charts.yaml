@@ -14,8 +14,8 @@ env:
     dhi.io/cloudnative-pg-chart
 
 jobs:
-  discover:
-    name: Discover missing tags per chart
+  discover-tags:
+    name: Discover Missing Tags
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -110,10 +110,10 @@ jobs:
           # Expose matrix for the next job (GitHub Actions matrix format)
           echo "matrix=$(jq -c '{include: .}' <<< "${ITEMS_JSON}")" >> "$GITHUB_OUTPUT"
 
-  mirror:
-    name: Copy missing tags (max 3 in parallel)
-    needs: discover
-    if: ${{ fromJson(needs.discover.outputs.matrix).include[0] != null }}
+  mirror-charts:
+    name: Mirror Charts
+    needs: discover-tags
+    if: ${{ fromJson(needs.discover-tags.outputs.matrix).include[0] != null }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -121,7 +121,7 @@ jobs:
     strategy:
       fail-fast: false
       max-parallel: 3
-      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.discover-tags.outputs.matrix) }}
     steps:
       - name: Install ORAS CLI
         uses: oras-project/setup-oras@v1
