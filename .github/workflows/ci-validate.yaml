@@ -1,18 +1,70 @@
-name: "CI: Validate Manifests Changes"
+name: "CI: Validate Manifests & Images"
 
 on:
   pull_request:
-    branches:
-      - main
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-  cancel-in-progress: true
+    branches: [ main ]
 
 jobs:
-  validate-kustomize:
-    name: Validate Manifests
+  detect-overlays:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed overlay directories
+        id: set-matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Base und PR Head diffen
+          git fetch origin "${{ github.base_ref }}" --depth=1 || true
+          CHANGED="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)"
+
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          # Find overlays containing kustomization.yaml from changed files
+          OVERLAY_DIRS="$(echo "$CHANGED" \
+            | awk -F/ '
+              /kustomization\\.ya?ml$/ { print; next }
+              { print }
+            ' \
+            | while read -r f; do
+                d="$(dirname "$f")"
+                while [ "$d" != "." ] && [ "$d" != "/" ]; do
+                  if [ -f "$d/kustomization.yaml" ] || [ -f "$d/kustomization.yml" ]; then
+                    echo "$d"
+                    break
+                  fi
+                  d="$(dirname "$d")"
+                done
+              done \
+            | sort -u)"
+
+          if [ -z "$OVERLAY_DIRS" ]; then
+            echo "No overlays detected from changed files. Falling back to all overlays..."
+            OVERLAY_DIRS="$(find kubernetes -name kustomization.yaml -o -name kustomization.yml \
+              | xargs -n1 dirname | sort -u)"
+          fi
+
+          echo "Overlays to render:"
+          echo "$OVERLAY_DIRS"
+
+          # JSON Array für Matrix bauen (with jq for better readability and syntax highlighting)
+          JSON=$(echo "$OVERLAY_DIRS" | jq -R -s -c 'split("\n") | map(select(length > 0)) | {overlay: .}')
+          echo "matrix=$JSON" >> "$GITHUB_OUTPUT"
+
+  validate:
+    runs-on: ubuntu-latest
+    needs: detect-overlays
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.detect-overlays.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -21,75 +73,62 @@ jobs:
         uses: alexellis/arkade-get@master
         with:
           kustomize: v5.8.1
+          helm: v3.14.0
+          kubeconform: v0.6.4
+          crane: v0.19.0
 
-      - name: Validate All Overlays
+      - name: Login to DHI
+        run: crane auth login dhi.io -u "${{ secrets.DHI_USER }}" -p "${{ secrets.DHI_PASS }}"
+
+      - name: Render Overlay
+        id: render
+        shell: bash
         run: |
           set -euo pipefail
-          # Find all kustomization.yaml files in overlays (prod/dev)
-          OVERLAYS=$(find kubernetes -type f -name "kustomization.yaml" | grep "overlays/")
+          echo "::group::Render ${{ matrix.overlay }}"
+          mkdir -p rendered
+          kustomize build --enable-helm "${{ matrix.overlay }}" > rendered/manifests.yaml
+          echo "::endgroup::"
 
-          for kfile in $OVERLAYS; do
-            dir=$(dirname "$kfile")
-            echo "::group::Validating $dir"
-            kustomize build --enable-helm "$dir" > /dev/null
-            echo "✅ $dir builds successfully."
-            echo "::endgroup::"
-          done
-
-  extract-images:
-    name: Extract Images
-    needs: validate-kustomize
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.extract.outputs.matrix }}
-      images: ${{ steps.extract.outputs.images }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup ORAS CLI
-        uses: oras-project/setup-oras@v1
-
-      - name: Install Python Dependencies
-        run: pip install pyyaml
-
-      - name: Extract Images
-        id: extract
+      - name: Validate Schema (kubeconform)
+        shell: bash
         run: |
-          ./.github/scripts/ci-extract-images.py . images.json
-          echo "matrix=$(jq -nc '{include: [range(8) | {shard: .}]}')" >> $GITHUB_OUTPUT
-          echo "images=$(jq -c . images.json)" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          echo "::group::Kubeconform"
+          # -ignore-missing-schemas: Ignore CRDs where no public schema exists
+          kubeconform -strict -summary -ignore-missing-schemas rendered/manifests.yaml
+          echo "::endgroup::"
 
-  check-images:
-    name: Verify Images
-    needs: extract-images
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJson(needs.extract-images.outputs.matrix).include }}
-    steps:
-      - name: Setup ORAS CLI
-        uses: oras-project/setup-oras@v1
-
-      - name: Validate Images
-        env:
-            IMAGES: ${{ needs.extract-images.outputs.images }}
-            SHARD: ${{ matrix.shard }}
+      - name: Validate Images (crane)
+        shell: bash
         run: |
-            # Filter images for this shard using jq
-            # We use to_entries to get indices, select based on modulo, and map back to values
-            echo "$IMAGES" | jq -r --argjson shard "$SHARD" --argjson total 8 \
-                'to_entries | map(select(.key % $total == $shard)) | map(.value) | .[]' | while read -r image; do
+          set -euo pipefail
+          echo "::group::Check Images"
 
-                if [[ "$image" == dhi.io/* ]]; then
-                    echo "Skipping private DHI check for $image"
-                    continue
-                fi
+          # Extract images using grep/awk (Simple & Robust)
+          # Matches 'image: <value>' allowing whitespace
+          grep -r "^[[:space:]]*image:" rendered/manifests.yaml | awk '{print $2}' | sort -u > images.txt
 
-                echo "Checking $image..."
-                if ! oras manifest fetch "$image" > /dev/null; then
-                    echo "::error::Image $image not found!"
-                    exit 1
-                fi
-            done
+          if [ ! -s images.txt ]; then
+            echo "No images found to check."
+            exit 0
+          fi
+
+          cat images.txt
+
+          while read -r image; do
+            # Skip empty lines
+            if [ -z "$image" ]; then continue; fi
+
+            # Normalize docker.io library images (e.g. docker.io/traefik -> docker.io/library/traefik)
+            if [[ "$image" == "docker.io/"* ]] && [[ "$image" != *"/"*"/"* ]]; then
+                 image="${image/docker.io\//docker.io\/library\/}"
+            fi
+
+            echo "Checking $image..."
+            if ! crane digest "$image" > /dev/null; then
+              echo "::error::Image $image not found or not accessible!"
+              exit 1
+            fi
+          done < images.txt
+          echo "::endgroup::"

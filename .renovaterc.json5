@@ -4,12 +4,12 @@
     "config:recommended",
     "docker:enableMajor",
     "helpers:pinGitHubActionDigests",
-    "local>.renovate/autoMerge.json5",
-    "local>.renovate/customManagers.json5",
-    "local>.renovate/grafanaDashboards.json5",
-    "local>.renovate/groups.json5",
-    "local>.renovate/labels.json5",
-    "local>.renovate/semanticCommits.json5",
+    "local>.renovate/autoMerge",
+    "local>.renovate/customManagers",
+    "local>.renovate/grafanaDashboards",
+    "local>.renovate/groups",
+    "local>.renovate/labels",
+    "local>.renovate/semanticCommits",
     ":dependencyDashboard",
     ":disableRateLimiting",
     ":gitSignOff",
@@ -25,9 +25,6 @@
   "flux": {
     "fileMatch": ["\\.yaml$"]
   },
-  "allowedPostUpgradeCommands": [
-    "^python3 .github/scripts/update_checksums.py$"
-  ],
   "postUpgradeTasks": {
     "commands": ["python3 .github/scripts/update_checksums.py"],
     "fileFilters": ["infrastructure/manifest/20-image/image.yaml"],

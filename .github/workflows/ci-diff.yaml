@@ -1,117 +1,67 @@
-name: "CI: Preview Manifest Changes"
+name: "CI: ArgoCD Diff Preview"
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-  cancel-in-progress: true
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
-  generate-diff:
-    name: Generate Diff Preview
+  diff:
+    name: Generate Diff
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
     steps:
-      - name: Checkout Pull Request
+      - name: Checkout PR branch
         uses: actions/checkout@v6
         with:
-          path: pull
+          path: pull-request
 
-      - name: Checkout Main
+      - name: Checkout base branch
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: hydrated
           path: main
 
       - name: Install CLI Tools
         uses: alexellis/arkade-get@master
         with:
           kustomize: v5.8.1
-          yq: v4.40.5
 
-      - name: Render Manifests (Pull)
+      - name: Render ApplicationSets (PR)
+        shell: bash
         run: |
-          set -euo pipefail
-          mkdir -p output
-          # Build all overlays for applications (prod/dev)
-          find pull/kubernetes/applications -type f -name "kustomization.yaml" | grep "overlays/" | while read -r kfile; do
-            dir=$(dirname "$kfile")
-            app=$(basename "$(dirname "$dir")")
-            kustomize build --enable-helm "$dir" >> output/pull-manifests.yaml || true
-          done
-          # Build all overlays for components (prod/dev)
-          find pull/kubernetes/components -type f -name "kustomization.yaml" | grep "overlays/" | while read -r kfile; do
-            dir=$(dirname "$kfile")
-            comp=$(basename "$(dirname "$dir")")
-            kustomize build --enable-helm "$dir" >> output/pull-manifests.yaml || true
-          done
-
-      - name: Render Manifests (Main)
-        run: |
-          set -euo pipefail
-          # Build all overlays for applications on main
-          find main/kubernetes/applications -type f -name "kustomization.yaml" | grep "overlays/" | while read -r kfile; do
-            dir=$(dirname "$kfile")
-            app=$(basename "$(dirname "$dir")")
-            kustomize build --enable-helm "$dir" >> output/main-manifests.yaml || true
-          done
-          # Build all overlays for components on main
-          find main/kubernetes/components -type f -name "kustomization.yaml" | grep "overlays/" | while read -r kfile; do
-            dir=$(dirname "$kfile")
-            comp=$(basename "$(dirname "$dir")")
-            kustomize build --enable-helm "$dir" >> output/main-manifests.yaml || true
-          done
-
-
-      - name: Filter Non-Deterministic Secrets
-        run: |
-          # Remove Helm-generated secrets that change on every build to avoid diff noise
-          for file in output/*.yaml; do
-            if [ -f "$file" ]; then
-              yq -i 'del(select(.kind == "Secret" and (.metadata.name == "cilium-ca" or .metadata.name == "hubble-server-certs" or .metadata.name == "hubble-relay-client-certs")))' "$file"
-            fi
-          done
+          echo "Rendering PR Branch ApplicationSets..."
+          kustomize build --enable-helm pull-request/kubernetes/bootstrap/gitops-controller > pull-request/rendered-apps.yaml
+          # PATCH: Point targetRevision to PR SHA instead of 'hydrated' to diff SOURCE changes
+          sed -i "s/targetRevision: hydrated/targetRevision: ${{ github.event.pull_request.head.sha }}/g" pull-request/rendered-apps.yaml
 
       - name: Generate Diff
-        id: generate-diff
         run: |
-          set -euo pipefail || true # Allow diff exit code 1
-          # Standard diff for simplicity (dyff would be better but requires installation)
-          diff -u output/main-manifests.yaml output/pull-manifests.yaml > diff.patch || true
+          # Use enable-helm to support our kustomize setup
+          export KUSTOMIZE_BUILD_OPTIONS="--enable-helm"
 
-          if [ ! -s diff.patch ]; then
-            echo "::set-output name=diff::No changes in manifests."
-            exit 0
+          docker run \
+            --network=host \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v $(pwd)/main:/base-branch \
+            -v $(pwd)/pull-request:/target-branch \
+            -v $(pwd)/output:/output \
+            -e TARGET_BRANCH=refs/pull/${{ github.event.number }}/merge \
+            -e REPO=${{ github.repository }} \
+            -e KUSTOMIZE_BUILD_OPTIONS="$KUSTOMIZE_BUILD_OPTIONS" \
+            dagandersen/argocd-diff-preview:v0.1.25
+
+      - name: Post diff as comment
+        run: |
+          # If output/diff.md exists, post it. The image might fail if diff fails generation?
+          # The tool guarantees output/diff.md usually.
+          if [ -f output/diff.md ]; then
+            gh pr comment ${{ github.event.number }} --repo ${{ github.repository }} --body-file output/diff.md --edit-last || \
+            gh pr comment ${{ github.event.number }} --repo ${{ github.repository }} --body-file output/diff.md
+          else
+            echo "::warning::No diff.md generated."
           fi
-
-          # Trim diff if too long
-          if [ $(wc -l < diff.patch) -gt 500 ]; then
-            echo "diff_trimmed=true" >> $GITHUB_OUTPUT
-            head -n 500 diff.patch > diff.patch.tmp
-            echo "... (truncated)" >> diff.patch.tmp
-            mv diff.patch.tmp diff.patch
-          fi
-
-          echo "diff_content<<EOF" >> $GITHUB_OUTPUT
-          cat diff.patch >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Comment PR
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: manifest-diff
-          message: |
-            ### 🤖 Kubernetes Manifest Diff Preview
-
-            ${{ steps.generate-diff.outputs.diff_trimmed == 'true' && '> [!WARNING] Diff was truncated to 500 lines.' || '' }}
-
-            ```diff
-            ${{ steps.generate-diff.outputs.diff_content }}
-            ```
-
-            *Validated by CI Diff Preview Workflow*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
