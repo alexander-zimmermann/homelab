@@ -33,7 +33,8 @@ jobs:
         shell: bash
         run: |
           echo "Rendering PR Branch ApplicationSets..."
-          kustomize build --enable-helm pull-request/kubernetes/bootstrap/gitops-controller > pull-request/rendered-apps.yaml
+          # Target 'overlays/prod' as it contains the Kustomization and env replacement logic
+          kustomize build --enable-helm pull-request/kubernetes/bootstrap/gitops-controller/overlays/prod > pull-request/rendered-apps.yaml
           # PATCH: Point targetRevision to PR SHA instead of 'hydrated' to diff SOURCE changes
           sed -i "s/targetRevision: hydrated/targetRevision: ${{ github.event.pull_request.head.sha }}/g" pull-request/rendered-apps.yaml
 
