@@ -15,7 +15,7 @@ spec:
       # wait until s3 is reachable
       initContainers:
         - name: wait-for-s3
-          image: curlimages/curl:8.9.1
+          image: curlimages/curl:8.18.0
           command: ["/bin/sh", "-c"]
           args:
             - |
