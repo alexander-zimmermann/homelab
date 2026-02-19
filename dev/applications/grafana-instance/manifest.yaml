@@ -1,0 +1,744 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    homelab.app: grafana-instance
+  name: grafana-instance
+---
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana
+  namespace: grafana-instance
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana-test
+  namespace: grafana-instance
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana
+  namespace: grafana-instance
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana-clusterrole
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - secrets
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana
+  namespace: grafana-instance
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: grafana
+subjects:
+- kind: ServiceAccount
+  name: grafana
+  namespace: grafana-instance
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: grafana-clusterrole
+subjects:
+- kind: ServiceAccount
+  name: grafana
+  namespace: grafana-instance
+---
+apiVersion: v1
+data:
+  grafana.ini: |
+    [analytics]
+    check_for_updates = true
+    [log]
+    mode = console
+    [paths]
+    data = /var/lib/grafana/
+    logs = /var/log/grafana
+    plugins = /var/lib/grafana/plugins
+    provisioning = /etc/grafana/provisioning
+    [security]
+    admin_password_file = /etc/grafana/secrets/admin-password
+    admin_user = admin
+    [server]
+    domain = ''
+    [unified_storage]
+    index_path = /var/lib/grafana-search/bleve
+kind: ConfigMap
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana
+  namespace: grafana-instance
+---
+apiVersion: v1
+data:
+  provider.yaml: |-
+    apiVersion: 1
+    providers:
+      - name: 'sidecarProvider'
+        orgId: 1
+        folder: ''
+        folderUid: ''
+        type: file
+        disableDeletion: false
+        allowUiUpdates: false
+        updateIntervalSeconds: 30
+        options:
+          foldersFromFilesStructure: false
+          path: /tmp/dashboards
+kind: ConfigMap
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana-config-dashboards
+  namespace: grafana-instance
+---
+apiVersion: v1
+data:
+  run.sh: |-
+    @test "Test Health" {
+      url="http://grafana/api/health"
+
+      code=$(wget --server-response --spider --timeout 90 --tries 10 ${url} 2>&1 | awk '/^  HTTP/{print $2}')
+      [ "$code" == "200" ]
+    }
+kind: ConfigMap
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana-test
+  namespace: grafana-instance
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    bgp.cilium.io/advertise-service: default
+    bgp.cilium.io/ip-pool: default
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana
+  namespace: grafana-instance
+spec:
+  ports:
+  - name: service
+    port: 80
+    protocol: TCP
+    targetPort: grafana
+  selector:
+    component: grafana-server
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana-image-renderer
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana-image-renderer
+  namespace: grafana-instance
+spec:
+  ports:
+  - name: http
+    port: 8081
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana-image-renderer
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana
+  namespace: grafana-instance
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: grafana
+      app.kubernetes.io/name: grafana
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "10"
+        checksum/config: 8d6db946f6cdbaa7bd462b82543bb36ed3f623a04901abc5005a87cedbf4bc41
+        checksum/sc-dashboard-provider-config: e70bf6a851099d385178a76de9757bb0bef8299da6d8443602590e44f05fdf24
+        kubectl.kubernetes.io/default-container: grafana
+      labels:
+        app.kubernetes.io/instance: grafana
+        app.kubernetes.io/name: grafana
+        app.kubernetes.io/version: 12.3.1
+        component: grafana-server
+        helm.sh/chart: grafana-10.5.15
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - env:
+        - name: METHOD
+          value: WATCH
+        - name: LABEL
+          value: grafana_dashboard
+        - name: FOLDER
+          value: /tmp/dashboards
+        - name: RESOURCE
+          value: both
+        - name: NAMESPACE
+          value: ALL
+        - name: REQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: admin-user
+              name: grafana-admin-credentials
+        - name: REQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: admin-password
+              name: grafana-admin-credentials
+        - name: REQ_URL
+          value: http://localhost:3000/api/admin/provisioning/dashboards/reload
+        - name: REQ_METHOD
+          value: POST
+        image: quay.io/kiwigrid/k8s-sidecar:2.5.0
+        imagePullPolicy: IfNotPresent
+        name: grafana-sc-dashboard
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 25m
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - mountPath: /tmp/dashboards
+          name: sc-dashboard-volume
+      - env:
+        - name: METHOD
+          value: WATCH
+        - name: LABEL
+          value: grafana_datasource
+        - name: FOLDER
+          value: /etc/grafana/provisioning/datasources
+        - name: RESOURCE
+          value: both
+        - name: NAMESPACE
+          value: ALL
+        - name: REQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: admin-user
+              name: grafana-admin-credentials
+        - name: REQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: admin-password
+              name: grafana-admin-credentials
+        - name: REQ_URL
+          value: http://localhost:3000/api/admin/provisioning/datasources/reload
+        - name: REQ_METHOD
+          value: POST
+        image: quay.io/kiwigrid/k8s-sidecar:2.5.0
+        imagePullPolicy: IfNotPresent
+        name: grafana-sc-datasources
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - mountPath: /etc/grafana/provisioning/datasources
+          name: sc-datasources-volume
+      - env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: GF_SECURITY_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              key: admin-user
+              name: grafana-admin-credentials
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: admin-password
+              name: grafana-admin-credentials
+        - name: GF_RENDERING_SERVER_URL
+          value: http://grafana-image-renderer.grafana-instance:8081/render
+        - name: GF_RENDERING_CALLBACK_URL
+          value: http://grafana.grafana-instance:80/
+        - name: GF_PATHS_DATA
+          value: /var/lib/grafana/
+        - name: GF_PATHS_LOGS
+          value: /var/log/grafana
+        - name: GF_PATHS_PLUGINS
+          value: /var/lib/grafana/plugins
+        - name: GF_PATHS_PROVISIONING
+          value: /etc/grafana/provisioning
+        - name: GF_UNIFIED_STORAGE_INDEX_PATH
+          value: /var/lib/grafana-search/bleve
+        image: docker.io/grafana/grafana:12.3.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /api/health
+            port: grafana
+          initialDelaySeconds: 60
+          timeoutSeconds: 30
+        name: grafana
+        ports:
+        - containerPort: 3000
+          name: grafana
+          protocol: TCP
+        - containerPort: 9094
+          name: gossip-tcp
+          protocol: TCP
+        - containerPort: 9094
+          name: gossip-udp
+          protocol: UDP
+        - containerPort: 6060
+          name: profiling
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: grafana
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - mountPath: /etc/grafana/grafana.ini
+          name: config
+          subPath: grafana.ini
+        - mountPath: /var/lib/grafana
+          name: storage
+        - mountPath: /var/lib/grafana-search
+          name: search
+        - mountPath: /tmp/dashboards
+          name: sc-dashboard-volume
+        - mountPath: /etc/grafana/provisioning/dashboards/sc-dashboardproviders.yaml
+          name: sc-dashboard-provider
+          subPath: provider.yaml
+        - mountPath: /etc/grafana/provisioning/datasources
+          name: sc-datasources-volume
+        - mountPath: /etc/grafana/secrets
+          name: grafana-admin-credentials
+          readOnly: true
+          subPath: null
+      enableServiceLinks: true
+      securityContext:
+        fsGroup: 472
+        runAsGroup: 472
+        runAsNonRoot: true
+        runAsUser: 472
+      serviceAccountName: grafana
+      shareProcessNamespace: false
+      volumes:
+      - configMap:
+          name: grafana
+        name: config
+      - emptyDir: {}
+        name: storage
+      - emptyDir: {}
+        name: search
+      - emptyDir: {}
+        name: sc-dashboard-volume
+      - configMap:
+          name: grafana-config-dashboards
+        name: sc-dashboard-provider
+      - emptyDir: {}
+        name: sc-datasources-volume
+      - name: grafana-admin-credentials
+        secret:
+          defaultMode: 288
+          secretName: grafana-admin-credentials
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana-image-renderer
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana-image-renderer
+  namespace: grafana-instance
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: grafana
+      app.kubernetes.io/name: grafana-image-renderer
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "10"
+        checksum/config: b096880eec4b6be94b40dc95c0128343522058cfab5e864e9d90e780c51b7403
+      labels:
+        app.kubernetes.io/instance: grafana
+        app.kubernetes.io/name: grafana-image-renderer
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - env:
+        - name: HTTP_PORT
+          value: "8081"
+        - name: HTTP_HOST
+          value: 0.0.0.0
+        - name: XDG_CACHE_HOME
+          value: /tmp/.chromium
+        - name: XDG_CONFIG_HOME
+          value: /tmp/.chromium
+        image: docker.io/grafana/grafana-image-renderer:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+        name: grafana-image-renderer
+        ports:
+        - containerPort: 8081
+          name: http
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 20m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - mountPath: /tmp
+          name: image-renderer-tmpfs
+      volumes:
+      - emptyDir: {}
+        name: image-renderer-tmpfs
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    homelab.app: grafana-instance
+  name: grafana-admin-credentials
+  namespace: grafana-instance
+spec:
+  encryptedData:
+    admin-password: AgAIjUA//lcT/tPF3q8gR0b+W9bH4AC7EAtK9pQOJaf84oE2EV0ebeBF0OHYv548tedRRnL48xK/jZBATYwHviJYOVfzswQz+8S/0GITJRolSsdgQ12qBTiyMiI+JlIxz6b/aGny9Dg/itxmx17z+Y30ZDaYSWR9OPyYGsbXaUkMT6L8cOr9NQNA7/UXcQeOP1x8WEdCQo2LZYgVsYfpTcOkLLxekdU70jIMQsRuOSBET/BakDBHXn6XhTXfGXXw6r7eVUqC27XAVlgWLRqO19NXMIR14iKMBaoN0j5CHXMivBcZkzNaRqIpeF958zuveisWz4irWGXcI1J360xTRXe1NSH3YVNzRGfK9VBII84D+GOhkHRqJIT91oeab/8hpKwNWyRujIEmlLGodsYlSVp+NLbqhJJav+MteWLXvFe9r0DJJJZXy0HMjhrxodQrCYIUUgYKSQdp8R46KqTll1a8sRYjiDNFmmeVHgYYr8xmhZRl9fAT5hVLJIQPb220w2+eXWcx7pTVqT6Zu0dY655pUGbkM0gWzcHEQGAFl3YxkOIue2BjHgY2o8FoMDh9Y63XGBPgx21nIe5dtjZodMoneMFoCSfZvDUzF8MKSCsEOLIV5wpbLwk5z2yiJURO4MAsgMAPHdPiOsQkAynH0aNZ36QY1gg7aVFtwoyKiiugzP9pta+tuBPWe0SSm3MNTxgoaIhYkB7i/PytP5xzETLw0c944A==
+    admin-user: AgANMQMXsf20eT907oPfzi9oaxMH9brcfpD9nUzzQWa3pGleAQTiOVZZNZ5MiLcSryiwtdhBeSxccV+jUs3s78dIhWZlgzSTxEpZ2Ye++9cQ9D7oZsns2rnZWRdYn1CGGy9+YKF4qngFazqgMO5GMHRqLFhAa3MxXRJLPJ4mlqDs43VfNK+rIXJCdzKKt9OD+t870/ltNq+gkDOinsRqqCGQ6HMiUuNRXPaFvZLu/G2hsBAKB+RKNC0EXXDDueGhr6lFlV4Yt9YBqq6iyf90DI741epp3nYOw6njIqNz2NZpVDU2MtfYhWSAXe+Uugi/Im8RJYemAo2Ov9VAldGsREU9Ug+Oo78/ZVP5ZtKYP7qZThK6be73Y0BVBJpupfo/j1Em8WwaMH44HqP5hkkio1Pder2hOMV9FWhgtLpxK5BpEyaQTw938B/OjecfJifdHW8Zjn7S9fOZb9X5OC1YU+qooghAOSyBqQnHSp5TvZxVL1jS0tc16fr4k/0diAIT4rGktHgkHLplslxrqlNFK8GI2y0WpMGAPALAaJ61Z0msyOQRXHmi5KvlKjTqRKLVAP146Sy/37gSKQ7Edb5tQdm7EWx3O6Utpv6iedyVUxVoXJ6jjanEIiuzO4fgUM/Qli+0OkbFqWB2fkULxoSYnoOoWmvr4oe6HFO4zU9U5+pXu2BXwKX3R070I0AJvKR3nYyMJl/GBQ==
+  template:
+    metadata:
+      name: grafana-admin-credentials
+      namespace: grafana-instance
+    type: Opaque
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    homelab.app: grafana-instance
+  name: grafana-tls-cert
+  namespace: grafana-instance
+spec:
+  dnsNames:
+  - grafana.zimmermann.phd
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns01-issuer
+  secretName: grafana-tls-cert
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    homelab.app: grafana-instance
+  name: grafana
+spec:
+  external:
+    adminPassword:
+      key: admin-password
+      name: grafana-admin-credentials
+    adminUser:
+      key: admin-user
+      name: grafana-admin-credentials
+    url: http://grafana.grafana-instance.svc.cluster.local:80
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    homelab.app: grafana-instance
+  name: loki
+  namespace: grafana-instance
+spec:
+  datasource:
+    access: proxy
+    editable: false
+    isDefault: false
+    name: Loki
+    type: loki
+    url: http://loki-gateway.loki.svc:80
+  instanceSelector:
+    matchLabels:
+      homelab.app: grafana-instance
+  valuesFrom: []
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    homelab.app: grafana-instance
+  name: prometheus
+  namespace: grafana-instance
+spec:
+  datasource:
+    access: proxy
+    editable: false
+    isDefault: true
+    jsonData:
+      timeInterval: 30s
+    name: Prometheus
+    type: prometheus
+    url: http://prometheus-operated.prometheus:9090
+  instanceSelector:
+    matchLabels:
+      homelab.app: grafana-instance
+  valuesFrom: []
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    kubernetes.io/ingress.class: traefik
+  labels:
+    homelab.app: grafana-instance
+  name: grafana
+  namespace: grafana-instance
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`grafana.zimmermann.phd`)
+    priority: 10
+    services:
+    - kind: Service
+      name: grafana
+      port: 80
+  tls:
+    secretName: grafana-tls-cert
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.1
+    helm.sh/chart: grafana-10.5.15
+    homelab.app: grafana-instance
+  name: grafana-test
+  namespace: grafana-instance
+spec:
+  containers:
+  - command:
+    - /opt/bats/bin/bats
+    - -t
+    - /tests/run.sh
+    image: docker.io/bats/bats:v1.4.1
+    imagePullPolicy: IfNotPresent
+    name: grafana-test
+    volumeMounts:
+    - mountPath: /tests
+      name: tests
+      readOnly: true
+  restartPolicy: Never
+  serviceAccountName: grafana-test
+  volumes:
+  - configMap:
+      name: grafana-test
+    name: tests

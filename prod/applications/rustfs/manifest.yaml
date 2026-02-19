@@ -1,0 +1,315 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+  labels:
+    homelab.app: rustfs
+  name: rustfs
+---
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+  labels:
+    app.kubernetes.io/instance: rustfs
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: rustfs
+    app.kubernetes.io/version: 1.0.0-alpha.83
+    helm.sh/chart: rustfs-0.0.83
+    homelab.app: rustfs
+  name: rustfs
+---
+apiVersion: v1
+data:
+  RUSTFS_ADDRESS: :9000
+  RUSTFS_CONSOLE_ADDRESS: :9001
+  RUSTFS_CONSOLE_ENABLE: "true"
+  RUSTFS_OBS_ENVIRONMENT: development
+  RUSTFS_OBS_LOG_DIRECTORY: /logs
+  RUSTFS_OBS_LOGGER_LEVEL: info
+  RUSTFS_REGION: us-east-1
+  RUSTFS_VOLUMES: /data
+kind: ConfigMap
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+  labels:
+    homelab.app: rustfs
+  name: rustfs-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+    io.cilium/lb-ipam-ips: 192.168.10.32
+  labels:
+    app.kubernetes.io/instance: rustfs
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: rustfs
+    app.kubernetes.io/version: 1.0.0-alpha.83
+    bgp.cilium.io/advertise-service: default
+    bgp.cilium.io/ip-pool: default
+    helm.sh/chart: rustfs-0.0.83
+    homelab.app: rustfs
+  name: rustfs-svc
+spec:
+  ports:
+  - name: endpoint
+    port: 9000
+    targetPort: 9000
+  - name: console
+    port: 9001
+    targetPort: 9001
+  selector:
+    app.kubernetes.io/instance: rustfs
+    app.kubernetes.io/name: rustfs
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+    helm.sh/resource-policy: keep
+  labels:
+    homelab.app: rustfs
+  name: rustfs-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+    helm.sh/resource-policy: keep
+  labels:
+    homelab.app: rustfs
+  name: rustfs-logs
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+  labels:
+    app.kubernetes.io/instance: rustfs
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: rustfs
+    app.kubernetes.io/version: 1.0.0-alpha.83
+    helm.sh/chart: rustfs-0.0.83
+    homelab.app: rustfs
+  name: rustfs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: rustfs
+      app.kubernetes.io/name: rustfs
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "8"
+      labels:
+        app.kubernetes.io/instance: rustfs
+        app.kubernetes.io/name: rustfs
+    spec:
+      affinity: null
+      containers:
+      - command:
+        - /usr/bin/rustfs
+        envFrom:
+        - configMapRef:
+            name: rustfs-config
+        - secretRef:
+            name: rustfs-admin-credentials
+        image: rustfs/rustfs:1.0.0-alpha.83
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 9000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: rustfs
+        ports:
+        - containerPort: 9000
+          name: endpoint
+        - containerPort: 9001
+          name: console
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 9000
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+        volumeMounts:
+        - mountPath: /logs
+          name: logs
+          subPath: logs
+        - mountPath: /data
+          name: data
+      imagePullSecrets: []
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - |
+          mkdir -p /data /mnt/rustfs/logs
+          chmod 755 /mnt/rustfs/logs
+        image: busybox:stable
+        imagePullPolicy: IfNotPresent
+        name: init-step
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+        volumeMounts:
+        - mountPath: /data
+          name: data
+        - mountPath: /mnt/rustfs
+          name: logs
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsUser: 10001
+      volumes:
+      - name: logs
+        persistentVolumeClaim:
+          claimName: rustfs-logs
+      - name: data
+        persistentVolumeClaim:
+          claimName: rustfs-data
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+  labels:
+    homelab.app: rustfs
+  name: rustfs-admin-credentials
+  namespace: rustfs
+spec:
+  encryptedData:
+    access-key: AgB+yCtGDrfR6cWUpSFKbMbrqz3SIx8wMffuqZJ2iIwFWRDkzA6Ws+OGa97i7+nIvox5TcBerGf4IE6MsK1QkUN1ojNpeA+HU7Me9vyCae4YXNZcrBAKAb9Ekx3puHBmxaSrDcjF62LMD1VpjtPtMdoqz3/TjuljVveNlBsqLOmMrl1r5n+s91zCuJ5jaqYBJ/b+/avZH2+E+m8a4V5XmsIdck0AMqFFGzKZhv4fYxNDeYcb5rcYhK2gxDqJ50OxGcVV82L5JHi0QXixr2Lub0/pXkzPdDw/sZprz3HKIWsVyt/YYC5V/t1vCNHMaIGtHf92lnnL6X8xJIuzeYY6bN8zXfDqMWkVBI04CGc3yWpBqR3QtPDHbk7poXGHHEYMtbYEA0E9GGNg4H8by6kCW++GIqlAWf78Pggf/dUBgSwnviSrgOP0YBBjW5Rd/WEiObaYiDvKNErwl4Yd+VvhKh3pLXHdWqR3sC4o6juNqQTE/r92kxXyY5nQ/Sj3o0tUmMT3q5rVPItY2GzeEaNdTGMOwxU7Lr+NvR1s8kAX0vifAHZsTnhYnGtX/GpnYxgnp+UAYqmX6x8JUTSl6/lVEjKXeJDScsX8paLJQYYY20+5RiaaE8FnsY+PGo3PdMAoln/T8evpMmBvJOMD78osaa9eXxcCwcMjctB6Z/hSE20yYp41OErYfnC5F/cNW64mmlAWXIdwT4/qeCIXSg==
+    secret-key: AgCSBMwWnhXXw6e5ZfqbbaJo8FPfoVjzq12QiwpJJZJ/B+guL6LGXF0ze5lmut22n2kH+OaLge0cJEFj5a2w2JKYJJGGashFBO/S+j6AqaFE3MA5GWerag3Hd3VhDYvxs8jkXNxWfLI1HMhSyQATn5/w6+9gO/dbgeP55eets6O8W4WO7aDKMf0vLZd3VEB8oJGUFSBwBAH/LC9+IvEIgdQ2ZWEMeo9ECjEa7Zpq15v5zQ2vdrogHrVKyv6jBlTp450HWeZ6VdAaIvfIpfdnI8I4H2kEOero6FLuZiks9uCZw6iXwP8znF/OzsMUk9HS5TZpHyrqm7REcgejU71FP0AmDB1RMIUFrcLaFE7OlL/YmPxwyRqLT7BV+vfDjhmM+tVftUe5oeamTWixQbfaIfQsSvo2Js0zNjHFCYBArr1lGkrj7g8syIfCw/FX870cB9jCK9qEAihcVvGyXwKsKFYyljm7G3VjiOLu2Jb5ZZt5UtXN7t7aaDukqWHmIDzt2tZCE+msTKXTo3hGuqzF2j8F0XmNR47F5LauxmhB/wiCd+x2Oth+Ccqm7rCy+JflXirXYf8czrWysqme19OhY8BZU4YVMeeDTsRlNpcb1mTUm49w59/HYmFWrmWv5yYCfpV9V0t04q/D4l3zte5RLcSfopi6P+bPCLgitYp0YPvZkAzCvW0G98xSJboXRJS0rHZQZbNPOAzKCWUAOjZls2dkWoiGIBfH88bklzuuJHXnI7o5
+  template:
+    metadata:
+      name: rustfs-admin-credentials
+      namespace: rustfs
+    type: Opaque
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+  labels:
+    homelab.app: rustfs
+  name: rustfs-console-tls
+  namespace: rustfs
+spec:
+  dnsNames:
+  - console.rustfs.zimmermann.sh
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns01-issuer
+  secretName: rustfs-console-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    kubernetes.io/ingress.class: traefik
+  labels:
+    homelab.app: rustfs
+  name: rustfs-console
+  namespace: rustfs
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`console.rustfs.zimmermann.sh`)
+    priority: 10
+    services:
+    - kind: Service
+      name: rustfs-svc
+      port: 9001
+  tls:
+    secretName: rustfs-console-tls
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "8"
+    helm.sh/hook: test
+  labels:
+    app.kubernetes.io/instance: rustfs
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: rustfs
+    app.kubernetes.io/version: 1.0.0-alpha.83
+    helm.sh/chart: rustfs-0.0.83
+    homelab.app: rustfs
+  name: rustfs-test-connection
+spec:
+  containers:
+  - args:
+    - -O
+    - /dev/null
+    - rustfs-svc:9000/health
+    command:
+    - wget
+    image: busybox:stable
+    imagePullPolicy: IfNotPresent
+    name: wget
+  restartPolicy: Never
