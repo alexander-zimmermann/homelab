@@ -3,13 +3,19 @@ name: "CI: ArgoCD Diff Preview"
 on:
   pull_request:
     branches: [ main ]
+    paths:
+      - "kubernetes/applications/**"
+      - "kubernetes/components/**"
+      - "kubernetes/bootstrap/**"
+      - ".github/workflows/ci-diff.yaml"
+      - ".github/scripts/hydrate.sh"
 
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
-  diff:
+  generate-diff:
     name: Generate Diff
     runs-on: ubuntu-latest
     steps:
@@ -29,14 +35,36 @@ jobs:
         with:
           kustomize: v5.8.1
 
+      - name: Hydrate Applications (PR)
+        run: pull-request/.github/scripts/hydrate.sh --source pull-request --dest pull-request/hydrated --envs prod
+
       - name: Render ApplicationSets (PR)
         shell: bash
         run: |
+          echo "::group::Render ApplicationSets"
           echo "Rendering PR Branch ApplicationSets..."
-          # Target 'overlays/prod' as it contains the Kustomization and env replacement logic
           kustomize build --enable-helm pull-request/kubernetes/bootstrap/gitops-controller/overlays/prod > pull-request/rendered-apps.yaml
-          # PATCH: Point targetRevision to PR SHA instead of 'hydrated' to diff SOURCE changes
-          sed -i "s/targetRevision: hydrated/targetRevision: ${{ github.event.pull_request.head.sha }}/g" pull-request/rendered-apps.yaml
+          echo "::endgroup::"
+
+      - name: Patch ApplicationSets (PR)
+        shell: bash
+        run: |
+          echo "::group::Patch ApplicationSets"
+          # Patch ApplicationSets to point to local hydrated files
+          # The container looks for files at: /target-branch/hydrated/...
+
+          # RepoURL: https://github.com/... -> file:///target-branch
+          # Path: prod/ -> hydrated/
+
+          sed -i "s|repoURL: https://github.com/.*|repoURL: file:///target-branch|g" pull-request/rendered-apps.yaml
+          sed -i "s|path: prod/|path: hydrated/|g" pull-request/rendered-apps.yaml
+
+          # Remove targetRevision as file:// doesn't support it (it uses file system)
+          sed -i "s|targetRevision: hydrated|targetRevision: HEAD|g" pull-request/rendered-apps.yaml
+
+          echo "Patched ApplicationSets:"
+          grep -E "repoURL|path|targetRevision" pull-request/rendered-apps.yaml || true
+          echo "::endgroup::"
 
       - name: Generate Diff
         run: |

@@ -9,6 +9,7 @@ on:
       - "kubernetes/components/**"
       - "kubernetes/bootstrap/**"
       - ".github/workflows/ci-validate.yaml"
+      - ".github/scripts/hydrate.sh"
 
 jobs:
   detect-overlays:
@@ -121,6 +122,7 @@ jobs:
           if [ -z "$POLICIES" ]; then
              echo "No Kyverno policies found in 'kubernetes/'."
              echo "Skipping policy validation."
+             echo "::endgroup::"
              exit 0
           fi
 
@@ -141,6 +143,7 @@ jobs:
 
           if [ ! -s images.txt ]; then
             echo "No images found to check."
+            echo "::endgroup::"
             exit 0
           fi
 
