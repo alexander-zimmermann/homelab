@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-authentik-backup-bucket
+  namespace: authentik
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      serviceAccountName: default
+      restartPolicy: OnFailure
+      # wait until s3 is reachable
+      initContainers:
+        - name: wait-for-s3
+          image: curlimages/curl:8.9.1
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              until curl -sSf http://rustfs-svc.rustfs.svc.cluster.local:9000/health >/dev/null; do
+                echo "Warte auf S3 Endpoint..."
+                sleep 3
+              done
+      containers:
+        - name: mc
+          image: minio/mc:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            readOnlyRootFilesystem: true
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -euo pipefail
+              mc alias set rustfs http://rustfs-svc.rustfs.svc.cluster.local:9000 "$ACCESS_KEY" "$SECRET_KEY"
+              mc mb rustfs/authentik-backups --ignore-existing
+              mc version enable rustfs/authentik-backups
+          env:
+            - name: ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rustfs-creds
+                  key: access-key
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rustfs-creds
+                  key: secret-key
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "32Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"

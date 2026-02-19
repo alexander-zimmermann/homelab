@@ -1,8 +1,9 @@
 cluster:
-  # Cluster name used in labels and metadata.
   name: homelab
 
-## Destinations
+global:
+  scrapeInterval: 60s
+
 # Remote write / push endpoints for metrics and logs.
 destinations:
   - name: prometheus
@@ -11,38 +12,22 @@ destinations:
   - name: loki
     type: loki
     url: http://loki-gateway.loki.svc.cluster.local/loki/api/v1/push
+    header:
+      batchSize: 256KiB
+      batchWait: 1s
 
-## Cluster metrics
+# Cluster metrics & events
 clusterMetrics:
   enabled: true
   destinations:
     - prometheus
-  # Kube-state-metrics resources: requests influence scheduling/QoS; limits enforce a hard cap.
-  kube-state-metrics:
-    resources:
-      requests:
-        cpu: 20m
-        memory: 64Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
-  # Node exporter resources: requests influence scheduling/QoS; limits enforce a hard cap.
-  node-exporter:
-    resources:
-      requests:
-        cpu: 10m
-        memory: 32Mi
-      limits:
-        cpu: 100m
-        memory: 64Mi
 
-## Cluster events
 clusterEvents:
   enabled: true
   destinations:
     - loki
 
-## Node and pod logs
+# Node & pod logs
 nodeLogs:
   enabled: true
   destinations:
@@ -50,55 +35,28 @@ nodeLogs:
 
 podLogs:
   enabled: true
+  # Use the stable volumes-based pod log collection (renders `loki.source.file "pod_logs"`)
+  gatherMethod: volumes
+  # Start reading at the end of existing log files (no backfill); only new lines after Alloy starts are shipped
+  volumeGatherSettings:
+    onlyGatherNewLogLines: true
   destinations:
     - loki
 
-## Collectors (Alloy instances)
-# Alloy Metrics instance resources: requests influence scheduling/QoS; limits enforce a hard cap.
+# Alloy Metrics: Cluster metrics & events
 alloy-metrics:
   enabled: true
-  alloy:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 256Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
+  # Expose Alloy Metrics service via Cilium/BGP-announced LoadBalancer
+  service:
+    type: LoadBalancer
+    labels:
+      bgp.cilium.io/ip-pool: default
+      bgp.cilium.io/advertise-service: default
 
-## Singleton instance: intended for components that should run as a single replica (e.g. log processing).
-# Alloy Singleton instance resources: requests influence scheduling/QoS; limits enforce a hard cap.
+# Alloy Singleton: Per-cluster tasks like event processing
 alloy-singleton:
   enabled: true
-  alloy:
-    resources:
-      requests:
-        cpu: 25m
-        memory: 128Mi
-      limits:
-        cpu: 250m
-        memory: 256Mi
 
-## Log instance
-# Alloy Log instance resources: requests influence scheduling/QoS; limits enforce a hard cap.
+# Alloy Logs: Collects and forwards logs to Loki
 alloy-logs:
   enabled: true
-  alloy:
-    resources:
-      requests:
-        cpu: 25m
-        memory: 128Mi
-      limits:
-        cpu: 300m
-        memory: 384Mi
-
-## Operator
-# Alloy Operator resources: requests influence scheduling/QoS; limits enforce a hard cap.
-alloy-operator:
-  resources:
-    requests:
-      cpu: 10m
-      memory: 64Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi

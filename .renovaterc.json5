@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "docker:enableMajor",
+    "helpers:pinGitHubActionDigests",
+    "github>alexander-zimmermann/homelab//.renovate/autoMerge.json5",
+    "github>alexander-zimmermann/homelab//.renovate/customManagers.json5",
+    "github>alexander-zimmermann/homelab//.renovate/grafanaDashboards.json5",
+    "github>alexander-zimmermann/homelab//.renovate/groups.json5",
+    "github>alexander-zimmermann/homelab//.renovate/labels.json5",
+    "github>alexander-zimmermann/homelab//.renovate/semanticCommits.json5",
+    ":dependencyDashboard",
+    ":disableRateLimiting",
+    ":gitSignOff",
+    ":semanticCommits",
+    ":timezone(Europe/Berlin)"
+  ],
+  "dependencyDashboardTitle": "Renovate Dashboard 🤖",
+  "suppressNotifications": ["prEditedNotification", "prIgnoreNotification"],
+  "ignorePaths": ["**/resources/**", "**/deprecated/**"],
+  "kubernetes": {
+    "managerFilePatterns": ["/\\.yaml$/"]
+  },
+  "flux": {
+    "managerFilePatterns": ["/\\.yaml$/"]
+  },
+  "postUpgradeTasks": {
+    "commands": ["python3 .github/scripts/update_checksums.py"],
+    "fileFilters": ["infrastructure/manifest/20-image/image.yaml"],
+    "executionMode": "branch"
+  }
+}

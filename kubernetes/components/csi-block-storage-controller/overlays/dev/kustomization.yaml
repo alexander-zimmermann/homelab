@@ -4,63 +4,46 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject the desired replica count into the embedded StorageClass YAML string
+  - sourceValue: "1"
+    targets:
+      - select:
+          kind: ConfigMap
+          name: longhorn-storageclass
+        fieldPaths:
+          - 'data.storageclass\.yaml.parameters.numberOfReplicas'
+
+  # Inject the domain name into the Certificate and IngressRoute
+  - sourceValue: longhorn.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: longhorn-ui-tls
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: longhorn-ui
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
-  # Set replicas to 1 in dev
+  # Longhorn Manager resources
   - target:
-      kind: StorageClass
-      name: longhorn
-    patch: |-
-      - op: replace
-        path: /parameters/numberOfReplicas
-        value: "1"
-
-  # Scale down replicas - CSI Attacher
-  - target:
-      kind: Deployment
-      name: csi-attacher
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-
-  # Scale down replicas - CSI Provisioner
-  - target:
-      kind: Deployment
-      name: csi-provisioner
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-
-  # Scale down replicas - CSI Resizer
-  - target:
-      kind: Deployment
-      name: csi-resizer
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-
-  # Scale down replicas - CSI Snapshotter
-  - target:
-      kind: Deployment
-      name: csi-snapshotter
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 1
-
-  # Longhorn Manager resources: requests influence scheduling/QoS; limits enforce a hard cap.
-  - target:
-      group: apps
-      version: v1
       kind: DaemonSet
       name: longhorn-manager
-      namespace: csi-block-storage-controller
     patch: |-
       - op: test
         path: /spec/template/spec/containers/0/name
         value: longhorn-manager
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: pre-pull-share-manager-image
+
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -70,9 +53,7 @@ patches:
           limits:
             cpu: 1000m
             memory: 512Mi
-      - op: test
-        path: /spec/template/spec/containers/1/name
-        value: pre-pull-share-manager-image
+
       - op: add
         path: /spec/template/spec/containers/1/resources
         value:
@@ -83,17 +64,11 @@ patches:
             cpu: 50m
             memory: 64Mi
 
-  # Longhorn UI resources: requests influence scheduling/QoS; limits enforce a hard cap.
+  # Longhorn UI resources
   - target:
-      group: apps
-      version: v1
       kind: Deployment
       name: longhorn-ui
-      namespace: csi-block-storage-controller
     patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: longhorn-ui
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -104,17 +79,15 @@ patches:
             cpu: 200m
             memory: 128Mi
 
-  # Longhorn Driver Deployer resources: requests influence scheduling/QoS; limits enforce a hard cap.
+  # Longhorn Driver Deployer resources
   - target:
-      group: apps
-      version: v1
       kind: Deployment
       name: longhorn-driver-deployer
-      namespace: csi-block-storage-controller
     patch: |-
       - op: test
         path: /spec/template/spec/containers/0/name
         value: longhorn-driver-deployer
+
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:

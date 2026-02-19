@@ -4,22 +4,83 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject domain name into the Certificate and IngressRoute
+  - sourceValue: console.rustfs.zimmermann.sh
+    targets:
+      - select:
+          kind: Certificate
+          name: rustfs-console-tls
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: rustfs-console
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
-  # Service Patch (API) - Fixed LoadBalancer
-  - patch: |-
+  # RustFS server manages distributed storage and API access
+  - target:
+      kind: Deployment
+      name: rustfs
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/resources
+        value: {}
       - op: replace
-        path: /spec/type
-        value: LoadBalancer
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 512Mi
+
+  # Storage for RustFS data and logs using Longhorn
+  - target:
+      kind: PersistentVolumeClaim
+      name: rustfs-data
+    patch: |-
+      - op: test
+        path: /spec/resources/requests/storage
+        value: 256Mi
+      - op: replace
+        path: /spec/resources/requests/storage
+        value: 5Gi
+      - op: test
+        path: /spec/storageClassName
+        value: local-path
+      - op: replace
+        path: /spec/storageClassName
+        value: longhorn
+
+  - target:
+      kind: PersistentVolumeClaim
+      name: rustfs-logs
+    patch: |-
+      - op: test
+        path: /spec/resources/requests/storage
+        value: 256Mi
+      - op: replace
+        path: /spec/resources/requests/storage
+        value: 1Gi
+      - op: test
+        path: /spec/storageClassName
+        value: local-path
+      - op: replace
+        path: /spec/storageClassName
+        value: longhorn
+
+  # RustFS API service with static IP and BGP advertisement
+  - target:
+      kind: Service
+      name: rustfs-svc
+    patch: |-
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.32"
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
-      name: rustfs-svc
-      namespace: rustfs

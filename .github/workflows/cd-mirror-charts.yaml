@@ -1,4 +1,4 @@
-name: Mirror DHI OCI Helm charts
+name: "CD: Mirror OCI Charts"
 
 on:
   schedule: [{ cron: "00 2 * * *" }]
@@ -14,8 +14,8 @@ env:
     dhi.io/cloudnative-pg-chart
 
 jobs:
-  discover:
-    name: Discover missing tags per chart
+  discover-tags:
+    name: Discover Missing Tags
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,29 +31,6 @@ jobs:
 
       - name: Login ghcr.io
         run: echo "${{ github.token }}" | oras login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
-
-      - name: "Preflight: Assert GHCR namespace is publishable"
-        shell: bash
-        run: |
-          set -euo pipefail
-          export LC_ALL=C
-
-          if [ "${OWNER}" != "${{ github.repository_owner }}" ] && [ -z "${{ secrets.GHCR_PAT }}" ]; then
-            echo "::error::To publish to ghcr.io/${OWNER}, provide a GHCR_PAT secret with write:packages and log in with it."
-            exit 1
-          fi
-          echo "✅ GHCR namespace is publishable."
-
-      - name: "Preflight: Verify DHI connectivity"
-        run: |
-          set -euo pipefail
-          export LC_ALL=C
-
-          if ! oras repo tags dhi.io/redis-chart | head -n 1 > /dev/null; then
-            echo "::error::Failed to list tags from dhi.io. Check DHI_USER/DHI_PASS permissions."
-            exit 1
-          fi
-          echo "✅ DHI connectivity verified."
 
       - id: make-matrix
         name: Build JSON matrix of (src,dst,tag) to copy
@@ -110,10 +87,10 @@ jobs:
           # Expose matrix for the next job (GitHub Actions matrix format)
           echo "matrix=$(jq -c '{include: .}' <<< "${ITEMS_JSON}")" >> "$GITHUB_OUTPUT"
 
-  mirror:
-    name: Copy missing tags (max 3 in parallel)
-    needs: discover
-    if: ${{ fromJson(needs.discover.outputs.matrix).include[0] != null }}
+  mirror-charts:
+    name: Mirror Charts
+    needs: discover-tags
+    if: ${{ fromJson(needs.discover-tags.outputs.matrix).include[0] != null }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -121,7 +98,7 @@ jobs:
     strategy:
       fail-fast: false
       max-parallel: 3
-      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.discover-tags.outputs.matrix) }}
     steps:
       - name: Install ORAS CLI
         uses: oras-project/setup-oras@v1

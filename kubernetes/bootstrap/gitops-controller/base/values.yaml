@@ -1,11 +1,11 @@
 configs:
   cm:
-    # Allows Argo CD to render Kustomize projects that use `helmCharts:`.
+    # Allows Argo CD to render Kustomize projects that use `helmCharts:`
     kustomize.buildOptions: --enable-helm
-    # Homelab optimization: reduce refresh frequency to save RAM/CPU.
+    # Homelab optimization: reduce refresh frequency to save RAM/CPU
     timeout.reconciliation: 15m
     timeout.reconciliation.jitter: 5m
-    # Exclude noisy resources from tracking to reduce memory footprint.
+    # Exclude noisy resources from tracking to reduce memory footprint
     resource.exclusions: |
       - apiGroups:
           - "*"
@@ -18,68 +18,33 @@ configs:
   params:
     # TLS is terminated externally via Ingress / reverse proxy.
     server.insecure: "true"
-    # Reduce memory usage by splitting application tree into multiple Redis keys.
+    # Reduce memory usage by splitting application tree into multiple Redis keys
     controller.app.tree.shard.size: "100"
 
-# ArgoCD controller manages state of Applications, and performs sync/health checks.
+# ArgoCD controller manages state of Applications, and performs sync/health checks
 controller:
-  resources:
-    requests:
-      cpu: 250m
-      memory: 512Mi
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-
   env:
-    # Reduce memory usage by enabling diff calculation via reconciliation.
+    # Reduce memory usage by enabling diff calculation via reconciliation
     - name: ARGOCD_CALC_DIFF_VIA_RECONCILIATION
       value: "true"
-    # Set GOMEMLIMIT to 90% of the container limit (1024Mi * 0.9 = 966367641 bytes).
-    - name: GOMEMLIMIT
-      value: "966367641"
 
   metrics:
-    # Exposes application sync status and controller performance metrics to Prometheus.
+    # Exposes application sync status and controller performance metrics to Prometheus
     enabled: true
     serviceMonitor:
       enabled: true
+      labels:
+        release: prometheus
 
-# ArgoCD API/UI server
-server:
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 250m
-      memory: 256Mi
-
-  env:
-    # Set GOMEMLIMIT to 90% of the container limit (256Mi * 0.9 = 241172480 bytes).
-    - name: GOMEMLIMIT
-      value: "241172480"
-
-# ArgoCD Repo-server renders/manages repos/Helm/Kustomize.
+# ArgoCD Repo-server renders/manages repos/Helm/Kustomize
 repoServer:
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
-
   env:
-    # Limit concurrent manifest generation to reduce memory spikes.
+    # Limit concurrent manifest generation to reduce memory spikes
     - name: ARGOCD_REPO_SERVER_MAX_CONCURRENT_REQUESTS
       value: "10"
-    # Limit concurrent helm/kustomize processes (forking) to save RAM.
+    # Limit concurrent helm/kustomize processes (forking) to save RAM
     - name: ARGOCD_REPO_SERVER_PARALLELISM_LIMIT
       value: "2"
-    # Set GOMEMLIMIT to 90% of the container limit (512Mi * 0.9 = 482344960 bytes).
-    - name: GOMEMLIMIT
-      value: "482344960"
 
 # ApplicationSet controller generates Applications from generators (e.g. Git, List, Cluster, etc.)
 applicationSet:
@@ -91,7 +56,7 @@ applicationSet:
       cpu: 100m
       memory: 128Mi
 
-# Notifications controller send notifications (Slack/webhook/etc.) on sync/health events.
+# Notifications controller send notifications (Slack/webhook/etc.) on sync/health events
 notifications:
   resources:
     requests:
@@ -101,7 +66,7 @@ notifications:
       cpu: 100m
       memory: 128Mi
 
-# Internal Redis for ArgoCD (caching/locking).
+# Internal Redis for ArgoCD (caching/locking)
 redis:
   resources:
     requests:
@@ -111,6 +76,6 @@ redis:
       cpu: 200m
       memory: 128Mi
 
-# Disable DEX server, as we are using Authentik as OIDC provider directly.
+# Disable DEX server, as we are using Authentik as OIDC provider directly
 dex:
   enabled: false

@@ -4,21 +4,124 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject domain name into the Certificate and IngressRoute
+  - sourceValue: prometheus.zimmermann.sh
+    targets:
+      - select:
+          kind: Certificate
+          name: prometheus-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: prometheus
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
-  # Service Patch - Fixed LoadBalancer
-  - patch: |-
+  # Prometheus Operator: Deploy with standardized resources and GOMEMLIMIT
+  - target:
+      kind: Deployment
+      name: prometheus-operator
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: kube-prometheus-stack
+
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: GOMEMLIMIT
+          value: 230Mi
+
+  # Prometheus instance: Configure resources and TSDB persistence
+  - target:
+      kind: Prometheus
+      name: prometheus
+    patch: |-
+      - op: test
+        path: /metadata/name
+        value: prometheus
+      - op: test
+        path: /spec/retention
+        value: 10d
+
+      - op: add
+        path: /spec/resources
+        value:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+      - op: add
+        path: /spec/containers
+        value:
+          - name: prometheus
+            env:
+              - name: GOMEMLIMIT
+                value: 922Mi
+
+      - op: add
+        path: /spec/storage/volumeClaimTemplate/spec/resources
+        value:
+          requests:
+
       - op: replace
-        path: /spec/type
-        value: LoadBalancer
+        path: /spec/retention
+        value: 30d
+
+  # Alertmanager: Configure resources and GOMEMLIMIT
+  - target:
+      kind: Alertmanager
+      name: prometheus
+    patch: |-
+      - op: test
+        path: /metadata/name
+        value: prometheus
+
+      - op: add
+        path: /spec/resources
+        value:
+          requests:
+            cpu: 5m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
+      - op: add
+        path: /spec/containers
+        value:
+          - name: alertmanager
+            env:
+              - name: GOMEMLIMIT
+                value: 230Mi
+
+      - op: add
+        path: /spec/storage/volumeClaimTemplate/spec/resources
+        value:
+          requests:
+            storage: 128Mi
+
+  # Prometheus service with static IP and BGP advertisement
+  - target:
+      kind: Service
+      name: prometheus-server
+    patch: |-
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.27"
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
-      name: prometheus-server

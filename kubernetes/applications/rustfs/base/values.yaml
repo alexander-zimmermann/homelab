@@ -1,4 +1,4 @@
-# Standalone mode (single replica) for homelab usage.
+# Standalone mode (single replica) for homelab usage
 replicaCount: 1
 mode:
   standalone:
@@ -7,33 +7,15 @@ mode:
     enabled: false
 
 # Credentials are provided via SealedSecret; the chart reads them from the
-# referenced Secret.
+# referenced Secret
 secret:
   existingSecret: rustfs-admin-credentials
-  rustfs:
-    access_key: ""
-    secret_key: ""
 
 config:
   rustfs:
     # Service DNS used for internal access.
     server_domains: rustfs-svc.rustfs.svc.cluster.local
 
-# Ingress is managed outside of the chart (Traefik IngressRoute manifests).
+# Ingress is managed outside of the chart (Traefik IngressRoute manifests)
 ingress:
   enabled: false
-
-# RustFS resources: requests influence scheduling/QoS; limits enforce a hard cap.
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 200m
-    memory: 512Mi
-
-# Persist data on Longhorn.
-storageclass:
-  name: longhorn
-  dataStorageSize: 5Gi
-  logStorageSize: 1Gi

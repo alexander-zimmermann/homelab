@@ -5,6 +5,10 @@ metadata:
   name: mosquitto
   annotations:
     coredns.io/hostname: mqtt.${INT_FQDN_I-$DEFAULT_FQDN}
+  labels:
+    # Expose Mosquitto service via Cilium/BGP-announced LoadBalancer
+    bgp.cilium.io/ip-pool: default
+    bgp.cilium.io/advertise-service: default
 spec:
   selector:
     app.kubernetes.io/name: mosquitto

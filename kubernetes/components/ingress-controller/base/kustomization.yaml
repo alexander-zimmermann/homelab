@@ -14,6 +14,8 @@ helmCharts:
     valuesFile: values.yaml
     namespace: ingress-controller
     includeCRDs: true
+    apiVersions:
+      - monitoring.coreos.com/v1
 
 labels:
   - includeSelectors: false

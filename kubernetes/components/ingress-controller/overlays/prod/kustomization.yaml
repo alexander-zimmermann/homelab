@@ -4,21 +4,39 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject the domain name into the Certificate and IngressRoute
+  - sourceValue: traefik.zimmermann.sh
+    targets:
+      - select:
+          kind: Certificate
+          name: traefik-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: traefik-dashboard
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
-  # Service Patch - Fixed LoadBalancer
+  # Ensure redundancy and high availability
   - patch: |-
       - op: replace
-        path: /spec/type
-        value: LoadBalancer
+        path: /spec/replicas
+        value: 2
+    target:
+      kind: Deployment
+      name: traefik
+
+  # Traefik service with static IP and BGP advertisement
+  - patch: |-
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.20"
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
     target:
       kind: Service
       name: traefik

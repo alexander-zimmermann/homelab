@@ -3,3 +3,20 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+replacements:
+  # Inject domain name and path into the StorageClass
+  - sourceValue: storage.zimmermann.eu.com
+    targets:
+      - select:
+          kind: StorageClass
+          name: nfs-csi
+        fieldPaths:
+          - parameters.server
+  - sourceValue: /k8s
+    targets:
+      - select:
+          kind: StorageClass
+          name: nfs-csi
+        fieldPaths:
+          - parameters.share

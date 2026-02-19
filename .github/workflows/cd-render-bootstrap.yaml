@@ -1,4 +1,4 @@
-name: Render Bootstrap Manifests
+name: "CD: Render Bootstrap"
 
 on:
   push:
@@ -6,39 +6,41 @@ on:
       - main
     paths:
       - "kubernetes/bootstrap/**"
-      - ".github/workflows/render-bootstrap.yaml"
+      - ".github/workflows/cd-render-bootstrap.yaml"
 
 permissions:
   contents: write
 
 jobs:
-  render:
+  render-manifests:
+    name: Render Manifests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Install Helm
-        uses: azure/setup-helm@v4
+      - name: Install CLI Tools
+        uses: alexellis/arkade-get@master
         with:
-          version: "v3.13.1"
-
-      - name: Install Kustomize
-        uses: yokawasa/action-setup-kube-tools@v0.13.1
-        with:
-          kustomize: "5.7.0"
+          kustomize: v5.8.1
+          helm: v4.1.1
 
       - name: Render Manifests
         run: |
+          set -euo pipefail
           mkdir -p dist/prod dist/dev
 
-          echo "Rendering Prod..."
+          echo "::group::Rendering Prod"
           kustomize build --enable-helm kubernetes/bootstrap/cilium/overlays/prod > dist/prod/cilium.yaml
           kustomize build --enable-helm kubernetes/bootstrap/gitops-controller/overlays/prod > dist/prod/argocd.yaml
+          echo "✅ Prod successful"
+          echo "::endgroup::"
 
-          echo "Rendering Dev..."
+          echo "::group::Rendering Dev"
           kustomize build --enable-helm kubernetes/bootstrap/cilium/overlays/dev > dist/dev/cilium.yaml
           kustomize build --enable-helm kubernetes/bootstrap/gitops-controller/overlays/dev > dist/dev/argocd.yaml
+          echo "✅ Dev successful"
+          echo "::endgroup::"
 
       - name: Deploy to Bootstrap Branch
         uses: peaceiris/actions-gh-pages@v3

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "description": "Kubernetes components grouping",
+      "groupName": "kubernetes",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "/kube-apiserver/",
+        "/kube-controller-manager/",
+        "/kube-proxy/",
+        "/kube-scheduler/",
+        "/kubelet/"
+      ]
+    },
+    {
+      "description": "Talos Linux components grouping",
+      "groupName": "talos",
+      "matchDatasources": ["docker", "github-releases"],
+      "matchPackageNames": ["/talos/", "/installer/", "/talosctl/"]
+    },
+    {
+      "description": "Cilium grouping",
+      "groupName": "cilium",
+      "matchPackageNames": ["/cilium/"]
+    },
+    {
+      "description": "ArgoCD components grouping",
+      "groupName": "argocd",
+      "matchPackageNames": ["/argocd/", "/argo-cd/"]
+    }
+  ]
+}

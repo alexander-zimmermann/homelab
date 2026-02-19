@@ -8,15 +8,18 @@ resources:
   - ./ingress-route.yaml
   - ./certificate.yaml
   - ./sealed-secrets.yaml
+  - ./bucket-job.yaml
 
 helmCharts:
   - name: authentik
     repo: oci://ghcr.io/goauthentik/helm-charts
     releaseName: authentik
-    version: 2025.12.3
+    version: 2025.12.4
     valuesFile: values.yaml
     namespace: authentik
     includeCRDs: true
+    apiVersions:
+      - monitoring.coreos.com/v1
 
 labels:
   - includeSelectors: false

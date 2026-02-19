@@ -18,21 +18,27 @@ helmCharts:
     namespace: grafana-instance
     includeCRDs: true
 
-labels:
-  - includeSelectors: false
-    pairs:
-      homelab.app: grafana-instance
-
 patches:
   # Service Patch - Fix Selector Collision
-  - patch: |-
+  - target:
+      kind: Service
+      name: grafana
+    patch: |-
+      - op: test
+        path: /spec/selector
+        value:
+          app.kubernetes.io/instance: grafana
+          app.kubernetes.io/name: grafana
+
       - op: replace
         path: /spec/selector
         value:
           component: grafana-server
-    target:
-      kind: Service
-      name: grafana
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.app: grafana-instance
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "10"

@@ -11,13 +11,13 @@ spec:
         revision: hydrated
         # Scan Manifests (Env is injected via replacement)
         files:
-          - path: applications/*/overlays/PLACEHOLDER/manifest.yaml
+          - path: PLACEHOLDER/applications/*/manifest.yaml
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   template:
     metadata:
-      # Segment 1 is application name
-      name: "{{index .path.segments 1}}-PLACEHOLDER"
+      # Segment 2 is application name
+      name: "{{index .path.segments 2}}-PLACEHOLDER"
       annotations:
         # Read common annotations from base if present
         argocd.argoproj.io/sync-wave: '{{ index .commonAnnotations "argocd.argoproj.io/sync-wave" | default "0" }}'

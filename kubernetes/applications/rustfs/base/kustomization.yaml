@@ -12,9 +12,29 @@ helmCharts:
   - name: rustfs
     repo: https://rustfs.github.io/helm
     releaseName: rustfs
-    version: 0.0.79
+    version: 0.0.83
     valuesFile: values.yaml
     namespace: rustfs
+
+patches:
+  # Expose RustFS service via Cilium/BGP-announced LoadBalancer
+  - target:
+      kind: Service
+      name: rustfs-svc
+    patch: |-
+      - op: test
+        path: /spec/type
+        value: ClusterIP
+
+      - op: replace
+        path: /spec/type
+        value: LoadBalancer
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1ip-pool
+        value: default
+      - op: add
+        path: /metadata/labels/bgp.cilium.io~1advertise-service
+        value: default
 
 labels:
   - includeSelectors: false

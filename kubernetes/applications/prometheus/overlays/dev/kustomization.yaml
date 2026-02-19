@@ -4,69 +4,116 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject domain name into the Certificate and IngressRoute
+  - sourceValue: prometheus.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: prometheus-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: prometheus
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
-  # Resources Patch (StatefulSet)
-  - patch: |-
-      - op: replace
-        path: /spec/template/spec/containers/0/resources/requests/cpu
-        value: 50m
-      - op: replace
-        path: /spec/template/spec/containers/0/resources/requests/memory
-        value: 128Mi
-      - op: replace
-        path: /spec/template/spec/containers/0/resources/limits/cpu
-        value: 200m
-      - op: replace
-        path: /spec/template/spec/containers/0/resources/limits/memory
-        value: 512Mi
-      - op: replace
-        path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
-        value: 2Gi
-      - op: replace
-        path: /spec/template/spec/containers/0/args/0
-        value: "--storage.tsdb.retention.time=7d"
-    target:
-      kind: StatefulSet
-      name: prometheus-server
+  # Prometheus Operator: Deploy with standardized resources and GOMEMLIMIT
+  - target:
+      kind: Deployment
+      name: prometheus-operator
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: kube-prometheus-stack
 
-  # Storage Patch (Alertmanager)
-  - patch: |-
-      - op: replace
-        path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
-        value: 32Mi
-    target:
-      kind: StatefulSet
-      name: prometheus-alertmanager
-
-  # Ingress Host Patch
-  # - patch: |-
-  #     - op: replace
-  #       path: /spec/routes/0/match
-  #       value: Host(`prometheus.zimmermann.phd`)
-  #   target:
-  #     kind: IngressRoute
-  #     name: prometheus
-
-  # Certificate DNS Patch
-  - patch: |-
-      - op: replace
-        path: /spec/dnsNames/0
-        value: prometheus.zimmermann.phd
-    target:
-      kind: Certificate
-      name: prometheus-tls-cert
-
-  # Service Patch - Dynamic LoadBalancer
-  - patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
       - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 5m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
       - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
-      name: prometheus-server
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: GOMEMLIMIT
+          value: 115Mi
+
+  # Prometheus instance: Configure resources and TSDB persistence
+  - target:
+      kind: Prometheus
+      name: prometheus
+    patch: |-
+      - op: test
+        path: /metadata/name
+        value: prometheus
+      - op: test
+        path: /spec/retention
+        value: 10d
+
+      - op: add
+        path: /spec/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 512Mi
+      - op: add
+        path: /spec/containers
+        value:
+          - name: prometheus
+            env:
+              - name: GOMEMLIMIT
+                value: 460Mi
+
+      - op: add
+        path: /spec/storage/volumeClaimTemplate/spec/resources
+        value:
+          requests:
+            storage: 1Gi
+
+      - op: replace
+        path: /spec/retention
+        value: 7d
+
+  # Alertmanager: Configure resources and GOMEMLIMIT
+  - target:
+      kind: Alertmanager
+      name: prometheus
+    patch: |-
+      - op: test
+        path: /metadata/name
+        value: prometheus
+
+      - op: add
+        path: /spec/resources
+        value:
+          requests:
+            cpu: 5m
+            memory: 64Mi
+          limits:
+            cpu: 50m
+            memory: 128Mi
+      - op: add
+        path: /spec/containers
+        value:
+          - name: alertmanager
+            env:
+              - name: GOMEMLIMIT
+                value: 115Mi
+
+      - op: add
+        path: /spec/storage/volumeClaimTemplate/spec/resources
+        value:
+          requests:
+            storage: 64Mi

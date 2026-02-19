@@ -1,9 +1,51 @@
-# Loki configuration overrides for SingleBinary deployment
+# Loki SingleBinary deployment
 deploymentMode: SingleBinary
 
+singleBinary:
+  replicas: 1
+  persistence:
+    # Automatic StatefulSet recreation for PVC expansion
+    enableStatefulSetRecreationForSizeChange: true
+    # Persistent Volume Claim
+    storageClass: longhorn
+
+gateway:
+  # Expose Loki Gateway service via Cilium/BGP-announced LoadBalancer
+  service:
+    type: LoadBalancer
+    labels:
+      bgp.cilium.io/ip-pool: default
+      bgp.cilium.io/advertise-service: default
+
+# Scalability settings for distributed components
+write:
+  replicas: 0
+read:
+  replicas: 0
+backend:
+  replicas: 0
+
 loki:
-  # Internal authentication toggle
+  # Disable internal authentication
   auth_enabled: false
+
+  commonConfig:
+    # Ingester replication factor
+    replication_factor: 1
+
+  ingester:
+    # Max time a chunk lives in memory before flushing
+    max_chunk_age: 1h
+    # Flush chunk after this idle period
+    chunk_idle_period: 30m
+    # Target chunk size in bytes (1MB)
+    chunk_target_size: 1048576
+    # Compression algorithm
+    chunk_encoding: snappy
+
+  querier:
+    # Max concurrent queries per querier
+    max_concurrent: 2
 
   limits_config:
     # Global log retention period
@@ -14,18 +56,27 @@ loki:
     reject_old_samples: true
     reject_old_samples_max_age: 168h
 
-  commonConfig:
-    # Ingester replication factor
-    replication_factor: 1
+    # Max sub-queries per request (split by time)
+    max_query_parallelism: 4
+    # Max parallelism for TSDB index queries
+    tsdb_max_query_parallelism: 32
+    # Limit log lines returned per query to prevent OOM
+    max_entries_limit_per_query: 5000
+    # Hard timeout for queries
+    query_timeout: 30s
 
   storage:
     type: filesystem
 
   schemaConfig:
+    # Schema configuration for storage
     configs:
       - from: "2024-04-01"
+        # Store for index: TSDB is the modern, efficient format for Loki
         store: tsdb
+        # Store for chunks: filesystem (local disk via PVC)
         object_store: filesystem
+        # Schema version: v13 is recommended for TSDB
         schema: v13
         index:
           prefix: index_
@@ -36,90 +87,17 @@ loki:
     retention_enabled: true
     delete_request_store: filesystem
 
-# Scalability settings for distributed components
-write:
-  replicas: 0
-read:
-  replicas: 0
-backend:
-  replicas: 0
-
-# Chunks cache resources: requests influence scheduling/QoS; limits enforce a hard cap.
+# Chunks cache resources are configured in overlays
 chunksCache:
   allocatedMemory: 256
-  resources:
-    requests:
-      cpu: 50m
-      memory: 307Mi
-    limits:
-      cpu: 200m
-      memory: 307Mi
 
-# Results cache resources: requests influence scheduling/QoS; limits enforce a hard cap.
+# Results cache resources are configured in overlays
 resultsCache:
   allocatedMemory: 256
-  resources:
-    requests:
-      cpu: 50m
-      memory: 307Mi
-    limits:
-      cpu: 200m
-      memory: 307Mi
 
-# Memcached exporter resources: requests influence scheduling/QoS; limits enforce a hard cap.
-memcachedExporter:
-  resources:
-    requests:
-      cpu: 5m
-      memory: 16Mi
-    limits:
-      cpu: 50m
-      memory: 64Mi
-
-# Gateway resources: requests influence scheduling/QoS; limits enforce a hard cap.
-gateway:
-  resources:
-    requests:
-      cpu: 10m
-      memory: 32Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
-
-# Loki canary resources: requests influence scheduling/QoS; limits enforce a hard cap.
-lokiCanary:
-  resources:
-    requests:
-      cpu: 5m
-      memory: 16Mi
-    limits:
-      cpu: 50m
-      memory: 64Mi
-
-# Persistence configuration for SingleBinary mode
-singleBinary:
-  replicas: 1
-  # Loki single-binary resources: requests influence scheduling/QoS; limits enforce a hard cap.
-  resources:
-    requests:
-      cpu: 200m
-      memory: 512Mi
-    limits:
-      cpu: 1000m
-      memory: 1Gi
-  persistence:
-    # Automatic StatefulSet recreation for PVC expansion
-    enableStatefulSetRecreationForSizeChange: true
-    # Persistent Volume Claim storage size
-    size: 5Gi
-    storageClass: longhorn
-
-# Rules sidecar resources: requests influence scheduling/QoS; limits enforce a hard cap.
-sidecar:
-  resources:
-    requests:
-      cpu: 10m
-      memory: 32Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
+# Prometheus Monitoring (Opt-In)
+monitoring:
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: prometheus

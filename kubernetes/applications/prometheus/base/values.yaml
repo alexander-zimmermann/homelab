@@ -1,99 +1,70 @@
-# Use a stable, short name for all rendered resources.
+# Use a stable, short name for all rendered resources
 fullnameOverride: prometheus
 
-# Reduce duplicate prefixes for objects created by the Prometheus Operator.
-# This primarily affects generated StatefulSet/Pod names.
+# Reduce duplicate prefixes for objects created by the Prometheus Operator
 cleanPrometheusOperatorObjectNames: true
 
-# Grafana runs as a separate app in this repo.
+# Grafana runs as a separate app
 grafana:
   enabled: false
 
-# Disable exporters/components that are provided elsewhere.
+# Disable exporters/components that are provided elsewhere
 kubeStateMetrics:
   enabled: false
 
 nodeExporter:
   enabled: false
 
-# Prometheus Operator resources: requests influence scheduling/QoS; limits enforce a hard cap.
-prometheusOperator:
-  resources:
-    requests:
-      cpu: 10m
-      memory: 96Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
-
-  # Resources for the config-reloader sidecar injected into Prometheus/Alertmanager pods.
-  prometheusConfigReloader:
-    resources:
-      requests:
-        cpu: 5m
-        memory: 32Mi
-      limits:
-        cpu: 50m
-        memory: 64Mi
-
-  admissionWebhooks:
-    # Jobs that patch webhook configurations / generate certs.
-    patch:
-      resources:
-        requests:
-          cpu: 5m
-          memory: 32Mi
-        limits:
-          cpu: 50m
-          memory: 64Mi
-
 alertmanager:
   alertmanagerSpec:
-    # Alertmanager resources: requests influence scheduling/QoS; limits enforce a hard cap.
-    resources:
-      requests:
-        cpu: 5m
-        memory: 64Mi
-      limits:
-        cpu: 100m
-        memory: 256Mi
-
-    # Persist Alertmanager state.
+    # Persist Alertmanager state
     storage:
       volumeClaimTemplate:
         spec:
           storageClassName: longhorn
           accessModes:
             - ReadWriteOnce
-          resources:
-            requests:
-              # Alertmanager is tiny; this is mostly for stable PVC lifecycle.
-              storage: 128Mi
 
 prometheus:
+  # Expose Prometheus service via Cilium/BGP-announced LoadBalancer
+  service:
+    type: LoadBalancer
+    labels:
+      bgp.cilium.io/ip-pool: default
+      bgp.cilium.io/advertise-service: default
+
   prometheusSpec:
-    # Required for remote_write receiver (e.g. for agent-based ingestion).
+    # Required for remote_write receiver (e.g. for agent-based ingestion)
     enableRemoteWriteReceiver: true
 
-    # Keep 30d of metrics for homelab trend analysis.
-    retention: 30d
+    # Opt-In Model: Only scrape ServiceMonitors/PodMonitors with 'release: prometheus'
+    serviceMonitorSelector:
+      matchLabels:
+        release: prometheus
+    podMonitorSelector:
+      matchLabels:
+        release: prometheus
 
-    # Prometheus resources: requests influence scheduling/QoS; limits enforce a hard cap.
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
-        cpu: 500m
-        memory: 1Gi
+    # Apply this label to all resources created by the operator (including default monitors)
+    commonLabels:
+      release: prometheus
 
-    # Persist TSDB data.
+    # Reduces TSDB disk usage by approx. 30-40% with minimal CPU overhead
+    walCompression: true
+
+    # Stability guards to prevent OOM kills from heavy queries or dashboards
+    additionalArgs:
+      - name: query.max-concurrency
+        value: "5"
+      - name: query.timeout
+        value: "30s"
+      - name: query.max-samples
+        value: "5000000"
+
+    # Persist TSDB data
     storageSpec:
       volumeClaimTemplate:
         spec:
           storageClassName: longhorn
           accessModes:
             - ReadWriteOnce
-          resources:
-            requests:
-              storage: 5Gi

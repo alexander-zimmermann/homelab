@@ -5,12 +5,29 @@ resources:
   - ../../base
   - ../../../../bootstrap/cilium/overlays/dev/
 
-patches:
-  # BGP Pool Patch (CIDR)
-  - patch: |-
-      - op: replace
-        path: /spec/blocks/0/cidr
-        value: 192.168.11.0/24
-    target:
-      kind: CiliumLoadBalancerIPPool
-      name: default-bgp-ip-pool
+replacements:
+  # Inject domain name into the Certificate and IngressRoute
+  - sourceValue: hubble.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: hubble-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: hubble
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
+  # Inject BGP IP Pool CIDR
+  - sourceValue: 192.168.11.0/24
+    targets:
+      - select:
+          kind: CiliumLoadBalancerIPPool
+          name: default-bgp-ip-pool
+        fieldPaths:
+          - spec.blocks.0.cidr

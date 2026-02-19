@@ -5,20 +5,11 @@ resources:
   - ../../base
 
 patches:
-  # Service Patch - Fixed LoadBalancer
-  - patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
+  # SMTPreplay service with static IP and BGP advertisement
+  - target:
+      kind: Service
+      name: smtprelay
+    patch: |-
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.25"
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
-      name: smtprelay

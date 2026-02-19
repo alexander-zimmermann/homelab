@@ -16,10 +16,16 @@ helmCharts:
     valuesFile: values.yaml
     namespace: cert-manager
     includeCRDs: true
+    apiVersions:
+      - monitoring.coreos.com/v1
 
 patches:
   # https://github.com/cert-manager/cert-manager/pull/6192
   - patch: |-
+      - op: test
+        path: /metadata/labels/app.kubernetes.io~1instance
+        value: cert-manager
+
       - op: remove
         path: /metadata/labels/app.kubernetes.io~1instance
     target:

@@ -4,21 +4,92 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject domain name into the Certificate and IngressRoute
+  - sourceValue: grafana.zimmermann.sh
+    targets:
+      - select:
+          kind: Certificate
+          name: grafana-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: grafana
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
-  # Service Patch - Fixed LoadBalancer
-  - patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
+  # Configure resources for Grafana Instance containers (main container & dashboard/datasource sidecars)
+  - target:
+      kind: Deployment
+      name: grafana
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: grafana-sc-dashboard
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: grafana-sc-datasources
+      - op: test
+        path: /spec/template/spec/containers/2/name
+        value: grafana
+
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+      - op: add
+        path: /spec/template/spec/containers/1/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+      - op: add
+        path: /spec/template/spec/containers/2/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+
+  # Configure resources for Grafana Image Renderer
+  - target:
+      kind: Deployment
+      name: grafana-image-renderer
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: grafana-image-renderer
+
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+
+  # Grafana service with static IP and BGP advertisement
+  - target:
+      kind: Service
+      name: grafana
+    patch: |-
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.28"
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
-      name: grafana

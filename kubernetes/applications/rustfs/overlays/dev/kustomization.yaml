@@ -4,59 +4,74 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject domain name into the Certificate and IngressRoute
+  - sourceValue: console.rustfs.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: rustfs-console-tls
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: rustfs-console
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
-  # Ingress host
-  - patch: |-
+  # RustFS server manages distributed storage and API access
+  - target:
+      kind: Deployment
+      name: rustfs
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/resources
+        value: {}
       - op: replace
-        path: /spec/routes/0/match
-        value: Host(`console.rustfs.zimmermann.phd`)
-    target:
-      kind: IngressRoute
-      name: rustfs-console
-      namespace: rustfs
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
 
-  # Certificate DNS names
-  - patch: |-
-      - op: replace
-        path: /spec/dnsNames/0
-        value: console.rustfs.zimmermann.phd
-    target:
-      kind: Certificate
-      name: rustfs-console-tls
-      namespace: rustfs
-
-  # Loadbalancer configuration
-  - patch: |-
-      - op: replace
-        path: /spec/type
-        value: LoadBalancer
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1ip-pool
-        value: default
-      - op: add
-        path: /metadata/labels/bgp.cilium.io~1advertise-service
-        value: default
-    target:
-      kind: Service
-      name: rustfs-svc
-      namespace: rustfs
-
-  # Reduce storage requests - Data
-  - patch: |-
+  # Storage for RustFS data and logs using Longhorn
+  - target:
+      kind: PersistentVolumeClaim
+      name: rustfs-data
+    patch: |-
+      - op: test
+        path: /spec/resources/requests/storage
+        value: 256Mi
       - op: replace
         path: /spec/resources/requests/storage
         value: 512Mi
-    target:
-      kind: PersistentVolumeClaim
-      name: rustfs-data
-      namespace: rustfs
+      - op: test
+        path: /spec/storageClassName
+        value: local-path
+      - op: replace
+        path: /spec/storageClassName
+        value: longhorn
 
-  # Reduce storage requests - Logs
-  - patch: |-
+  - target:
+      kind: PersistentVolumeClaim
+      name: rustfs-logs
+    patch: |-
+      - op: test
+        path: /spec/resources/requests/storage
+        value: 256Mi
       - op: replace
         path: /spec/resources/requests/storage
         value: 128Mi
-    target:
-      kind: PersistentVolumeClaim
-      name: rustfs-logs
-      namespace: rustfs
+      - op: test
+        path: /spec/storageClassName
+        value: local-path
+      - op: replace
+        path: /spec/storageClassName
+        value: longhorn

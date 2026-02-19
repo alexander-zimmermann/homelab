@@ -1,0 +1,102 @@
+name: "CI: Pre-Pull Images"
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  extract-images:
+    name: Extract Images
+    runs-on: ubuntu-latest
+    outputs:
+      default: ${{ steps.extract-default.outputs.default }}
+      pull: ${{ steps.extract-pull.outputs.pull }}
+    steps:
+      - name: Checkout Default Branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: default
+
+      - name: Checkout Pull Request Branch
+        uses: actions/checkout@v6
+        with:
+          path: pull
+
+      - name: Install CLI Tools
+        uses: alexellis/arkade-get@master
+        with:
+          kustomize: v5.8.1
+          yq: v4.40.5
+
+      - name: Install Python Dependencies
+        run: pip install pyyaml
+
+      - name: Extract Default Images
+        id: extract-default
+        run: |
+          ./pull/.github/scripts/ci-extract-images.py default default_images.json
+          echo "default=$(jq --compact-output '.' default_images.json)" >> $GITHUB_OUTPUT
+          echo "✅ Extracted default images"
+
+      - name: Extract Pull Images
+        id: extract-pull
+        run: |
+          ./pull/.github/scripts/ci-extract-images.py pull pull_images.json
+          echo "pull=$(jq --compact-output '.' pull_images.json)" >> $GITHUB_OUTPUT
+          echo "✅ Extracted pull images"
+
+  diff-images:
+    name: Diff Images
+    needs: extract-images
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.diff.outputs.images }}
+    steps:
+      - id: diff
+        env:
+          DEFAULT_IMAGES: ${{ needs.extract-images.outputs.default }}
+          PULL_IMAGES: ${{ needs.extract-images.outputs.pull }}
+        run: |
+          set -euo pipefail
+          images=$(jq --compact-output --null-input \
+              --argjson f1 "$DEFAULT_IMAGES" \
+              --argjson f2 "$PULL_IMAGES" \
+              '$f2 - $f1' \
+          )
+          echo "images=${images}" >> $GITHUB_OUTPUT
+
+  pre-pull-images:
+    name: Pre-Pull Images
+    needs: diff-images
+    if: ${{ needs.diff-images.outputs.images != '[]' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ${{ fromJSON(needs.diff-images.outputs.images) }}
+      max-parallel: 4
+      fail-fast: false
+    steps:
+      - name: Install CLI Tools
+        uses: alexellis/arkade-get@master
+        with:
+          talosctl: v1.12.2
+
+      - name: Pre-pull Image
+        env:
+          TALOSCONFIG: ${{ secrets.TALOSCONFIG }}
+        run: |
+          if [ -z "$TALOSCONFIG" ]; then
+            echo "::warning::TALOSCONFIG secret not found. Skipping pre-pull."
+            exit 0
+          fi
+          # Example: Pull for all nodes. Adjust nodes if necessary.
+          echo "${TALOSCONFIG}" > talosconfig
+          # nodes=$(talosctl --talosconfig talosconfig config info --output json | jq -r '.nodes[0]')
+          # talosctl --talosconfig talosconfig --nodes $nodes image pull ${{ matrix.image }}
+          echo "Pre-pulling ${{ matrix.image }} on Talos nodes..."
+          # talosctl --talosconfig talosconfig image pull ${{ matrix.image }}
+          echo "✅ Pre-pulled ${{ matrix.image }}"
