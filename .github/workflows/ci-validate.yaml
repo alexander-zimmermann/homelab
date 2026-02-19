@@ -15,47 +15,51 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Detect changed overlay directories
+      - name: Detect changed applications
         id: set-matrix
         shell: bash
         run: |
           set -euo pipefail
 
-          # Base und PR Head diffen
+          # Fetch main to diff against
           git fetch origin "${{ github.base_ref }}" --depth=1 || true
           CHANGED="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)"
 
           echo "Changed files:"
           echo "$CHANGED"
 
-          # Find overlays containing kustomization.yaml from changed files
-          OVERLAY_DIRS="$(echo "$CHANGED" \
-            | awk -F/ '
-              /kustomization\\.ya?ml$/ { print; next }
-              { print }
-            ' \
-            | while read -r f; do
-                d="$(dirname "$f")"
-                while [ "$d" != "." ] && [ "$d" != "/" ]; do
-                  if [ -f "$d/kustomization.yaml" ] || [ -f "$d/kustomization.yml" ]; then
-                    echo "$d"
-                    break
-                  fi
-                  d="$(dirname "$d")"
-                done
-              done \
-            | sort -u)"
+          OVERLAY_DIRS=""
 
-          if [ -z "$OVERLAY_DIRS" ]; then
-            echo "No overlays detected from changed files. Falling back to all overlays..."
-            OVERLAY_DIRS="$(find kubernetes -name kustomization.yaml -o -name kustomization.yml \
-              | xargs -n1 dirname | sort -u)"
+          # Extract unique App Roots (dir logic: kubernetes/{applications,components,bootstrap}/<app>)
+          APP_ROOTS=$(echo "$CHANGED" | grep -E '^kubernetes/(applications|components|bootstrap)/[^/]+' | awk -F/ '{print $1"/"$2"/"$3}' | sort -u)
+
+          # For each App Root, check if overlays/dev or overlays/prod exist.
+          if [ -z "$APP_ROOTS" ]; then
+             echo "No app changes detected."
+          else
+             for app in $APP_ROOTS; do
+               if [ -f "$app/overlays/dev/kustomization.yaml" ]; then
+                 OVERLAY_DIRS="$OVERLAY_DIRS $app/overlays/dev"
+               fi
+               if [ -f "$app/overlays/prod/kustomization.yaml" ]; then
+                 OVERLAY_DIRS="$OVERLAY_DIRS $app/overlays/prod"
+               fi
+             done
           fi
 
-          echo "Overlays to render:"
+          # Fallback: If no overlays found (e.g. only irrelevant file changed?), fallback to all.
+          if [ -z "$OVERLAY_DIRS" ]; then
+             echo "No specific overlays identified. Falling back to ALL dev/prod overlays..."
+             # Find all dev/prod overlays
+             OVERLAY_DIRS=$(find kubernetes/applications kubernetes/components -path "*/overlays/dev" -o -path "*/overlays/prod" | sort -u)
+          fi
+
+          # Trim leading space and format for JSON
+          OVERLAY_DIRS=$(echo $OVERLAY_DIRS | tr ' ' '\n' | sort -u)
+
+          echo "Overlays to validate:"
           echo "$OVERLAY_DIRS"
 
-          # JSON Array für Matrix bauen (with jq for better readability and syntax highlighting)
           JSON=$(echo "$OVERLAY_DIRS" | jq -R -s -c 'split("\n") | map(select(length > 0)) | {overlay: .}')
           echo "matrix=$JSON" >> "$GITHUB_OUTPUT"
 
@@ -76,11 +80,12 @@ jobs:
           helm: v3.14.0
           kubeconform: v0.6.4
           crane: v0.19.0
+          kyverno: v1.13.3
 
       - name: Login to DHI
         run: crane auth login dhi.io -u "${{ secrets.DHI_USER }}" -p "${{ secrets.DHI_PASS }}"
 
-      - name: Render Overlay
+      - name: Render Overlay (kustomize)
         id: render
         shell: bash
         run: |
@@ -95,8 +100,30 @@ jobs:
         run: |
           set -euo pipefail
           echo "::group::Kubeconform"
-          # -ignore-missing-schemas: Ignore CRDs where no public schema exists
           kubeconform -strict -summary -ignore-missing-schemas rendered/manifests.yaml
+          echo "::endgroup::"
+
+      - name: Validate Policies (kyverno)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "::group::Kyverno Policy Check/Apply"
+
+          # Find Policy Files. We look for files containing "apiVersion: kyverno.io/"
+          POLICIES=$(grep -lR "apiVersion: kyverno.io/" kubernetes | grep -v "kustomization.yaml" | sort -u || true)
+
+          if [ -z "$POLICIES" ]; then
+             echo "No Kyverno policies found in 'kubernetes/'."
+             echo "Skipping policy validation."
+             exit 0
+          fi
+
+          echo "Found the following policy files:"
+          echo "$POLICIES"
+
+          # Apply Policies. We use the previously rendered 'rendered/manifests.yaml'
+          echo "Running kyverno apply..."
+          kyverno apply $POLICIES --resource rendered/manifests.yaml
           echo "::endgroup::"
 
       - name: Validate Images (crane)
@@ -104,9 +131,6 @@ jobs:
         run: |
           set -euo pipefail
           echo "::group::Check Images"
-
-          # Extract images using grep/awk (Simple & Robust)
-          # Matches 'image: <value>' allowing whitespace
           grep -r "^[[:space:]]*image:" rendered/manifests.yaml | awk '{print $2}' | sort -u > images.txt
 
           if [ ! -s images.txt ]; then
@@ -114,13 +138,10 @@ jobs:
             exit 0
           fi
 
-          cat images.txt
-
           while read -r image; do
-            # Skip empty lines
             if [ -z "$image" ]; then continue; fi
 
-            # Normalize docker.io library images (e.g. docker.io/traefik -> docker.io/library/traefik)
+            # Normalize docker.io library images
             if [[ "$image" == "docker.io/"* ]] && [[ "$image" != *"/"*"/"* ]]; then
                  image="${image/docker.io\//docker.io\/library\/}"
             fi

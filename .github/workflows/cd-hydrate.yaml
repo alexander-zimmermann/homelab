@@ -32,41 +32,59 @@ jobs:
           mkdir -p dist/applications dist/components
 
           # Helper function to hydrate
+          # Args: <type> (applications|components) <path> (e.g. kubernetes/applications/demo/overlays/dev)
           hydrate() {
             local type=$1
             local path=$2
+            # Extract App Name and Env from path
+            # path is: kubernetes/applications/<name>/overlays/<env>
             local name=$(basename $(dirname $(dirname $path)))
             local env=$(basename $path)
 
-            # Process both prod and dev overlays
-            if [[ "$env" == "prod" || "$env" == "dev" ]]; then
-              echo "::group::Hydrating $name ($env)"
-              # Clean output directory to ensure determinism (remove stale files)
-              rm -rf dist/$env/$type/$name
-              mkdir -p dist/$env/$type/$name
+            echo "::group::Hydrating $name ($env)"
+            # Clean output directory to ensure determinism (remove stale files)
+            rm -rf dist/$env/$type/$name
+            mkdir -p dist/$env/$type/$name
 
-              if kustomize build --enable-helm $path > dist/$env/$type/$name/manifest.yaml; then
-                echo "✅ Hydrated $type/$name ($env)"
-              else
-                echo "::error::Failed to hydrate $name"
-                exit 1
-              fi
-              echo "::endgroup::"
+            if kustomize build --enable-helm $path > dist/$env/$type/$name/manifest.yaml; then
+              echo "✅ Hydrated $type/$name ($env)"
+            else
+              echo "::error::Failed to hydrate $name"
+              exit 1
             fi
+            echo "::endgroup::"
           }
 
-          # Check applications
+          # Hydrate Applications (Dev & Prod only)
           if [ -d "kubernetes/applications" ]; then
-            find kubernetes/applications -name kustomization.yaml | while read kustomization; do
-              hydrate "applications" $(dirname $kustomization)
+            for dir in kubernetes/applications/*; do
+              if [ -d "$dir" ]; then
+                # Check dev
+                if [ -d "$dir/overlays/dev" ]; then
+                  hydrate "applications" "$dir/overlays/dev"
+                fi
+                # Check prod
+                if [ -d "$dir/overlays/prod" ]; then
+                  hydrate "applications" "$dir/overlays/prod"
+                fi
+              fi
             done
           fi
 
-          # Check components
+          # Hydrate Components (Dev & Prod only)
           if [ -d "kubernetes/components" ]; then
-             find kubernetes/components -name kustomization.yaml | while read kustomization; do
-              hydrate "components" $(dirname $kustomization)
-            done
+             for dir in kubernetes/components/*; do
+               if [ -d "$dir" ]; then
+                  # Check dev
+                  if [ -d "$dir/overlays/dev" ]; then
+                    hydrate "components" "$dir/overlays/dev"
+                  fi
+                  # Check prod
+                  if [ -d "$dir/overlays/prod" ]; then
+                    hydrate "components" "$dir/overlays/prod"
+                  fi
+               fi
+             done
           fi
 
       - name: Deploy to Hydrated Branch
