@@ -4,12 +4,12 @@
     "config:recommended",
     "docker:enableMajor",
     "helpers:pinGitHubActionDigests",
-    "local>.renovate/autoMerge",
-    "local>.renovate/customManagers",
-    "local>.renovate/grafanaDashboards",
-    "local>.renovate/groups",
-    "local>.renovate/labels",
-    "local>.renovate/semanticCommits",
+    "github>alexander-zimmermann/homelab//.renovate/autoMerge.json5",
+    "github>alexander-zimmermann/homelab//.renovate/customManagers.json5",
+    "github>alexander-zimmermann/homelab//.renovate/grafanaDashboards.json5",
+    "github>alexander-zimmermann/homelab//.renovate/groups.json5",
+    "github>alexander-zimmermann/homelab//.renovate/labels.json5",
+    "github>alexander-zimmermann/homelab//.renovate/semanticCommits.json5",
     ":dependencyDashboard",
     ":disableRateLimiting",
     ":gitSignOff",
@@ -20,10 +20,10 @@
   "suppressNotifications": ["prEditedNotification", "prIgnoreNotification"],
   "ignorePaths": ["**/resources/**", "**/deprecated/**"],
   "kubernetes": {
-    "fileMatch": ["\\.yaml$"]
+    "managerFilePatterns": ["/\\.yaml$/"]
   },
   "flux": {
-    "fileMatch": ["\\.yaml$"]
+    "managerFilePatterns": ["/\\.yaml$/"]
   },
   "postUpgradeTasks": {
     "commands": ["python3 .github/scripts/update_checksums.py"],

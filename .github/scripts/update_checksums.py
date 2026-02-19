@@ -17,7 +17,7 @@ import os
 import re
 import sys
 import urllib.request
-from typing import Dict, List, Optional, Tuple, Callable
+from typing import Dict, List, Optional, Tuple, Callable, Any
 
 # Configure logging
 logging.basicConfig(
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_IMAGE_YAML_PATH = "infrastructure/manifest/20-image/image.yaml"
 
-def get_hash_func(algo: str) -> Optional[Callable[[], hashlib._Hash]]:
+def get_hash_func(algo: str) -> Optional[Callable[[], Any]]:
     """
     Return a hashlib function constructor for the given algorithm name.
 
@@ -62,8 +62,10 @@ def calculate_checksum(url: str, algo: str) -> Optional[str]:
 
     hash_obj = hash_constructor()
     try:
-        # standard timeout to avoid hanging indefinitely
-        with urllib.request.urlopen(url, timeout=30) as response:
+        # Standard timeout to avoid hanging indefinitely.
+        # Add User-Agent to avoid 404s from some registries (e.g. linuxcontainers.org)
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=30) as response:
             while True:
                 chunk = response.read(8192)
                 if not chunk:

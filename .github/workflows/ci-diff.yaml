@@ -1,14 +1,7 @@
 name: "CI: ArgoCD Diff Preview"
 
 on:
-  pull_request:
-    branches: [ main ]
-    paths:
-      - "kubernetes/applications/**"
-      - "kubernetes/components/**"
-      - "kubernetes/bootstrap/**"
-      - ".github/workflows/ci-diff.yaml"
-      - ".github/scripts/hydrate.sh"
+  workflow_dispatch:
 
 permissions:
   contents: read
