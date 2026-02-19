@@ -86,6 +86,9 @@ jobs:
             -e KUSTOMIZE_BUILD_OPTIONS="$KUSTOMIZE_BUILD_OPTIONS" \
             -e TIMEOUT=300 \
             -e DEBUG=true \
+            -e GIT_CONFIG_COUNT=1 \
+            -e GIT_CONFIG_KEY_0=safe.directory \
+            -e GIT_CONFIG_VALUE_0=* \
             dagandersen/argocd-diff-preview:v0.1.25
 
       - name: Post diff as comment
