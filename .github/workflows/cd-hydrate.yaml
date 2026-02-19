@@ -8,6 +8,7 @@ on:
       - "kubernetes/applications/**"
       - "kubernetes/components/**"
       - ".github/workflows/cd-hydrate.yaml"
+      - ".github/scripts/hydrate.sh"
 
 permissions:
   contents: write
@@ -27,65 +28,7 @@ jobs:
           helm: v4.1.1
 
       - name: Hydrate Manifests
-        run: |
-          set -euo pipefail
-          mkdir -p dist/applications dist/components
-
-          # Helper function to hydrate
-          # Args: <type> (applications|components) <path> (e.g. kubernetes/applications/demo/overlays/dev)
-          hydrate() {
-            local type=$1
-            local path=$2
-            # Extract App Name and Env from path
-            # path is: kubernetes/applications/<name>/overlays/<env>
-            local name=$(basename $(dirname $(dirname $path)))
-            local env=$(basename $path)
-
-            echo "::group::Hydrating $name ($env)"
-            # Clean output directory to ensure determinism (remove stale files)
-            rm -rf dist/$env/$type/$name
-            mkdir -p dist/$env/$type/$name
-
-            if kustomize build --enable-helm $path > dist/$env/$type/$name/manifest.yaml; then
-              echo "✅ Hydrated $type/$name ($env)"
-            else
-              echo "::error::Failed to hydrate $name"
-              exit 1
-            fi
-            echo "::endgroup::"
-          }
-
-          # Hydrate Applications (Dev & Prod only)
-          if [ -d "kubernetes/applications" ]; then
-            for dir in kubernetes/applications/*; do
-              if [ -d "$dir" ]; then
-                # Check dev
-                if [ -d "$dir/overlays/dev" ]; then
-                  hydrate "applications" "$dir/overlays/dev"
-                fi
-                # Check prod
-                if [ -d "$dir/overlays/prod" ]; then
-                  hydrate "applications" "$dir/overlays/prod"
-                fi
-              fi
-            done
-          fi
-
-          # Hydrate Components (Dev & Prod only)
-          if [ -d "kubernetes/components" ]; then
-             for dir in kubernetes/components/*; do
-               if [ -d "$dir" ]; then
-                  # Check dev
-                  if [ -d "$dir/overlays/dev" ]; then
-                    hydrate "components" "$dir/overlays/dev"
-                  fi
-                  # Check prod
-                  if [ -d "$dir/overlays/prod" ]; then
-                    hydrate "components" "$dir/overlays/prod"
-                  fi
-               fi
-             done
-          fi
+        run: .github/scripts/hydrate.sh --source . --dest dist --envs "dev prod"
 
       - name: Deploy to Hydrated Branch
         uses: peaceiris/actions-gh-pages@v3
