@@ -1,11 +1,21 @@
 deployment:
   # Deploy as a Deployment for controlled scaling (alternate: DaemonSet)
   kind: Deployment
+  # High Availability: Spread pods across nodes
 
-ingressClass:
-  # Enable Traefik as the default IngressClass for the cluster
+# Pod anti-affinity forces scheduler to put traefik pods on nodes where no other traefik pods are scheduled
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: traefik
+        topologyKey: kubernetes.io/hostname
+
+# Pod Disruption Budget: Ensure at least one replica is available during maintenance
+podDisruptionBudget:
   enabled: true
-  isDefaultClass: true
+  minAvailable: 1
 
 ingressRoute:
   dashboard:
@@ -32,7 +42,6 @@ ports:
           to: websecure
           scheme: https
           permanent: true
-
   # Websecure entry point (Port 443)
   websecure:
     port: 8443
@@ -49,6 +58,15 @@ service:
   labels:
     bgp.cilium.io/ip-pool: default
     bgp.cilium.io/advertise-service: default
+
+
+# Logging: Enable JSON access logs for better observability
+logs:
+  general:
+    level: INFO
+  access:
+    enabled: true
+    format: json
 
 # Prometheus Metrics (Opt-In)
 metrics:

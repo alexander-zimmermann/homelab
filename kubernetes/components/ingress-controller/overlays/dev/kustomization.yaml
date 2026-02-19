@@ -23,11 +23,30 @@ replacements:
           index: 1
 
 patches:
-  # Use a single replica to save resources in development
-  - patch: |-
+  # Traefik: Cloud-native edge router optimized for development resources
+  - target:
+      kind: Deployment
+      name: traefik
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: traefik
+
       - op: replace
         path: /spec/replicas
         value: 1
-    target:
-      kind: Deployment
-      name: traefik
+
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+      - op: add
+        path: /spec/template/spec/containers/0/env
+        value:
+          - name: GOMEMLIMIT
+            value: "120795955"

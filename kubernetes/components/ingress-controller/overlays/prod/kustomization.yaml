@@ -23,20 +23,39 @@ replacements:
           index: 1
 
 patches:
-  # Ensure redundancy and high availability
-  - patch: |-
+  # Traefik: Cloud-native edge router with high availability
+  - target:
+      kind: Deployment
+      name: traefik
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: traefik
+
       - op: replace
         path: /spec/replicas
         value: 2
-    target:
-      kind: Deployment
-      name: traefik
+      - op: add
+
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+      - op: add
+        path: /spec/template/spec/containers/0/env
+        value:
+          - name: GOMEMLIMIT
+            value: "241591910"
 
   # Traefik service with static IP and BGP advertisement
-  - patch: |-
+  - target:
+      kind: Service
+      name: traefik
+    patch: |-
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.20"
-    target:
-      kind: Service
-      name: traefik
