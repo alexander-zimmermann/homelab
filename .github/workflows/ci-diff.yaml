@@ -52,6 +52,8 @@ jobs:
             -e TARGET_BRANCH=refs/pull/${{ github.event.number }}/merge \
             -e REPO=${{ github.repository }} \
             -e KUSTOMIZE_BUILD_OPTIONS="$KUSTOMIZE_BUILD_OPTIONS" \
+            -e TIMEOUT=300 \
+            -e DEBUG=true \
             dagandersen/argocd-diff-preview:v0.1.25
 
       - name: Post diff as comment
