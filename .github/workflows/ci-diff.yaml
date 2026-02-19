@@ -50,20 +50,24 @@ jobs:
         shell: bash
         run: |
           echo "::group::Patch ApplicationSets"
+
+          # Relax Permissions for Container Access
+          chmod -R a+rwX pull-request
+
           # Patch ApplicationSets to point to local hydrated files
           # The container looks for files at: /target-branch/hydrated/...
 
           # RepoURL: https://github.com/... -> file:///target-branch
           # Path: prod/ -> hydrated/
+          # TargetRevision: hydrated -> HEAD
 
-          sed -i "s|repoURL: https://github.com/.*|repoURL: file:///target-branch|g" pull-request/rendered-apps.yaml
-          sed -i "s|path: prod/|path: hydrated/|g" pull-request/rendered-apps.yaml
-
-          # Remove targetRevision as file:// doesn't support it (it uses file system)
-          sed -i "s|targetRevision: hydrated|targetRevision: HEAD|g" pull-request/rendered-apps.yaml
+          # Use -E for extended regex to handle optional quotes
+          sed -i -E "s|repoURL: *['\"]?https://github.com/.*|repoURL: file:///target-branch|g" pull-request/rendered-apps.yaml
+          sed -i -E "s|path: *['\"]?prod/|path: hydrated/|g" pull-request/rendered-apps.yaml
+          sed -i -E "s|targetRevision: *['\"]?hydrated['\"]?|targetRevision: HEAD|g" pull-request/rendered-apps.yaml
 
           echo "Patched ApplicationSets:"
-          grep -E "repoURL|path|targetRevision" pull-request/rendered-apps.yaml || true
+          cat pull-request/rendered-apps.yaml
           echo "::endgroup::"
 
       - name: Generate Diff
