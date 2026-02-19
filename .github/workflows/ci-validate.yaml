@@ -2,7 +2,13 @@ name: "CI: Validate Manifests & Images"
 
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+    paths:
+      - "kubernetes/applications/**"
+      - "kubernetes/components/**"
+      - "kubernetes/bootstrap/**"
+      - ".github/workflows/ci-validate.yaml"
 
 jobs:
   detect-overlays:
@@ -63,7 +69,7 @@ jobs:
           JSON=$(echo "$OVERLAY_DIRS" | jq -R -s -c 'split("\n") | map(select(length > 0)) | {overlay: .}')
           echo "matrix=$JSON" >> "$GITHUB_OUTPUT"
 
-  validate:
+  validate-overlays:
     runs-on: ubuntu-latest
     needs: detect-overlays
     strategy:
