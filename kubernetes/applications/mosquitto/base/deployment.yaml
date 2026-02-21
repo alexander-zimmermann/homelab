@@ -39,7 +39,7 @@ spec:
       containers:
         - name: mosquitto
           # Broker container.
-          image: docker.io/library/eclipse-mosquitto:2.0.21
+          image: docker.io/library/eclipse-mosquitto:2.0.22
           imagePullPolicy: IfNotPresent
           env:
             # Keep logs/timestamps consistent with local timezone.
