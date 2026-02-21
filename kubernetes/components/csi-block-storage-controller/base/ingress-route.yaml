@@ -1,0 +1,23 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: longhorn-ui
+  namespace: csi-block-storage-controller
+  annotations:
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`PLACEHOLDER`)
+      priority: 10
+      services:
+        - kind: Service
+          name: longhorn-ui
+          port: 80
+  tls:
+    secretName: longhorn-ui-tls
