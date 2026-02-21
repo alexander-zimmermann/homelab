@@ -1,5 +1,5 @@
 terraform {
-  required_version = "1.14.4" # OpenTofu
+  required_version = ">= 1.11.0" # OpenTofu
 
   required_providers {
     proxmox = {

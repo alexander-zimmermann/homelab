@@ -59,7 +59,7 @@ template_vm:
     image_id: vm_talos_1_12_2_dp-prod
     os_type: l26
     ## Resources
-    memory: 6144 #8192
+    memory: 10240
     cores: 6
     disk_size: 64
     vnic_bridge: vmbr0
@@ -69,8 +69,8 @@ template_vm:
     image_id: vm_talos_1_12_2_cp-dev
     os_type: l26
     ## Resources
-    memory: 4096
-    cores: 4
+    memory: 2048
+    cores: 2
     disk_size: 32
     vnic_bridge: vmbr0
 
@@ -79,8 +79,8 @@ template_vm:
     image_id: vm_talos_1_12_2_dp-dev
     os_type: l26
     ## Resources
-    memory: 6144 #8192
-    cores: 6
+    memory: 4096
+    cores: 4
     disk_size: 64
     vnic_bridge: vmbr0
 

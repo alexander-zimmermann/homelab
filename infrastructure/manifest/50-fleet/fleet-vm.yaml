@@ -19,13 +19,13 @@ fleet_vm:
 
   talos_cp:
     template_id: vm_talos_1_12_2_cp-prod
-    count: 1
+    count: 3
     vm_id_start: 2000
 
   talos_dp:
     template_id: vm_talos_1_12_2_dp-prod
     count: 3
-    vm_id_start: 2001
+    vm_id_start: 2100
     disks:
       - disk_interface: scsi1
         disk_size: 128
