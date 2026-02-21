@@ -14,6 +14,23 @@ replacements:
         fieldPaths:
           - 'data.storageclass\.yaml.parameters.numberOfReplicas'
 
+  # Inject the domain name into the Certificate and IngressRoute
+  - sourceValue: longhorn.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: longhorn-ui-tls
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: longhorn-ui
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
   # Longhorn Manager resources
   - target:
