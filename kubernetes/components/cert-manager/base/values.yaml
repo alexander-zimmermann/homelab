@@ -11,6 +11,11 @@ global:
 crds:
   enabled: true
 
+# Webhook configuration for Talos host network reachability
+webhook:
+  hostNetwork: true
+  securePort: 10260
+
 # Use a stable, short name for all rendered resources
 fullnameOverride: "cert-manager"
 
