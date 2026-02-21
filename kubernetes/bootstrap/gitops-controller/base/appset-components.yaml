@@ -9,9 +9,9 @@ spec:
     - git:
         repoURL: https://github.com/alexander-zimmermann/homelab
         revision: HEAD
-        # Scan Kustomizations (Env is injected via replacement)
+        # Scan Base Kustomizations to get annotations/namespace
         files:
-          - path: PLACEHOLDER/components/*/kustomization.yaml
+          - path: kubernetes/components/*/base/kustomization.yaml
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   template:

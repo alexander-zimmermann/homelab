@@ -23,10 +23,11 @@ tasks:
     cmds:
       # wait for Kubernetes API readiness (trigger OIDC flow if needed)
       - kubectl cluster-info
+      # ensure namespace exists before injecting secrets
+      - kubectl create namespace sealed-secrets-controller --dry-run=client -o yaml | kubectl apply -f -
       # inject sealed secrets master key
       - kubectl apply -f kubernetes/.secrets/sealed-secrets-key.yaml
       # inject dhi registry credentials (needed for sealed-secrets-controller bootstrap)
-      - kubectl create namespace sealed-secrets-controller --dry-run=client -o yaml | kubectl apply -f -
       - kubectl apply -f kubernetes/.secrets/dhi-registry-credentials.yaml
       - kubectl annotate secret dhi-registry-secret -n sealed-secrets-controller sealed-secrets.bitnami.com/managed="true" --overwrite
       # inject dhi registry credentials into kube-system (needed for metrics-server, as Kyverno excludes this ns)
