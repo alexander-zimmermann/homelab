@@ -9,7 +9,6 @@ on:
       - "kubernetes/components/**"
       - "kubernetes/bootstrap/**"
       - ".github/workflows/ci-validate.yaml"
-      - ".github/scripts/hydrate.sh"
 
 jobs:
   detect-overlays:
@@ -162,3 +161,19 @@ jobs:
             fi
           done < images.txt
           echo "::endgroup::"
+
+  validate-manifests:
+    name: Validate Manifests
+    if: always()
+    needs:
+      - detect-overlays
+      - validate-overlays
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix job status
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "::error::One or more validation matrix jobs failed or were cancelled."
+          exit 1
+      - name: Validation successful
+        run: echo "All validation jobs passed successfully!"
