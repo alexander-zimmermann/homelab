@@ -17,7 +17,7 @@ spec:
       # wait until RustFS is reachable
       initContainers:
         - name: wait-for-rustfs
-          image: curlimages/curl:8.9.1
+          image: curlimages/curl:8.18.0
           command: ["/bin/sh", "-c"]
           args:
             - |
