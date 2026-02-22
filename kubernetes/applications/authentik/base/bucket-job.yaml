@@ -25,7 +25,7 @@ spec:
                 echo "Warte auf S3 Endpoint..."
                 sleep 3
               done
-      # create bucket and enable versioning
+      # create bucket with versioning enabled
       containers:
         - name: mc
           image: minio/mc:latest
@@ -40,6 +40,7 @@ spec:
           args:
             - |
               set -euo pipefail
+              export MC_CONFIG_DIR=$(mktemp -d)
               mc alias set rustfs http://rustfs-svc.rustfs.svc.cluster.local:9000 "$ACCESS_KEY" "$SECRET_KEY"
               mc mb rustfs/authentik-backups --ignore-existing
               mc version enable rustfs/authentik-backups
@@ -61,3 +62,9 @@ spec:
             limits:
               cpu: "200m"
               memory: "128Mi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
