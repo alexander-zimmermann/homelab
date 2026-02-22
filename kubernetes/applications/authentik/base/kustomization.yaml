@@ -27,4 +27,4 @@ labels:
       homelab.app: authentik
 
 commonAnnotations:
-  argocd.argoproj.io/sync-wave: "4"
+  argocd.argoproj.io/sync-wave: "3"
