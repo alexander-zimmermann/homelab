@@ -25,11 +25,6 @@ configs:
 
 # ArgoCD controller manages state of Applications, and performs sync/health checks
 controller:
-  env:
-    # Reduce memory usage by enabling diff calculation via reconciliation
-    - name: ARGOCD_CALC_DIFF_VIA_RECONCILIATION
-      value: "true"
-
   metrics:
     # Exposes application sync status and controller performance metrics to Prometheus
     enabled: true
