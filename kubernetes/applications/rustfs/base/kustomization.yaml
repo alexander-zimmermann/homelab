@@ -42,4 +42,4 @@ labels:
       homelab.app: rustfs
 
 commonAnnotations:
-  argocd.argoproj.io/sync-wave: "8"
+  argocd.argoproj.io/sync-wave: "1"

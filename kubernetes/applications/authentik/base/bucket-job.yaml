@@ -1,10 +1,12 @@
 apiVersion: batch/v1
 kind: Job
+
 metadata:
   name: create-authentik-backup-bucket
   namespace: authentik
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   backoffLimit: 2
   ttlSecondsAfterFinished: 3600
@@ -12,9 +14,9 @@ spec:
     spec:
       serviceAccountName: default
       restartPolicy: OnFailure
-      # wait until s3 is reachable
+      # wait until RustFS is reachable
       initContainers:
-        - name: wait-for-s3
+        - name: wait-for-rustfs
           image: curlimages/curl:8.9.1
           command: ["/bin/sh", "-c"]
           args:
@@ -23,6 +25,7 @@ spec:
                 echo "Warte auf S3 Endpoint..."
                 sleep 3
               done
+      # create bucket and enable versioning
       containers:
         - name: mc
           image: minio/mc:latest
