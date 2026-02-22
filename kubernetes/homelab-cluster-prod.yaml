@@ -23,7 +23,7 @@ patches:
 kind: ControlPlane
 machineClass:
   name: control-plane-prod
-  size: 1
+  size: 3
 
 patches:
   - name: control-plane-settings
