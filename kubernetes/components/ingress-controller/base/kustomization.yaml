@@ -16,6 +16,7 @@ helmCharts:
     includeCRDs: true
     apiVersions:
       - monitoring.coreos.com/v1
+      - policy/v1/PodDisruptionBudget
 
 labels:
   - includeSelectors: false
