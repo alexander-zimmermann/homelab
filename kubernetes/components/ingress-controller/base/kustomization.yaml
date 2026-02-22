@@ -23,4 +23,4 @@ labels:
       homelab.component: ingress-controller
 
 commonAnnotations:
-  argocd.argoproj.io/sync-wave: "-1"
+  argocd.argoproj.io/sync-wave: "-8"
