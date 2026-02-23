@@ -18,10 +18,7 @@ global:
         secretKeyRef:
           name: authentik-credentials
           key: AUTHENTIK_BOOTSTRAP_PASSWORD
-
-authentik:
-  # Optimization: Fewer workers and no preloading saves RAM in small setups
-  env:
+    # Optimization: Fewer workers and no preloading saves RAM in small setups
     - name: AUTHENTIK_WEB__WORKERS
       value: "2"
     - name: AUTHENTIK_WEB__PRELOAD
@@ -33,6 +30,7 @@ authentik:
     - name: AUTHENTIK_WORKER__MAX_MEMORY_PER_CHILD
       value: "300000" # ~300 MiB limit per process
 
+authentik:
   # SMTP configuration for notifications and password resets
   email:
     host: smtprelay.smtprelay.svc.cluster.local
