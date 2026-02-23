@@ -30,8 +30,8 @@ spec:
       endpointURL: http://rustfs-svc.rustfs.svc.cluster.local:9000
       s3Credentials:
         accessKeyId:
-          name: rustfs-creds
+          name: rustfs-admin-credentials
           key: RUSTFS_ACCESS_KEY
         secretAccessKey:
-          name: rustfs-creds
+          name: rustfs-admin-credentials
           key: RUSTFS_SECRET_KEY
