@@ -107,7 +107,9 @@ appsec:
     - name: COLLECTIONS
       value: >-
         crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors
-        firix/authentik
+        firix/authentik crowdsecurity/appsec-virtual-patching
+    - name: APPSEC_CONFIGS
+      value: "crowdsecurity/appsec-default"
 
   # Acquisition configuration: tells AppSec what to listen for
   acquisitions:
