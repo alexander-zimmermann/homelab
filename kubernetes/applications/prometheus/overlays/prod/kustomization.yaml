@@ -45,7 +45,7 @@ patches:
         path: /spec/template/spec/containers/0/env/-
         value:
           name: GOMEMLIMIT
-          value: 241172480
+          value: "241172480"
 
   # Prometheus instance: Configure resources and TSDB persistence
   - target:
@@ -74,7 +74,7 @@ patches:
           - name: prometheus
             env:
               - name: GOMEMLIMIT
-                value: 966787072
+                value: "966787072"
 
       - op: add
         path: /spec/storage/volumeClaimTemplate/spec/resources
@@ -109,7 +109,7 @@ patches:
           - name: alertmanager
             env:
               - name: GOMEMLIMIT
-                value: 241172480
+                value: "241172480"
 
       - op: add
         path: /spec/storage/volumeClaimTemplate/spec/resources
