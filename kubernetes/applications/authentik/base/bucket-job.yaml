@@ -47,12 +47,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: rustfs-creds
-                  key: access-key
+                  key: RUSTFS_ACCESS_KEY
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: rustfs-creds
-                  key: secret-key
+                  key: RUSTFS_SECRET_KEY
           resources:
             requests:
               cpu: "10m"
