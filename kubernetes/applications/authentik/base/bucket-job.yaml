@@ -24,7 +24,7 @@ spec:
                 echo "Warte auf S3 Endpoint..."
                 sleep 3
               done
-      # create bucket
+      # create bucket for backup
       containers:
         - name: mc
           image: minio/mc:latest
@@ -46,12 +46,12 @@ spec:
             - name: ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: rustfs-creds
+                  name: rustfs-admin-credentials
                   key: RUSTFS_ACCESS_KEY
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: rustfs-creds
+                  name: rustfs-admin-credentials
                   key: RUSTFS_SECRET_KEY
           resources:
             requests:
