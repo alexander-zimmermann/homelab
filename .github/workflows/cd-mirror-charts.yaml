@@ -88,7 +88,7 @@ jobs:
           echo "matrix=$(jq -c '{include: .}' <<< "${ITEMS_JSON}")" >> "$GITHUB_OUTPUT"
 
   mirror-charts:
-    name: Mirror Charts
+    name: Mirror Charts to GHCR.io
     needs: discover-tags
     if: ${{ fromJson(needs.discover-tags.outputs.matrix).include[0] != null }}
     runs-on: ubuntu-latest
