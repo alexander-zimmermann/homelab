@@ -140,6 +140,7 @@ config:
       password: ${CROWDSEC_POSTGRESQL_PASSWORD}
       db_name: crowdsec
       host: crowdsec-db-rw
+      port: 5432
       flush:
         bouncers_autodelete:
           api_key: 1h
