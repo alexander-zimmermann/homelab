@@ -44,6 +44,17 @@ template_vm:
     ci_network_config: cluster-mgmt
     ci_meta_config: cluster-mgmt
 
+  vm_proxmox_backup_server:
+    vm_id: 10006
+    image_id: vm_proxmox-backup-server_4_1
+    os_type: l26
+    ## Resources
+    memory: 4096
+    cores: 4
+    disk_size: 32
+    vnic_bridge: vmbr0
+    enable_cloud_init: false
+
   vm_talos_1_12_2_cp-prod:
     vm_id: 10100
     image_id: vm_talos_1_12_2_cp-prod
