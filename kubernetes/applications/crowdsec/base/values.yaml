@@ -109,6 +109,15 @@ appsec:
         crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors
         firix/authentik
 
+  # Acquisition configuration: tells AppSec what to listen for
+  acquisitions:
+    - source: appsec
+      listen_addr: "0.0.0.0:7422"
+      path: /
+      appsec_config: crowdsecurity/appsec-default
+      labels:
+        type: appsec
+
   metrics:
     # Prometheus Monitoring
     serviceMonitor:
