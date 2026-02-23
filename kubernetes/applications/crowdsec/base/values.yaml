@@ -110,6 +110,8 @@ appsec:
         firix/authentik crowdsecurity/appsec-virtual-patching
     - name: APPSEC_CONFIGS
       value: "crowdsecurity/appsec-default"
+    - name: APPSEC_RULES
+      value: "crowdsecurity/experimental-*"
 
   # Acquisition configuration: tells AppSec what to listen for
   acquisitions:
