@@ -80,7 +80,7 @@ patches:
         path: /spec/storage/volumeClaimTemplate/spec/resources
         value:
           requests:
-            storage: 1Gi
+            storage: 500Mi
 
       - op: replace
         path: /spec/retention
