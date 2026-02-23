@@ -5,33 +5,34 @@ metadata:
   name: authentik-db
   namespace: authentik
 spec:
-  instances: 2
-  imagePullSecrets:
-    - name: dhi-registry-secret
+  instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1
+
   storage:
     size: 1Gi
+
   bootstrap:
     initdb:
       database: authentik
       owner: authentik
+
   postgresql:
     parameters:
-      # Memory-optimized settings
       shared_buffers: "128MB"
       work_mem: "8MB"
       maintenance_work_mem: "128MB"
       wal_buffers: "8MB"
       effective_cache_size: "512MB"
       autovacuum_work_mem: "128MB"
+
   backup:
     barmanObjectStore:
       destinationPath: s3://authentik-backups/
       endpointURL: http://rustfs-svc.rustfs.svc.cluster.local:9000
       s3Credentials:
         accessKeyId:
-          name: rustfs-creds
-          key: access-key
+          name: rustfs-admin-credentials
+          key: RUSTFS_ACCESS_KEY
         secretAccessKey:
-          name: rustfs-creds
-          key: secret-key
+          name: rustfs-admin-credentials
+          key: RUSTFS_SECRET_KEY
