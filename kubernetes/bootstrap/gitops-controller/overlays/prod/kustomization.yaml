@@ -12,10 +12,10 @@ replacements:
       - select:
           kind: ApplicationSet
         fieldPaths:
-          - spec.generators.0.git.files.0.path
+          - spec.template.spec.source.path
         options:
           delimiter: "/"
-          index: 0
+          index: 4
       - select:
           kind: ApplicationSet
         fieldPaths:

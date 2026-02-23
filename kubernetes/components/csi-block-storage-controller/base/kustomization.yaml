@@ -4,6 +4,8 @@ kind: Kustomization
 namespace: csi-block-storage-controller
 resources:
   - ./namespace.yaml
+  - ./certificate.yaml
+  - ./ingress-route.yaml
 
 helmCharts:
   - name: longhorn

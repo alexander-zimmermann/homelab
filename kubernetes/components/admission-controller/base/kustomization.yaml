@@ -11,7 +11,7 @@ helmCharts:
   - name: kyverno
     repo: oci://ghcr.io/kyverno/charts
     releaseName: kyverno
-    version: 3.7.0
+    version: 3.7.1
     valuesFile: values.yaml
     namespace: admission-controller
     includeCRDs: true
@@ -22,6 +22,6 @@ labels:
       homelab.component: admission-controller
 
 commonAnnotations:
-  argocd.argoproj.io/sync-wave: "-2"
+  argocd.argoproj.io/sync-wave: "-4"
   argocd.argoproj.io/compare-options: ServerSideDiff=true
   argocd.argoproj.io/sync-options: ServerSideApply=true

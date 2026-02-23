@@ -5,7 +5,7 @@ terraform {
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
-      version = "~> 0.95.0"
+      version = "~> 0.96.0"
     }
   }
 }
@@ -161,6 +161,6 @@ resource "proxmox_virtual_environment_vm" "vm" {
   ## Cloud-init SSH keys will cause a forced replacement, this is expected
   ## behavior see https://github.com/bpg/terraform-provider-proxmox/issues/373
   lifecycle {
-    ignore_changes = [initialization["user_account"], ]
+    ignore_changes = [initialization]
   }
 }

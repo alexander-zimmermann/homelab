@@ -10,12 +10,13 @@ helmCharts:
   - name: traefik
     repo: oci://ghcr.io/traefik/helm
     releaseName: traefik
-    version: 39.0.0
+    version: 39.0.2
     valuesFile: values.yaml
     namespace: ingress-controller
     includeCRDs: true
     apiVersions:
       - monitoring.coreos.com/v1
+      - policy/v1/PodDisruptionBudget
 
 labels:
   - includeSelectors: false
@@ -23,4 +24,4 @@ labels:
       homelab.component: ingress-controller
 
 commonAnnotations:
-  argocd.argoproj.io/sync-wave: "-1"
+  argocd.argoproj.io/sync-wave: "-8"

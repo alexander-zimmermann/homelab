@@ -1,11 +1,11 @@
 terraform {
-  required_version = "1.14.4" # OpenTofu
+  required_version = ">= 1.11.0" # OpenTofu
 
   required_providers {
     proxmox = {
       ## https://search.opentofu.org/provider/bpg/proxmox/latest
       source  = "bpg/proxmox"
-      version = "0.95.0"
+      version = "0.96.0"
     }
     external = {
       ## https://search.opentofu.org/provider/hashicorp/external/latest
@@ -15,7 +15,7 @@ terraform {
     local = {
       ## https://search.opentofu.org/provider/hashicorp/local/latest
       source  = "hashicorp/local"
-      version = "2.6.2"
+      version = "2.7.0"
     }
     random = {
       ## https://search.opentofu.org/provider/hashicorp/random/latest

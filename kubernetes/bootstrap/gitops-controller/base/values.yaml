@@ -20,14 +20,11 @@ configs:
     server.insecure: "true"
     # Reduce memory usage by splitting application tree into multiple Redis keys
     controller.app.tree.shard.size: "100"
+    # Limit concurrent helm/kustomize processes (forking) to save RAM
+    reposerver.parallelism.limit: "1"
 
 # ArgoCD controller manages state of Applications, and performs sync/health checks
 controller:
-  env:
-    # Reduce memory usage by enabling diff calculation via reconciliation
-    - name: ARGOCD_CALC_DIFF_VIA_RECONCILIATION
-      value: "true"
-
   metrics:
     # Exposes application sync status and controller performance metrics to Prometheus
     enabled: true
@@ -35,16 +32,6 @@ controller:
       enabled: true
       labels:
         release: prometheus
-
-# ArgoCD Repo-server renders/manages repos/Helm/Kustomize
-repoServer:
-  env:
-    # Limit concurrent manifest generation to reduce memory spikes
-    - name: ARGOCD_REPO_SERVER_MAX_CONCURRENT_REQUESTS
-      value: "10"
-    # Limit concurrent helm/kustomize processes (forking) to save RAM
-    - name: ARGOCD_REPO_SERVER_PARALLELISM_LIMIT
-      value: "2"
 
 # ApplicationSet controller generates Applications from generators (e.g. Git, List, Cluster, etc.)
 applicationSet:

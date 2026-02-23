@@ -8,10 +8,10 @@ spec:
   generators:
     - git:
         repoURL: https://github.com/alexander-zimmermann/homelab
-        revision: hydrated
-        # Scan Manifests (Env is injected via replacement)
+        revision: HEAD
+        # Scan Base Kustomizations to get annotations/namespace
         files:
-          - path: PLACEHOLDER/components/*/manifest.yaml
+          - path: kubernetes/components/*/base/kustomization.yaml
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
   template:
@@ -27,9 +27,9 @@ spec:
       project: default
       source:
         repoURL: https://github.com/alexander-zimmermann/homelab
-        targetRevision: hydrated
-        # Path to the directory containing the hydrated manifest.yaml
-        path: "{{.path.path}}"
+        targetRevision: HEAD
+        # Construct path to overlays/PLACEHOLDER (Env is injected via replacement)
+        path: kubernetes/components/{{index .path.segments 2}}/overlays/PLACEHOLDER
       destination:
         server: https://kubernetes.default.svc
         # Read namespace from the parsed Kustomization file content
