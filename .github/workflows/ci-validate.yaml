@@ -1,17 +1,87 @@
-name: "CI: Validate Manifests & Images"
+name: "CI: Commit Validation"
 
 on:
   pull_request:
     branches:
       - main
-    paths:
-      - "kubernetes/applications/**"
-      - "kubernetes/components/**"
-      - "kubernetes/bootstrap/**"
-      - ".github/workflows/ci-validate.yaml"
 
 jobs:
-  detect-overlays:
+  # 1. Path Filter to determine which validation stages to run
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      infra: ${{ steps.filter.outputs.infra }}
+      k8s: ${{ steps.filter.outputs.k8s }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            infra:
+              - 'infrastructure/**'
+              - '.github/workflows/ci-validate.yaml'
+            k8s:
+              - 'kubernetes/**'
+              - '.github/workflows/ci-validate.yaml'
+
+  # 2. Standard Contribution Checks (runs always)
+  pre-commit:
+    name: "Check: General Commit Integrity"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.8.2
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --all-files
+
+  # 3. Infrastructure Integrity (OpenTofu)
+  tofu-validate:
+    name: "Check: Infrastructure Integrity"
+    needs: changes
+    if: needs.changes.outputs.infra == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infrastructure
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.8.2
+
+      - name: OpenTofu Format Check
+        run: tofu fmt -check -recursive
+
+      - name: OpenTofu Init
+        run: tofu init -backend=false
+
+      - name: OpenTofu Validate
+        run: tofu validate
+
+  # 4. Identify which K8s Workload has been modified
+  resolve-workload:
+    name: "Plan: K8s Workload Integrity"
+    needs: changes
+    if: needs.changes.outputs.k8s == 'true'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -26,20 +96,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
-          # Fetch main to diff against
           git fetch origin "${{ github.base_ref }}" --depth=1 || true
           CHANGED="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)"
 
-          echo "Changed files:"
-          echo "$CHANGED"
-
           OVERLAY_DIRS=""
-
-          # Extract unique App Roots (dir logic: kubernetes/{applications,components,bootstrap}/<app>)
           APP_ROOTS=$(echo "$CHANGED" | grep -E '^kubernetes/(applications|components|bootstrap)/[^/]+' | awk -F/ '{print $1"/"$2"/"$3}' | sort -u)
 
-          # For each App Root, check if overlays/dev or overlays/prod exist.
           if [ -z "$APP_ROOTS" ]; then
              echo "No app changes detected."
           else
@@ -53,28 +115,22 @@ jobs:
              done
           fi
 
-          # Fallback: If no overlays found (e.g. only irrelevant file changed?), fallback to all.
           if [ -z "$OVERLAY_DIRS" ]; then
-             echo "No specific overlays identified. Falling back to ALL dev/prod overlays..."
-             # Find all dev/prod overlays
              OVERLAY_DIRS=$(find kubernetes/applications kubernetes/components -path "*/overlays/dev" -o -path "*/overlays/prod" | sort -u)
           fi
 
-          # Trim leading space and format for JSON
           OVERLAY_DIRS=$(echo $OVERLAY_DIRS | tr ' ' '\n' | sort -u)
-
-          echo "Overlays to validate:"
-          echo "$OVERLAY_DIRS"
-
           JSON=$(echo "$OVERLAY_DIRS" | jq -R -s -c 'split("\n") | map(select(length > 0)) | {overlay: .}')
           echo "matrix=$JSON" >> "$GITHUB_OUTPUT"
 
-  validate-overlays:
-    runs-on: ubuntu-latest
-    needs: detect-overlays
+  # 5. Validate affected K8s Workload
+  validate-workload:
+    name: "Check: K8s Workload Integrity"
+    needs: resolve-workload
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.detect-overlays.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.resolve-workload.outputs.matrix) }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -92,88 +148,47 @@ jobs:
         run: crane auth login dhi.io -u "${{ secrets.DHI_USER }}" -p "${{ secrets.DHI_PASS }}"
 
       - name: Render Overlay (kustomize)
-        id: render
-        shell: bash
         run: |
-          set -euo pipefail
-          echo "::group::Render ${{ matrix.overlay }}"
           mkdir -p rendered
           kustomize build --enable-helm "${{ matrix.overlay }}" > rendered/manifests.yaml
-          echo "::endgroup::"
 
       - name: Validate Schema (kubeconform)
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "::group::Kubeconform"
-          kubeconform -strict -summary -ignore-missing-schemas rendered/manifests.yaml
-          echo "::endgroup::"
+        run: kubeconform -strict -summary -ignore-missing-schemas rendered/manifests.yaml
 
       - name: Validate Policies (kyverno)
-        shell: bash
         run: |
-          set -euo pipefail
-          echo "::group::Kyverno Policy Check/Apply"
-
-          # Find Policy Files. We look for files containing "apiVersion: kyverno.io/"
           POLICIES=$(grep -lR "apiVersion: kyverno.io/" kubernetes | grep -v "kustomization.yaml" | sort -u || true)
-
-          if [ -z "$POLICIES" ]; then
-             echo "No Kyverno policies found in 'kubernetes/'."
-             echo "Skipping policy validation."
-             echo "::endgroup::"
-             exit 0
+          if [ -n "$POLICIES" ]; then
+             kyverno apply $POLICIES --resource rendered/manifests.yaml
           fi
-
-          echo "Found the following policy files:"
-          echo "$POLICIES"
-
-          # Apply Policies. We use the previously rendered 'rendered/manifests.yaml'
-          echo "Running kyverno apply..."
-          kyverno apply $POLICIES --resource rendered/manifests.yaml
-          echo "::endgroup::"
 
       - name: Validate Images (crane)
-        shell: bash
         run: |
-          set -euo pipefail
-          echo "::group::Check Images"
           grep -r "^[[:space:]]*image:" rendered/manifests.yaml | awk '{print $2}' | sort -u > images.txt
-
-          if [ ! -s images.txt ]; then
-            echo "No images found to check."
-            echo "::endgroup::"
-            exit 0
-          fi
-
           while read -r image; do
             if [ -z "$image" ]; then continue; fi
-
-            # Normalize docker.io library images
             if [[ "$image" == "docker.io/"* ]] && [[ "$image" != *"/"*"/"* ]]; then
                  image="${image/docker.io\//docker.io\/library\/}"
             fi
-
-            echo "Checking $image..."
-            if ! crane digest "$image" > /dev/null; then
-              echo "::error::Image $image not found or not accessible!"
-              exit 1
-            fi
+            crane digest "$image" > /dev/null
           done < images.txt
-          echo "::endgroup::"
 
-  validate-manifests:
-    name: Validate Manifests
+  # 5. Final Gate: Single required check for Branch Protection
+  ci-status:
+    name: "Quality Gate"
     if: always()
     needs:
-      - detect-overlays
-      - validate-overlays
+      - pre-commit
+      - tofu-validate
+      - validate-workload
     runs-on: ubuntu-latest
     steps:
-      - name: Check matrix job status
-        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+      - name: Check Status
+        if: |
+          contains(needs.*.result, 'failure') ||
+          contains(needs.*.result, 'cancelled')
         run: |
-          echo "::error::One or more validation matrix jobs failed or were cancelled."
+          echo "::error::Validation suite failed or was cancelled."
           exit 1
-      - name: Validation successful
-        run: echo "All validation jobs passed successfully!"
+      - name: All checks passed
+        run: echo "Validation complete."
