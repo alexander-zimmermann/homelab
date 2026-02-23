@@ -31,7 +31,7 @@ spec:
       s3Credentials:
         accessKeyId:
           name: rustfs-creds
-          key: access-key
+          key: RUSTFS_ACCESS_KEY
         secretAccessKey:
           name: rustfs-creds
-          key: secret-key
+          key: RUSTFS_SECRET_KEY
