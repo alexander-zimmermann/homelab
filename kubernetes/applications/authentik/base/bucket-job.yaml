@@ -40,8 +40,8 @@ spec:
             - |
               set -euo pipefail
               export MC_CONFIG_DIR=$(mktemp -d)
-              mc --debug alias set rustfs http://rustfs-svc.rustfs.svc.cluster.local:9000 "$ACCESS_KEY" "$SECRET_KEY"
-              mc --debug mb rustfs/authentik-backups --ignore-existing
+              mc alias set --debug rustfs http://rustfs-svc.rustfs.svc.cluster.local:9000 "$ACCESS_KEY" "$SECRET_KEY"
+              mc mb --debug --ignore-existing rustfs/authentik-backups
           env:
             - name: ACCESS_KEY
               valueFrom:
