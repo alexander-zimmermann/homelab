@@ -5,6 +5,7 @@ namespace: crowdsec
 resources:
   - ./namespace.yaml
   - ./sealed-secret.yaml
+  - ./database.yaml
 
 helmCharts:
   - name: crowdsec
