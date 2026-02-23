@@ -41,7 +41,7 @@ spec:
               set -euo pipefail
               export MC_CONFIG_DIR=$(mktemp -d)
               mc --debug alias set rustfs http://rustfs-svc.rustfs.svc.cluster.local:9000 "$ACCESS_KEY" "$SECRET_KEY"
-              mc --debug mb rustfs/authentik-backups || echo "Bucket already exists"
+              mc --debug mb rustfs/authentik-backups --ignore-existing
           env:
             - name: ACCESS_KEY
               valueFrom:
