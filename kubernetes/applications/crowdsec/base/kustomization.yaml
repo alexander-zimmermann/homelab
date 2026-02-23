@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: crowdsec
+resources:
+  - ./namespace.yaml
+  - ./sealed-secret.yaml
+
+helmCharts:
+  - name: crowdsec
+    repo: oci://ghcr.io/crowdsecurity/helm-charts
+    releaseName: crowdsec
+    version: 0.22.0
+    valuesFile: values.yaml
+    namespace: crowdsec
+    includeCRDs: true
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: crowdsec
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-1"

@@ -1,0 +1,26 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+
+metadata:
+  name: crowdsec-db
+  namespace: crowdsec
+
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.1
+
+  storage:
+    size: 1Gi
+
+  bootstrap:
+    initdb:
+      database: crowdsec
+      owner: crowdsec
+
+  postgresql:
+    parameters:
+      shared_buffers: "64MB"
+      work_mem: "4MB"
+      maintenance_work_mem: "64MB"
+      effective_cache_size: "256MB"
+      autovacuum_work_mem: "64MB"

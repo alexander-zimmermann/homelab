@@ -1,0 +1,60 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  # CrowdSec LAPI: central management component
+  - target:
+      kind: Deployment
+      name: crowdsec-lapi
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: crowdsec-lapi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 300m
+            memory: 256Mi
+
+  # CrowdSec AppSec: WAF-like security component
+  - target:
+      kind: Deployment
+      name: crowdsec-appsec
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: crowdsec-appsec
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 300m
+            memory: 256Mi
+
+  # CrowdSec Agent: DaemonSet resources for log parsing
+  - target:
+      kind: DaemonSet
+      name: crowdsec-agent
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: crowdsec-agent
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi

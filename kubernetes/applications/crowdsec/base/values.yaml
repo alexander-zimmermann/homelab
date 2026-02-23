@@ -1,0 +1,147 @@
+# Log format emitted by the container runtime
+container_runtime: containerd
+
+secrets:
+  # External secret to avoid Helm lookup issues with ArgoCD
+  externalSecret:
+    name: "crowdsec-credentials"
+
+lapi:
+  # Enables LAPI (Local API): central management component of CrowdSec
+  enabled: true
+
+  env:
+    # Register CrowdSec instance with console
+    - name: ENROLL_KEY
+      valueFrom:
+        secretKeyRef:
+          name: crowdsec-credentials
+          key: ENROLL_KEY
+
+    # Name of this instance in the console
+    - name: ENROLL_INSTANCE_NAME
+      value: "homelab"
+
+    # To filter instances by tag in the console
+    - name: ENROLL_TAGS
+      value: "k8s"
+
+    # API key used by Traefik bouncer
+    - name: BOUNCER_KEY_TRAEFIK
+      valueFrom:
+        secretKeyRef:
+          name: crowdsec-credentials
+          key: BOUNCER_KEY_TRAEFIK
+
+    # Database password from a Secret created by the CloudNativePG Cluster
+    - name: CROWDSEC_POSTGRESQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: crowdsec-db-app
+          key: password
+
+  # Persistent storage for CrowdSec data is discouraged. Use database instead
+  persistentVolume:
+    data:
+      enabled: false
+    config:
+      enabled: false
+
+  # Homepage Service Discovery
+  service:
+    annotations:
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/group: "Security & Identity"
+      gethomepage.dev/name: "CrowdSec"
+      gethomepage.dev/icon: "crowdsec.png"
+      gethomepage.dev/weight: "2"
+      gethomepage.dev/widget.type: "crowdsec"
+      gethomepage.dev/widget.url: "http://crowdsec-lapi.crowdsec.svc.cluster.local:8080"
+
+  metrics:
+    # Prometheus Monitoring
+    serviceMonitor:
+      enabled: true
+      # Prometheus Operator label (Opt-In)
+      additionalLabels:
+        release: prometheus
+
+agent:
+  # Enable CrowdSec agent (as daemonset)
+  enabled: true
+
+  env:
+    # Install default collections (including Traefik and Authentik support)
+    - name: COLLECTIONS
+      value: >-
+        crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors
+        firix/authentik
+
+  # Acquisition configuration: tells CrowdSec which logs to monitor
+  acquisition:
+    # Monitor Traefik access logs from the ingress-controller namespace
+    - namespace: ingress-controller
+      podName: traefik-*
+      program: traefik
+      poll_without_inotify: true
+    # Monitor Authentik logs (server and worker)
+    - namespace: authentik
+      podName: authentik-*
+      program: authentik
+      poll_without_inotify: true
+
+  metrics:
+    # Prometheus Monitoring
+    serviceMonitor:
+      enabled: true
+      # Prometheus Operator label (Opt-In)
+      additionalLabels:
+        release: prometheus
+
+appsec:
+  # Enables CrowdSec AppSec (WAF component)
+  enabled: true
+
+  env:
+    # Install default collections (including Traefik and Authentik support)
+    - name: COLLECTIONS
+      value: >-
+        crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors
+        firix/authentik
+
+  metrics:
+    # Prometheus Monitoring
+    serviceMonitor:
+      enabled: true
+      # Prometheus Operator label (Opt-In)
+      additionalLabels:
+        release: prometheus
+
+config:
+  # Custom configuration to be loaded in crowdsec agent or lapi
+  config.yaml.local: |
+    api:
+      client:
+        # the log processor will remove delete itself from LAPI when stopping.
+        unregister_on_exit: true
+      server:
+        # This is needed for agent autoregistration
+        auto_registration: # Activate if not using TLS for authentication
+          enabled: true
+          token: "${REGISTRATION_TOKEN}" # /!\ Do not modify this variable (auto-generated and handled by the chart)
+          allowed_ranges: # /!\ Make sure to adapt to the pod IP ranges used by your cluster
+            - "127.0.0.1/32"
+            - "192.168.0.0/16"
+            - "10.0.0.0/8"
+            - "172.16.0.0/12"
+    db_config:
+      type: postgresql
+      user: crowdsec
+      password: ${CROWDSEC_POSTGRESQL_PASSWORD}
+      db_name: crowdsec
+      host: crowdsec-db-rw
+      flush:
+        bouncers_autodelete:
+          api_key: 1h
+        agents_autodelete:
+          login_password: 1h
