@@ -105,7 +105,8 @@ jobs:
           if [ -z "$APP_ROOTS" ]; then
              echo "No app changes detected."
           else
-             for app in $APP_ROOTS; do
+             read -r -a apps <<< "$APP_ROOTS"
+             for app in "${apps[@]}"; do
                if [ -f "$app/overlays/dev/kustomization.yaml" ]; then
                  OVERLAY_DIRS="$OVERLAY_DIRS $app/overlays/dev"
                fi
@@ -119,7 +120,7 @@ jobs:
              OVERLAY_DIRS=$(find kubernetes/applications kubernetes/components -path "*/overlays/dev" -o -path "*/overlays/prod" | sort -u)
           fi
 
-          OVERLAY_DIRS=$(echo $OVERLAY_DIRS | tr ' ' '\n' | sort -u)
+          OVERLAY_DIRS=$(echo "$OVERLAY_DIRS" | tr ' ' '\n' | sort -u)
           JSON=$(echo "$OVERLAY_DIRS" | jq -R -s -c 'split("\n") | map(select(length > 0)) | {overlay: .}')
           echo "matrix=$JSON" >> "$GITHUB_OUTPUT"
 
@@ -159,7 +160,7 @@ jobs:
         run: |
           POLICIES=$(grep -lR "apiVersion: kyverno.io/" kubernetes | grep -v "kustomization.yaml" | sort -u || true)
           if [ -n "$POLICIES" ]; then
-             kyverno apply $POLICIES --resource rendered/manifests.yaml
+             kyverno apply "$POLICIES" --resource rendered/manifests.yaml
           fi
 
       - name: Validate Images (crane)

@@ -39,9 +39,8 @@ jobs:
           set -euo pipefail
           export LC_ALL=C
 
-          # Source repositories (1:1 mapping to destination path)
           # Source repositories from env
-          SRC_REPOS=($MIRROR_CHARTS)
+          read -r -a SRC_REPOS <<< "$MIRROR_CHARTS"
 
           # Destination path prefix in GHCR
           DST_PREFIX="ghcr.io/${OWNER}/charts"
