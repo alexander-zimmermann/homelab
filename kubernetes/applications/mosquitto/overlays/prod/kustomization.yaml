@@ -4,6 +4,24 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject domain name into the Certificate and IngressRoute
+  - sourceValue: mqtt.zimmermann.sh
+    targets:
+      - select:
+          kind: Certificate
+          name: mqtt-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRouteTCP
+          name: mosquitto
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
 patches:
   # Mosquitto service with static IP and BGP advertisement
   - target:
