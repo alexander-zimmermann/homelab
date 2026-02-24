@@ -12,19 +12,17 @@ repos:
       - id: check-added-large-files
       - id: detect-private-key
       - id: end-of-file-fixer
-      #- id: no-commit-to-branch
-      #  args: [--branch, main]
+      - id: no-commit-to-branch
+        args: [--branch, main]
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
-
-  - repo: https://github.com/tofuutils/pre-commit-opentofu
-    rev: v2.1.0
-    hooks:
-      - id: tofu_fmt
-        args: [--args=-recursive, infrastructure]
-      - id: tofu_validate
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.18.0
     hooks:
       - id: gitleaks
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.7
+    hooks:
+      - id: actionlint

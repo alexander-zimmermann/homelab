@@ -6,7 +6,7 @@ resources:
   - ../../base
 
 replacements:
-  # Inject environment ('dev') into ApplicationSet paths and names
+  # Append environment ('dev') into ApplicationSet paths and names
   - sourceValue: "dev"
     targets:
       - select:
@@ -15,14 +15,14 @@ replacements:
           - spec.template.spec.source.path
         options:
           delimiter: "/"
-          index: 4
+          index: 100
       - select:
           kind: ApplicationSet
         fieldPaths:
           - spec.template.metadata.name
         options:
           delimiter: "-"
-          index: 1
+          index: 100
 
 patches:
   # ArgoCD controller manages state of Applications, and performs sync/health checks

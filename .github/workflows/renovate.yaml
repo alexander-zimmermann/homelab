@@ -9,6 +9,9 @@ on:
       - .renovate/**.json5
   schedule:
     - cron: '0 * * * *' # Every hour
+  issues:
+    types:
+      - edited
   workflow_dispatch:
     inputs:
       dryRun:

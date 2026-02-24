@@ -37,6 +37,7 @@ tasks:
         opentofu
         cilium-cli
         siderolabs/tap/sidero-tools
+        actionlint
       PACKAGES: >-
         pre-commit
     preconditions:

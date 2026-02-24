@@ -39,9 +39,8 @@ jobs:
           set -euo pipefail
           export LC_ALL=C
 
-          # Source repositories (1:1 mapping to destination path)
           # Source repositories from env
-          SRC_REPOS=($MIRROR_CHARTS)
+          read -r -a SRC_REPOS <<< "$MIRROR_CHARTS"
 
           # Destination path prefix in GHCR
           DST_PREFIX="ghcr.io/${OWNER}/charts"
@@ -88,7 +87,7 @@ jobs:
           echo "matrix=$(jq -c '{include: .}' <<< "${ITEMS_JSON}")" >> "$GITHUB_OUTPUT"
 
   mirror-charts:
-    name: Mirror Charts
+    name: Mirror Charts to GHCR.io
     needs: discover-tags
     if: ${{ fromJson(needs.discover-tags.outputs.matrix).include[0] != null }}
     runs-on: ubuntu-latest
