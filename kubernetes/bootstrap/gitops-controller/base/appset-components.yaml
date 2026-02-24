@@ -16,8 +16,8 @@ spec:
   goTemplateOptions: ["missingkey=error"]
   template:
     metadata:
-      # Segment 2 is component name
-      name: "{{index .path.segments 2}}-PLACEHOLDER"
+      # Construct application name to appname-{prod|dev}, where appname is derived from Segment 2 and -(prod|dev) is appended via replacement
+      name: "{{index .path.segments 2}}"
       annotations:
         # Read common annotations from the parsed Kustomization file content
         argocd.argoproj.io/sync-wave: '{{ index .commonAnnotations "argocd.argoproj.io/sync-wave" | default "0" }}'
@@ -28,8 +28,8 @@ spec:
       source:
         repoURL: https://github.com/alexander-zimmermann/homelab
         targetRevision: HEAD
-        # Construct path to overlays/PLACEHOLDER (Env is injected via replacement)
-        path: kubernetes/components/{{index .path.segments 2}}/overlays/PLACEHOLDER
+        # Construct path to overlays/{prod|dev}, where /(prod|dev) is appended via replacement
+        path: kubernetes/components/{{index .path.segments 2}}/overlays
       destination:
         server: https://kubernetes.default.svc
         # Read namespace from the parsed Kustomization file content
