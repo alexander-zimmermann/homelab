@@ -20,3 +20,6 @@ spec:
     - name: mqtt
       port: 1883
       protocol: TCP
+    - name: mqtts
+      port: 8883
+      protocol: TCP

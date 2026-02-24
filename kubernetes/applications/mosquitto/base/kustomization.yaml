@@ -8,6 +8,8 @@ resources:
   - ./deployment.yaml
   - ./service.yaml
   - ./sealed-secret.yaml
+  - ./certificate.yaml
+  - ./ingress-route-tcp.yaml
 
 configMapGenerator:
   - name: mosquitto-config

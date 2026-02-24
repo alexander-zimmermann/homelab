@@ -60,6 +60,9 @@ spec:
             # MQTT listener.
             - name: "mqtt"
               containerPort: 1883
+            # MQTTS listener (plaintext, but dedicated to TLS entrypoint)
+            - name: "mqtts"
+              containerPort: 8883
           readinessProbe:
             # Consider the broker ready when it accepts TCP connections.
             tcpSocket:
