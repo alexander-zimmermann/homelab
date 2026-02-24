@@ -41,6 +41,12 @@ jobs:
         with:
           tofu_version: 1.11.4
 
+      - name: Create mock SSH keys for validation
+        run: |
+          mkdir -p ~/.ssh
+          touch ~/.ssh/proxmox_opentofu
+          touch ~/.ssh/id_rsa.pub
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -68,6 +74,12 @@ jobs:
         uses: opentofu/setup-opentofu@v1
         with:
           tofu_version: 1.11.4
+
+      - name: Create mock SSH keys for validation
+        run: |
+          mkdir -p ~/.ssh
+          touch ~/.ssh/proxmox_opentofu
+          touch ~/.ssh/id_rsa.pub
 
       - name: OpenTofu Format Check
         run: tofu fmt -check -recursive
@@ -101,7 +113,7 @@ jobs:
           CHANGED="$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)"
 
           OVERLAY_DIRS=""
-          APP_ROOTS=$(echo "$CHANGED" | grep -E '^kubernetes/(applications|components|bootstrap)/[^/]+' | awk -F/ '{print $1"/"$2"/"$3}' | sort -u)
+          APP_ROOTS=$(echo "$CHANGED" | grep -E '^kubernetes/(applications|components|bootstrap)/[^/]+' | awk -F/ '{print $1"/"$2"/"$3}' | sort -u || true)
 
           if [ -z "$APP_ROOTS" ]; then
              echo "No app changes detected."
