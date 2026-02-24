@@ -30,6 +30,14 @@ jobs:
         with:
           kustomize: v5.8.1
 
+      - name: Render ApplicationSets (Base)
+        shell: bash
+        run: |
+          echo "::group::Render ApplicationSets"
+          echo "Rendering Base Branch ApplicationSets..."
+          kustomize build --enable-helm main/kubernetes/bootstrap/gitops-controller/overlays/prod > main/rendered-apps.yaml
+          echo "::endgroup::"
+
       - name: Render ApplicationSets (PR)
         shell: bash
         run: |
@@ -38,20 +46,26 @@ jobs:
           kustomize build --enable-helm pull-request/kubernetes/bootstrap/gitops-controller/overlays/prod > pull-request/rendered-apps.yaml
           echo "::endgroup::"
 
+      - name: Set Argo CD Custom Values
+        run: |
+          cat > values.yaml << "EOF"
+          # set whatever helm values you want
+          configs:
+            cm:
+              kustomize.buildOptions: --load-restrictor LoadRestrictionsNone --enable-helm
+          EOF
+
       - name: Generate Diff
         run: |
-          # Use enable-helm to support our kustomize setup
-          export KUSTOMIZE_BUILD_OPTIONS="--enable-helm"
-
           docker run \
             --network=host \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v "$(pwd)/main:/base-branch" \
             -v "$(pwd)/pull-request:/target-branch" \
             -v "$(pwd)/output:/output" \
+            -v "$(pwd)/values.yaml:/argocd-config/values.yaml" \
             -e TARGET_BRANCH=refs/pull/${{ github.event.number }}/merge \
             -e REPO=${{ github.repository }} \
-            -e KUSTOMIZE_BUILD_OPTIONS="$KUSTOMIZE_BUILD_OPTIONS" \
             -e TIMEOUT=300 \
             -e DEBUG=true \
             -e GIT_CONFIG_COUNT=1 \
