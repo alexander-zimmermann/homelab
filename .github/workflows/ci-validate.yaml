@@ -8,6 +8,7 @@ on:
 jobs:
   # 1. Path Filter to determine which validation stages to run
   changes:
+    name: "Plan: Validation Stages"
     runs-on: ubuntu-latest
     outputs:
       infra: ${{ steps.filter.outputs.infra }}
@@ -38,7 +39,7 @@ jobs:
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
         with:
-          tofu_version: 1.8.2
+          tofu_version: 1.11.4
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -66,7 +67,7 @@ jobs:
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
         with:
-          tofu_version: 1.8.2
+          tofu_version: 1.11.4
 
       - name: OpenTofu Format Check
         run: tofu fmt -check -recursive
