@@ -9,7 +9,7 @@ helmCharts:
   - name: grafana-operator
     repo: oci://ghcr.io/grafana/helm-charts
     releaseName: grafana-operator
-    version: 5.21.4
+    version: 5.22.0
     valuesFile: values.yaml
     namespace: grafana-operator
     includeCRDs: true
