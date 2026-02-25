@@ -16,7 +16,7 @@ spec:
   goTemplateOptions: ["missingkey=error"]
   template:
     metadata:
-      # Construct application name to appname-{prod|dev}, where appname is derived from Segment 2 and -(prod|dev) is appended via replacement
+      # Construct component name to componentname-{prod|dev}, where componentname is derived from Segment 2 and -(prod|dev) is appended via replacement
       name: "{{index .path.segments 2}}"
       annotations:
         # Read common annotations from the parsed Kustomization file content
