@@ -10,6 +10,9 @@ patches:
       kind: Deployment
       name: grafana-operator
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: grafana-operator
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
