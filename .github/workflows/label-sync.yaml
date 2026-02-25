@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Sync Labels
-        uses: Mic92/labeler@v3
+        uses: EndBug/label-sync@v2
         with:
-          manifest: ".github/settings/labels.yaml"
-          token: "${{ secrets.GITHUB_TOKEN }}"
+          config-file: ".github/settings/labels.yaml"
+          delete-other-labels: true
