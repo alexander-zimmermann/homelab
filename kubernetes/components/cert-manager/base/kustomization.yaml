@@ -21,16 +21,15 @@ helmCharts:
 
 patches:
   # https://github.com/cert-manager/cert-manager/pull/6192
-  - patch: |-
+  - target:
+      kind: CustomResourceDefinition
+      labelSelector: app.kubernetes.io/instance=cert-manager
+    patch: |-
       - op: test
         path: /metadata/labels/app.kubernetes.io~1instance
         value: cert-manager
-
       - op: remove
         path: /metadata/labels/app.kubernetes.io~1instance
-    target:
-      kind: CustomResourceDefinition
-      labelSelector: app.kubernetes.io/instance=cert-manager
 
 labels:
   - includeSelectors: false
