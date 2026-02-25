@@ -20,11 +20,11 @@ global:
           key: AUTHENTIK_BOOTSTRAP_PASSWORD
     # Optimization: Fewer workers and no preloading saves RAM in small setups
     - name: AUTHENTIK_WEB__WORKERS
-      value: "2"
+      value: "1"
     - name: AUTHENTIK_WEB__PRELOAD
       value: "false"
     - name: AUTHENTIK_WORKER__WORKERS
-      value: "2"
+      value: "1"
     - name: AUTHENTIK_WORKER__PREFETCH_MULTIPLIER
       value: "1"
     - name: AUTHENTIK_WORKER__MAX_MEMORY_PER_CHILD

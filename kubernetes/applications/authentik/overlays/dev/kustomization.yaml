@@ -39,7 +39,7 @@ patches:
             memory: 256Mi
           limits:
             cpu: 500m
-            memory: 512Mi
+            memory: 768Mi
 
   # Authentik worker handles background tasks and async operations
   - target:
@@ -57,7 +57,7 @@ patches:
             memory: 256Mi
           limits:
             cpu: 500m
-            memory: 512Mi
+            memory: 768Mi
 
   # PostgreSQL Cluster resources optimized for stability
   - target:
