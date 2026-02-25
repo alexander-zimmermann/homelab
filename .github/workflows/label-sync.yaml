@@ -1,0 +1,23 @@
+name: "Maintenance: Label Sync"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/settings/labels.yaml"
+
+jobs:
+  label-sync:
+    name: Label Sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Sync Labels
+        uses: Mic92/labeler@v3
+        with:
+          manifest: ".github/settings/labels.yaml"
+          token: "${{ secrets.GITHUB_TOKEN }}"

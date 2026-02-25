@@ -1,0 +1,33 @@
+# Labels to apply based on PR content
+area/bootstrap:
+  - changed-files:
+      - any-glob-to-any-file: "kubernetes/bootstrap/**/*"
+area/docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "README.md"
+          - "LICENSE"
+          - "**/*.md"
+area/github:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**/*"
+area/infrastructure:
+  - changed-files:
+      - any-glob-to-any-file: "infrastructure/**/*"
+area/kubernetes:
+  - changed-files:
+      - any-glob-to-any-file: "kubernetes/applications/**/*"
+      - any-glob-to-any-file: "kubernetes/components/**/*"
+area/renovate:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".renovate/**/*"
+          - ".renovaterc.json5"
+area/scripts:
+  - changed-files:
+      - any-glob-to-any-file: "scripts/**/*"
+area/tasks:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "tasks/**/*"
+          - "Taskfile.yaml"

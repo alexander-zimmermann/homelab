@@ -36,6 +36,12 @@ image:
     image_url: https://factory.talos.dev/image/a3680b2d6cfcd2fcee1aeefd9ec5da9502bcc516c0b4ae7f83d63e1b72596b54/1.12.2/nocloud-amd64.raw
     image_checksum: 2969eb54c9a3a3fb3991de0c770b007f8a3f43be2e8b0fbaab6aa181f7de86cd
 
+  lxc_ubuntu_noble:
+    image_type: vztmpl
+    image_filename: ubuntu-noble-cloud-amd64-202602241040.tar.xz
+    image_url: https://images.linuxcontainers.org/images/ubuntu/noble/amd64/cloud/20260224_10:40/rootfs.tar.xz
+    image_checksum: 7990146be576f30d075210c85f7c3580ca0ce12316e6f6ee05928d3ef7922d06
+
   lxc_ubuntu_plucky:
     image_type: vztmpl
     image_filename: ubuntu-plucky-cloud-amd64-202512220742.tar.xz
