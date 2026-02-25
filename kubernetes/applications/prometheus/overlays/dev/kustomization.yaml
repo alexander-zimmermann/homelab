@@ -31,7 +31,6 @@ patches:
       - op: test
         path: /spec/template/spec/containers/0/name
         value: kube-prometheus-stack
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -52,13 +51,6 @@ patches:
       kind: Prometheus
       name: prometheus
     patch: |-
-      - op: test
-        path: /metadata/name
-        value: prometheus
-      - op: test
-        path: /spec/retention
-        value: 10d
-
       - op: add
         path: /spec/resources
         value:
@@ -91,10 +83,6 @@ patches:
       kind: Alertmanager
       name: prometheus
     patch: |-
-      - op: test
-        path: /metadata/name
-        value: prometheus
-
       - op: add
         path: /spec/resources
         value:

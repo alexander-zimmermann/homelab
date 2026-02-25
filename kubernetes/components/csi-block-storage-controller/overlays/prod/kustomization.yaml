@@ -49,10 +49,6 @@ patches:
       - op: test
         path: /spec/template/spec/containers/0/name
         value: longhorn-manager
-      - op: test
-        path: /spec/template/spec/containers/1/name
-        value: pre-pull-share-manager-image
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -63,6 +59,9 @@ patches:
             cpu: 1000m
             memory: 512Mi
 
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: pre-pull-share-manager-image
       - op: add
         path: /spec/template/spec/containers/1/resources
         value:
@@ -78,6 +77,9 @@ patches:
       kind: Deployment
       name: longhorn-ui
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: longhorn-ui
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -96,7 +98,6 @@ patches:
       - op: test
         path: /spec/template/spec/containers/0/name
         value: longhorn-driver-deployer
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:

@@ -13,16 +13,6 @@ patches:
       - op: test
         path: /spec/template/spec/containers/0/name
         value: loki
-      - op: test
-        path: /spec/template/spec/containers/1/name
-        value: loki-sc-rules
-      - op: test
-        path: /spec/volumeClaimTemplates/0/metadata/name
-        value: storage
-      - op: test
-        path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
-        value: 10Gi
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -38,6 +28,9 @@ patches:
           - name: GOMEMLIMIT
             value: "483183820"
 
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: loki-sc-rules
       - op: add
         path: /spec/template/spec/containers/1/resources
         value:
@@ -53,6 +46,9 @@ patches:
           name: GOMEMLIMIT
           value: "120795955"
 
+      - op: test
+        path: /spec/volumeClaimTemplates/0/metadata/name
+        value: storage
       - op: replace
         path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
         value: 500Mi
@@ -65,7 +61,6 @@ patches:
       - op: test
         path: /spec/template/spec/containers/0/name
         value: nginx
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -84,10 +79,6 @@ patches:
       - op: test
         path: /spec/template/spec/containers/0/name
         value: memcached
-      - op: test
-        path: /spec/template/spec/containers/1/name
-        value: exporter
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -98,6 +89,9 @@ patches:
             cpu: 200m
             memory: 128Mi
 
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: exporter
       - op: add
         path: /spec/template/spec/containers/1/resources
         value:
@@ -121,10 +115,6 @@ patches:
       - op: test
         path: /spec/template/spec/containers/0/name
         value: memcached
-      - op: test
-        path: /spec/template/spec/containers/1/name
-        value: exporter
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -134,6 +124,10 @@ patches:
           limits:
             cpu: 200m
             memory: 128Mi
+
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: exporter
       - op: add
         path: /spec/template/spec/containers/1/resources
         value:
@@ -157,7 +151,6 @@ patches:
       - op: test
         path: /spec/template/spec/containers/0/name
         value: loki-canary
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:

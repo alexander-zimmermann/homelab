@@ -29,7 +29,6 @@ patches:
         value:
           app.kubernetes.io/instance: grafana
           app.kubernetes.io/name: grafana
-
       - op: replace
         path: /spec/selector
         value:

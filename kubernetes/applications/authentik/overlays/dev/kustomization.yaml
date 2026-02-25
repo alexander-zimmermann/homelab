@@ -28,6 +28,9 @@ patches:
       kind: Deployment
       name: authentik-server
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: server
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -43,6 +46,9 @@ patches:
       kind: Deployment
       name: authentik-worker
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: worker
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
