@@ -12,6 +12,12 @@ image:
     image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
     image_checksum: 2b5f90ffe8180def601c021c874e55d8303e8bcbfc66fee2b94414f43ac5eb1f
 
+  vm_proxmox-backup-server_4_1:
+    image_type: iso
+    image_filename: proxmox-backup-server_4.1-1.iso
+    image_url: https://enterprise.proxmox.com/iso/proxmox-backup-server_4.1-1.iso
+    image_checksum: 670f0a71ee25e00cc7839bebb3f399594f5257e49a224a91ce517460e7ab171e
+
   vm_talos_1_12_2_cp-prod:
     image_type: import
     image_filename: talos-1.12.2-cp-prod-nocloud-amd64.raw
