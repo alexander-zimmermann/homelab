@@ -10,12 +10,40 @@
       "ignoreTests": false
     },
     {
-      "description": "Auto-merge GitHub Actions (minor/patch)",
+      "description": "Auto-merge OCI Charts (Core Monitoring)",
+      "matchDatasources": ["docker"],
+      "automerge": true,
+      "automergeType": "pr",
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchPackageNames": [
+        "/kube-prometheus-stack/",
+        "/grafana/",
+        "/alloy/",
+        "/loki/",
+        "/cilium/",
+        "/cert-manager/",
+        "/external-dns/"
+      ],
+      "ignoreTests": false
+    },
+    {
+      "description": "Auto-merge GitHub Actions (General)",
       "matchManagers": ["github-actions"],
       "automerge": true,
       "automergeType": "branch",
       "matchUpdateTypes": ["minor", "patch", "digest"],
-      "minimumReleaseAge": "3 days"
+      "minimumReleaseAge": "3 days",
+      "ignoreTests": true
+    },
+    {
+      "description": "Auto-merge GitHub Actions (Fast-Track)",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["/^actions//", "/^renovatebot//"],
+      "automerge": true,
+      "automergeType": "branch",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "minimumReleaseAge": "1 minute",
+      "ignoreTests": true
     }
   ]
 }

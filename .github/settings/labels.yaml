@@ -1,6 +1,7 @@
+# Areas
 - name: "area/bootstrap"
   color: "fef2c0"
-  description: "Bootstrap"
+  description: "Core cluster bootstrap manifests"
 - name: "area/docs"
   color: "fef2c0"
   description: "Documentation"
@@ -23,6 +24,38 @@
   color: "fef2c0"
   description: "Taskfile & Automation"
 
+# Renovate / Dependency Management
+- name: "renovate/container"
+  color: "027fa0"
+  description: "Container image updates"
+- name: "renovate/github-action"
+  color: "027fa0"
+  description: "GitHub Action updates"
+- name: "renovate/grafana-dashboard"
+  color: "027fa0"
+  description: "Grafana dashboard updates"
+- name: "renovate/github-release"
+  color: "027fa0"
+  description: "GitHub Release updates"
+- name: "renovate/helm"
+  color: "027fa0"
+  description: "Helm chart updates"
+
+# Update Types
+- name: "type/digest"
+  color: "ffeC19"
+  description: "Digest update"
+- name: "type/patch"
+  color: "ffeC19"
+  description: "Patch update"
+- name: "type/minor"
+  color: "ff9800"
+  description: "Minor update"
+- name: "type/major"
+  color: "f6412d"
+  description: "Major update"
+
+# Status
 - name: "status/abandoned"
   color: "e11d21"
   description: "Abandoned"
@@ -39,6 +72,7 @@
   color: "e11d21"
   description: "Stale"
 
+# Types
 - name: "type/bug"
   color: "d1adfe"
   description: "Bug"

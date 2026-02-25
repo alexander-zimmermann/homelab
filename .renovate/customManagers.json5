@@ -4,7 +4,7 @@
     {
       "customType": "regex",
       "description": "Process annotated dependencies",
-      "fileMatch": ["\\.yaml$"],
+      "managerFilePatterns": ["/\\.yaml$/"],
       "matchStrings": [
         "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+ (?<currentValue>[v|\\d]\\S+)"
       ],
@@ -13,14 +13,14 @@
     {
       "customType": "regex",
       "description": "Process OCI dependencies",
-      "fileMatch": ["\\.yaml$"],
+      "managerFilePatterns": ["/\\.yaml$/"],
       "matchStrings": ["oci://(?<depName>[^:]+):(?<currentValue>\\S+)"],
       "datasourceTemplate": "docker"
     },
     {
       "customType": "regex",
       "description": "Process Talos factory images",
-      "fileMatch": ["infrastructure/manifest/20-image/image.yaml"],
+      "managerFilePatterns": ["infrastructure/manifest/20-image/image.yaml"],
       "matchStrings": [
         "image_url: https://factory\\.talos\\.dev/image/(?<schematic>[a-f0-9]+)/(?<currentValue>[\\d\\.]+)/nocloud-amd64\\.raw"
       ],
