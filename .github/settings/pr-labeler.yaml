@@ -1,4 +1,4 @@
-# Labels to apply based on PR content
+# Labels to apply based on PR type
 area/bootstrap:
   - changed-files:
       - any-glob-to-any-file: "kubernetes/bootstrap/**/*"
@@ -16,8 +16,9 @@ area/infrastructure:
       - any-glob-to-any-file: "infrastructure/**/*"
 area/kubernetes:
   - changed-files:
-      - any-glob-to-any-file: "kubernetes/applications/**/*"
-      - any-glob-to-any-file: "kubernetes/components/**/*"
+      - any-glob-to-any-file:
+          - "kubernetes/applications/**/*"
+          - "kubernetes/components/**/*"
 area/renovate:
   - changed-files:
       - any-glob-to-any-file:

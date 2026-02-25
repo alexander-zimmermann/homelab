@@ -11,23 +11,39 @@
         "/kube-proxy/",
         "/kube-scheduler/",
         "/kubelet/"
-      ]
+      ],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 5
     },
     {
       "description": "Talos Linux components grouping",
       "groupName": "talos",
       "matchDatasources": ["docker", "github-releases"],
-      "matchPackageNames": ["/talos/", "/installer/", "/talosctl/"]
+      "matchPackageNames": ["/talos/", "/installer/", "/talosctl/"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 2
     },
     {
       "description": "Cilium grouping",
       "groupName": "cilium",
-      "matchPackageNames": ["/cilium/"]
+      "matchPackageNames": ["/cilium/"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 2
     },
     {
       "description": "ArgoCD components grouping",
       "groupName": "argocd",
-      "matchPackageNames": ["/argocd/", "/argo-cd/"]
+      "matchPackageNames": ["/argocd/", "/argo-cd/"],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}} group"
+      },
+      "minimumGroupSize": 2
     }
   ]
 }
