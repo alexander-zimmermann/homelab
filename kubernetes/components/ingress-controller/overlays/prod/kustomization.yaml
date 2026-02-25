@@ -28,15 +28,14 @@ patches:
       kind: Deployment
       name: traefik
     patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: traefik
-
       - op: replace
         path: /spec/replicas
         value: 2
-      - op: add
 
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: traefik
+      - op: add
         path: /spec/template/spec/containers/0/resources
         value:
           requests:
