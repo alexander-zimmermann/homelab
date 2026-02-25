@@ -1,15 +1,26 @@
 name: "Maintenance: Issue Labeler"
 
 on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/issue-labeler.yaml"
+      - ".github/settings/issue-labeler.yaml"
   issues:
     types:
       - opened
-      - edited
 
 jobs:
   label-issue:
     name: Label Issue
     runs-on: ubuntu-latest
+    # Skip for Renovate Dashboard and other Renovate-managed issues
+    if: |
+      github.event.issue.user.login != 'renovate[bot]' &&
+      !contains(github.event.issue.labels.*.name, 'renovate') &&
+      !contains(github.event.issue.title, 'Renovate')
     permissions:
       issues: write
     steps:
