@@ -1,0 +1,21 @@
+name: "Maintenance: Issue Labeler"
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+
+jobs:
+  label-issue:
+    name: Label Issue
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Labeler
+        uses: github/issue-labeler@v3.4
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          configuration-path: .github/settings/issue-labeler.yaml
+          enable-versioning: false
