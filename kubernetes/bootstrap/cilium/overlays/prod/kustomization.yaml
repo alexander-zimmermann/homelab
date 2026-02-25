@@ -11,6 +11,9 @@ patches:
       kind: DaemonSet
       name: cilium
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: cilium-agent
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -26,6 +29,9 @@ patches:
       kind: Deployment
       name: cilium-operator
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: cilium-operator
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -41,6 +47,9 @@ patches:
       kind: DaemonSet
       name: cilium-envoy
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: cilium-envoy
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
