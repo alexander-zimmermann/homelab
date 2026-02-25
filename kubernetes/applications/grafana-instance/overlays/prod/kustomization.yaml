@@ -31,13 +31,6 @@ patches:
       - op: test
         path: /spec/template/spec/containers/0/name
         value: grafana-sc-dashboard
-      - op: test
-        path: /spec/template/spec/containers/1/name
-        value: grafana-sc-datasources
-      - op: test
-        path: /spec/template/spec/containers/2/name
-        value: grafana
-
       - op: add
         path: /spec/template/spec/containers/0/resources
         value:
@@ -47,6 +40,10 @@ patches:
           limits:
             cpu: 1000m
             memory: 1Gi
+
+      - op: test
+        path: /spec/template/spec/containers/1/name
+        value: grafana-sc-datasources
       - op: add
         path: /spec/template/spec/containers/1/resources
         value:
@@ -56,6 +53,10 @@ patches:
           limits:
             cpu: 100m
             memory: 128Mi
+
+      - op: test
+        path: /spec/template/spec/containers/2/name
+        value: grafana
       - op: add
         path: /spec/template/spec/containers/2/resources
         value:
