@@ -44,7 +44,7 @@ def get_hash_func(algo: str) -> Optional[Callable[[], Any]]:
     logger.error(f"Unsupported algorithm '{algo}'")
     return None
 
-def calculate_checksum(url: str, algo: str) -> Optional[str]:
+def calculate_checksum(url: str, algo: str) -> Tuple[Optional[str], Optional[int]]:
     """
     Download the file from URL and calculate its checksum.
 
@@ -53,12 +53,13 @@ def calculate_checksum(url: str, algo: str) -> Optional[str]:
         algo: Hash algorithm to use.
 
     Returns:
-        Hex digest of the checksum, or None if failed.
+        Tuple of (hex digest, error_code).
+        error_code is None on success, HTTP status code for HTTP errors, -1 for other errors.
     """
     logger.info(f"Downloading {url} with {algo}...")
     hash_constructor = get_hash_func(algo)
     if not hash_constructor:
-        return None
+        return None, -1
 
     hash_obj = hash_constructor()
     try:
@@ -71,10 +72,13 @@ def calculate_checksum(url: str, algo: str) -> Optional[str]:
                 if not chunk:
                     break
                 hash_obj.update(chunk)
-        return hash_obj.hexdigest()
+        return hash_obj.hexdigest(), None
+    except urllib.error.HTTPError as e:
+        logger.warning(f"HTTP Error {e.code} for {url}")
+        return None, e.code
     except Exception as e:
         logger.error(f"Error downloading {url}: {e}")
-        return None
+        return None, -1
 
 def parse_algorithms(lines: List[str]) -> Dict[str, str]:
     """
@@ -140,7 +144,7 @@ def update_lines(lines: List[str], algorithms: Dict[str, str], default_algo: str
             old_checksum = checksum_match.group(2)
 
             algo = algorithms.get(current_url, default_algo)
-            new_checksum = calculate_checksum(current_url, algo)
+            new_checksum, error_code = calculate_checksum(current_url, algo)
 
             if new_checksum:
                 if new_checksum != old_checksum:
@@ -151,8 +155,11 @@ def update_lines(lines: List[str], algorithms: Dict[str, str], default_algo: str
                 else:
                     logger.debug("  No change.")
                     new_lines.append(line)
+            elif error_code == 404:
+                logger.warning(f"  Image not found (404) at {current_url}. Keeping old checksum.")
+                new_lines.append(line)
             else:
-                logger.error("  Failed to calculate checksum!")
+                logger.error(f"  Failed to calculate checksum for {current_url}!")
                 success = False
                 new_lines.append(line)
 

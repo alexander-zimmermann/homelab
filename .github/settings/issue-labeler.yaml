@@ -1,0 +1,34 @@
+# Labels to apply based on issue content
+area/kubernetes:
+  - "kubernetes"
+  - "k8s"
+  - "kubectl"
+  - "helm"
+  - "kustomize"
+area/infrastructure:
+  - "opentofu"
+  - "tofu"
+  - "terraform"
+  - "talos"
+  - "proxmox"
+area/renovate:
+  - "renovate"
+  - "dependency"
+  - "update"
+area/github:
+  - "github"
+  - "action"
+  - "workflow"
+type/bug:
+  - "bug"
+  - "error"
+  - "fail"
+  - "flaky"
+type/feature:
+  - "feature"
+  - "enhancement"
+  - "request"
+type/security:
+  - "security"
+  - "vulnerability"
+  - "cve"

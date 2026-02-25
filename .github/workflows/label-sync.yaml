@@ -1,0 +1,23 @@
+name: "Maintenance: Label Sync"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/settings/labels.yaml"
+
+jobs:
+  label-sync:
+    name: Label Sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Sync Labels
+        uses: EndBug/label-sync@v2
+        with:
+          config-file: ".github/settings/labels.yaml"
+          delete-other-labels: true

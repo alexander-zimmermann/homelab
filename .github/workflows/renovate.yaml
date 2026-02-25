@@ -38,6 +38,13 @@ jobs:
       - name: Checkout Source
         uses: actions/checkout@v6
 
+      - name: Generate Token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
+
       - name: Run Renovate
         uses: renovatebot/github-action@v41.0.7
         env:
@@ -48,5 +55,5 @@ jobs:
           RENOVATE_PLATFORM_COMMIT: "true"
           RENOVATE_ALLOWED_POST_UPGRADE_COMMANDS: '["^python3 .github/scripts/update_checksums.py$"]'
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           renovate-version: ${{ inputs.version || 'latest' }}

@@ -8,3 +8,13 @@ template_lxc:
     cores: 1
     disk_size: 8
     vnic_bridge: vmbr0
+
+  lxc_ubuntu_noble:
+    lxc_id: 15001
+    image_id: lxc_ubuntu_noble
+    os_type: ubuntu
+    # Resources
+    memory: 512
+    cores: 1
+    disk_size: 8
+    vnic_bridge: vmbr0
