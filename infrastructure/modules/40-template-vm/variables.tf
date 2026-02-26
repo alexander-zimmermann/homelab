@@ -545,7 +545,7 @@ variable "ci_interface" {
     Hardware interface used for cloud-init configuration (e.g., `ide2`, `scsi2`).
   EOT
   type        = string
-  default     = "ide2"
+  default     = "ide0"
 }
 
 variable "ci_datasource_type" {
