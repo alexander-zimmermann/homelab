@@ -58,6 +58,7 @@ template_vm:
     ci_vendor_config: proxmox_backup_server
     ci_network_config: proxmox_backup_server
     ci_meta_data: proxmox_backup_server
+    ci_interface: ide0
 
   vm_talos_1_12_2_cp-prod:
     vm_id: 10100
