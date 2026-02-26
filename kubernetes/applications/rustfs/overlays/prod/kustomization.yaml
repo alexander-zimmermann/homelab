@@ -41,17 +41,17 @@ patches:
             cpu: 200m
             memory: 512Mi
 
-  # Storage for RustFS data and logs using Longhorn
+  # Storage for RustFS data and logs using NAS (NFS)
   - target:
       kind: PersistentVolumeClaim
       name: rustfs-data
     patch: |-
       - op: replace
         path: /spec/resources/requests/storage
-        value: 5Gi
+        value: 500Gi
       - op: replace
         path: /spec/storageClassName
-        value: longhorn
+        value: nfs-csi
 
   - target:
       kind: PersistentVolumeClaim
@@ -59,10 +59,10 @@ patches:
     patch: |-
       - op: replace
         path: /spec/resources/requests/storage
-        value: 1Gi
+        value: 5Gi
       - op: replace
         path: /spec/storageClassName
-        value: longhorn
+        value: nfs-csi
 
   # RustFS API service with static IP and BGP advertisement
   - target:
