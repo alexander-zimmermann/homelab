@@ -27,7 +27,7 @@ spec:
 
   backup:
     barmanObjectStore:
-      destinationPath: s3://authentik-backups/
+      destinationPath: s3://authentik-backups
       endpointURL: http://rustfs-svc.rustfs.svc.cluster.local:9000
       s3Credentials:
         accessKeyId:
