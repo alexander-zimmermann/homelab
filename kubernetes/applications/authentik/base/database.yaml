@@ -22,11 +22,13 @@ spec:
       work_mem: "8MB"
       maintenance_work_mem: "128MB"
       wal_buffers: "8MB"
+      wal_compression: "on"
       effective_cache_size: "512MB"
       autovacuum_work_mem: "128MB"
 
   backup:
     barmanObjectStore:
+      serverName: PLACEHOLDER
       destinationPath: s3://authentik-backups
       endpointURL: http://rustfs-svc.rustfs.svc.cluster.local:9000
       s3Credentials:
@@ -36,4 +38,23 @@ spec:
         secretAccessKey:
           name: rustfs-admin-credentials
           key: RUSTFS_SECRET_KEY
+      wal:
+        compression: gzip
+      data:
+        compression: gzip
     retentionPolicy: "14d"
+
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+
+metadata:
+  name: authentik-db-daily
+  namespace: authentik
+
+spec:
+  schedule: "0 2 * * *"
+  immediate: false
+  backupOwnerReference: cluster
+  cluster:
+    name: authentik-db
