@@ -11,3 +11,4 @@ parameters:
   share: PLACEHOLDER
 mountOptions:
   - nfsvers=3
+  - nolock

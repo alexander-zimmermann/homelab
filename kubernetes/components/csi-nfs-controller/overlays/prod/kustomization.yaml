@@ -13,7 +13,7 @@ replacements:
           name: nfs-csi
         fieldPaths:
           - parameters.server
-  - sourceValue: /k8s
+  - sourceValue: /var/nfs/shared/kubernetes
     targets:
       - select:
           kind: StorageClass
