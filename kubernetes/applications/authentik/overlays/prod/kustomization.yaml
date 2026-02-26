@@ -22,6 +22,15 @@ replacements:
           delimiter: "`"
           index: 1
 
+  # Set database storage size
+  - sourceValue: 5Gi
+    targets:
+      - select:
+          kind: Cluster
+          name: authentik-db
+        fieldPaths:
+          - spec.storage.size
+
 patches:
   # Authentik server manages API access and primary logic
   - target:
