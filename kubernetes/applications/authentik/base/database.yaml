@@ -9,7 +9,7 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1
 
   storage:
-    size: 10Gi
+    size: PLACEHOLDER
 
   bootstrap:
     initdb:
@@ -36,3 +36,4 @@ spec:
         secretAccessKey:
           name: rustfs-admin-credentials
           key: RUSTFS_SECRET_KEY
+    retentionPolicy: "14d"
