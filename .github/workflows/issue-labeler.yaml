@@ -1,16 +1,15 @@
 name: "Maintenance: Issue Labeler"
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/issue-labeler.yaml"
-      - ".github/settings/issue-labeler.yaml"
   issues:
     types:
       - opened
+      - edited
+      - reopened
+
+permissions:
+  issues: write
+  contents: read
 
 jobs:
   label-issue:
@@ -30,6 +29,6 @@ jobs:
       - name: Labeler
         uses: github/issue-labeler@c1b0f9f52a63158c4adc09425e858e87b32e9685 # v3.4
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
           configuration-path: .github/settings/issue-labeler.yaml
           enable-versioned-regex: false
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
