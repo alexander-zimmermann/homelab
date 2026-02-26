@@ -38,6 +38,9 @@ defaultSettings:
   # Reserve CPU for each instance manager pod (percent of allocatable CPU)
   guaranteedInstanceManagerCPU: 4
 
+  # Use Info log level to reduce management overhead
+  logLevel: Info
+
 # Prometheus Metrics (Opt-In)
 metrics:
   serviceMonitor:
