@@ -6,7 +6,7 @@ resources:
 
 replacements:
   # Inject domain name into the Certificate and IngressRoute
-  - sourceValue: console.rustfs.zimmermann.sh
+  - sourceValue: rustfs-console.zimmermann.sh
     targets:
       - select:
           kind: Certificate

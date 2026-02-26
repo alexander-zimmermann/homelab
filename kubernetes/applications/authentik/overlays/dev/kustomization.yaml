@@ -22,6 +22,24 @@ replacements:
           delimiter: "`"
           index: 1
 
+  # Set database storage size
+  - sourceValue: 1Gi
+    targets:
+      - select:
+          kind: Cluster
+          name: authentik-db
+        fieldPaths:
+          - spec.storage.size
+
+  # Make WAL archive server name unique per environment
+  - sourceValue: authentik-db-dev
+    targets:
+      - select:
+          kind: Cluster
+          name: authentik-db
+        fieldPaths:
+          - spec.backup.barmanObjectStore.serverName
+
 patches:
   # Authentik server manages API access and primary logic
   - target:
