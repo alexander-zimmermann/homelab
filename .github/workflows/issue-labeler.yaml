@@ -32,4 +32,4 @@ jobs:
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           configuration-path: .github/settings/issue-labeler.yaml
-          enable-versioning: false
+          enable-versioned-regex: false
