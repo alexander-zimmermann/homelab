@@ -31,6 +31,15 @@ replacements:
         fieldPaths:
           - spec.storage.size
 
+  # Make WAL archive server name unique per environment
+  - sourceValue: authentik-db-prod
+    targets:
+      - select:
+          kind: Cluster
+          name: authentik-db
+        fieldPaths:
+          - spec.backup.barmanObjectStore.serverName
+
 patches:
   # Authentik server manages API access and primary logic
   - target:
