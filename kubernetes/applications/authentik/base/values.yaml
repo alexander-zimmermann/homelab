@@ -29,6 +29,8 @@ global:
       value: "1"
     - name: AUTHENTIK_WORKER__MAX_MEMORY_PER_CHILD
       value: "300000" # ~300 MiB limit per process
+    - name: AUTHENTIK_EVENTS__RETENTION_DAYS
+      value: "14"
 
 authentik:
   # SMTP configuration for notifications and password resets
