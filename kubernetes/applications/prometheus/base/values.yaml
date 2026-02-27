@@ -76,7 +76,7 @@ kubeApiServer:
       # Drop all histogram buckets for request durations/sizes to reduce cardinality
       # Keeping only _sum and _count
       - action: drop
-        regex: (apiserver_request_duration_seconds_bucket|apiserver_request_sli_duration_seconds_bucket|apiserver_request_body_size_bytes_bucket)
+        regex: (apiserver_request_duration_seconds_bucket|apiserver_request_slo_duration_seconds_bucket|apiserver_request_sli_duration_seconds_bucket|apiserver_request_body_size_bytes_bucket|etcd_request_duration_seconds_bucket)
         sourceLabels: [__name__]
 
 kubeEtcd:
