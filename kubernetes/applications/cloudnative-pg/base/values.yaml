@@ -1,3 +1,10 @@
 # Required for pulling images from the private DHI registry
 imagePullSecrets:
   - name: dhi-registry-secret
+
+monitoring:
+  # Prometheus Monitoring
+  podMonitorEnabled: true
+  # Prometheus Operator label (Opt-In)
+  podMonitorAdditionalLabels:
+    release: prometheus
