@@ -72,11 +72,11 @@ patches:
         path: /spec/storage/volumeClaimTemplate/spec/resources
         value:
           requests:
-            storage: 500Mi
+            storage: 5Gi
 
       - op: replace
         path: /spec/retention
-        value: 7d
+        value: 2d
 
   # Alertmanager: Configure resources and GOMEMLIMIT
   - target:
