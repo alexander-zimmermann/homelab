@@ -37,14 +37,6 @@ spec:
       wal_keep_size: "128MB"
       wal_compression: "on"
 
-  monitoring:
-    # Prometheus Monitoring
-    enablePodMonitor: true
-    podMonitorMetadata:
-      # Prometheus Operator label (Opt-In)
-      labels:
-        release: prometheus
-
   backup:
     barmanObjectStore:
       serverName: PLACEHOLDER
@@ -77,3 +69,19 @@ spec:
   backupOwnerReference: cluster
   cluster:
     name: authentik-db
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: authentik-db
+  namespace: authentik
+  # Prometheus Operator label (Opt-In)
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: authentik-db
+  podMetricsEndpoints:
+    - port: metrics
