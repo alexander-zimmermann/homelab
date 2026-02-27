@@ -4,13 +4,18 @@ kind: Cluster
 metadata:
   name: authentik-db
   namespace: authentik
+
 spec:
   instances: 1
+
+  # PostgreSQL version and configuration
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1
 
+  # Storage configuration
   storage:
     size: PLACEHOLDER
 
+  # Bootstrap from scratch or restore from backup
   bootstrap:
     initdb:
       database: authentik
@@ -18,13 +23,19 @@ spec:
 
   postgresql:
     parameters:
+      # Memory settings
       shared_buffers: "128MB"
+      effective_cache_size: "512MB"
       work_mem: "8MB"
       maintenance_work_mem: "128MB"
-      wal_buffers: "8MB"
-      wal_compression: "on"
-      effective_cache_size: "512MB"
       autovacuum_work_mem: "128MB"
+
+      # WAL settings
+      wal_buffers: "16MB"
+      max_wal_size: "1GB"
+      min_wal_size: "80MB"
+      wal_keep_size: "128MB"
+      wal_compression: "on"
 
   backup:
     barmanObjectStore:
@@ -53,8 +64,24 @@ metadata:
   namespace: authentik
 
 spec:
-  schedule: "0 2 * * *"
+  schedule: "0 0 2 * * *"
   immediate: false
   backupOwnerReference: cluster
   cluster:
     name: authentik-db
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: authentik-db
+  namespace: authentik
+  # Prometheus Operator label (Opt-In)
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: authentik-db
+  podMetricsEndpoints:
+    - port: metrics
