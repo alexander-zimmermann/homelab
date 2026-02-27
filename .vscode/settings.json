@@ -1,0 +1,71 @@
+{
+  // --- Editor Appearance & Behavior ---
+  "editor.bracketPairColorization.enabled": true,
+  "editor.fontFamily": "FiraCode Nerd Font",
+  "editor.fontLigatures": true,
+  "editor.hover.delay": 1500,
+  "editor.rulers": [
+    100
+  ],
+  "editor.stickyScroll.enabled": false,
+
+  // --- Explorer & File Handling ---
+  "explorer.autoReveal": false,
+  "files.trimTrailingWhitespace": true,
+
+  // --- File Associations ---
+  "files.associations": {
+    "**/.github/workflows/*.yaml": "github-actions-workflow",
+    "**/*.json5": "json5",
+    "**/*.yaml.j2": "yaml"
+  },
+
+  // --- Material Icon Theme - Language Mapping ---
+  "material-icon-theme.languages.associations": {
+    "github-actions-workflow": "github-actions-workflow"
+  },
+
+  // --- Material Icon Theme - Color Saturation ---
+  "material-icon-theme.saturation": 0.5,
+
+  // --- Material Icon Theme - File Mapping ---
+  "material-icon-theme.files.associations": {
+    "kubeconfig": "kubernetes",
+    "talosconfig": "kubernetes",
+    "omni-compose.yaml": "docker"
+  },
+
+  // --- Material Icon Theme - Folder Mapping (Infrastructure & Namespaces) ---
+  "material-icon-theme.folders.associations": {
+    // Top Level
+    ".renovate": "robot",
+    ".task": "tasks",
+    "cluster": "linux",
+    "infrastructure": "terraform",
+    "kubernetes": "kubernetes",
+
+    // Infrastructure Folders
+    "manifest": "config",
+
+    // Kubernetes Folders
+    "applications": "app",
+    "bootstrap": "seeders",
+    "components": "core",
+
+    // Kustomize Structure
+    "base": "container",
+    "overlays": "changesets",
+    "charts": "helm"
+  },
+
+  // --- YAML & Kubernetes Validation ---
+  "yaml.schemaStore.enable": true,
+  "yaml.schemas": {
+    // Map local Kubernetes manifests to the k8s schema for linting/autocompletion
+    "kubernetes": "./kubernetes/**/*.yaml",
+    // Taskfile schema validation
+    "https://taskfile.dev/schema.json": [
+      "./tasks/*"
+    ]
+  }
+}

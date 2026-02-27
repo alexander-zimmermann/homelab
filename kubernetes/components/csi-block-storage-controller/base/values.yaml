@@ -36,13 +36,26 @@ defaultSettings:
   defaultReplicaCount: 2
 
   # Reserve CPU for each instance manager pod (percent of allocatable CPU)
-  guaranteedInstanceManagerCPU: 4
+  guaranteedInstanceManagerCPU: 10
 
-# Prometheus Metrics (Opt-In)
+  # Use fast-check with nightly cron to balance integrity and performance
+  snapshotDataIntegrity: fast-check
+  snapshotDataIntegrityImmediateCheckAfterSnapshotCreation: false
+  snapshotDataIntegrityCronjob: "0 3 * * *"
+
+  # Use Info log level to reduce management overhead
+  logLevel: Info
+
+persistence:
+  # Default number of replicas for volumes created via the StorageClass
+  defaultClassReplicaCount: 2
+
 metrics:
+  # Prometheus Monitoring
   serviceMonitor:
     enabled: true
-    labels:
+    # Prometheus Operator label (Opt-In)
+    additionalLabels:
       release: prometheus
 
 # Reduce Longhorn UI replicas
