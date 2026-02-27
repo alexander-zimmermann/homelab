@@ -4,6 +4,16 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Set database storage size
+  - sourceValue: 5Gi
+    targets:
+      - select:
+          kind: Cluster
+          name: crowdsec-db
+        fieldPaths:
+          - spec.storage.size
+
 patches:
   # CrowdSec LAPI: central management component
   - target:
@@ -58,3 +68,18 @@ patches:
           limits:
             cpu: 200m
             memory: 128Mi
+
+  # PostgreSQL Cluster resources optimized for stability
+  - target:
+      kind: Cluster
+      name: crowdsec-db
+    patch: |-
+      - op: add
+        path: /spec/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi

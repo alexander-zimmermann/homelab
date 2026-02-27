@@ -7,11 +7,15 @@ metadata:
 
 spec:
   instances: 1
+
+  # PostgreSQL version and configuration
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1
 
+  # Storage configuration
   storage:
-    size: 1Gi
+    size: PLACEHOLDER
 
+  # Bootstrap from scratch or restore from backup
   bootstrap:
     initdb:
       database: crowdsec
@@ -19,8 +23,33 @@ spec:
 
   postgresql:
     parameters:
+      # Memory settings
       shared_buffers: "64MB"
+      effective_cache_size: "256MB"
       work_mem: "4MB"
       maintenance_work_mem: "64MB"
-      effective_cache_size: "256MB"
       autovacuum_work_mem: "64MB"
+
+      # WAL settings
+      wal_buffers: "16MB"
+      max_wal_size: "1GB"
+      min_wal_size: "80MB"
+      wal_keep_size: "64MB"
+      wal_compression: "on"
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+
+metadata:
+  name: crowdsec-db
+  namespace: crowdsec
+  # Prometheus Operator label (Opt-In)
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: crowdsec-db
+  podMetricsEndpoints:
+    - port: metrics
