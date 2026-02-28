@@ -22,16 +22,17 @@ spec:
     enablePodAntiAffinity: true
     podAntiAffinityType: preferred
     topologyKey: kubernetes.io/hostname
-    podAntiAffinity:
-      - weight: 50
-        podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-              - key: homelab.app/io-class
-                operator: In
-                values:
-                  - "heavy"
-          topologyKey: kubernetes.io/hostname
+    additionalPodAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 50
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: homelab.app/io-class
+                  operator: In
+                  values:
+                    - "heavy"
+            topologyKey: kubernetes.io/hostname
 
   # Storage configuration
   storage:
