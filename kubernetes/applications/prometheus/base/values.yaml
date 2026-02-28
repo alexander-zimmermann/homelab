@@ -45,9 +45,27 @@ prometheus:
       matchLabels:
         release: prometheus
 
-    # Apply this label to all resources created by the operator (including default monitors)
-    commonLabels:
-      release: prometheus
+    # Apply labels only to the Prometheus Pods
+    podMetadata:
+      labels:
+        homelab.app/io-class: "heavy"
+
+    # Disable the chart's hardcoded podAntiAffinity to avoid duplicate key YAML errors in Kustomize
+    podAntiAffinity: ""
+
+    # Prometheus is "heavy" I/O workload. Prefers not to be on the same node as other "heavy" I/O workloads
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: homelab.app/io-class
+                    operator: In
+                    values:
+                      - "heavy"
+              topologyKey: kubernetes.io/hostname
 
     # Reduces TSDB disk usage by approx. 30-40% with minimal CPU overhead
     walCompression: true
@@ -68,6 +86,13 @@ prometheus:
           storageClassName: longhorn
           accessModes:
             - ReadWriteOnce
+
+    # Alertmanager configuration
+    alerting:
+      alertmanagers:
+        - apiVersion: v2
+          name: prometheus-alertmanager
+          namespace: prometheus
 
 # Component-specific scraping optimizations
 kubeApiServer:

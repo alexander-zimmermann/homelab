@@ -21,7 +21,7 @@ helmCharts:
 labels:
   - includeSelectors: false
     pairs:
-      homelab.component: crowdsec
+      homelab.app: crowdsec
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-1"
