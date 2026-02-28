@@ -11,11 +11,10 @@ spec:
   # PostgreSQL version and configuration
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1
 
-  # Apply I/O workload class "heavy" to the database
-  template:
-    metadata:
-      labels:
-        homelab.app/io-class: "heavy"
+  # Apply I/O workload class "heavy" to the database pods
+  inheritedMetadata:
+    labels:
+      homelab.app/io-class: "heavy"
 
   # Authentik DB is "heavy" I/O workload. Prefers not to be on the same node as "heavy" I/O workloads
   affinity:
