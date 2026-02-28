@@ -11,6 +11,28 @@ spec:
   # PostgreSQL version and configuration
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1
 
+  # Apply I/O workload class "light" to the database
+  template:
+    metadata:
+      labels:
+        homelab.app/io-class: "light"
+
+  # Crowdsec DB is "light" I/O workload. Prefers not to be on the same node as "heavy" I/O workloads
+  affinity:
+    enablePodAntiAffinity: true
+    podAntiAffinityType: preferred
+    topologyKey: kubernetes.io/hostname
+    podAntiAffinity:
+      - weight: 50
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: homelab.app/io-class
+                operator: In
+                values:
+                  - "heavy"
+          topologyKey: kubernetes.io/hostname
+
   # Storage configuration
   storage:
     size: PLACEHOLDER
