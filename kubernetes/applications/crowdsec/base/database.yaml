@@ -31,7 +31,7 @@ spec:
                   operator: In
                   values:
                     - "heavy"
-              namespaceSelector: {}
+            namespaceSelector: {}
             topologyKey: kubernetes.io/hostname
 
   # Storage configuration
