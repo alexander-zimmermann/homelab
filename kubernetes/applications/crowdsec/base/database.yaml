@@ -8,6 +8,10 @@ metadata:
 spec:
   instances: 1
 
+  # Registry authentication for dhi.io images
+  imagePullSecrets:
+    - name: dhi-registry-secret
+
   # PostgreSQL version and configuration
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1
 
