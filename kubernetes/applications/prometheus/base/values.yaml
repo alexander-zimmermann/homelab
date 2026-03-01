@@ -65,6 +65,7 @@ prometheus:
                     operator: In
                     values:
                       - "heavy"
+              namespaceSelector: {}
               topologyKey: kubernetes.io/hostname
 
     # Reduces TSDB disk usage by approx. 30-40% with minimal CPU overhead
