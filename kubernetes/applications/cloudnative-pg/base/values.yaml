@@ -8,3 +8,6 @@ monitoring:
   # Prometheus Operator label (Opt-In)
   podMonitorAdditionalLabels:
     release: prometheus
+  # Grafana Dashboard
+  grafanaDashboard:
+    create: true
