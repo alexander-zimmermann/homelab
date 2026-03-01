@@ -8,13 +8,6 @@ cleanPrometheusOperatorObjectNames: true
 grafana:
   enabled: false
 
-# Disable exporters/components that are provided elsewhere
-kubeStateMetrics:
-  enabled: false
-
-nodeExporter:
-  enabled: false
-
 alertmanager:
   alertmanagerSpec:
     # Persist Alertmanager state
@@ -95,13 +88,71 @@ prometheus:
           name: prometheus-alertmanager
           namespace: prometheus
 
-# Component-specific scraping optimizations
+# Component scraping the kube api server
 kubeApiServer:
   serviceMonitor:
     metricRelabelings:
-      # Drop all histogram buckets for request durations/sizes to reduce cardinality
-      # Keeping only _sum and _count
-      # Note: etcd metrics are also reported by the apiserver job
-      - action: drop
-        regex: (apiserver_request_duration_seconds_bucket|apiserver_request_slo_duration_seconds_bucket|apiserver_request_sli_duration_seconds_bucket|apiserver_request_body_size_bytes_bucket|etcd_request_duration_seconds_bucket)
+      - action: keep
         sourceLabels: [__name__]
+        regex: (apiserver_request_total|apiserver_request_duration_seconds_sum|apiserver_request_duration_seconds_count|apiserver_current_inflight_requests|apiserver_cache_.*|apiserver_flowcontrol_.*|apiserver_storage_.*|process_start_time_seconds)
+
+# Component scraping the kubelet and kubelet-hosted cAdvisor
+kubelet:
+  serviceMonitor:
+    # cadvisor "Minimal" Profile (Azure-inspired)
+    cAdvisorMetricRelabelings:
+      - action: keep
+        sourceLabels: [__name__]
+        regex: (container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_network_receive_bytes_total|container_network_transmit_bytes_total|container_fs_usage_bytes|kubernetes_build_info)
+    # kubelet "Minimal" Profile
+    metricRelabelings:
+      - action: keep
+        sourceLabels: [__name__]
+        regex: (kubelet_running_pods|kubelet_running_containers|kubelet_volume_stats_used_bytes|kubelet_node_name|kubernetes_build_info)
+
+# Component scraping coreDNS
+coreDns:
+  serviceMonitor:
+    metricRelabelings:
+      - action: keep
+        sourceLabels: [__name__]
+        regex: (coredns_dns_request_duration_seconds_(sum|count)|coredns_dns_requests_total|coredns_forward_request_duration_seconds_(sum|count)|coredns_forward_requests_total|coredns_build_info|coredns_panics_total|coredns_dns_responses_total|coredns_cache_hits_total|coredns_cache_misses_total|coredns_cache_entries|process_resident_memory_bytes|process_cpu_seconds_total|go_goroutines|kubernetes_build_info)
+
+# Component scraping kube proxy
+kubeProxy:
+  serviceMonitor:
+    metricRelabelings:
+      - action: keep
+        sourceLabels: [__name__]
+        regex: (kubeproxy_sync_proxy_rules_duration_seconds_(sum|count)|kubeproxy_network_programming_duration_seconds_(sum|count)|rest_client_requests_total|process_resident_memory_bytes|process_cpu_seconds_total|go_goroutines|kubernetes_build_info)
+
+# Component scraping the kube controller manager
+kubeControllerManager:
+  serviceMonitor:
+    metricRelabelings:
+      - action: keep
+        sourceLabels: [__name__]
+        regex: (workqueue_adds_total|workqueue_depth|workqueue_queue_duration_seconds_(sum|count)|process_resident_memory_bytes|process_cpu_seconds_total|go_goroutines|kubernetes_build_info)
+
+# Component scraping kube scheduler
+kubeScheduler:
+  serviceMonitor:
+    metricRelabelings:
+      - action: keep
+        sourceLabels: [__name__]
+        regex: (scheduler_framework_extension_point_duration_seconds_(sum|count)|scheduler_scheduling_attempt_duration_seconds_(sum|count)|process_resident_memory_bytes|process_cpu_seconds_total|go_goroutines|kubernetes_build_info)
+
+# Component scraping etcd
+kubeEtcd:
+  serviceMonitor:
+    metricRelabelings:
+      - action: keep
+        sourceLabels: [__name__]
+        regex: (etcd_server_has_leader|etcd_server_proposals_committed_total|etcd_server_proposals_applied_total|etcd_disk_wal_fsync_duration_seconds_(sum|count)|etcd_mvcc_db_total_size_in_use_bytes|process_resident_memory_bytes|process_cpu_seconds_total|go_goroutines|kubernetes_build_info)
+
+# Disable exporters/components that are provided via alloy
+nodeExporter:
+  enabled: false
+
+kubeStateMetrics:
+  enabled: false
