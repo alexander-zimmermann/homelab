@@ -19,3 +19,9 @@ config:
 # Ingress is managed outside of the chart (Traefik IngressRoute manifests)
 ingress:
   enabled: false
+
+# Storage configuration for data and logs
+storageclass:
+  name: nfs-csi
+  dataStorageSize: PLACEHOLDER
+  logStorageSize: PLACEHOLDER
