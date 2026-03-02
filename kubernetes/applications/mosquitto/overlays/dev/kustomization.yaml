@@ -21,3 +21,19 @@ replacements:
         options:
           delimiter: "`"
           index: 1
+
+  # Inject storage size configuration
+  - sourceValue: 256Mi
+    targets:
+      - select:
+          kind: PersistentVolumeClaim
+          name: mosquitto-data
+        fieldPaths:
+          - spec.resources.requests.storage
+  - sourceValue: 32Mi
+    targets:
+      - select:
+          kind: PersistentVolumeClaim
+          name: mosquitto-config
+        fieldPaths:
+          - spec.resources.requests.storage
