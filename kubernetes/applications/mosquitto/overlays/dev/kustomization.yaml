@@ -30,7 +30,7 @@ replacements:
           name: mosquitto-data
         fieldPaths:
           - spec.resources.requests.storage
-  - sourceValue: 25Mi
+  - sourceValue: 32Mi
     targets:
       - select:
           kind: PersistentVolumeClaim
