@@ -4,6 +4,16 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject storage size configuration
+  - sourceValue: 500Mi
+    targets:
+      - select:
+          kind: StatefulSet
+          name: loki
+        fieldPaths:
+          - spec.volumeClaimTemplates.0.spec.resources.requests.storage
+
 patches:
   # Loki SingleBinary (StatefulSet)
   - target:
@@ -45,13 +55,6 @@ patches:
         value:
           name: GOMEMLIMIT
           value: "120795955"
-
-      - op: test
-        path: /spec/volumeClaimTemplates/0/metadata/name
-        value: storage
-      - op: replace
-        path: /spec/volumeClaimTemplates/0/spec/resources/requests/storage
-        value: 500Mi
 
   # Loki Gateway (Deployment)
   - target:

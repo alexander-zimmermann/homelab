@@ -8,6 +8,7 @@ singleBinary:
     enableStatefulSetRecreationForSizeChange: true
     # Persistent Volume Claim
     storageClass: longhorn
+    size: PLACEHOLDER
 
 gateway:
   # Expose Loki Gateway service via Cilium/BGP-announced LoadBalancer
