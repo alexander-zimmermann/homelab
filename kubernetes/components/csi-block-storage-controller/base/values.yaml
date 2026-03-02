@@ -23,6 +23,9 @@ defaultSettings:
   # Prefer local replicas when possible
   defaultDataLocality: best-effort
 
+  # Allows replicas to be scheduled on the same node
+  replicaSoftAntiAffinity: true
+
   # Rebalance replicas in best-effort mode
   replicaAutoBalance: best-effort
 
@@ -43,12 +46,29 @@ defaultSettings:
   snapshotDataIntegrityImmediateCheckAfterSnapshotCreation: false
   snapshotDataIntegrityCronjob: "0 3 * * *"
 
+  # Set number of recurring job history
+  recurringSuccessfulJobsHistoryLimit: 1
+  recurringFailedJobsHistoryLimit: 1
+
   # Use Info log level to reduce management overhead
   logLevel: Info
 
-persistence:
-  # Default number of replicas for volumes created via the StorageClass
-  defaultClassReplicaCount: 2
+defaultBackupStore:
+  # Setup RusstFS as local backupstore
+  backupTarget: s3://longhorn-backups@us-east-1/
+  backupTargetCredentialSecret: longhorn-backupstore-credentials
+  pollInterval: 300
+
+# Replica count of the CSI components
+csi:
+  attacherReplicaCount: 2
+  provisionerReplicaCount: 2
+  resizerReplicaCount: 2
+  snapshotterReplicaCount: 2
+
+# Reduce Longhorn UI replicas
+longhornUI:
+  replicas: 1
 
 metrics:
   # Prometheus Monitoring
@@ -57,7 +77,3 @@ metrics:
     # Prometheus Operator label (Opt-In)
     additionalLabels:
       release: prometheus
-
-# Reduce Longhorn UI replicas
-longhornUI:
-  replicas: 1

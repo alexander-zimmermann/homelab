@@ -6,6 +6,9 @@ resources:
   - ./namespace.yaml
   - ./certificate.yaml
   - ./ingress-route.yaml
+  - ./storage-classes.yaml
+  - ./recurring-jobs.yaml
+  - ./sealed-secret.yaml
 
 helmCharts:
   - name: longhorn
