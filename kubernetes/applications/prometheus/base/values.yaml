@@ -17,6 +17,9 @@ alertmanager:
           storageClassName: longhorn
           accessModes:
             - ReadWriteOnce
+          resources:
+            requests:
+              storage: PLACEHOLDER
 
 prometheus:
   # Expose Prometheus service via Cilium/BGP-announced LoadBalancer
@@ -73,6 +76,18 @@ prometheus:
       - name: query.max-samples
         value: "5000000"
 
+    # Enable Experimental Features
+    enableFeatures:
+      # Enable Memory snapshot on shutdown for faster restarts
+      - memory-snapshot-on-shutdown
+
+    # Administrative maintenance API
+    enableAdminAPI: true
+
+    # Retention data configuration
+    retention: PLACEHOLDER
+    retentionSize: PLACEHOLDER
+
     # Persist TSDB data
     storageSpec:
       volumeClaimTemplate:
@@ -80,6 +95,9 @@ prometheus:
           storageClassName: longhorn
           accessModes:
             - ReadWriteOnce
+          resources:
+            requests:
+              storage: PLACEHOLDER
 
     # Alertmanager configuration
     alerting:

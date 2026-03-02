@@ -22,6 +22,38 @@ replacements:
           delimiter: "`"
           index: 1
 
+  # Inject storage size configuration
+  - sourceValue: 5Gi
+    targets:
+      - select:
+          kind: Prometheus
+          name: prometheus
+        fieldPaths:
+          - spec.storage.volumeClaimTemplate.spec.resources.requests.storage
+  - sourceValue: 64Mi
+    targets:
+      - select:
+          kind: Alertmanager
+          name: prometheus
+        fieldPaths:
+          - spec.storage.volumeClaimTemplate.spec.resources.requests.storage
+
+  # Inject data retention configuration
+  - sourceValue: 2d
+    targets:
+      - select:
+          kind: Prometheus
+          name: prometheus
+        fieldPaths:
+          - spec.retention
+  - sourceValue: 4GB
+    targets:
+      - select:
+          kind: Prometheus
+          name: prometheus
+        fieldPaths:
+          - spec.retentionSize
+
 patches:
   # Prometheus Operator: Deploy with standardized resources and GOMEMLIMIT
   - target:
@@ -68,16 +100,6 @@ patches:
               - name: GOMEMLIMIT
                 value: "482344960"
 
-      - op: add
-        path: /spec/storage/volumeClaimTemplate/spec/resources
-        value:
-          requests:
-            storage: 5Gi
-
-      - op: replace
-        path: /spec/retention
-        value: 2d
-
   # Alertmanager: Configure resources and GOMEMLIMIT
   - target:
       kind: Alertmanager
@@ -99,9 +121,3 @@ patches:
             env:
               - name: GOMEMLIMIT
                 value: "120586240"
-
-      - op: add
-        path: /spec/storage/volumeClaimTemplate/spec/resources
-        value:
-          requests:
-            storage: 64Mi
