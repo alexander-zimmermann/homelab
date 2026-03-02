@@ -1,0 +1,57 @@
+# Default Storage Class
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+
+metadata:
+  name: longhorn
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+parameters:
+  numberOfReplicas: "2"
+  staleReplicaTimeout: "1440" # 1 day
+  fsType: "ext4"
+  dataLocality: "best-effort"
+  recurringJobSelector: '[{"name":"trim-weekly", "isGroup":false}]'
+
+---
+# Postgres Storage Class (no replicas)
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+
+metadata:
+  name: longhorn-postgres
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  numberOfReplicas: "1"
+  staleReplicaTimeout: "1440" # 1 day
+  fsType: "ext4"
+  dataLocality: "strict-local"
+  recurringJobSelector: '[{"name":"trim-weekly", "isGroup":false}]'
+
+---
+# Backup-Enabled Storage Class
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+
+metadata:
+  name: longhorn-backup
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+parameters:
+  numberOfReplicas: "2"
+  staleReplicaTimeout: "1440" # 1 day
+  fsType: "ext4"
+  recurringJobSelector: '[{"name":"backup-daily", "isGroup":false},{"name":"trim-weekly", "isGroup":false}]'
