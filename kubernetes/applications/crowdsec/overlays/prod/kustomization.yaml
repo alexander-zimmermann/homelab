@@ -5,14 +5,23 @@ resources:
   - ../../base
 
 replacements:
-  # Set database storage size
-  - sourceValue: 5Gi
+  # Inject database storage size
+  - sourceValue: 1Gi
     targets:
       - select:
           kind: Cluster
           name: crowdsec-db
         fieldPaths:
           - spec.storage.size
+
+  # Inject database WAL storage size
+  - sourceValue: 1Gi
+    targets:
+      - select:
+          kind: Cluster
+          name: crowdsec-db
+        fieldPaths:
+          - spec.walStorage.size
 
 patches:
   # CrowdSec LAPI: central management component
