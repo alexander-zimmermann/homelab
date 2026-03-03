@@ -21,6 +21,16 @@ helmCharts:
     apiVersions:
       - monitoring.coreos.com/v1
 
+replacements:
+  # Inject the desired replica timeout into the default Longhorn StorageClass
+  - sourceValue: "1440" # 1 day
+    targets:
+      - select:
+          kind: ConfigMap
+          name: longhorn-storageclass
+        fieldPaths:
+          - 'data.storageclass\.yaml.parameters.staleReplicaTimeout'
+
 labels:
   - includeSelectors: false
     pairs:

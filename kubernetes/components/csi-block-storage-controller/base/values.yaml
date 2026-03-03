@@ -53,6 +53,17 @@ defaultSettings:
   # Use Info log level to reduce management overhead
   logLevel: Info
 
+# Default Storage Class
+persistence:
+  # Replica count of the default Longhorn StorageClass
+  defaultClassReplicaCount: 2
+  # Data locality of the default Longhorn StorageClass
+  defaultDataLocality: best-effort
+  # Recurring job selector for a default Longhorn StorageClass
+  recurringJobSelector:
+    enable: true
+    jobList: '[{"name":"trim-weekly", "isGroup":false}]'
+
 defaultBackupStore:
   # Setup RusstFS as local backupstore
   backupTarget: s3://longhorn-backups@us-east-1/
