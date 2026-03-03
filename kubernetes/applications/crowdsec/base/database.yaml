@@ -47,7 +47,7 @@ spec:
 
       # WAL settings
       wal_buffers: "16MB"
-      max_wal_size: "1GB"
+      max_wal_size: PLACEHOLDER
       min_wal_size: "80MB"
       wal_keep_size: "64MB"
       wal_compression: "on"
