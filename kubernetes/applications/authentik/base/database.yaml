@@ -6,7 +6,7 @@ metadata:
   namespace: authentik
 
 spec:
-  instances: 1
+  instances: 2
 
   # Registry authentication for dhi.io images
   imagePullSecrets:
@@ -15,32 +15,20 @@ spec:
   # PostgreSQL version and configuration
   imageName: ghcr.io/cloudnative-pg/postgresql:16.1
 
-  # Apply I/O workload class "heavy" to the database pods
-  inheritedMetadata:
-    labels:
-      homelab.app/io-class: "heavy"
-
-  # Authentik DB is "heavy" I/O workload. Prefers not to be on the same node as "heavy" I/O workloads
-  affinity:
-    enablePodAntiAffinity: true
-    podAntiAffinityType: preferred
-    topologyKey: kubernetes.io/hostname
-    additionalPodAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 100
-          podAffinityTerm:
-            labelSelector:
-              matchExpressions:
-                - key: homelab.app/io-class
-                  operator: In
-                  values:
-                    - "heavy"
-            namespaceSelector: {}
-            topologyKey: kubernetes.io/hostname
+  # Rolling update process is managed by Kubernetes
+  primaryUpdateStrategy: unsupervised
 
   # Storage configuration
   storage:
+    storageClass: longhorn-postgres
     size: PLACEHOLDER
+  walStorage:
+    storageClass: longhorn-postgres
+    size: PLACEHOLDER
+
+  # Use non-reusable PVCs for improved failover/rebalance behavior
+  nodeMaintenanceWindow:
+    reusePVC: false
 
   # Bootstrap from scratch or restore from backup
   bootstrap:
@@ -59,7 +47,7 @@ spec:
 
       # WAL settings
       wal_buffers: "16MB"
-      max_wal_size: "1GB"
+      max_wal_size: PLACEHOLDER
       min_wal_size: "80MB"
       wal_keep_size: "128MB"
       wal_compression: "on"
@@ -77,9 +65,10 @@ spec:
           name: rustfs-admin-credentials
           key: RUSTFS_SECRET_KEY
       wal:
-        compression: gzip
+        compression: bzip2
+        maxParallel: 2
       data:
-        compression: gzip
+        compression: bzip2
     retentionPolicy: "14d"
 
 ---
