@@ -13,6 +13,16 @@ preUpgradeChecker:
   upgradeVersionCheck: false
 
 defaultSettings:
+  # Allow draining nodes even if it contains the last healthy replica
+  # (Applications like CNPG handle failover at the app-level, so Longhorn shouldn't block)
+  nodeDrainPolicy: always-allow
+
+  # Immediately delete pods on completely failed nodes, so Kubernetes reschedules them elsewhere
+  nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+
+  # Kill pods if their volume is unexpectedly detached (e.g., during network splits)
+  autoDeletePodWhenVolumeDetachedUnexpectedly: true
+
   # Constrain Longhorn to storage nodes via `global.nodeSelector`
   # Gate default-disk creation on the CCM-applied label
   createDefaultDiskLabeledNodes: true
