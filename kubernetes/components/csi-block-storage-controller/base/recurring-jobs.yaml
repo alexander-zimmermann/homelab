@@ -23,5 +23,5 @@ spec:
   task: filesystem-trim
   groups:
     - default
-  retain: 1
+  retain: 0
   concurrency: 2
