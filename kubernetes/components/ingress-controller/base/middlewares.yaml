@@ -34,14 +34,16 @@ spec:
     stsSeconds: 15552000
     stsIncludeSubdomains: true
     stsPreload: true
-    accessControlAllowHeaders: '*'
+    accessControlAllowHeaders:
+      - "*"
     accessControlMaxAge: 100
     accessControlAllowMethods:
       - GET
       - OPTIONS
       - PUT
     addVaryheader: true
-    hostsProxyHeaders: 'X-Forwarded-Host'
+    hostsProxyHeaders:
+      - "X-Forwarded-Host"
     contentTypeNosniff: true
     browserXssFilter: true
     referrerPolicy: 'same-origin'
