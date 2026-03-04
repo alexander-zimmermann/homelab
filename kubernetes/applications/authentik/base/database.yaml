@@ -58,7 +58,7 @@ spec:
       isWALArchiver: true
       parameters:
         barmanObjectName: authentik-backups
-        server_name: PLACEHOLDER
+        serverName: PLACEHOLDER
         s3-force-path-style: "true"
 
 ---
