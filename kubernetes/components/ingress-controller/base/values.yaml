@@ -51,6 +51,7 @@ ingressRoute:
     entryPoints: ["websecure"]
     middlewares:
       - name: chain-mfa-auth
+        namespace: ingress-controller
     tls:
       secretName: traefik-tls-cert
 
