@@ -1,0 +1,38 @@
+global:
+  # Required for pulling images from the private DHI registry
+  imagePullSecrets:
+    - dhi-registry-secret
+
+# Use a stable, short name for all rendered resources
+fullnameOverride: "redis"
+
+# Standalone architecture is sufficient for this homelab setup
+architecture: standalone
+
+auth:
+  # Use an existing secret for credentials
+  existingSecret: "redis-admin-credentials"
+  existingSecretPasswordKey: "redis-password"
+
+master:
+  # Use the smallest resource preset (100m CPU, 128Mi Memory)
+  resourcesPreset: "nano"
+  # Persistence is disabled as Redis is used only as a volatile cache
+  persistence:
+    enabled: false
+
+networkPolicy:
+  # Restrict access to Redis for security
+  enabled: true
+  # Only allow connections from explicitly defined sources
+  allowExternal: false
+  extraIngress:
+    - from:
+        # Allow internal communication between Redis components
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: redis
+        # Allow ingress-controller to reach Redis
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-controller
