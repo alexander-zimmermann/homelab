@@ -34,17 +34,11 @@ replacements:
           name: crowdsec
         fieldPaths:
           - spec.plugin.bouncer.forwardedheaderstrustedips
-        options:
-          delimiter: ","
-          index: 0
       - select:
           kind: Middleware
           name: cloudflare
         fieldPaths:
           - spec.plugin.cloudflare.trustedCIDRs
-        options:
-          delimiter: ","
-          index: 0
 
   # Inject Cloudflare IPv6 into CrowdSec and Cloudflare middlewares
   - source:
@@ -59,7 +53,7 @@ replacements:
           - spec.plugin.bouncer.forwardedheaderstrustedips
         options:
           delimiter: ","
-          index: 1
+          index: -1
       - select:
           kind: Middleware
           name: cloudflare
@@ -67,7 +61,7 @@ replacements:
           - spec.plugin.cloudflare.trustedCIDRs
         options:
           delimiter: ","
-          index: 1
+          index: -1
 
   # Inject Local IPv4 into CrowdSec middleware
   - source:
