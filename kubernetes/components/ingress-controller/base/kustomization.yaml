@@ -5,6 +5,10 @@ namespace: ingress-controller
 resources:
   - ./namespace.yaml
   - ./certificate.yaml
+  - ./middlewares.yaml
+  - ./chain-middlewares.yaml
+  - ./sealed-secret.yaml
+  - ./ingress-ips.yaml
 
 helmCharts:
   - name: traefik
@@ -17,6 +21,65 @@ helmCharts:
     apiVersions:
       - monitoring.coreos.com/v1
       - policy/v1/PodDisruptionBudget
+
+replacements:
+  # Inject Cloudflare IPv4 into CrowdSec and Cloudflare middlewares
+  - source:
+      kind: ConfigMap
+      name: ingress-ips
+      fieldPath: data.CLOUDFLARE_IPv4
+    targets:
+      - select:
+          kind: Middleware
+          name: crowdsec
+        fieldPaths:
+          - spec.plugin.bouncer.forwardedheaderstrustedips
+        options:
+          delimiter: ","
+          index: 0
+      - select:
+          kind: Middleware
+          name: cloudflare
+        fieldPaths:
+          - spec.plugin.cloudflare.trustedCIDRs
+        options:
+          delimiter: ","
+          index: 0
+
+  # Inject Cloudflare IPv6 into CrowdSec and Cloudflare middlewares
+  - source:
+      kind: ConfigMap
+      name: ingress-ips
+      fieldPath: data.CLOUDFLARE_IPv6
+    targets:
+      - select:
+          kind: Middleware
+          name: crowdsec
+        fieldPaths:
+          - spec.plugin.bouncer.forwardedheaderstrustedips
+        options:
+          delimiter: ","
+          index: 1
+      - select:
+          kind: Middleware
+          name: cloudflare
+        fieldPaths:
+          - spec.plugin.cloudflare.trustedCIDRs
+        options:
+          delimiter: ","
+          index: 1
+
+  # Inject Local IPv4 into CrowdSec middleware
+  - source:
+      kind: ConfigMap
+      name: ingress-ips
+      fieldPath: data.LOCAL_IPv4
+    targets:
+      - select:
+          kind: Middleware
+          name: crowdsec
+        fieldPaths:
+          - spec.plugin.bouncer.clientTrustedIPs
 
 labels:
   - includeSelectors: false
