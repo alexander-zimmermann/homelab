@@ -1,40 +1,114 @@
 deployment:
   # Deploy as a Deployment for controlled scaling (alternate: DaemonSet)
   kind: Deployment
-  # High Availability: Spread pods across nodes
 
-# Pod anti-affinity forces scheduler to put traefik pods on nodes where no other traefik pods are scheduled
-affinity:
-  podAntiAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchLabels:
-            app.kubernetes.io/name: traefik
-        topologyKey: kubernetes.io/hostname
+  # Additional volumes to add to the Traefik container
+  additionalVolumes:
+    - name: crowdsec-lapi-key
+      secret:
+        secretName: crowdsec-lapi-key
+        items:
+          - key: crowdsec_lapi_key
+            path: crowdsec_lapi_key
+
+  # Additional volumeMounts to add to the Traefik container
+  additionalVolumeMounts:
+    - name: crowdsec-lapi-key
+      mountPath: /run/secrets/
+      readOnly: true
 
 # Pod Disruption Budget: Ensure at least one replica is available during maintenance
 podDisruptionBudget:
   enabled: true
   minAvailable: 1
 
+experimental:
+  plugins:
+    # CrowdSec Bouncer
+    bouncer:
+      moduleName: github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+      version: v1.5.0
+    # Cloudflare: only allow traffic originating from Cloudflare
+    cloudflare:
+      moduleName: github.com/agence-gaya/traefik-plugin-cloudflare
+      version: v1.2.0
+
 ingressRoute:
+  # Create an IngressRoute for the dashboard
   dashboard:
-    # Enable the dashboard ingress route
     enabled: true
-    # Router match rule
+    annotations:
+      # Homepage annotations
+      gethomepage.dev/enabled: "true"
+      gethomepage.dev/group: Networking
+      gethomepage.dev/name: Traefik
+      gethomepage.dev/icon: traefik.png
+      gethomepage.dev/weight: 3
+      gethomepage.dev/href: https://traefik.zimmermann.sh
+      gethomepage.dev/widget.type: "traefik"
+      gethomepage.dev/widget.url: "http://traefik.ingress-controller.svc.cluster.local:9000"
     matchRule: Host(`PLACEHOLDER`)
-    # Entry points for the dashboard
     entryPoints: ["websecure"]
-    # TLS configuration
+    middlewares:
+      - name: chain-mfa-auth
     tls:
       secretName: traefik-tls-cert
+
+logs:
+  # General Traefik logs (startup, configuration, events, shutdown, ...)
+  general:
+    format: json
+    level: INFO
+  # Access logs (HTTP requests)
+  access:
+    enabled: true
+    format: json
+    bufferingSize: 100
+    filters:
+      statusCodes:
+        - "204-299"
+        - "400-499"
+        - "500-599"
+
+metrics:
+  # Prometheus Monitoring
+  prometheus:
+    serviceMonitor:
+      enabled: true
+      # Prometheus Operator label (Opt-In)
+      labels:
+        release: prometheus
+
+global:
+  # Disable new version checks
+  checkNewVersion: false
+
+env:
+  # Load trusted Ingress IPs as ENV variables for use in arguments
+  - name: LOCAL_IPv4
+    valueFrom:
+      configMapKeyRef:
+        name: ingress-ips
+        key: LOCAL_IPv4
+  - name: LOCAL_IPv6
+    valueFrom:
+      configMapKeyRef:
+        name: ingress-ips
+        key: LOCAL_IPv6
+  - name: CLOUDFLARE_IPv4
+    valueFrom:
+      configMapKeyRef:
+        name: ingress-ips
+        key: CLOUDFLARE_IPv4
+  - name: CLOUDFLARE_IPv6
+    valueFrom:
+      configMapKeyRef:
+        name: ingress-ips
+        key: CLOUDFLARE_IPv6
 
 ports:
   # Web entry point (Port 80)
   web:
-    port: 8000
-    expose:
-      default: true
     exposedPort: 80
     http:
       redirections:
@@ -42,15 +116,63 @@ ports:
           to: websecure
           scheme: https
           permanent: true
+    forwardedHeaders:
+      insecure: false
+      trustedIPs:
+        - $(CLOUDFLARE_IPv4)
+        - $(CLOUDFLARE_IPv6)
+        - $(LOCAL_IPv4)
+        - $(LOCAL_IPv6)
+    proxyProtocol:
+      insecure: false
+      trustedIPs:
+        - $(CLOUDFLARE_IPv4)
+        - $(CLOUDFLARE_IPv6)
+        - $(LOCAL_IPv4)
+        - $(LOCAL_IPv6)
+
   # Websecure entry point (Port 443)
   websecure:
-    port: 8443
-    expose:
-      default: true
     exposedPort: 443
-    http:
-      tls:
-        enabled: true
+    http3:
+      enabled: true
+    forwardedHeaders:
+      insecure: false
+      trustedIPs:
+        - $(CLOUDFLARE_IPv4)
+        - $(CLOUDFLARE_IPv6)
+        - $(LOCAL_IPv4)
+        - $(LOCAL_IPv6)
+    proxyProtocol:
+      insecure: false
+      trustedIPs:
+        - $(CLOUDFLARE_IPv4)
+        - $(CLOUDFLARE_IPv6)
+        - $(LOCAL_IPv4)
+        - $(LOCAL_IPv6)
+
+  # MQTT entry point (Port 8883)
+  mqtt:
+    port: 8883
+    exposedPort: 8883
+    protocol: TCP
+
+tlsOptions:
+  default:
+    minVersion: VersionTLS12
+    cipherSuites:
+      # Recommended ciphers for TLSv1.2
+      - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+      - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+      # Recommended ciphers for TLSv1.3
+      - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+      - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+      - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+    curvePreferences:
+      - CurveP521
+      - CurveP384
+    sniStrict: true
 
 service:
   # Expose Traefik UI via Cilium/BGP-announced LoadBalancer
@@ -59,20 +181,11 @@ service:
     bgp.cilium.io/ip-pool: default
     bgp.cilium.io/advertise-service: default
 
-
-# Logging: Enable JSON access logs for better observability
-logs:
-  general:
-    level: INFO
-  access:
-    enabled: true
-    format: json
-
-# Prometheus Monitoring
-metrics:
-  prometheus:
-    serviceMonitor:
-      enabled: true
-      # Prometheus Operator label (Opt-In)
-      labels:
-        release: prometheus
+affinity:
+  # Pod anti-affinity forces scheduler to put Traefik pods on nodes where no other Traefik are
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: traefik
+        topologyKey: kubernetes.io/hostname
