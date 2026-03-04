@@ -49,14 +49,14 @@ replacements:
         fieldPaths:
           - spec.postgresql.parameters.max_wal_size
 
-  # Inject WAL archive server name to beunique per environment
+  # Inject WAL archive server name to be unique per environment
   - sourceValue: authentik-db-dev
     targets:
       - select:
           kind: Cluster
           name: authentik-db
         fieldPaths:
-          - spec.backup.barmanObjectStore.serverName
+          - spec.plugins.0.parameters.server_name
 
 patches:
   # Authentik server manages API access and primary logic
