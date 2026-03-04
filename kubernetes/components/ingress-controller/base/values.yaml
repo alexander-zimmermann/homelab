@@ -3,19 +3,19 @@ deployment:
   kind: Deployment
 
   # Additional volumes to add to the Traefik container
-  additionalVolumes:
-    - name: crowdsec-lapi-key
-      secret:
-        secretName: crowdsec-lapi-key
-        items:
-          - key: crowdsec_lapi_key
-            path: crowdsec_lapi_key
+  additionalVolumes: []
+#    - name: crowdsec-lapi-key
+#      secret:
+#        secretName: crowdsec-lapi-key
+#        items:
+#          - key: crowdsec_lapi_key
+#            path: crowdsec_lapi_key
 
 # Additional volumeMounts to add to the Traefik container
-additionalVolumeMounts:
-  - name: crowdsec-lapi-key
-    mountPath: /run/secrets/
-    readOnly: true
+additionalVolumeMounts: []
+#  - name: crowdsec-lapi-key
+#    mountPath: /run/secrets/
+#    readOnly: true
 
 # Pod Disruption Budget: Ensure at least one replica is available during maintenance
 podDisruptionBudget:
@@ -51,7 +51,6 @@ ingressRoute:
     entryPoints: ["websecure"]
     middlewares:
       - name: chain-mfa-auth
-        namespace: ingress-controller
     tls:
       secretName: traefik-tls-cert
 

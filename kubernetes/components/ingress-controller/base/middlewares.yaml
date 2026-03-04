@@ -41,7 +41,7 @@ spec:
       - GET
       - OPTIONS
       - PUT
-    addVaryheader: true
+    addVaryHeader: true
     hostsProxyHeaders:
       - "X-Forwarded-Host"
     contentTypeNosniff: true
@@ -76,8 +76,8 @@ spec:
       loglevel: INFO
       crowdseclapihost: "crowdsec.ingress-controller.svc.cluster.local:8080"
       crowdseclapikeyfile: "/run/secrets/crowdsec_lapi_key"
-      forwardedheaderstrustedips: "PLACEHOLDER_CF_V4,PLACEHOLDER_CF_V6"
-      clientTrustedIPs: "PLACEHOLDER_LOCAL_V4"
+      forwardedheaderstrustedips: "PLACEHOLDER"
+      clientTrustedIPs: "PLACEHOLDER"
       rediscacheenabled: true
       rediscachehost: "redis-master.redis.svc.cluster.local:6379"
 
@@ -92,7 +92,7 @@ spec:
   plugin:
     cloudflare:
       debug: false
-      trustedCIDRs: "PLACEHOLDER_CF_V4,PLACEHOLDER_CF_V6"
+      trustedCIDRs: "PLACEHOLDER"
       refreshInterval: 0
       overwriteRequestHeader: false
 
