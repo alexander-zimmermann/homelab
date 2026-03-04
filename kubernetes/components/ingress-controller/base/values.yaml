@@ -11,11 +11,11 @@ deployment:
           - key: crowdsec_lapi_key
             path: crowdsec_lapi_key
 
-  # Additional volumeMounts to add to the Traefik container
-  additionalVolumeMounts:
-    - name: crowdsec-lapi-key
-      mountPath: /run/secrets/
-      readOnly: true
+# Additional volumeMounts to add to the Traefik container
+additionalVolumeMounts:
+  - name: crowdsec-lapi-key
+    mountPath: /run/secrets/
+    readOnly: true
 
 # Pod Disruption Budget: Ensure at least one replica is available during maintenance
 podDisruptionBudget:
@@ -65,10 +65,7 @@ logs:
     format: json
     bufferingSize: 100
     filters:
-      statusCodes:
-        - "204-299"
-        - "400-499"
-        - "500-599"
+      statuscodes: "204-299,400-599"
 
 metrics:
   # Prometheus Monitoring
