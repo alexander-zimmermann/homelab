@@ -54,6 +54,11 @@ ingressRoute:
     tls:
       secretName: traefik-tls-cert
 
+providers:
+  kubernetesCRD:
+    # Allows IngressRoute to reference resources in namespace other than theirs (e.g. middlewares)
+    allowCrossNamespace: true
+
 logs:
   # General Traefik logs (startup, configuration, events, shutdown, ...)
   general:
