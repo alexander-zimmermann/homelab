@@ -51,10 +51,11 @@ server:
       bgp.cilium.io/ip-pool: default
       bgp.cilium.io/advertise-service: default
 
-  # Prometheus Monitoring (Opt-In)
   metrics:
     enabled: true
+    # Prometheus Monitoring
     serviceMonitor:
       enabled: true
+      # Prometheus Operator label (Opt-In)
       labels:
         release: prometheus

@@ -96,9 +96,10 @@ chunksCache:
 resultsCache:
   allocatedMemory: 256
 
-# Prometheus Monitoring (Opt-In)
 monitoring:
+  # Prometheus Monitoring
   serviceMonitor:
     enabled: true
+    # Prometheus Operator label (Opt-In)
     labels:
       release: prometheus

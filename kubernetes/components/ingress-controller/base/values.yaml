@@ -68,10 +68,11 @@ logs:
     enabled: true
     format: json
 
-# Prometheus Metrics (Opt-In)
+# Prometheus Monitoring
 metrics:
   prometheus:
     serviceMonitor:
       enabled: true
+      # Prometheus Operator label (Opt-In)
       labels:
         release: prometheus
