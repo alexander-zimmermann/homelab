@@ -75,7 +75,7 @@ spec:
       enabled: true
       loglevel: INFO
       crowdseclapihost: "crowdsec.ingress-controller.svc.cluster.local:8080"
-      crowdseclapikeyfile: "/run/secrets/crowdsec_lapi_key"
+      crowdseclapikeyfile: "/etc/traefik/secrets/crowdsec_lapi_key"
       forwardedheaderstrustedips: "PLACEHOLDER"
       clientTrustedIPs: "PLACEHOLDER"
       rediscacheenabled: true

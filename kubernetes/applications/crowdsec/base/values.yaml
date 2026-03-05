@@ -47,9 +47,9 @@ lapi:
     config:
       enabled: false
 
-  # Homepage Service Discovery
   service:
     annotations:
+      # Homepage Service Discovery
       gethomepage.dev/enabled: "true"
       gethomepage.dev/group: "Security & Identity"
       gethomepage.dev/name: "CrowdSec"
