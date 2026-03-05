@@ -51,4 +51,8 @@ ci_secrets = {
     auth0_client_id    = "YOUR_AUTH0_CLIENT_ID"
     auth0_issuer       = "YOUR_AUTH0_ISSUER"
   }
+  backup_notification_url = {
+    pushover_token = "YOUR_PUSHOVER_TOKEN"
+    pushover_user  = "YOUR_PUSHOVER_USER"
+  }
 }
