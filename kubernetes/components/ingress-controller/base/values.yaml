@@ -13,7 +13,7 @@ deployment:
 # Additional volumeMounts to add to the Traefik container
 additionalVolumeMounts:
   - name: crowdsec-lapi-key
-    mountPath: /run/secrets/
+    mountPath: /etc/traefik/secrets
     readOnly: true
 
 # Pod Disruption Budget: Ensure at least one replica is available during maintenance
