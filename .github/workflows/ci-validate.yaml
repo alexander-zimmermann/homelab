@@ -85,7 +85,7 @@ jobs:
         run: tofu fmt -check -recursive
 
       - name: OpenTofu Init
-        run: tofu init -backend=false
+        run: tofu init -upgrade -backend=false
 
       - name: OpenTofu Validate
         run: tofu validate

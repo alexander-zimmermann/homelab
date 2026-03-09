@@ -15,14 +15,11 @@
 
   // --- File Associations ---
   "files.associations": {
-    "**/.github/workflows/*.yaml": "github-actions-workflow",
     "**/*.json5": "json5",
-    "**/*.yaml.j2": "yaml"
-  },
-
-  // --- Material Icon Theme - Language Mapping ---
-  "material-icon-theme.languages.associations": {
-    "github-actions-workflow": "github-actions-workflow"
+    "**/*.yaml.j2": "yaml",
+    "*.env.*.tftpl": "dotenv",
+    "*.yaml.tftpl": "yaml",
+    "**/*.tfvars.example": "opentofu-vars"
   },
 
   // --- Material Icon Theme - Color Saturation ---
@@ -32,7 +29,12 @@
   "material-icon-theme.files.associations": {
     "kubeconfig": "kubernetes",
     "talosconfig": "kubernetes",
-    "omni-compose.yaml": "docker"
+    "omni-compose.yaml": "docker",
+    "*.env.*.tftpl": "tune",
+    "*.tf": "opentofu",
+    "*.tfvars": "opentofu",
+    "*.tfvars.example": "opentofu",
+    "*.tfstate": "opentofu"
   },
 
   // --- Material Icon Theme - Folder Mapping (Infrastructure & Namespaces) ---
@@ -61,11 +63,9 @@
   // --- YAML & Kubernetes Validation ---
   "yaml.schemaStore.enable": true,
   "yaml.schemas": {
-    // Map local Kubernetes manifests to the k8s schema for linting/autocompletion
     "kubernetes": "./kubernetes/**/*.yaml",
-    // Taskfile schema validation
     "https://taskfile.dev/schema.json": [
-      "./tasks/*"
+      "/tasks/*"
     ]
   }
 }

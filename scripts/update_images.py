@@ -134,14 +134,26 @@ def generate_schematic_id(config: SchematicConfig) -> Optional[str]:
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         output = result.stdout.strip()
+        error_output = result.stderr.strip()
 
-        # Output format example:
-        # https://pxe.factory.talos.dev/pxe/<ID>/<VERSION>/nocloud-amd64
-        match = re.search(r'https://pxe\.factory\.talos\.dev/pxe/([a-f0-9]+)/', output)
-        if match:
-            return match.group(1)
+        # Check for version mismatch warning in stdout or stderr
+        version_mismatch_msg = "[WARN] omnictl version differs from the backend version"
+        if version_mismatch_msg in output or version_mismatch_msg in error_output:
+            print(f"\nERROR: omnictl version mismatch detected for '{config.profile_name}'.")
+            print("Please update omnictl to match the backend version.")
+            sys.exit(1)
+
+        # Output might contain multiple lines (warnings, info, etc.)
+        for line in output.splitlines():
+            # Output format example:
+            # https://pxe.factory.talos.dev/pxe/<ID>/<VERSION>/nocloud-amd64
+            match = re.search(r'https://pxe\.factory\.talos\.dev/pxe/([a-f0-9]+)/', line)
+            if match:
+                return match.group(1)
 
         print(f"  Error: Could not parse ID from omnictl output for '{config.profile_name}'")
+        if output:
+            print(f"  Output was: {output}")
         return None
 
     except subprocess.CalledProcessError as e:
