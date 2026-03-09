@@ -8,7 +8,6 @@ resources:
   - ./ingress-route.yaml
   - ./certificate.yaml
   - ./sealed-secrets.yaml
-  - ./bucket-job.yaml
 
 helmCharts:
   - name: authentik
