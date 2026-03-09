@@ -14,10 +14,13 @@ tasks:
     status:
       - test -d .terraform
     sources:
-      - infrastructure/manifest/20-image/schematics.yaml
-      - infrastructure/manifest/20-image/image.yaml
+      - versions.tf
+      - providers.tf
+      - variables.tf
+      - "**/*.tf"
+      - manifest/**/*.yaml
     cmds:
-      - tofu init
+      - tofu init -upgrade
       - "{{.PYTHON}} {{.SCRIPTS_DIR}}/update_images.py"
 
   create:

@@ -4,3 +4,6 @@ ci_meta_config:
 
   cluster-mgmt:
     hostname: cluster-mgmt-01
+
+  proxmox_backup_server:
+    hostname: pbs-01

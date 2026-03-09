@@ -16,3 +16,10 @@ ci_user_config:
       ssh_public_key: ~/.ssh/id_rsa.pub
       set_password: false
       password: ""
+
+  proxmox_backup_server:
+    - username: alexander
+      groups: [sudo]
+      ssh_public_key: ~/.ssh/id_rsa.pub
+      set_password: false
+      password: ""

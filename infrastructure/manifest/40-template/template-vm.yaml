@@ -53,7 +53,11 @@ template_vm:
     cores: 4
     disk_size: 32
     vnic_bridge: vmbr0
-    enable_cloud_init: false
+    ## Cloud-init
+    ci_user_config: proxmox_backup_server
+    ci_vendor_config: proxmox_backup_server
+    ci_network_config: proxmox_backup_server
+    ci_meta_data: proxmox_backup_server
 
   vm_talos_1_12_2_cp-prod:
     vm_id: 10100
