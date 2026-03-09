@@ -2,10 +2,11 @@ apiVersion: batch/v1
 kind: Job
 
 metadata:
-  name: create-authentik-backup-bucket
-  namespace: authentik
+  name: initialize-rustfs-buckets
+  namespace: rustfs
   annotations:
     argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   backoffLimit: 2
   ttlSecondsAfterFinished: 3600
@@ -24,7 +25,7 @@ spec:
                 echo "Warte auf S3 Endpoint..."
                 sleep 3
               done
-      # create bucket for backup
+      # create buckets for applications
       containers:
         - name: mc
           image: minio/mc:latest
@@ -41,7 +42,12 @@ spec:
               set -euo pipefail
               export MC_CONFIG_DIR=$(mktemp -d)
               mc alias set --debug rustfs http://rustfs-svc.rustfs.svc.cluster.local:9000 "$ACCESS_KEY" "$SECRET_KEY"
-              mc mb --debug --ignore-existing rustfs/authentik-backups
+
+              echo "Creating authentik-backups bucket..."
+              mc mb --ignore-existing rustfs/authentik-backups
+
+              echo "Creating longhorn-backups bucket..."
+              mc mb --ignore-existing rustfs/longhorn-backups
           env:
             - name: ACCESS_KEY
               valueFrom:
