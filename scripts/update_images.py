@@ -189,6 +189,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate Talos Schematic IDs and update image.yaml.")
     parser.add_argument("--source", default=DEFAULT_SOURCE, help="Path to schematics.yaml")
     parser.add_argument("--output", default=DEFAULT_TARGET, help="Path to image.yaml file")
+    parser.add_argument("--refresh", action="store_true", help="Force refresh of all checksums")
     args = parser.parse_args()
 
     # Validation
@@ -270,11 +271,14 @@ def main():
         # E. Check if Update is Required
         current_checksum = image_data['image'][target_key].get('image_checksum')
 
-        if current_url == new_url and current_checksum:
+        if not args.refresh and current_url == new_url and current_checksum:
             print("  [OK] URL matches existing configuration. No change.")
             continue
 
-        print("  [UPDATE] URL changed or checksum missing. Updating...")
+        if args.refresh:
+            print("  [FORCE] Refreshing checksum as requested...")
+        else:
+            print("  [UPDATE] URL changed or checksum missing. Updating...")
 
         # F. Calculate Checksum (Download)
         checksum = calculate_checksum(new_url)
