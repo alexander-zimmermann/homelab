@@ -116,6 +116,7 @@ prometheus:
   enabled: true
   serviceMonitor:
     enabled: true
+    # Prometheus Operator label (Opt-In)
     labels:
       release: prometheus
 

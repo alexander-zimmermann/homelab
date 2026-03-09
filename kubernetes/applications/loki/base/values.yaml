@@ -8,6 +8,7 @@ singleBinary:
     enableStatefulSetRecreationForSizeChange: true
     # Persistent Volume Claim
     storageClass: longhorn
+    size: PLACEHOLDER
 
 gateway:
   # Expose Loki Gateway service via Cilium/BGP-announced LoadBalancer
@@ -49,12 +50,12 @@ loki:
 
   limits_config:
     # Global log retention period
-    retention_period: 168h
+    retention_period: 336h
     # Maximum lookback period for log queries
-    max_query_lookback: 168h
+    max_query_lookback: 336h
     # Rejection threshold for older log samples
     reject_old_samples: true
-    reject_old_samples_max_age: 168h
+    reject_old_samples_max_age: 336h
 
     # Max sub-queries per request (split by time)
     max_query_parallelism: 4
@@ -95,9 +96,10 @@ chunksCache:
 resultsCache:
   allocatedMemory: 256
 
-# Prometheus Monitoring (Opt-In)
 monitoring:
+  # Prometheus Monitoring
   serviceMonitor:
     enabled: true
+    # Prometheus Operator label (Opt-In)
     labels:
       release: prometheus

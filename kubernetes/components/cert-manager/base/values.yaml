@@ -19,10 +19,11 @@ webhook:
 # Use a stable, short name for all rendered resources
 fullnameOverride: "cert-manager"
 
-# Prometheus Monitoring (Opt-In)
+# Prometheus Monitoring
 prometheus:
   enabled: true
   servicemonitor:
     enabled: true
+    # Prometheus Operator label (Opt-In)
     labels:
       release: prometheus

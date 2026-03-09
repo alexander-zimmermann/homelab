@@ -7,14 +7,14 @@ tasks:
       Register Machine Classes in Omni.
       Underlying command: omnictl apply
     sources:
-      - "kubernetes/homelab-machine-classes.yaml"
+      - "cluster/homelab-machine-classes.yaml"
     preconditions:
       - sh: command -v omnictl
         msg: "omnictl is not installed"
-      - sh: test -f kubernetes/homelab-machine-classes.yaml
-        msg: "kubernetes/homelab-machine-classes.yaml is missing"
+      - sh: test -f cluster/homelab-machine-classes.yaml
+        msg: "cluster/homelab-machine-classes.yaml is missing"
     cmds:
-      - omnictl apply -f kubernetes/homelab-machine-classes.yaml
+      - omnictl apply -f cluster/homelab-machine-classes.yaml
 
   update:
     desc: "sync cluster template [env]"
@@ -25,7 +25,7 @@ tasks:
     vars:
       ENVIRONMENT: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}prod{{end}}"
       MANIFEST: "homelab-cluster-{{.ENVIRONMENT}}.yaml"
-    dir: kubernetes
+    dir: cluster
     requires:
       vars:
         - name: ENVIRONMENT

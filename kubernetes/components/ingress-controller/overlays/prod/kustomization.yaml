@@ -45,10 +45,10 @@ patches:
             cpu: 500m
             memory: 256Mi
       - op: add
-        path: /spec/template/spec/containers/0/env
+        path: /spec/template/spec/containers/0/env/-
         value:
-          - name: GOMEMLIMIT
-            value: "241591910"
+          name: GOMEMLIMIT
+          value: "241591910"
 
   # Traefik service with static IP and BGP advertisement
   - target:

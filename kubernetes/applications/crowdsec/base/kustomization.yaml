@@ -11,15 +11,17 @@ helmCharts:
   - name: crowdsec
     repo: oci://ghcr.io/crowdsecurity/helm-charts
     releaseName: crowdsec
-    version: 0.22.0
+    version: 0.22.1
     valuesFile: values.yaml
     namespace: crowdsec
     includeCRDs: true
+    apiVersions:
+      - monitoring.coreos.com/v1
 
 labels:
   - includeSelectors: false
     pairs:
-      homelab.component: crowdsec
+      homelab.app: crowdsec
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-1"

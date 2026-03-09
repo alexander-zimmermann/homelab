@@ -22,8 +22,8 @@ replacements:
           delimiter: "`"
           index: 1
 
-  # Set database storage size
-  - sourceValue: 5Gi
+  # Inject database storage size
+  - sourceValue: 2Gi
     targets:
       - select:
           kind: Cluster
@@ -31,14 +31,32 @@ replacements:
         fieldPaths:
           - spec.storage.size
 
-  # Make WAL archive server name unique per environment
+  # Inject database WAL storage size
+  - sourceValue: 1Gi
+    targets:
+      - select:
+          kind: Cluster
+          name: authentik-db
+        fieldPaths:
+          - spec.walStorage.size
+
+  # Inject safe max_wal_size based on WAL PVC (80% rule)
+  - sourceValue: "800MB"
+    targets:
+      - select:
+          kind: Cluster
+          name: authentik-db
+        fieldPaths:
+          - spec.postgresql.parameters.max_wal_size
+
+  # Inject WAL archive server name to be unique per environment
   - sourceValue: authentik-db-prod
     targets:
       - select:
           kind: Cluster
           name: authentik-db
         fieldPaths:
-          - spec.backup.barmanObjectStore.serverName
+          - spec.plugins.0.parameters.serverName
 
 patches:
   # Authentik server manages API access and primary logic
@@ -89,7 +107,7 @@ patches:
             cpu: 50m
             memory: 128Mi
           limits:
-            cpu: 500m
+            cpu: 200m
             memory: 256Mi
 
   # Authentik service with static IP and BGP advertisement

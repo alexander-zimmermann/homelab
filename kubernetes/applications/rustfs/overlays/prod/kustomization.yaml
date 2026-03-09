@@ -22,6 +22,22 @@ replacements:
           delimiter: "`"
           index: 1
 
+  # Inject storage size configuration
+  - sourceValue: 500Gi
+    targets:
+      - select:
+          kind: PersistentVolumeClaim
+          name: rustfs-data
+        fieldPaths:
+          - spec.resources.requests.storage
+  - sourceValue: 5Gi
+    targets:
+      - select:
+          kind: PersistentVolumeClaim
+          name: rustfs-logs
+        fieldPaths:
+          - spec.resources.requests.storage
+
 patches:
   # RustFS server manages distributed storage and API access
   - target:
@@ -40,29 +56,6 @@ patches:
           limits:
             cpu: 200m
             memory: 512Mi
-
-  # Storage for RustFS data and logs using NAS (NFS)
-  - target:
-      kind: PersistentVolumeClaim
-      name: rustfs-data
-    patch: |-
-      - op: replace
-        path: /spec/resources/requests/storage
-        value: 500Gi
-      - op: replace
-        path: /spec/storageClassName
-        value: nfs-csi
-
-  - target:
-      kind: PersistentVolumeClaim
-      name: rustfs-logs
-    patch: |-
-      - op: replace
-        path: /spec/resources/requests/storage
-        value: 5Gi
-      - op: replace
-        path: /spec/storageClassName
-        value: nfs-csi
 
   # RustFS API service with static IP and BGP advertisement
   - target:

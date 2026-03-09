@@ -15,7 +15,15 @@ config:
   rustfs:
     # Service DNS used for internal access.
     server_domains: rustfs-svc.rustfs.svc.cluster.local
+    # Set log level to warn since 'info' level included too much verbose tracing
+    log_level: "warn"
 
 # Ingress is managed outside of the chart (Traefik IngressRoute manifests)
 ingress:
   enabled: false
+
+# Storage configuration for data and logs
+storageclass:
+  name: nfs-csi
+  dataStorageSize: PLACEHOLDER
+  logStorageSize: PLACEHOLDER

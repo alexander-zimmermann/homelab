@@ -15,9 +15,12 @@ spec:
     - kind: Rule
       match: Host(`PLACEHOLDER`)
       priority: 10
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
       services:
         - kind: Service
-          name: longhorn-ui
+          name: longhorn-frontend
           port: 80
   tls:
     secretName: longhorn-ui-tls

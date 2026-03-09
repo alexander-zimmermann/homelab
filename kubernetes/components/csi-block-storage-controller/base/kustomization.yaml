@@ -6,6 +6,9 @@ resources:
   - ./namespace.yaml
   - ./certificate.yaml
   - ./ingress-route.yaml
+  - ./storage-classes.yaml
+  - ./recurring-jobs.yaml
+  - ./sealed-secret.yaml
 
 helmCharts:
   - name: longhorn
@@ -17,6 +20,16 @@ helmCharts:
     includeCRDs: true
     apiVersions:
       - monitoring.coreos.com/v1
+
+replacements:
+  # Inject the desired replica timeout into the default Longhorn StorageClass
+  - sourceValue: "1440" # 1 day
+    targets:
+      - select:
+          kind: ConfigMap
+          name: longhorn-storageclass
+        fieldPaths:
+          - 'data.storageclass\.yaml.parameters.staleReplicaTimeout'
 
 labels:
   - includeSelectors: false

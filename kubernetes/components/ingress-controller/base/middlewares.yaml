@@ -1,0 +1,147 @@
+# Foundation Middlewares: Core traffic control and optimization
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: rate-limit
+spec:
+  rateLimit:
+    average: 100
+    burst: 50
+    period: 1m
+
+---
+# Compression: Reduces response size for faster loading
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: compress
+spec:
+  compress: {}
+
+---
+# Security Headers: Standard HTTP security hardening (HSTS, CSP, etc.)
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: security-headers
+spec:
+  headers:
+    frameDeny: false
+    customFrameOptionsValue: "SAMEORIGIN"
+    stsSeconds: 15552000
+    stsIncludeSubdomains: true
+    stsPreload: true
+    accessControlAllowHeaders:
+      - "*"
+    accessControlMaxAge: 100
+    accessControlAllowMethods:
+      - GET
+      - OPTIONS
+      - PUT
+    addVaryHeader: true
+    hostsProxyHeaders:
+      - "X-Forwarded-Host"
+    contentTypeNosniff: true
+    browserXssFilter: true
+    referrerPolicy: 'same-origin'
+    permissionsPolicy: 'accelerometer=(), autoplay=(self), camera=(), encrypted-media=(), fullscreen=(), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(self), usb=()'
+    contentSecurityPolicy: >
+      default-src 'self' *.zimmermann.sh;
+      frame-ancestors https://*.zimmermann.sh;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' traefik.github.io static.cloudflareinsights.com ajax.cloudflare.com www.gstatic.com;
+      img-src 'self' grafana.com data:;
+      style-src 'self' 'unsafe-inline' www.gstatic.com blob:;
+      font-src 'self' data:;
+      object-src 'none';
+      connect-src 'self' cloudflareinsights.com grafana.com
+      worker-src 'self' blob:
+    customResponseHeaders:
+      X-Robots-Tag: 'none,noarchive,nosnippet,notranslate,noimageindex'
+      server: ""
+
+---
+# CrowdSec Integration: Blocks malicious IPs using the CrowdSec Traefik Bouncer plugin
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: crowdsec
+spec:
+  plugin:
+    bouncer:
+      enabled: true
+      loglevel: INFO
+      crowdseclapihost: "crowdsec.ingress-controller.svc.cluster.local:8080"
+      crowdseclapikeyfile: "/etc/traefik/secrets/crowdsec_lapi_key"
+      forwardedheaderstrustedips: "PLACEHOLDER"
+      clientTrustedIPs: "PLACEHOLDER"
+      rediscacheenabled: true
+      rediscachehost: "redis-master.redis.svc.cluster.local:6379"
+
+---
+# Cloudflare Integration: Validates that traffic is coming from trusted Cloudflare CIDRs
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: cloudflare
+spec:
+  plugin:
+    cloudflare:
+      debug: false
+      trustedCIDRs: "PLACEHOLDER"
+      refreshInterval: 0
+      overwriteRequestHeader: false
+
+---
+# Header Cleanup: Removes sensitive or unnecessary proxy headers before passing to upstream
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: remove-headers
+spec:
+  headers:
+    customRequestHeaders:
+      X-Real-Ip: ""
+      X-Forwarded-Server: ""
+      X-Forwarded-Proto: ""
+      X-Forwarded-Port: ""
+      X-Forwarded-Host: ""
+      X-Forwarded-For: ""
+      Cf-Visitor: ""
+      Cf-Ray: ""
+      Cf-Ipcountry: ""
+      Cf-Connecting-Ip: ""
+      Cdn-Loop: ""
+
+---
+# Authentik integration (ForwardAuth): Delegates authentication to the Authentik outpost
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: authentik
+spec:
+  forwardAuth:
+    address: "http://authentik-server.authentik.svc.cluster.local/outpost.goauthentik.io/auth/traefik"
+    trustForwardHeader: true
+    authResponseHeaders:
+      - "Remote-User"
+      - "Remote-Groups"
+      - "Remote-Name"
+      - "Remote-Email"
+
+---
+# Basic Auth: Simple htpasswd-based authentication for emergency or technical access
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: basic-auth
+spec:
+  basicAuth:
+    secret: basic-auth-users

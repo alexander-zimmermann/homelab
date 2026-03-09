@@ -13,6 +13,16 @@ preUpgradeChecker:
   upgradeVersionCheck: false
 
 defaultSettings:
+  # Allow draining nodes even if it contains the last healthy replica
+  # (Applications like CNPG handle failover at the app-level, so Longhorn shouldn't block)
+  nodeDrainPolicy: always-allow
+
+  # Immediately delete pods on completely failed nodes, so Kubernetes reschedules them elsewhere
+  nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+
+  # Kill pods if their volume is unexpectedly detached (e.g., during network splits)
+  autoDeletePodWhenVolumeDetachedUnexpectedly: true
+
   # Constrain Longhorn to storage nodes via `global.nodeSelector`
   # Gate default-disk creation on the CCM-applied label
   createDefaultDiskLabeledNodes: true
@@ -22,6 +32,9 @@ defaultSettings:
 
   # Prefer local replicas when possible
   defaultDataLocality: best-effort
+
+  # Allows replicas to be scheduled on the same node
+  replicaSoftAntiAffinity: true
 
   # Rebalance replicas in best-effort mode
   replicaAutoBalance: best-effort
@@ -36,15 +49,52 @@ defaultSettings:
   defaultReplicaCount: 2
 
   # Reserve CPU for each instance manager pod (percent of allocatable CPU)
-  guaranteedInstanceManagerCPU: 4
+  guaranteedInstanceManagerCPU: 10
 
-# Prometheus Metrics (Opt-In)
-metrics:
-  serviceMonitor:
-    enabled: true
-    labels:
-      release: prometheus
+  # Use fast-check with nightly cron to balance integrity and performance
+  snapshotDataIntegrity: fast-check
+  snapshotDataIntegrityImmediateCheckAfterSnapshotCreation: false
+  snapshotDataIntegrityCronjob: "0 3 * * *"
+
+  # Set number of recurring job history
+  recurringSuccessfulJobsHistoryLimit: 1
+  recurringFailedJobsHistoryLimit: 1
+
+  # Use Info log level to reduce management overhead
+  logLevel: Info
+
+# Default Storage Class
+persistence:
+  # Replica count of the default Longhorn StorageClass
+  defaultClassReplicaCount: 2
+  # Data locality of the default Longhorn StorageClass
+  defaultDataLocality: best-effort
+  # Recurring job selector for a default Longhorn StorageClass
+  recurringJobSelector:
+    enable: true
+    jobList: '[{"name":"trim-weekly", "isGroup":false}]'
+
+defaultBackupStore:
+  # Setup RusstFS as local backupstore
+  backupTarget: s3://longhorn-backups@us-east-1/
+  backupTargetCredentialSecret: longhorn-backupstore-credentials
+  pollInterval: 300
+
+# Replica count of the CSI components
+csi:
+  attacherReplicaCount: 2
+  provisionerReplicaCount: 2
+  resizerReplicaCount: 2
+  snapshotterReplicaCount: 2
 
 # Reduce Longhorn UI replicas
 longhornUI:
   replicas: 1
+
+metrics:
+  # Prometheus Monitoring
+  serviceMonitor:
+    enabled: true
+    # Prometheus Operator label (Opt-In)
+    additionalLabels:
+      release: prometheus

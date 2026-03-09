@@ -4,6 +4,34 @@ kind: Kustomization
 resources:
   - ../../base
 
+replacements:
+  # Inject database storage size
+  - sourceValue: 512Mi
+    targets:
+      - select:
+          kind: Cluster
+          name: crowdsec-db
+        fieldPaths:
+          - spec.storage.size
+
+  # Inject database WAL storage size
+  - sourceValue: 512Mi
+    targets:
+      - select:
+          kind: Cluster
+          name: crowdsec-db
+        fieldPaths:
+          - spec.walStorage.size
+
+  # Inject safe max_wal_size based on WAL PVC (80% rule)
+  - sourceValue: "400MB"
+    targets:
+      - select:
+          kind: Cluster
+          name: crowdsec-db
+        fieldPaths:
+          - spec.postgresql.parameters.max_wal_size
+
 patches:
   # CrowdSec LAPI: central management component
   - target:
@@ -58,3 +86,18 @@ patches:
           limits:
             cpu: 100m
             memory: 64Mi
+
+  # PostgreSQL Cluster resources optimized for stability
+  - target:
+      kind: Cluster
+      name: crowdsec-db
+    patch: |-
+      - op: add
+        path: /spec/resources
+        value:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi

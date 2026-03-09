@@ -54,8 +54,9 @@ rbac:
       resources: ["ingressroutes", "ingressroutetcps", "ingressrouteudps"]
       verbs: ["get", "watch", "list"]
 
-# Prometheus Metrics (Opt-In)
+# Prometheus Monitoring
 serviceMonitor:
   enabled: true
+  # Prometheus Operator label (Opt-In)
   labels:
     release: prometheus
