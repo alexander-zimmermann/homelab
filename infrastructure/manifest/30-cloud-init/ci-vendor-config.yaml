@@ -16,7 +16,6 @@ ci_vendor_config:
       - nfs-common
       - docker.io
       - docker-compose-v2
-      - git
       - curl
       - snapd
 
@@ -49,10 +48,10 @@ ci_vendor_config:
       - ["LABEL=omni_data", "/mnt/omni"]
       - ["LABEL=swap", "none", "swap", "sw", "0", "0"]
       - [
-          "storage.zimmermann.eu.com:/srv/mgmt",
+          "storage.zimmermann.eu.com:/var/nfs/shared/omni",
           "/mnt/backup",
           "nfs",
-          "defaults,_netdev,noauto,nofail,x-systemd.after=cloud-init-network.service",
+          "defaults,_netdev,noauto,nofail,vers=3,rw,nolock,x-systemd.after=cloud-init-network.service",
           "0",
           "0",
         ]
@@ -100,6 +99,14 @@ ci_vendor_config:
         template_file: templates/30-cloud-init/omni.env.docker.tftpl
         secret_ref: omni_env_docker
         permissions: "0660"
+        owner: "omni:omni"
+        defer: true
+
+      ## Docker secrets
+      - path: /opt/omni/.secrets/backup_notification_url
+        template_file: templates/30-cloud-init/secrets/backup_notification_url.tftpl
+        secret_ref: backup_notification_url
+        permissions: "0600"
         owner: "omni:omni"
         defer: true
 

@@ -43,6 +43,7 @@ customization:
           environment: prod
           role: data-plane
           image-id: dp-prod
+
 ---
 ###############################################################################
 ## Development Talos images (schematics)

@@ -3,13 +3,19 @@ pve_cluster_users:
     alexander:
       path: "/"
       role_id: "Administrator"
+
     proxmate:
       path: "/"
       role_id: "Administrator"
       create_token: true
       token_name: "proxmate"
+
     homepage:
       path: "/"
       role_id: "PVEAuditor"
       create_token: true
       token_name: "homepage"
+
+    omni:
+      path: "/"
+      role_id: "Administrator"

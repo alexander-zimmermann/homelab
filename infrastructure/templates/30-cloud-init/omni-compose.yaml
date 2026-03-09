@@ -1,31 +1,43 @@
-# ============================================================================
-# Global
-# ============================================================================
+###############################################################################
+## Global
+###############################################################################
 
 name: management
 
-# ============================================================================
-# Extension fields
-# ============================================================================
 
-# Default environment values
+###############################################################################
+## Extension fields
+###############################################################################
+
+## Default environment values
 x-default-environment:
   environment: &default-environment
     TZ: $TZ
     LANG: $LANG
     LC_ALL: $LC_ALL
 
-# Default logging
+## Default logging
 x-default-logging:
   logging: &default-logging
     driver: "json-file"
     options:
       tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
 
-# ============================================================================
-# Services
-# ============================================================================
+
+###############################################################################
+## Secrets
+###############################################################################
+secrets:
+  backup_notification_url:
+    file: ./.secrets/backup_notification_url
+
+
+###############################################################################
+## Services
+###############################################################################
 services:
+
+  ## Sidero Labs Omni
   omni:
     image: ghcr.io/siderolabs/omni:v1.4.7
     container_name: omni
@@ -78,3 +90,36 @@ services:
 
     logging:
       <<: *default-logging
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+  ## Backup for Omni
+  omni-backup:
+    image: offen/docker-volume-backup:v2.47.2
+    container_name: omni-backup
+    restart: unless-stopped
+
+    volumes:
+      - ${OMNI_BACKUP_DIR}:/archive
+      - ${OMNI_LOCAL_DATA_DIR:-./data}:/backup/data:ro
+      - ${OMNI_LOCAL_CERT_DIR:-./certificates}:/backup/certificates:ro
+      - ${OMNI_LOCAL_KEY_DIR:-./keys}:/backup/keys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    secrets:
+      - backup_notification_url
+
+    environment:
+      BACKUP_CRON_EXPRESSION: "${BACKUP_CRON_EXPRESSION}"
+      BACKUP_RETENTION_DAYS: "${BACKUP_RETENTION_DAYS}"
+      BACKUP_FILENAME: "omni-backup-%Y-%m-%dT%H-%M-%S.tar.gz"
+      BACKUP_STOP_DURING_BACKUP_CONTAINER_LABEL: "true"
+      NOTIFICATION_URLS_FILE: /run/secrets/backup_notification_url
+      NOTIFICATION_LEVEL: info
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - omni

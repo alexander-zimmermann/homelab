@@ -11,8 +11,6 @@ tasks:
         msg: "OpenTofu (tofu) is not installed"
       - sh: command -v omnictl
         msg: "omnictl is not installed"
-    status:
-      - test -d .terraform
     sources:
       - versions.tf
       - providers.tf
