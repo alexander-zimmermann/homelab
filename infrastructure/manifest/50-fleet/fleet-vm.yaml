@@ -1,5 +1,5 @@
 fleet_vm:
-  ## Linux VMs
+  ## Linux VM fleets
   ubuntu_01:
     template_id: vm_ubuntu_noble
     vm_id: 1001
@@ -24,7 +24,7 @@ fleet_vm:
       - disk_interface: scsi2
         disk_size: 8
 
-  ## Windows VMs
+  ## Windows VM fleets
   windows_01:
     template_id: vm_windows_11_25h2
     vm_id: 1100
