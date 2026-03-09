@@ -4,14 +4,14 @@ image:
     image_type: import
     image_filename: debian-13-genericcloud-amd64.qcow2
     image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
-    image_checksum: e5563c7bb388eebf7df385e99ee36c83cd16ba8fad4bd07f4c3fd725a6f1cf1cb9f54c6673d4274a856974327a5007a69ff24d44f9b21f7f920e1938a19edf7e
+    image_checksum: 2adc940dcbc6aeca46b64615a827480bc0ffeb541dc5c77c835e5740d6fb1f14
     image_checksum_algorithm: sha512
 
   vm_ubuntu_noble:
     image_type: import
     image_filename: ubuntu-noble-server-cloudimg-amd64.qcow2
     image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
-    image_checksum: 2b5f90ffe8180def601c021c874e55d8303e8bcbfc66fee2b94414f43ac5eb1f
+    image_checksum: 7aa6d9f5e8a3a55c7445b138d31a73d1187871211b2b7da9da2e1a6cbf169b21
 
   ## Proxmox Backup Server images
   vm_proxmox-backup-server_4_1:
@@ -31,13 +31,13 @@ image:
     image_type: import
     image_filename: talos-1.12.2-dp-prod-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/aa15fdd6a7f2c756e252f4720e4d0d2a7b3bd26b3163f3e1e6fbb188f511297b/1.12.4/nocloud-amd64.raw
-    image_checksum: 8fc7bfd6b1b441c461cc39887af3e11b0c44b9c53d2ec2f14c20c4eeb37ae650
+    image_checksum: 5fa838b19ca190e933e9b7a1e83197d5e149a67373ebaed134d6335027355248
 
   vm_talos_1_12_2_cp-dev:
     image_type: import
     image_filename: talos-1.12.2-cp-dev-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/577869ee5d2e8ec0ba2cedd209bd19158f2fbb0720efa288107de4c6d95f5b14/1.12.4/nocloud-amd64.raw
-    image_checksum: f19f54328f2e705447e1057ce596b881305604387cb67eed6051d18e862cd8b0
+    image_checksum: 05f33500a768a3145c9da2304a157b1a3fcee8a2e1f98021d3f22e71743196a5
 
   vm_talos_1_12_2_dp-dev:
     image_type: import
