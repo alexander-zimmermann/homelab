@@ -136,12 +136,13 @@ def update_lines(lines: List[str], algorithms: Dict[str, str], default_algo: str
             new_lines.append(line)
             continue
 
-        # Find and Update Checksum
-        # Look for 'image_checksum: "..."'
-        checksum_match = re.search(r'(image_checksum:\s*)"([a-f0-9]*)"', line)
+        # Find and Update Checksum: search for 'image_checksum: "..."' or 'image_checksum: ...'
+        checksum_match = re.search(r'(image_checksum:\s*)("?)([a-f0-9]*)("?)', line)
         if checksum_match and current_url:
             prefix = checksum_match.group(1)
-            old_checksum = checksum_match.group(2)
+            quote_start = checksum_match.group(2)
+            old_checksum = checksum_match.group(3)
+            quote_end = checksum_match.group(4)
 
             algo = algorithms.get(current_url, default_algo)
             new_checksum, error_code = calculate_checksum(current_url, algo)
@@ -149,8 +150,8 @@ def update_lines(lines: List[str], algorithms: Dict[str, str], default_algo: str
             if new_checksum:
                 if new_checksum != old_checksum:
                     logger.info(f"  Change: {old_checksum[:8]} -> {new_checksum[:8]}")
-                    # Reconstruct line with new checksum
-                    new_line = f'{line[:checksum_match.start(1)]}{prefix}"{new_checksum}"\n'
+                    # Reconstruct line with same quoting as before
+                    new_line = f'{line[:checksum_match.start(1)]}{prefix}{quote_start}{new_checksum}{quote_end}\n'
                     new_lines.append(new_line)
                 else:
                     logger.debug("  No change.")

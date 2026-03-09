@@ -3,7 +3,7 @@
 Talos Schematic & Image Generator
 
 This script automates the process of generating Talos Image Schematics and updating the
-infrastructure image manifest.
+infrastructure image manifest while preserving its structure (comments, empty lines).
 
 Workflow:
 1. Reads schematic definitions from a YAML source file.
@@ -15,10 +15,10 @@ Workflow:
 7. If an update is required:
    - Downloads the new image (streamed).
    - Calculates the SHA256 checksum.
-   - Updates `image.yaml` with the new URL and Checksum.
+   - Surgically updates `image.yaml` using regex to preserve comments and structure.
 
 Usage:
-    python3 scripts/generate_schematics.py [--source path/to/schematics.yaml] [--output path/to/image.yaml]
+    python3 scripts/update_images.py [--source path/to/schematics.yaml] [--output path/to/image.yaml] [--refresh]
 """
 
 import argparse
@@ -32,7 +32,7 @@ import urllib.request
 import yaml
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 
 
 # --- Configuration ---
@@ -56,9 +56,6 @@ class SchematicConfig:
 def parse_profile(doc: dict) -> Optional[SchematicConfig]:
     """
     Parses a dictionary (YAML document) into a SchematicConfig object.
-
-    Expects the document to contain `customization.meta` with a `machineLabels` block
-    defining the `image-id`.
     """
     try:
         customization = doc.get('customization', {})
@@ -112,9 +109,6 @@ def parse_profile(doc: dict) -> Optional[SchematicConfig]:
 def generate_schematic_id(config: SchematicConfig) -> Optional[str]:
     """
     Invokes `omnictl` to generate the schematic ID based on the configuration.
-
-    Uses `--pxe` flag to retrieve the URL without downloading the artifact locally
-    during this step. The ID is extracted from the returned PXE URL.
     """
     cmd = [
         'omnictl', 'download', 'nocloud',
@@ -136,24 +130,20 @@ def generate_schematic_id(config: SchematicConfig) -> Optional[str]:
         output = result.stdout.strip()
         error_output = result.stderr.strip()
 
-        # Check for version mismatch warning in stdout or stderr
+        # Check for version mismatch warning
         version_mismatch_msg = "[WARN] omnictl version differs from the backend version"
         if version_mismatch_msg in output or version_mismatch_msg in error_output:
             print(f"\nERROR: omnictl version mismatch detected for '{config.profile_name}'.")
             print("Please update omnictl to match the backend version.")
             sys.exit(1)
 
-        # Output might contain multiple lines (warnings, info, etc.)
         for line in output.splitlines():
-            # Output format example:
-            # https://pxe.factory.talos.dev/pxe/<ID>/<VERSION>/nocloud-amd64
+            # Extract ID from PXE URL
             match = re.search(r'https://pxe\.factory\.talos\.dev/pxe/([a-f0-9]+)/', line)
             if match:
                 return match.group(1)
 
         print(f"  Error: Could not parse ID from omnictl output for '{config.profile_name}'")
-        if output:
-            print(f"  Output was: {output}")
         return None
 
     except subprocess.CalledProcessError as e:
@@ -164,7 +154,6 @@ def generate_schematic_id(config: SchematicConfig) -> Optional[str]:
 def calculate_checksum(url: str) -> Optional[str]:
     """
     Downloads the file from the given URL and calculates its SHA256 checksum.
-    The file is read in chunks to avoid high memory usage.
     """
     print(f"    Downloading to calculate checksum: {url}")
     sha256_hash = hashlib.sha256()
@@ -185,6 +174,53 @@ def calculate_checksum(url: str) -> Optional[str]:
         return None
 
 
+def update_yaml_surgically(file_path: str, updates: Dict[str, Dict[str, str]]):
+    """
+    Updates the YAML file using regex to preserve comments and empty lines.
+    """
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+
+    new_lines = []
+    current_key = None
+
+    for line in lines:
+        # Detect top-level image keys (indented by 2 spaces)
+        key_match = re.match(r'^  (\w+):', line)
+        if key_match:
+            current_key = key_match.group(1)
+            new_lines.append(line)
+            continue
+
+        if current_key and current_key in updates:
+            # Check for image_url
+            url_match = re.search(r'(image_url:\s*)(\S+)', line)
+            if url_match:
+                new_url = updates[current_key]['url']
+                # Preserve indentation and prefix, replace the rest
+                new_line = f"{line[:url_match.start(2)]}{new_url}\n"
+                new_lines.append(new_line)
+                continue
+
+            # Check for image_checksum
+            # Supports both quoted and unquoted checksums
+            checksum_match = re.search(r'(image_checksum:\s*)("?)([a-f0-9]*)("?)', line)
+            if checksum_match:
+                new_checksum = updates[current_key]['checksum']
+                prefix = checksum_match.group(1)
+                quote_start = checksum_match.group(2)
+                quote_end = checksum_match.group(4)
+                # Preserve indentation, prefix and existing quoting
+                new_line = f"{line[:checksum_match.start(1)]}{prefix}{quote_start}{new_checksum}{quote_end}\n"
+                new_lines.append(new_line)
+                continue
+
+        new_lines.append(line)
+
+    with open(file_path, 'w') as f:
+        f.writelines(new_lines)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate Talos Schematic IDs and update image.yaml.")
     parser.add_argument("--source", default=DEFAULT_SOURCE, help="Path to schematics.yaml")
@@ -192,32 +228,24 @@ def main():
     parser.add_argument("--refresh", action="store_true", help="Force refresh of all checksums")
     args = parser.parse_args()
 
-    # Validation
-    if not os.path.exists(args.source):
-        print(f"Error: Source file '{args.source}' not found.")
+    if not os.path.exists(args.source) or not os.path.exists(args.output):
+        print("Error: Source or target file not found.")
         sys.exit(1)
 
-    if not os.path.exists(args.output):
-        print(f"Error: Target file '{args.output}' not found.")
-        sys.exit(1)
-
-    # 1. Read Source Schematics
     print(f"Reading schematics from '{args.source}'...")
     with open(args.source, 'r') as f:
         docs = list(yaml.safe_load_all(f))
 
-    # 2. Read Target Image Manifest
     print(f"Reading targets from '{args.output}'...")
     with open(args.output, 'r') as f:
         image_data = yaml.safe_load(f)
 
     if 'image' not in image_data:
-        print("Error: 'image' key not found in target YAML structure.")
+        print("Error: 'image' key not found in target YAML.")
         sys.exit(1)
 
-    updated_count = 0
+    pending_updates = {}
 
-    # 3. Process each schematic profile
     for doc in docs:
         if not doc or isinstance(doc, str):
             continue
@@ -228,79 +256,45 @@ def main():
 
         print(f"\nProcessing profile: {config.profile_name}")
 
-        # A. Generate Schematic ID
         schematic_id = generate_schematic_id(config)
         if not schematic_id:
             continue
         print(f"  Generated ID: {schematic_id}")
 
-        # B. Find matching key in image.yaml
-        # Matching strategy: Key must end with "_<profile_name>"
-        # e.g. "vm_talos_1_12_0_cp-prod" matches profile "cp-prod"
-        target_key = None
-        for key in image_data['image']:
-            if key.endswith(f"_{config.profile_name}"):
-                target_key = key
-                break
-
+        target_key = next((k for k in image_data['image'] if k.endswith(f"_{config.profile_name}")), None)
         if not target_key:
-            print(f"  Warning: No matching key found in '{args.output}' for profile '{config.profile_name}'")
+            print(f"  Warning: No matching key for profile '{config.profile_name}'")
             continue
-        print(f"  Matching key: {target_key}")
 
-        # C. Determine Talos Version
-        # We try to extracting it from the existing URL to maintain consistency.
-        current_url = image_data['image'][target_key].get('image_url')
+        current_info = image_data['image'][target_key]
+        current_url = current_info.get('image_url')
+        current_checksum = current_info.get('image_checksum')
+
+        # Determine Version
         talos_version = DEFAULT_TALOS_VERSION
-
         if current_url:
-            # Regex to capture version segment between ID and Filename
-            # Matches: .../image/<ID>/<VERSION>/...
             url_match = re.search(r'/image/[a-f0-9]+/(?P<version>[^/]+)/', current_url)
             if url_match:
                 talos_version = url_match.group('version')
-                print(f"  Detected Talos Version from URL: {talos_version}")
-            else:
-                print(f"  Warning: Could not parse version from URL '{current_url}'. Using default {talos_version}")
-        else:
-             print(f"  Warning: No existing URL for '{target_key}'. Using default {talos_version}")
 
-        # D. Construct New Factory URL
         new_url = f"https://factory.talos.dev/image/{schematic_id}/{talos_version}/nocloud-amd64.raw"
-
-        # E. Check if Update is Required
-        current_checksum = image_data['image'][target_key].get('image_checksum')
 
         if not args.refresh and current_url == new_url and current_checksum:
             print("  [OK] URL matches existing configuration. No change.")
             continue
 
-        if args.refresh:
-            print("  [FORCE] Refreshing checksum as requested...")
-        else:
-            print("  [UPDATE] URL changed or checksum missing. Updating...")
-
-        # F. Calculate Checksum (Download)
+        print(f"  [UPDATE] Updating {target_key}...")
         checksum = calculate_checksum(new_url)
-        if not checksum:
-            print("  [FAILED] Could not checksum new image. Skipping update.")
-            continue
+        if checksum:
+            pending_updates[target_key] = {"url": new_url, "checksum": checksum}
+            print(f"  New Checksum: {checksum}")
 
-        print(f"  New Checksum: {checksum}")
-
-        # G. Apply Updates to Data Structure
-        image_data['image'][target_key]['image_url'] = new_url
-        image_data['image'][target_key]['image_checksum'] = checksum
-        updated_count += 1
-
-    # 4. Write Changes to Disk
-    if updated_count > 0:
-        print(f"\nWriting {updated_count} updates to '{args.output}'...")
-        with open(args.output, 'w') as f:
-            yaml.dump(image_data, f, sort_keys=False)
+    if pending_updates:
+        print(f"\nSurgically updating {len(pending_updates)} entries in '{args.output}'...")
+        update_yaml_surgically(args.output, pending_updates)
         print("Done.")
     else:
-        print("\nAll images are up to date. No changes written.")
+        print("\nAll images are up to date.")
 
 
 if __name__ == "__main__":
