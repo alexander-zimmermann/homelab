@@ -354,6 +354,7 @@ module "template_vm" {
 
   ## Cloud-init configuration
   enable_cloud_init = lookup(each.value, "enable_cloud_init", true)
+  ci_interface      = try(each.value.ci_interface, null)
   ci_user_data      = try(module.cloud_init_user_config[each.value.ci_user_config].user_data_file_id, null)
   ci_vendor_data    = try(module.cloud_init_vendor_config[each.value.ci_vendor_config].vendor_data_file_id, null)
   ci_network_data   = try(module.cloud_init_network_config[each.value.ci_network_config].network_data_file_id, null)

@@ -10,3 +10,9 @@ ci_network_config:
     dhcp6: false
     accept_ra: true
     dns_search_domain: [zimmermann.eu.com]
+
+  proxmox_backup_server:
+    dhcp4: false
+    dhcp6: false
+    accept_ra: true
+    dns_search_domain: [zimmermann.eu.com]
