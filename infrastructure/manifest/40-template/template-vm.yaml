@@ -1,4 +1,5 @@
 template_vm:
+  ## Linux templates
   vm_debian_trixie:
     vm_id: 10000
     image_id: vm_debian_trixie
@@ -44,6 +45,7 @@ template_vm:
     ci_network_config: cluster-mgmt
     ci_meta_config: cluster-mgmt
 
+  ## Proxmox Backup Server template
   vm_proxmox_backup_server:
     vm_id: 10006
     image_id: vm_proxmox-backup-server_4_1
@@ -59,6 +61,7 @@ template_vm:
     ci_network_config: proxmox_backup_server
     ci_meta_data: proxmox_backup_server
 
+  ## Talos templates
   vm_talos_1_12_2_cp-prod:
     vm_id: 10100
     image_id: vm_talos_1_12_2_cp-prod
@@ -99,6 +102,7 @@ template_vm:
     disk_size: 64
     vnic_bridge: vmbr0
 
+  ## Windows templates
   vm_windows_11_25h2:
     vm_id: 10004
     image_id: vm_windows_11_25h2

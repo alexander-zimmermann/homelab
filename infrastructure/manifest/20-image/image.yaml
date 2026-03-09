@@ -1,4 +1,5 @@
 image:
+  ## Linux images
   vm_debian_trixie:
     image_type: import
     image_filename: debian-13-genericcloud-amd64.qcow2
@@ -12,12 +13,14 @@ image:
     image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
     image_checksum: 2b5f90ffe8180def601c021c874e55d8303e8bcbfc66fee2b94414f43ac5eb1f
 
+  ## Proxmox Backup Server images
   vm_proxmox-backup-server_4_1:
     image_type: iso
     image_filename: proxmox-backup-server_4.1-1.iso
     image_url: https://enterprise.proxmox.com/iso/proxmox-backup-server_4.1-1.iso
     image_checksum: 670f0a71ee25e00cc7839bebb3f399594f5257e49a224a91ce517460e7ab171e
 
+  ## Talos images
   vm_talos_1_12_2_cp-prod:
     image_type: import
     image_filename: talos-1.12.2-cp-prod-nocloud-amd64.raw
@@ -42,6 +45,7 @@ image:
     image_url: https://factory.talos.dev/image/a3680b2d6cfcd2fcee1aeefd9ec5da9502bcc516c0b4ae7f83d63e1b72596b54/1.12.4/nocloud-amd64.raw
     image_checksum: 2969eb54c9a3a3fb3991de0c770b007f8a3f43be2e8b0fbaab6aa181f7de86cd
 
+  ## LXC images
   lxc_ubuntu_noble:
     image_type: vztmpl
     image_filename: ubuntu-noble-cloud-amd64-202602241040.tar.xz
@@ -54,6 +58,7 @@ image:
     image_url: https://images.linuxcontainers.org/images/ubuntu/noble/amd64/cloud/20251222_07:42/rootfs.tar.xz
     image_checksum: af66983f97ce1741076e6bcbf1ea535c8cd983e97bff3403a7cb10c877ab7539
 
+  ## Windows images
   vm_windows_11_25h2:
     image_type: iso
     image_filename: windows-11-25H2-amd64.iso
