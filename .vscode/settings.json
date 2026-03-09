@@ -63,11 +63,9 @@
   // --- YAML & Kubernetes Validation ---
   "yaml.schemaStore.enable": true,
   "yaml.schemas": {
-    // Map local Kubernetes manifests to the k8s schema for linting/autocompletion
     "kubernetes": "./kubernetes/**/*.yaml",
-    // Taskfile schema validation
     "https://taskfile.dev/schema.json": [
-      "./tasks/*"
+      "/tasks/*"
     ]
   }
 }
