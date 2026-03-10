@@ -14,34 +14,34 @@ image:
     image_checksum: 7aa6d9f5e8a3a55c7445b138d31a73d1187871211b2b7da9da2e1a6cbf169b21
 
   ## Proxmox Backup Server images
-  vm_proxmox-backup-server_4_1:
+  vm_proxmox_backup_server_4_1:
     image_type: iso
     image_filename: proxmox-backup-server_4.1-1.iso
     image_url: https://enterprise.proxmox.com/iso/proxmox-backup-server_4.1-1.iso
     image_checksum: 670f0a71ee25e00cc7839bebb3f399594f5257e49a224a91ce517460e7ab171e
 
   ## Talos images
-  vm_talos_1_12_2_cp-prod:
+  vm_talos_1_12_5_cp-prod:
     image_type: import
-    image_filename: talos-1.12.2-cp-prod-nocloud-amd64.raw
+    image_filename: talos-1.12.5-cp-prod-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/59fde51b82473c0eb57059149c67a6058327247cd7ffe13af97355856a5315e6/1.12.5/nocloud-amd64.raw
     image_checksum: 7d8f438b0b69acf0be4ba7ecc4c55613f2020437b4a1ae8486e200d1ac07968f
 
-  vm_talos_1_12_2_dp-prod:
+  vm_talos_1_12_5_dp-prod:
     image_type: import
-    image_filename: talos-1.12.2-dp-prod-nocloud-amd64.raw
+    image_filename: talos-1.12.5-dp-prod-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/aa15fdd6a7f2c756e252f4720e4d0d2a7b3bd26b3163f3e1e6fbb188f511297b/1.12.5/nocloud-amd64.raw
     image_checksum: 9cf98489f4039ee8aa8133bc423f38a242f70eb350ac575202a9d307d890cc62
 
-  vm_talos_1_12_2_cp-dev:
+  vm_talos_1_12_5_cp-dev:
     image_type: import
-    image_filename: talos-1.12.2-cp-dev-nocloud-amd64.raw
+    image_filename: talos-1.12.5-cp-dev-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/577869ee5d2e8ec0ba2cedd209bd19158f2fbb0720efa288107de4c6d95f5b14/1.12.5/nocloud-amd64.raw
     image_checksum: 523bdcc6623ab271d8a4790df22bbc4a2d32033366e2fcfd27a5618b083ac2a4
 
-  vm_talos_1_12_2_dp-dev:
+  vm_talos_1_12_5_dp-dev:
     image_type: import
-    image_filename: talos-1.12.2-dp-dev-nocloud-amd64.raw
+    image_filename: talos-1.12.5-dp-dev-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/a3680b2d6cfcd2fcee1aeefd9ec5da9502bcc516c0b4ae7f83d63e1b72596b54/1.12.5/nocloud-amd64.raw
     image_checksum: 4946f388e96d281946fd34cb333fef9f8c66097f0bc9a0cd314bb7c200353cf4
 

@@ -1,4 +1,5 @@
 ci_vendor_config:
+  ## Standard Linux VM
   std_linux:
     packages:
       - qemu-guest-agent
@@ -8,7 +9,8 @@ ci_vendor_config:
     runcmd:
       - systemctl enable --now qemu-guest-agent
 
-  cluster-mgmt:
+  ## Cluster management VM (Omni)
+  cluster_mgmt:
     packages:
       - qemu-guest-agent
       - htop
@@ -137,6 +139,7 @@ ci_vendor_config:
         owner: "omni:omni"
         defer: true
 
+  ## Proxmox Backup Server VM
   proxmox_backup_server:
     packages:
       - qemu-guest-agent
