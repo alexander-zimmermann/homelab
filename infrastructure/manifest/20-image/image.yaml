@@ -4,14 +4,14 @@ image:
     image_type: import
     image_filename: debian-13-genericcloud-amd64.qcow2
     image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
-    image_checksum: 2adc940dcbc6aeca46b64615a827480bc0ffeb541dc5c77c835e5740d6fb1f14
+    image_checksum: 6da628d0f44ddcc8641d5ed1c7a1b4841ccf6608810a8f7aae860db51e9975e76b3c230728560337b615f8b610a34a760cf9d18e8ddb55c48608a06724ea0892
     image_checksum_algorithm: sha512
 
   vm_ubuntu_noble:
     image_type: import
     image_filename: ubuntu-noble-server-cloudimg-amd64.qcow2
     image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
-    image_checksum: 7aa6d9f5e8a3a55c7445b138d31a73d1187871211b2b7da9da2e1a6cbf169b21
+    image_checksum: 931dba2bec09d574f032485bda386c664481ef01208371957af28fad40bc7f2d
 
   ## Proxmox Backup Server images
   vm_proxmox_backup_server_4_1:
