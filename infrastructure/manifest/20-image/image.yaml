@@ -11,7 +11,7 @@ image:
     image_type: import
     image_filename: ubuntu-noble-server-cloudimg-amd64.qcow2
     image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
-    image_checksum: 7aa6d9f5e8a3a55c7445b138d31a73d1187871211b2b7da9da2e1a6cbf169b21
+    image_checksum: 931dba2bec09d574f032485bda386c664481ef01208371957af28fad40bc7f2d
 
   ## Proxmox Backup Server images
   vm_proxmox-backup-server_4_1:
