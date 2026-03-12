@@ -100,6 +100,15 @@ variable "tablet" {
   default     = false
 }
 
+variable "cdrom_interface" {
+  description = <<EOT
+    Hardware interface used for the CD-ROM drive (e.g., `ide2`, `scsi2`).
+    Defaults to `ide2`.
+  EOT
+  type        = string
+  default     = "ide2"
+}
+
 
 ###############################################################################
 ## CPU and memory variables
@@ -545,6 +554,7 @@ variable "ci_interface" {
     Hardware interface used for cloud-init configuration (e.g., `ide2`, `scsi2`).
   EOT
   type        = string
+  nullable    = false
   default     = "ide0"
 }
 
