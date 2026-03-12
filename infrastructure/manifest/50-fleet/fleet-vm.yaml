@@ -16,7 +16,7 @@ fleet_vm:
 
   ## Proxmox Backup Server VM
   proxmox_backup_server_01:
-    template_id: vm_proxmox_backup_server
+    template_id: vm_proxmox_backup_server_4_1
     vm_id: 1003
     disks:
       - disk_interface: scsi1

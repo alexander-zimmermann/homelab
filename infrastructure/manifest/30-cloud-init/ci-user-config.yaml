@@ -1,4 +1,5 @@
 ci_user_config:
+  ## Standard Linux VM
   std_linux:
     - username: alexander
       groups: [sudo]
@@ -6,7 +7,8 @@ ci_user_config:
       set_password: false
       password: ""
 
-  cluster-mgmt:
+  ## Cluster management VM (Omni)
+  cluster_mgmt:
     - username: omni
       groups: [sudo, docker]
       set_password: false
@@ -17,6 +19,7 @@ ci_user_config:
       set_password: false
       password: ""
 
+  ## Proxmox Backup Server VM
   proxmox_backup_server:
     - username: alexander
       groups: [sudo]

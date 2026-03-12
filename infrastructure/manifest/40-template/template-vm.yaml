@@ -40,15 +40,15 @@ template_vm:
     disk_size: 16
     vnic_bridge: vmbr0
     ## Cloud-init
-    ci_user_config: cluster-mgmt
-    ci_vendor_config: cluster-mgmt
-    ci_network_config: cluster-mgmt
-    ci_meta_config: cluster-mgmt
+    ci_user_config: cluster_mgmt
+    ci_vendor_config: cluster_mgmt
+    ci_network_config: cluster_mgmt
+    ci_meta_config: cluster_mgmt
 
   ## Proxmox Backup Server template
-  vm_proxmox_backup_server:
+  vm_proxmox_backup_server_4_1:
     vm_id: 10006
-    image_id: vm_proxmox-backup-server_4_1
+    image_id: vm_proxmox_backup_server_4_1
     os_type: l26
     ## Resources
     memory: 4096

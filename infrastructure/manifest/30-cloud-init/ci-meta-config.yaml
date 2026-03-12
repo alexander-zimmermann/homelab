@@ -1,9 +1,12 @@
 ci_meta_config:
+  ## Standard Linux VM
   std_linux:
     hostname: proxmox-vm
 
-  cluster-mgmt:
+  ## Cluster management VM (Omni)
+  cluster_mgmt:
     hostname: cluster-mgmt-01
 
+  ## Proxmox Backup Server VM
   proxmox_backup_server:
     hostname: pbs-01

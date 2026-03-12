@@ -1,16 +1,19 @@
 ci_network_config:
+  ## Standard Linux VM
   std_linux:
     dhcp4: true
     dhcp6: false
     accept_ra: true
     dns_search_domain: [zimmermann.eu.com]
 
-  cluster-mgmt:
+  ## Cluster management VM (Omni)
+  cluster_mgmt:
     dhcp4: true
     dhcp6: false
     accept_ra: true
     dns_search_domain: [zimmermann.eu.com]
 
+  ## Proxmox Backup Server VM
   proxmox_backup_server:
     dhcp4: false
     dhcp6: false
