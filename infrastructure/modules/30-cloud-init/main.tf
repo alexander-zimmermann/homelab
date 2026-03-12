@@ -30,7 +30,7 @@ resource "proxmox_virtual_environment_file" "user_config" {
           groups: ${jsonencode(u.groups)}
           shell: /bin/bash
 %{if u.ssh_public_key != ""~}
-          ssh-authorized-keys:
+          ssh_authorized_keys:
             - ${trimspace(file(pathexpand(u.ssh_public_key)))}
 %{endif~}
           sudo: ALL=(ALL) NOPASSWD:ALL

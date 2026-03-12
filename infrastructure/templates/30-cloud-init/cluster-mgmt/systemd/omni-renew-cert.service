@@ -7,4 +7,5 @@ Wants=network-online.target
 Type=oneshot
 User=root
 Group=root
-ExecStart=/usr/local/bin/omni-renew-ssl.sh
+EnvironmentFile=/etc/omni/omni.conf
+ExecStart=/usr/local/bin/omni-renew-cert.sh

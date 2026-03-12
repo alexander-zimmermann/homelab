@@ -71,71 +71,92 @@ ci_vendor_config:
       - ["ln", "-s", "/snap/bin/task", "/usr/local/bin/task"]
       ## Manually mount NFS share (after nfs-common install)
       - ["mount", "/mnt/backup"]
-      ## Set permissions for data disk
-      - ["chown", "omni:omni", "/opt/omni"]
-      - ["chown", "omni:omni", "/mnt/omni"]
+      ## Set permissions for data disk and config directory
+      - ["chown", "-R", "omni:omni", "/opt/omni"]
+      - ["chown", "-R", "omni:omni", "/mnt/omni"]
+      - ["chown", "-R", "omni:omni", "/etc/omni"]
       ## Setup Omni
       - ["bash", "/usr/local/bin/omni-bootstrap.sh"]
       ## Systemd services
       - ["systemctl", "enable", "--now", "qemu-guest-agent"]
       - ["systemctl", "enable", "--now", "docker"]
-      - ["systemctl", "enable", "--now", "omni-renew-ssl.timer"]
+      - ["systemctl", "enable", "--now", "omni-renew-cert.timer"]
+      - ["systemctl", "enable", "--now", "omni-rotate-sa-key.timer"]
+      - ["systemctl", "enable", "--now", "omni-rotate-ip-key.timer"]
 
     write_files:
-      ## Environment file for lego, Omni Bootstrap, and Omni docker compose
-      - path: /opt/omni/.lego
-        template_file: templates/30-cloud-init/omni.env.lego.tftpl
-        secret_ref: omni_env_lego
-        permissions: "0660"
-        owner: "omni:omni"
-        defer: true
-
-      - path: /opt/omni/.bootstrap
-        template_file: templates/30-cloud-init/omni.env.bootstrap.tftpl
-        secret_ref: omni_env_bootstrap
-        permissions: "0660"
-        owner: "omni:omni"
-        defer: true
-
-      - path: /opt/omni/.env
-        template_file: templates/30-cloud-init/omni.env.docker.tftpl
-        secret_ref: omni_env_docker
-        permissions: "0660"
-        owner: "omni:omni"
-        defer: true
-
-      ## Docker secrets
-      - path: /opt/omni/.secrets/backup_notification_url
-        template_file: templates/30-cloud-init/secrets/backup_notification_url.tftpl
-        secret_ref: backup_notification_url
-        permissions: "0600"
-        owner: "omni:omni"
-        defer: true
-
-      ## Systemd service for renewing SSL certificates
-      - path: /etc/systemd/system/omni-renew-ssl.service
-        content_file: templates/30-cloud-init/omni-renew-ssl.service
-
-      - path: /etc/systemd/system/omni-renew-ssl.timer
-        content_file: templates/30-cloud-init/omni-renew-ssl.timer
-
-      - path: /usr/local/bin/omni-renew-ssl.sh
-        content_file: templates/30-cloud-init/omni-renew-ssl.sh
-        permissions: "0755"
+      ## Omni configuration
+      - path: /etc/omni/omni.conf
+        template_file: templates/30-cloud-init/cluster-mgmt/config/omni.conf.tftpl
+        secret_ref: omni_config
+        permissions: "0640"
         owner: "omni:omni"
         defer: true
 
       ## Omni bootstrap script
       - path: /usr/local/bin/omni-bootstrap.sh
-        content_file: templates/30-cloud-init/omni-bootstrap.sh
+        content_file: templates/30-cloud-init/cluster-mgmt/omni-bootstrap.sh
         permissions: "0755"
         owner: "omni:omni"
         defer: true
 
-      ## Omni Docker Compose configuration
+      ## Systemd service for renewing SSL certificates (Lego)
+      - path: /etc/systemd/system/omni-renew-cert.service
+        content_file: templates/30-cloud-init/cluster-mgmt/systemd/omni-renew-cert.service
+
+      - path: /etc/systemd/system/omni-renew-cert.timer
+        content_file: templates/30-cloud-init/cluster-mgmt/systemd/omni-renew-cert.timer
+
+      - path: /usr/local/bin/omni-renew-cert.sh
+        content_file: templates/30-cloud-init/cluster-mgmt/systemd/omni-renew-cert.sh
+        permissions: "0755"
+        owner: "omni:omni"
+        defer: true
+
+      ## Systemd service for Omni Service Account key rotation
+      - path: /etc/systemd/system/omni-rotate-sa-key.service
+        content_file: templates/30-cloud-init/cluster-mgmt/systemd/omni-rotate-sa-key.service
+
+      - path: /etc/systemd/system/omni-rotate-sa-key.timer
+        content_file: templates/30-cloud-init/cluster-mgmt/systemd/omni-rotate-sa-key.timer
+
+      - path: /usr/local/bin/omni-rotate-sa-key.sh
+        content_file: templates/30-cloud-init/cluster-mgmt/systemd/omni-rotate-sa-key.sh
+        permissions: "0755"
+        owner: "omni:omni"
+        defer: true
+
+      ## Systemd service for Omni Infra Provider key rotation
+      - path: /etc/systemd/system/omni-rotate-ip-key.service
+        content_file: templates/30-cloud-init/cluster-mgmt/systemd/omni-rotate-ip-key.service
+
+      - path: /etc/systemd/system/omni-rotate-ip-key.timer
+        content_file: templates/30-cloud-init/cluster-mgmt/systemd/omni-rotate-ip-key.timer
+
+      - path: /usr/local/bin/omni-rotate-ip-key.sh
+        content_file: templates/30-cloud-init/cluster-mgmt/systemd/omni-rotate-ip-key.sh
+        permissions: "0755"
+        defer: true
+
+      ## Omni Docker Compose
       - path: /opt/omni/compose.yaml
-        content_file: templates/30-cloud-init/omni-compose.yaml
+        content_file: templates/30-cloud-init/cluster-mgmt/docker/omni-compose.yaml
         permissions: "0644"
+        owner: "omni:omni"
+        defer: true
+
+      ## Docker secrets
+      - path: /opt/omni/.secrets/backup-notification-url
+        template_file: templates/30-cloud-init/cluster-mgmt/docker/secrets/backup-notification-url.tftpl
+        secret_ref: backup_notification_url
+        permissions: "0640"
+        owner: "omni:omni"
+        defer: true
+
+      - path: /opt/omni/.secrets/omni-proxmox-config.yaml
+        template_file: templates/30-cloud-init/cluster-mgmt/docker/secrets/omni-proxmox-config.yaml.tftpl
+        secret_ref: omni_proxmox_config
+        permissions: "0640"
         owner: "omni:omni"
         defer: true
 
