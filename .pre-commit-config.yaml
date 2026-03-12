@@ -12,6 +12,7 @@ repos:
       - id: check-added-large-files
       - id: detect-private-key
       - id: end-of-file-fixer
+        exclude: '.*/secrets/.*'
       - id: no-commit-to-branch
         args: [--branch, main]
       - id: trailing-whitespace
