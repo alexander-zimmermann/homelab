@@ -4,7 +4,7 @@ image:
     image_type: import
     image_filename: debian-13-genericcloud-amd64.qcow2
     image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
-    image_checksum: 2adc940dcbc6aeca46b64615a827480bc0ffeb541dc5c77c835e5740d6fb1f14
+    image_checksum: fa5fa232b820baf89a383418286a4222d66b415fb5ae710e316e66050fa7aa6aa2288e9e5ceacf1ac126d13251107bbf88fa9a335ef3c1901feabf58a2bb9615
     image_checksum_algorithm: sha512
 
   vm_ubuntu_noble:
