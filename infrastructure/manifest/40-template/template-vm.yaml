@@ -30,12 +30,12 @@ template_vm:
     ci_network_config: std_linux
     ci_meta_config: std_linux
 
-  vm_ubuntu_noble_cluster-mgmt:
+  vm_ubuntu_noble_cluster_mgmt:
     vm_id: 10005
     image_id: vm_ubuntu_noble
     os_type: l26
     ## Resources
-    memory: 2048
+    memory: 4096
     cores: 4
     disk_size: 16
     vnic_bridge: vmbr0

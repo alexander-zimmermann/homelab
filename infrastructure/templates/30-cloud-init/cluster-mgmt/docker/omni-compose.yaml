@@ -1,0 +1,164 @@
+###############################################################################
+## Global
+###############################################################################
+name: management
+
+
+###############################################################################
+## Extension fields
+###############################################################################
+## Default environment values
+x-default-environment:
+  environment: &default-environment
+    TZ: ${TZ:-Europe/Berlin}
+    LANG: ${LANG:-de_DE.UTF-8}
+    LC_ALL: ${LC_ALL:-de_DE.UTF-8}
+
+## Default logging
+x-default-logging:
+  logging: &default-logging
+    driver: "json-file"
+    options:
+      tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+
+
+###############################################################################
+## Secrets
+###############################################################################
+secrets:
+  backup_notification_url:
+    file: ./.secrets/backup-notification-url
+  omni_proxmox_config:
+    file: ./.secrets/omni-proxmox-config.yaml
+
+
+###############################################################################
+## Services
+###############################################################################
+services:
+
+  ## Omni
+  omni:
+    image: ghcr.io/siderolabs/omni:${OMNI_VERSION:-latest}
+    container_name: omni
+    network_mode: host
+    restart: unless-stopped
+
+    devices:
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+
+    volumes:
+      - ${OMNI_DATA_DIR}:/data
+      - ${OMNI_CERT_DIR}:/certificates
+      - ${OMNI_KEY_DIR}:/keys
+      - ${CURL_PATH}:/curl:ro
+
+    environment:
+      <<: *default-environment
+
+    command:
+      ## Day-0 Bootstrap admin key
+      - --create-initial-service-account
+      - --initial-service-account-key-path=/keys/${OMNI_SA_KEY}
+      - --initial-service-account-lifetime=720h
+      - --initial-service-account-role=Admin
+      ## Omni configuration
+      - --name=omni
+      - --account-id=${OMNI_ACCOUNT_UUID}
+      - --initial-users=${OMNI_INITIAL_USERS}
+      ## Persistence data
+      - --sqlite-storage-path=/data/omni.db
+      - --etcd-embedded-db-path=/data/etcd
+      ## Bind addresses
+      - --bind-addr=0.0.0.0:443
+      - --event-sink-port=8091
+      - --machine-api-bind-addr=0.0.0.0:8090
+      - --k8s-proxy-bind-addr=0.0.0.0:8100
+      ## Advertised URLs
+      - --advertised-api-url=${OMNI_API_ENDPOINT}
+      - --advertised-kubernetes-proxy-url=${OMNI_API_ENDPOINT}:8100/
+      - --siderolink-api-advertised-url=${OMNI_API_ENDPOINT}:8090/
+      - --siderolink-wireguard-advertised-addr=${OMNI_DOMAIN_NAME}:50180
+      ## TLS & security
+      - --cert=/certificates/${OMNI_TLS_CERT}
+      - --key=/certificates/${OMNI_TLS_KEY}
+      - --machine-api-cert=/certificates/${OMNI_TLS_CERT}
+      - --machine-api-key=/certificates/${OMNI_TLS_KEY}
+      - --private-key-source=file:///keys/${OMNI_PRIVATE_KEY}
+      ## Auth0 integration
+      - --auth-auth0-enabled=true
+      - --auth-auth0-domain=${AUTH0_ISSUER}
+      - --auth-auth0-client-id=${AUTH0_CLIENT_ID}
+
+    logging:
+      <<: *default-logging
+
+    healthcheck:
+      test: ["CMD", "/curl", "-k", "-s", "-f", "https://localhost/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+    labels:
+      - docker-volume-backup.stop-during-backup=true
+
+  ## Omni Proxmox Infrastructure Provider
+  omni-infra-provider-proxmox:
+    image: ghcr.io/siderolabs/omni-infra-provider-proxmox
+    container_name: omni-infra-proxmox
+    network_mode: host
+    restart: unless-stopped
+
+    secrets:
+      - omni_proxmox_config
+
+    environment:
+      <<: *default-environment
+
+    command:
+      - --config-file=/run/secrets/omni_proxmox_config
+      - --omni-api-endpoint=${OMNI_API_ENDPOINT}
+      - --omni-service-account-key=${OMNI_SERVICE_ACCOUNT_KEY}
+      - --id=${OMNI_IP_NAME}
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      omni:
+        condition: service_healthy
+
+  ## Docker Volume Backup
+  omni-backup:
+    image: offen/docker-volume-backup:${DOCKER_VOLUME_BACKUP_VERSION:-latest}
+    container_name: omni-backup
+    network_mode: host
+    restart: unless-stopped
+
+    volumes:
+      - ${DOCKER_VOLUME_BACKUP_DIR}:/archive
+      - ${OMNI_DATA_DIR}:/backup/data:ro
+      - ${OMNI_CERT_DIR}:/backup/certificates:ro
+      - ${OMNI_KEY_DIR}:/backup/keys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    secrets:
+      - backup_notification_url
+
+    environment:
+      <<: *default-environment
+      BACKUP_CRON_EXPRESSION: "${BACKUP_CRON_EXPRESSION}"
+      BACKUP_RETENTION_DAYS: "${BACKUP_RETENTION_DAYS}"
+      BACKUP_FILENAME: "omni-backup-%Y-%m-%dT%H-%M-%S.tar.gz"
+      BACKUP_STOP_DURING_BACKUP_CONTAINER_LABEL: "true"
+      NOTIFICATION_URLS_FILE: "/run/secrets/backup_notification_url"
+      NOTIFICATION_LEVEL: "info"
+
+    logging:
+      <<: *default-logging
+
+    depends_on:
+      - omni

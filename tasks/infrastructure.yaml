@@ -33,7 +33,7 @@ tasks:
     preconditions:
       - sh: command -v tofu
         msg: "OpenTofu (tofu) is not installed"
-    deps: [init, status]
+    deps: [status]
     aliases: [update]
     cmds:
       - tofu apply -auto-approve tfplan

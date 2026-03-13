@@ -1,8 +1,8 @@
 [Unit]
-Description=Daily check for Lego SSL renewal
+Description=Bi-Weekly rotation of Omni Infra Provider Key
 
 [Timer]
-OnCalendar=daily
+OnUnitActiveSec=2w
 RandomizedDelaySec=1h
 Persistent=true
 

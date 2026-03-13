@@ -115,7 +115,7 @@ resource "proxmox_virtual_environment_vm" "vm_template" {
     for_each = (var.image_id != null && strcontains(var.image_id, ":iso/")) ? [1] : []
     content {
       file_id   = var.image_id
-      interface = "ide2"
+      interface = var.cdrom_interface
     }
   }
 

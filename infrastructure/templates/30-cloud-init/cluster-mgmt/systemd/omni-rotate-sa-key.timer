@@ -1,0 +1,10 @@
+[Unit]
+Description=Bi-Weekly rotation of Omni Service Account Key
+
+[Timer]
+OnUnitActiveSec=2w
+RandomizedDelaySec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target

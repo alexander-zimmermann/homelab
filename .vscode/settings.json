@@ -17,8 +17,8 @@
   "files.associations": {
     "**/*.json5": "json5",
     "**/*.yaml.j2": "yaml",
-    "*.env.*.tftpl": "dotenv",
     "*.yaml.tftpl": "yaml",
+    "*.conf.tftpl": "dotenv",
     "**/*.tfvars.example": "opentofu-vars"
   },
 
@@ -30,7 +30,6 @@
     "kubeconfig": "kubernetes",
     "talosconfig": "kubernetes",
     "omni-compose.yaml": "docker",
-    "*.env.*.tftpl": "tune",
     "*.tf": "opentofu",
     "*.tfvars": "opentofu",
     "*.tfvars.example": "opentofu",
