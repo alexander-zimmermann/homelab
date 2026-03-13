@@ -344,6 +344,7 @@ module "template_vm" {
   ## Hardware configuration
   bios         = try(each.value.bios, "seabios")
   machine_type = lookup(each.value, "machine_type", null)
+  boot_order   = lookup(each.value, "boot_order", null)
   cores        = each.value.cores
   memory       = each.value.memory
 
