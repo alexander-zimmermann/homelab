@@ -162,10 +162,51 @@ ci_vendor_config:
 
   ## Proxmox Backup Server VM
   proxmox_backup_server:
+    locale: ""
+    timezone: ""
+    apt:
+      sources:
+        proxmox-pbs:
+          source: "deb http://download.proxmox.com/debian/pbs $RELEASE pbs-no-subscription"
+          key: |
+            -----BEGIN PGP PUBLIC KEY BLOCK-----
+            Comment: Hostname:
+            Version: Hockeypuck 2.2
+
+            xsFNBGcwscgBEADB3YrP0xJn3Mz+rsZWiYsyrboVJVoGAnb3MBJ81WM9g74+4YMw
+            FSZB4DwV+ubXldo6GyQMTThA2RdPiaLF+Ro+H9iQAbs5vlT0IXA/QSzK1Hnzz8Ny
+            +PxgSy/hdekgFzvTbt2MB0S+38/xIzwcnSwEu+ieyVuivqM66btcPJJAaCqN4mmS
+            RAmbgR0FpxLf6rBBTgCu2I4EB907Cm77lCCr09u75bPb7kV8ede4kmMxWfrZ0Sol
+            D590UiNdz/GwiJMNHBV+3HHiX+uR1v8vkeMy1eykSnKPCkCBW/KmozaD2PRsvgAs
+            BZSaQ7kxv6YSN1c+9FSoEUe0caETxAQLQjV9Ds55gjj6clVM+8V6fNxzQGrc0Lfg
+            lc4FxoCZ9Gp4t0YbhI4ORb/tx6wtHOWU4lJa4Kzjt7GRnUxcKBssartcQIQquv8d
+            rj4UWEmHSpv4yfS88ls3YG0JEcdd3LWm1jLVPMwIkSUiFQthkLoed5mTIheSUN/X
+            9YcP8/PRwcKCBNHM+eLlBX1j6AjgN0WOEG0XD24wvrkHiwaejk0VEhkqlNHJ1INe
+            9UHmgblsTGKu8WgTvQPkRXKqT3ZBOw3yacdwURzrY6F4wfaejCgQSQivCnCcPlYc
+            5LEJuOOrIj3qhNpyL6TvFGqu5QDx7GrQSGtgZnAFu+M93zTa+FMAUrwftQARAQAB
+            zThQcm94bW94IFRyaXhpZSBSZWxlYXNlIEtleSA8cHJveG1veC1yZWxlYXNlQHBy
+            b3htb3guY29tPsLBlAQTAQoAPhYhBCSzDwbswYNqTl7+y6e80UIL/neOBQJnMLHI
+            AhsvBQkSzqYABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEKe80UIL/neOEFkP
+            /12ClMqxvQSw3NgcS8bhof/D6Ty8K+ymmMFOGtW/3mt3yPgFGlM+2xjGjRlGjt2s
+            wsbnVImLd9u52C8+31cwe+TZQb2OF8fOYVieaoBtN8avmOAKJqoCBpJ4wLb8ok5A
+            G87c15fKtCG0W4ZBlaZpmQVcdigRYcgw1iYvLn5HXWdVw5c+77+o2DTkqvH5UU5X
+            s1M6T4YBlQupL3AEnn/LmFCueq1dzVdiPf1w5DRkS6dMuF856q03uMllf7arxz0N
+            pVYMq6ZibOv3DBm1m7DY/xjJjf2ANS5F6b7ocTEJE9FrAKhQh+g7AapiK3p8LAfs
+            EcDUGy6hyo9Dag2XKvPlCCdS/8YKCRvm19ZsJvRq60J1dVlBPvr87h3mt9fCqW2m
+            09MMKrrNU6WsKQWQMiHm/bA+npAaaaoqaMNIl0f1TkBQZSfFF6WVb54hL5321S7K
+            mpwvUOEz7sz0rjeK/zUvjVuQGg6rvFUu6vuT5zhJOcGI4nwwPM3jEhcvSO63OU4c
+            F+ekQ4lUibcuZFs20fmOnErA7kzJbct5DgfKGxr4aH88oHxJE+EOmE8qvl3e8hVe
+            RGaUThp5NkpfYjGJew5biofJgri90djDP+xg6h/4x5Cgz2IKhyQ2mrQEfF15+QcE
+            xYb/kZCwIeyAMFr6cIVG/rhTgKqHHhyGCgv/7RpntsyN
+            =2Tpm
+            -----END PGP PUBLIC KEY BLOCK-----
+
     packages:
+      - locales
       - qemu-guest-agent
       - htop
       - vim
+      - proxmox-backup-server
 
     disk_setup:
       /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi2:
@@ -183,4 +224,6 @@ ci_vendor_config:
       - ["LABEL=swap", "none", "swap", "sw", "0", "0"]
 
     runcmd:
+      - locale-gen de_DE.UTF-8
+      - localectl set-locale LANG=de_DE.UTF-8
       - systemctl enable --now qemu-guest-agent
