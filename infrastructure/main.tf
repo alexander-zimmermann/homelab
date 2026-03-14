@@ -237,11 +237,16 @@ module "cloud_init_vendor_config" {
   filename  = "${each.key}-vendor-config.yaml"
 
   ## Package management
+  apt                        = try(each.value.apt, {})
   snap                       = try(each.value.snap, {})
   packages                   = try(each.value.packages, [])
   package_update             = try(each.value.package_update, true)
   package_upgrade            = try(each.value.package_upgrade, true)
   package_reboot_if_required = try(each.value.package_reboot_if_required, true)
+
+  ## Localization
+  locale   = try(each.value.locale, "de_DE.UTF-8")
+  timezone = try(each.value.timezone, "Europe/Berlin")
 
   ## Custom commands
   runcmd  = try(each.value.runcmd, [])
