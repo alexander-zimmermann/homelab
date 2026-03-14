@@ -9,4 +9,4 @@ ci_meta_config:
 
   ## Proxmox Backup Server VM
   proxmox_backup_server:
-    hostname: pbs-01
+    hostname: backup-01
