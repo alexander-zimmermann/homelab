@@ -32,8 +32,12 @@ resource "proxmox_virtual_environment_vm" "vm_template" {
   machine       = var.machine_type
   tablet_device = var.tablet
 
-  ## Boot order for UEFI systems with Secure Boot
-  boot_order = (var.bios == "ovmf" && var.secure_boot) ? ["scsi0", "ide2", "net0"] : null
+  ## Boot order: Priority for primary disk, followed by the CD-ROM and Network if they exist.
+  boot_order = var.boot_order != null ? var.boot_order : concat(
+    [var.disk_interface],
+    (var.image_id != null && strcontains(var.image_id, ":iso/")) ? [var.cdrom_interface] : [],
+    (var.vnic_bridge != null) ? ["net0"] : []
+  )
 
   agent {
     enabled = var.qemu_guest_agent

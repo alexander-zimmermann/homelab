@@ -106,6 +106,22 @@ variable "package_reboot_if_required" {
   default     = true
 }
 
+variable "locale" {
+  description = <<EOT
+    System locale. Defaults to `de_DE.UTF-8`.
+  EOT
+  type        = string
+  default     = "de_DE.UTF-8"
+}
+
+variable "timezone" {
+  description = <<EOT
+    System timezone. Defaults to `Europe/Berlin`.
+  EOT
+  type        = string
+  default     = "Europe/Berlin"
+}
+
 variable "packages" {
   description = <<EOT
     List of additional packages to install during provisioning.
@@ -155,6 +171,15 @@ variable "snap" {
   description = <<EOT
     Custom Snap configuration (commands, assertions, etc.).
     Passed directly to cloud-init's `snap` module.
+  EOT
+  type        = any
+  default     = {}
+}
+
+variable "apt" {
+  description = <<EOT
+    Custom APT configuration (sources, keys, etc.).
+    Passed directly to cloud-init's `apt` module.
   EOT
   type        = any
   default     = {}

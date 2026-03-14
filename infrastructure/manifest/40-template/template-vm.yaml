@@ -48,7 +48,7 @@ template_vm:
   ## Proxmox Backup Server template
   vm_proxmox_backup_server_4_1:
     vm_id: 10006
-    image_id: vm_proxmox_backup_server_4_1
+    image_id: vm_debian_trixie
     os_type: l26
     ## Resources
     memory: 4096
@@ -59,7 +59,7 @@ template_vm:
     ci_user_config: proxmox_backup_server
     ci_vendor_config: proxmox_backup_server
     ci_network_config: proxmox_backup_server
-    ci_meta_data: proxmox_backup_server
+    ci_meta_config: proxmox_backup_server
 
   ## Talos templates
   vm_talos_1_12_2_cp-prod:

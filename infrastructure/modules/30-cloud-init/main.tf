@@ -56,8 +56,15 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
   source_raw {
     data = <<-EOF
       #cloud-config
-      timezone: Europe/Berlin
-      locale: de_DE.UTF-8
+%{if var.timezone != ""~}
+      timezone: ${var.timezone}
+%{endif~}
+%{if var.locale != ""~}
+      locale: ${var.locale}
+%{endif~}
+%{if length(var.apt) > 0~}
+      apt: ${jsonencode(var.apt)}
+%{endif~}
 %{if length(var.disk_setup) > 0~}
       disk_setup: ${jsonencode(var.disk_setup)}
 %{endif~}

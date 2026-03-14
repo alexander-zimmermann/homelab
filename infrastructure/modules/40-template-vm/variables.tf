@@ -100,6 +100,15 @@ variable "tablet" {
   default     = false
 }
 
+variable "boot_order" {
+  description = <<EOT
+    Custom boot order for the VM. List of strings (e.g., ["scsi0", "ide2", "net0"]).
+    If null, the module uses a default UEFI/legacy logic.
+  EOT
+  type        = list(string)
+  default     = null
+}
+
 variable "cdrom_interface" {
   description = <<EOT
     Hardware interface used for the CD-ROM drive (e.g., `ide2`, `scsi2`).

@@ -15,7 +15,7 @@ fleet_vm:
         disk_size: 8
 
   ## Proxmox Backup Server VM
-  proxmox_backup_server_01:
+  backup_server_01:
     template_id: vm_proxmox_backup_server_4_1
     vm_id: 1003
     disks:
