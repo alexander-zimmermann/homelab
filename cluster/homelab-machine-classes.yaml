@@ -1,16 +1,29 @@
 ###############################################################################
-## Production machine class
+## Machine classes for manual deployment
 ###############################################################################
+## Production control plane
 metadata:
-  id: control-plane-prod
+  id: control-plane-manual-prod
   type: MachineClasses.omni.sidero.dev
   namespace: default
 spec:
   matchlabels:
     - "cluster = homelab, environment = prod, role = control-plane"
+
 ---
+## Development control plane
 metadata:
-  id: data-plane-prod
+  id: control-plane-manual-dev
+  type: MachineClasses.omni.sidero.dev
+  namespace: default
+spec:
+  matchlabels:
+    - "cluster = homelab, environment = dev, role = control-plane"
+
+---
+## Production data plane
+metadata:
+  id: data-plane-manual-prod
   type: MachineClasses.omni.sidero.dev
   namespace: default
 spec:
@@ -18,21 +31,192 @@ spec:
     - "cluster = homelab, environment = prod, role = data-plane"
 
 ---
-###############################################################################
-## Development machine class
-###############################################################################
+## Development data plane
 metadata:
-  id: control-plane-dev
-  type: MachineClasses.omni.sidero.dev
-  namespace: default
-spec:
-  matchlabels:
-    - "cluster = homelab, environment = dev, role = control-plane"
----
-metadata:
-  id: data-plane-dev
+  id: data-plane-manual-dev
   type: MachineClasses.omni.sidero.dev
   namespace: default
 spec:
   matchlabels:
     - "cluster = homelab, environment = dev, role = data-plane"
+
+---
+###############################################################################
+## Machine classes for auto-provisioning (Proxmox Infrastructure Provider)
+###############################################################################
+## Production control plane
+metadata:
+  id: control-plane-auto-prod
+  type: MachineClasses.omni.sidero.dev
+  namespace: default
+spec:
+  matchlabels: []
+  autoprovision:
+    providerid: proxmox-infra
+    kernelargs: []
+    metavalues: []
+    providerdata: |
+      # Resource allocation
+      cores: 4
+      sockets: 1
+      memory: 4096
+      disk_size: 32
+
+      # CPU & memory optimizations
+      cpu_type: host
+      machine_type: q35
+      numa: true
+      balloon: false
+
+      # Storage configuration
+      storage_selector: name == "local-zfs"
+      disk_ssd: true
+      disk_discard: true
+      disk_iothread: true
+      disk_cache: none
+      disk_aio: io_uring
+
+      # Network configuration
+      network_bridge: vmbr0
+
+---
+## Development control plane
+metadata:
+  id: control-plane-auto-dev
+  type: MachineClasses.omni.sidero.dev
+  namespace: default
+spec:
+  matchlabels: []
+  autoprovision:
+    providerid: proxmox-infra
+    kernelargs: []
+    metavalues: []
+    providerdata: |
+      # Resource allocation
+      cores: 2
+      sockets: 1
+      memory: 2048
+      disk_size: 32
+
+      # CPU & memory optimizations
+      cpu_type: host
+      machine_type: q35
+      numa: true
+      balloon: false
+
+      # Storage configuration
+      storage_selector: name == "local-zfs"
+      disk_ssd: true
+      disk_discard: true
+      disk_iothread: true
+      disk_cache: none
+      disk_aio: io_uring
+
+      # Network configuration
+      network_bridge: vmbr0
+
+---
+## Production data plane
+metadata:
+  id: data-plane-auto-prod
+  type: MachineClasses.omni.sidero.dev
+  namespace: default
+spec:
+  matchlabels: []
+  autoprovision:
+    providerid: proxmox-infra
+    kernelargs: []
+    metavalues: []
+    providerdata: |
+      # Resource allocation
+      sockets: 1
+      cores: 6
+      memory: 10240
+      disk_size: 64
+
+      # CPU & memory optimizations
+      cpu_type: host
+      machine_type: q35
+      numa: true
+      balloon: false
+
+      # Storage configuration
+      storage_selector: name == "local-zfs"
+      disk_ssd: true
+      disk_discard: true
+      disk_iothread: true
+      disk_cache: none
+      disk_aio: io_uring
+
+      # Additional storage for Longhorn & Swap
+      additional_disks:
+        - disk_size: 128
+          storage_selector: name == "local-zfs"
+          disk_ssd: true
+          disk_discard: true
+          disk_iothread: true
+          disk_cache: none
+          disk_aio: io_uring
+        - disk_size: 4
+          storage_selector: name == "local-zfs"
+          disk_ssd: true
+          disk_discard: true
+          disk_iothread: true
+          disk_cache: none
+          disk_aio: io_uring
+
+      # Network configuration
+      network_bridge: vmbr0
+
+---
+## Development data plane
+metadata:
+  id: data-plane-auto-dev
+  type: MachineClasses.omni.sidero.dev
+  namespace: default
+spec:
+  matchlabels: []
+  autoprovision:
+    providerid: proxmox-infra
+    kernelargs: []
+    metavalues: []
+    providerdata: |
+      # Resource allocation
+      sockets: 1
+      cores: 4
+      memory: 4096
+      disk_size: 64
+
+      # CPU & memory optimizations
+      cpu_type: host
+      machine_type: q35
+      numa: true
+      balloon: false
+
+      # Storage configuration
+      storage_selector: name == "local-zfs"
+      disk_ssd: true
+      disk_discard: true
+      disk_iothread: true
+      disk_cache: none
+      disk_aio: io_uring
+
+      # Additional storage for Longhorn & Swap
+      additional_disks:
+        - disk_size: 64
+          storage_selector: name == "local-zfs"
+          disk_ssd: true
+          disk_discard: true
+          disk_iothread: true
+          disk_cache: none
+          disk_aio: io_uring
+        - disk_size: 4
+          storage_selector: name == "local-zfs"
+          disk_ssd: true
+          disk_discard: true
+          disk_iothread: true
+          disk_cache: none
+          disk_aio: io_uring
+
+      # Network configuration
+      network_bridge: vmbr0
