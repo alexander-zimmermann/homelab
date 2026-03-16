@@ -224,7 +224,7 @@ setup_infra_provider_key() {
   ## Update the key file
   echo "${new_key}" > "${OMNI_IP_KEY_PATH}"
 
-  success "Proxmox InfraProvider key '${OMNI_IP_NAME}' successfully generated at ${OMNI_IP_KEY_PATH}."
+  success "Proxmox InfraProvider key ${OMNI_IP_NAME} successfully generated at ${OMNI_IP_KEY_PATH}."
 }
 
 ###############################################################################
