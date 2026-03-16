@@ -11,7 +11,7 @@
 set -euo pipefail
 
 ## Set environment file
-OMNI_CONF="/etc/omni/omni.conf"
+OMNI_BOOTSTRAP_CONF="/etc/omni/omni-bootstrap.conf"
 
 ###############################################################################
 ## Helper: Logging functions
@@ -100,11 +100,12 @@ setup_certificates() {
     return 0
   fi
 
-  ## Construct domain flags for running lego
-  info "Configuring domains..."
-  local domain_flags=("--domains=${PRIMARY_DOMAIN}")
-  IFS=',' read -ra domains_arr <<< "${SAN_DOMAINS:-}"
-  for domain in "${domains_arr[@]}"; do
+  ## Build Bash array from the domain list
+  readarray -t acme_domains <<< "$(echo "${ACME_DOMAINS}" | tr ',' '\n' | xargs -n1)"
+
+  ## Construct domain flags for certificate issuing
+  local -a domain_flags=()
+  for domain in "${acme_domains[@]}"; do
     domain_flags+=("--domains=${domain}")
   done
 
@@ -117,7 +118,7 @@ setup_certificates() {
     --dns="cloudflare" \
     --accept-tos \
     "${domain_flags[@]}" \
-    run &> /dev/null
+    run &> /dev/null || die "Failed to generate certificates for ${ACME_DOMAINS}."
 
   ## Copy certificates into local cert directory
   info "Copying new certificates to ${OMNI_CERT_DIR}..."
@@ -224,7 +225,7 @@ setup_infra_provider_key() {
   ## Update the key file
   echo "${new_key}" > "${OMNI_IP_KEY_PATH}"
 
-  success "Proxmox InfraProvider key '${OMNI_IP_NAME}' successfully generated at ${OMNI_IP_KEY_PATH}."
+  success "Proxmox InfraProvider key ${OMNI_IP_NAME} successfully generated at ${OMNI_IP_KEY_PATH}."
 }
 
 ###############################################################################
@@ -262,7 +263,7 @@ info "===================================="
 
 ## Load environment files
 info "Loading environment files..."
-source "${OMNI_CONF}" || die "Failed to load Omni environment variables."
+source "${OMNI_BOOTSTRAP_CONF}" || die "Bootstrap configuration file not found at ${OMNI_BOOTSTRAP_CONF}."
 
 ## Restore all data from the latest tarball (if on a fresh node)
 info "Checking for Omni backup archive to restore..."

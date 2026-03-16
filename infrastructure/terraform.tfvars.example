@@ -36,27 +36,23 @@ pve_node_core_subscription_keys = {
 ###############################################################################
 ci_secrets = {
   ## Omni docker stack configuration
-  omni_config = {
+  omni_bootstrap_conf = {
     ## Certificate issuer (lego)
     cf_dns_api_token = "YOUR_CLOUDFLARE_API_TOKEN"
     cf_api_email     = "YOUR_EMAIL_ADDRESS"
     primary_domain   = "YOUR_PRIMARY_DOMAIN"
     san_domains      = "YOUR_SAN_DOMAINS" # comma-separated list of domains
-    ## Omni
+    ## Omni container stack configuration
     omni_account_uuid  = "YOUR_OMNI_ACCOUNT_UUID"
     omni_initial_users = "YOUR_OMNI_INITIAL_USERS"
     omni_domain_name   = "YOUR_OMNI_DOMAIN_NAME"
     omni_email_address = "YOUR_OMNI_EMAIL_ADDRESS"
     auth0_client_id    = "YOUR_AUTH0_CLIENT_ID"
     auth0_issuer       = "YOUR_AUTH0_ISSUER"
-  }
-  ## Docker secret for backup notification
-  backup_notification_url = {
+    ## Docker volume backup container stack configuration
     pushover_token = "YOUR_PUSHOVER_TOKEN"
     pushover_user  = "YOUR_PUSHOVER_USER"
-  }
-  ## Docker secret for Omni Proxmox configuration
-  omni_proxmox_config = {
+    ## Omni Proxmox Infrastructure Provider container stack configuration
     proxmox_username = "YOUR_PVE_USER"
     proxmox_password = "YOUR_PVE_PASSWORD"
     proxmox_url      = "YOUR_PVE_URL"
