@@ -61,4 +61,22 @@ ci_secrets = {
     proxmox_password = "YOUR_PVE_PASSWORD"
     proxmox_url      = "YOUR_PVE_URL"
   }
+
+  ## PBS bootstrap configuration
+  pbs_bootstrap_conf = {
+    ## PBS root password
+    pbs_root_password = "YOUR_PBS_ROOT_PASSWORD"
+    ## PBS initial & backup user
+    pbs_initial_username = "YOUR_PBS_INITIAL_USERNAME"
+    pbs_initial_password = "YOUR_PBS_INITIAL_PASSWORD"
+    pbs_backup_username  = "YOUR_PBS_BACKUP_USERNAME"
+    pbs_backup_password  = "YOUR_PBS_BACKUP_PASSWORD"
+    ## ACME Cloudflare DNS plugin
+    acme_cf_account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"
+    acme_cf_zone_id    = "YOUR_CLOUDFLARE_ZONE_ID"
+    acme_cf_token      = "YOUR_CLOUDFLARE_API_TOKEN"
+    ## Primary and SAN domains for ACME certificates
+    primary_domain   = "YOUR_PRIMARY_DOMAIN"
+    san_domains      = "YOUR_SAN_DOMAINS" # comma-separated list of domains
+  }
 }

@@ -202,10 +202,11 @@ ci_vendor_config:
             -----END PGP PUBLIC KEY BLOCK-----
 
     packages:
-      - locales
       - qemu-guest-agent
       - htop
       - vim
+      - nfs-common
+      - locales
       - proxmox-backup-server
 
     disk_setup:
@@ -219,7 +220,7 @@ ci_vendor_config:
         overwrite: false
 
     fs_setup:
-      - label: datastore_01
+      - label: datastore_primary
         filesystem: ext4
         device: /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_drive-scsi1
         partition: auto
@@ -229,25 +230,49 @@ ci_vendor_config:
         partition: auto
 
     mounts:
-      - ["LABEL=datastore_01", "/mnt/datastore-01"]
+      - ["LABEL=datastore_primary", "/mnt/datastore-primary"]
       - ["LABEL=swap", "none", "swap", "sw", "0", "0"]
+      - [
+          "storage.zimmermann.eu.com:/var/nfs/shared/proxmox",
+          "/mnt/datastore-secondary",
+          "nfs",
+          "defaults,_netdev,noauto,nofail,vers=3,rw,nolock,x-systemd.after=cloud-init-network.service",
+          "0",
+          "0",
+        ]
+
+    mount_default_fields: [None, None, "auto", "defaults", "0", "0"]
 
     bootcmd:
-      - mkdir -p /mnt/datastore-01
+      - mkdir -p /mnt/datastore-primary
+      - mkdir -p /mnt/datastore-secondary
 
     runcmd:
       ## Set locale
       - ["locale-gen", "de_DE.UTF-8"]
       - ["localectl", "set-locale", "LANG=de_DE.UTF-8"]
+      ## Manually mount NFS share
+      - ["mount", "/mnt/datastore-secondary"]
+      ## Set permissions for data disk and config directory
+      - ["chown", "-R", "backup:backup", "/mnt/datastore-primary"]
+      - ["chown", "-R", "backup:backup", "/mnt/datastore-secondary"]
       ## Setup PBS
       - ["bash", "/usr/local/bin/pbs-bootstrap.sh"]
       ## Systemd services
       - ["systemctl", "enable", "--now", "qemu-guest-agent"]
 
     write_files:
+      ## PBS bootstrap configuration
+      - path: /etc/pbs/pbs-bootstrap.conf
+        template_file: templates/30-cloud-init/proxmox-backup-server/pbs-bootstrap.conf.tftpl
+        secret_ref: pbs_bootstrap_conf
+        permissions: "0640"
+        owner: "backup:backup"
+        defer: true
+
       ## PBS bootstrap script
       - path: /usr/local/bin/pbs-bootstrap.sh
-        content_file: templates/30-cloud-init/proxmox_backup_server/pbs-bootstrap.sh
+        content_file: templates/30-cloud-init/proxmox-backup-server/pbs-bootstrap.sh
         permissions: "0755"
         owner: "backup:backup"
         defer: true
