@@ -70,17 +70,19 @@ locals {
     # Log every command executed, with timestamp and source info
     trap 'printf "+ [%(%F %T)T] %s:%d: %s\n" -1 "$(basename -- "$BASH_SOURCE")" "$LINENO" "$BASH_COMMAND" >&2' DEBUG
 
-    # Set ACME account
-    sudo /usr/bin/pvenode config set --acme account=${proxmox_virtual_environment_acme_account.this.name}
-
     # Build Bash array from the Opentofu list
     readarray -t DOMAINS <<< "${join("\n", var.cert_domains)}"
 
-    # Configure SANs: --acmedomain0, --acmedomain1, ...
+    # Construct domain flags for certificate issuing
+    DOMAIN_FLAGS=()
     for i in $${!DOMAINS[@]}; do
-      DOMAIN="$${DOMAINS[$i]}"
-      sudo /usr/bin/pvenode config set --acmedomain$${i} "$${DOMAIN},plugin=${proxmox_virtual_environment_acme_dns_plugin.this.plugin}"
+      DOMAIN_FLAGS+=("--acmedomain$${i}" "domain=$${DOMAINS[$i]},plugin=${proxmox_virtual_environment_acme_dns_plugin.this.plugin}")
     done
+
+    # Apply ACME account and domains
+    sudo /usr/bin/pvenode config set \
+      --acme "account=${proxmox_virtual_environment_acme_account.this.name}" \
+      "$${DOMAIN_FLAGS[@]}"
 
     # Force order / renewal of the certificate
     sudo /usr/bin/pvenode acme cert order --force
