@@ -12,6 +12,7 @@ ci_user_config:
     - username: omni
       groups: [sudo, docker]
       set_password: false
+      password: ""
 
     - username: alexander
       groups: [sudo, docker, omni]
