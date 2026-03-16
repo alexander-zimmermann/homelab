@@ -86,9 +86,9 @@ ci_vendor_config:
 
     write_files:
       ## Omni configuration
-      - path: /etc/omni/omni.conf
-        template_file: templates/30-cloud-init/cluster-mgmt/config/omni.conf.tftpl
-        secret_ref: omni_config
+      - path: /etc/omni/omni-bootstrap.conf
+        template_file: templates/30-cloud-init/cluster-mgmt/omni-bootstrap.conf.tftpl
+        secret_ref: omni_bootstrap_conf
         permissions: "0640"
         owner: "omni:omni"
         defer: true
@@ -148,14 +148,14 @@ ci_vendor_config:
       ## Docker secrets
       - path: /opt/omni/.secrets/backup-notification-url
         template_file: templates/30-cloud-init/cluster-mgmt/docker/secrets/backup-notification-url.tftpl
-        secret_ref: backup_notification_url
+        secret_ref: omni_bootstrap_conf
         permissions: "0640"
         owner: "omni:omni"
         defer: true
 
       - path: /opt/omni/.secrets/omni-proxmox-config.yaml
         template_file: templates/30-cloud-init/cluster-mgmt/docker/secrets/omni-proxmox-config.yaml.tftpl
-        secret_ref: omni_proxmox_config
+        secret_ref: omni_bootstrap_conf
         permissions: "0640"
         owner: "omni:omni"
         defer: true
