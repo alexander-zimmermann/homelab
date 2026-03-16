@@ -161,12 +161,12 @@ ci_vendor_config:
         defer: true
 
   ## Proxmox Backup Server VM
-  proxmox_backup_server:
+  proxmox_backup:
     locale: ""
     timezone: ""
     apt:
       sources:
-        proxmox-pbs:
+        proxmox_backup:
           source: "deb http://download.proxmox.com/debian/pbs $RELEASE pbs-no-subscription"
           key: |
             -----BEGIN PGP PUBLIC KEY BLOCK-----

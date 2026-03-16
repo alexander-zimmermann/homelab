@@ -21,7 +21,7 @@ ci_user_config:
       password: ""
 
   ## Proxmox Backup Server VM
-  proxmox_backup_server:
+  proxmox_backup:
     - username: alexander
       groups: [sudo]
       ssh_public_key: ~/.ssh/id_rsa.pub
