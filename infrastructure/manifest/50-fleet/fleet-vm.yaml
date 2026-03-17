@@ -14,9 +14,9 @@ fleet_vm:
       - disk_interface: scsi2
         disk_size: 8
 
-  ## Proxmox Backup Server VM
+  ## Proxmox backup VM (PBS)
   backup_server_01:
-    template_id: vm_proxmox_backup_server_4_1
+    template_id: vm_debian_trixie_proxmox_backup
     vm_id: 1003
     disks:
       - disk_interface: scsi1

@@ -14,7 +14,7 @@ ci_network_config:
     dns_search_domain: [zimmermann.eu.com]
 
   ## Proxmox Backup Server VM
-  proxmox_backup_server:
+  proxmox_backup:
     dhcp4: true
     dhcp6: false
     accept_ra: true

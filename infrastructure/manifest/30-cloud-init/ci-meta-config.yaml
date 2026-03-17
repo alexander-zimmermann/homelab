@@ -8,5 +8,5 @@ ci_meta_config:
     hostname: cluster-mgmt-01
 
   ## Proxmox Backup Server VM
-  proxmox_backup_server:
+  proxmox_backup:
     hostname: backup-01
