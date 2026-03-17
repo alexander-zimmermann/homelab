@@ -25,9 +25,14 @@
   "flux": {
     "managerFilePatterns": ["/\\.yaml$/"]
   },
-  "postUpgradeTasks": {
-    "commands": ["python3 .github/scripts/update_checksums.py"],
-    "fileFilters": ["infrastructure/manifest/20-image/image.yaml"],
-    "executionMode": "branch"
-  }
+  "packageRules": [
+    {
+      "matchFileNames": ["infrastructure/manifest/20-image/image.yaml"],
+      "postUpgradeTasks": {
+        "commands": ["python3 .github/scripts/update_checksums.py"],
+        "fileFilters": ["infrastructure/manifest/20-image/image.yaml"],
+        "executionMode": "branch"
+      }
+    }
+  ]
 }
