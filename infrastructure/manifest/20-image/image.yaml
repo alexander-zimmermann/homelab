@@ -4,7 +4,7 @@ image:
     image_type: import
     image_filename: debian-13-genericcloud-amd64.qcow2
     image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
-    image_checksum: fa5fa232b820baf89a383418286a4222d66b415fb5ae710e316e66050fa7aa6aa2288e9e5ceacf1ac126d13251107bbf88fa9a335ef3c1901feabf58a2bb9615
+    image_checksum: 42ddef8e8b66894bf48cdb8d006e15bab4df198cc6f3422d5d5a4da0092229b7
 
 
 
@@ -31,7 +31,7 @@ image:
     image_type: import
     image_filename: talos-1.12.5-cp-dev-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/577869ee5d2e8ec0ba2cedd209bd19158f2fbb0720efa288107de4c6d95f5b14/1.12.5/nocloud-amd64.raw
-    image_checksum: 523bdcc6623ab271d8a4790df22bbc4a2d32033366e2fcfd27a5618b083ac2a4
+    image_checksum: 7939c8931ca37dc461f64f9528d12599dd3c2972b13a8fa38ffdf9f5cac6e400
 
   vm_talos_1_12_5_dp-dev:
     image_type: import
