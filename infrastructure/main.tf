@@ -52,10 +52,11 @@ module "pve_cluster_acme" {
   contact_email = local.pve_cluster.acme.contact_email
 
   ## Certificate Configuration
-  cert_domains  = local.pve_cluster.acme.cert_domains
-  cf_token      = var.pve_cluster_acme_cf_token
-  cf_zone_id    = var.pve_cluster_acme_cf_zone_id
-  cf_account_id = var.pve_cluster_acme_cf_account_id
+  primary_domain = local.pve_cluster.acme.primary_domain
+  san_domains    = local.pve_cluster.acme.san_domains
+  cf_token       = var.pve_cluster_acme_cf_token
+  cf_zone_id     = var.pve_cluster_acme_cf_zone_id
+  cf_account_id  = var.pve_cluster_acme_cf_account_id
 }
 
 
