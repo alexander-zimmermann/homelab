@@ -70,8 +70,9 @@ locals {
     # Log every command executed, with timestamp and source info
     trap 'printf "+ [%(%F %T)T] %s:%d: %s\n" -1 "$(basename -- "$BASH_SOURCE")" "$LINENO" "$BASH_COMMAND" >&2' DEBUG
 
-    # Build Bash array from the Opentofu list
-    readarray -t DOMAINS <<< "${join("\n", var.cert_domains)}"
+    # Build Bash array from the domain list
+    local ACME_DOMAINS="${var.primary_domain}${length(var.san_domains) > 0 ? ",${join(",", var.san_domains)}" : ""}"
+    readarray -t DOMAINS <<< "$(echo "$${ACME_DOMAINS}" | tr ',' '\n' | xargs -n1)"
 
     # Construct domain flags for certificate issuing
     DOMAIN_FLAGS=()
@@ -98,7 +99,7 @@ resource "terraform_data" "acme_order" {
 
   ## Re-execute if any attribute changes
   triggers_replace = [
-    join(",", tolist(var.cert_domains)),
+    join(",", compact(concat([var.primary_domain], var.san_domains))),
     proxmox_virtual_environment_acme_account.this.name,
     proxmox_virtual_environment_acme_dns_plugin.this.plugin
   ]

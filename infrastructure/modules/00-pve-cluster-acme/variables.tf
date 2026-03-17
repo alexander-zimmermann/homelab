@@ -144,18 +144,26 @@ variable "cf_account_id" {
 ###############################################################################
 ## Certificate issuing
 ###############################################################################
-variable "cert_domains" {
+variable "primary_domain" {
   description = <<EOT
-    List of domain names to include in the certificate (SANs). Must contain at
-    least one domain. These domains must be resolvable and manageable via the
-    configured DNS plugin.
+    Primary domain name for the certificate. This is the main identifier
+    for the cluster node.
   EOT
-  type        = list(string)
+  type        = string
 
   validation {
-    condition     = length(var.cert_domains) > 0
-    error_message = "cert_domains must contain at least one domain."
+    condition     = length(var.primary_domain) > 0
+    error_message = "primary_domain must not be empty."
   }
+}
+
+variable "san_domains" {
+  description = <<EOT
+    List of Subject Alternative Names (SANs) to include in the certificate.
+    Optional.
+  EOT
+  type        = list(string)
+  default     = []
 }
 
 variable "ssh_hostname" {
