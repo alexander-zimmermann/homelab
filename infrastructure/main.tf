@@ -55,8 +55,8 @@ module "pve_cluster_acme" {
   primary_domain = local.pve_cluster.acme.primary_domain
   san_domains    = local.pve_cluster.acme.san_domains
   cf_token       = var.pve_cluster_acme_cf_token
-  cf_zone_id    = var.pve_cluster_acme_cf_zone_id
-  cf_account_id = var.pve_cluster_acme_cf_account_id
+  cf_zone_id     = var.pve_cluster_acme_cf_zone_id
+  cf_account_id  = var.pve_cluster_acme_cf_account_id
 }
 
 
