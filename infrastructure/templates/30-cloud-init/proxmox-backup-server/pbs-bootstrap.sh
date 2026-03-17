@@ -1,0 +1,308 @@
+#!/usr/bin/env bash
+###############################################################################
+## PBS bootstrap script
+###############################################################################
+## Automates Proxmox Backup Server initial setup, including datastore
+## configuration, user initialization, maintenance jobs, and ACME certs.
+##
+## Prerequisites:
+## - proxmox-backup-server installed.
+## - Environment file in /etc/pbs/pbs-bootstrap.conf
+
+set -euo pipefail
+
+## Set environment file
+PBS_BOOTSTRAP_CONF="/etc/pbs/pbs-bootstrap.conf"
+
+###############################################################################
+## Helper: Logging functions
+###############################################################################
+info() {
+  printf "[INFO]  %s\n" "${1}"
+}
+
+success() {
+  printf "[SUCCESS] %s\n" "${1}"
+}
+
+die() {
+  printf "[ERROR] %s\n" "${1}"
+  exit 1
+}
+
+###############################################################################
+## Helper: System configuration
+###############################################################################
+setup_system_config() {
+  local enterprise_source="/etc/apt/sources.list.d/pbs-enterprise.sources"
+
+  ## Set root password
+  info "Setting root password..."
+  echo "root:${PBS_ROOT_PASSWORD}" | chpasswd || die "Failed to set root password."
+
+  ## Check if enterprise repo is already disabled
+  if [[ -f "${enterprise_source}" ]] && grep -q "Enabled: false" "${enterprise_source}"; then
+    info "Enterprise repository already disabled."
+    return 0
+  fi
+
+  ## Disable enterprise repo
+  info "Disabling enterprise repository..."
+  echo "Enabled: false" >> "${enterprise_source}"
+
+  success "System configuration set up successfully."
+}
+
+###############################################################################
+## Helper: User setup
+###############################################################################
+setup_user() {
+  local user="${1}@pbs"
+  local password="${2}"
+
+  ### Check if user already exists
+  if proxmox-backup-manager user list | grep -q "${user}"; then
+    info "User ${user} already exists."
+    return 0
+  fi
+
+  ## Creating user
+  info "Creating user ${user}..."
+  proxmox-backup-manager user create "${user}" \
+    --password "${password}" || die "Failed to create user ${user}."
+
+  ## Assigning Admin role
+  info "Assigning Admin role to ${user}..."
+  proxmox-backup-manager acl update / "Admin" \
+    --auth-id "${user}" || die "Failed to assign role to ${user}."
+
+  success "User ${user} configured as Admin."
+}
+
+###############################################################################
+## Helper: Datastore setup
+###############################################################################
+setup_datastore() {
+  local datastore_name="${1}"
+  local datastore_path="${2}"
+
+  ## Check if datastore is already configured in PBS
+  if proxmox-backup-manager datastore list | grep -q "${datastore_name}"; then
+    info "Datastore ${datastore_name} already exists in PBS configuration."
+    return 0
+  fi
+
+  ## Create datastore
+  info "Initializing datastore ${datastore_name} at ${datastore_path}..."
+  proxmox-backup-manager datastore create \
+    "${datastore_name}" "${datastore_path}" \
+    2> /dev/null || die "Failed to create datastore ${datastore_name}."
+
+  success "Datastore ${datastore_name} created successfully."
+}
+
+###############################################################################
+## Helper: Data retention setup (GC & Pruning)
+###############################################################################
+setup_data_retention() {
+  local datastore_name="${1}"
+  local keep_last="${2}"
+  local keep_hourly="${3}"
+  local keep_daily="${4}"
+  local keep_weekly="${5}"
+  local keep_monthly="${6}"
+  local keep_yearly="${7}"
+
+  ## Update retention retention policy
+  info "Setting up data retention policy for ${datastore_name}..."
+  proxmox-backup-manager datastore update "${datastore_name}" \
+    --keep-last "${keep_last}" \
+    --keep-hourly "${keep_hourly}" \
+    --keep-daily "${keep_daily}" \
+    --keep-weekly "${keep_weekly}" \
+    --keep-monthly "${keep_monthly}" \
+    --keep-year "${keep_yearly}" || die "Could not update data retention policy for ${datastore_name}."
+
+  ## Prune job
+  info "Setting up prune job for ${datastore_name}..."
+  proxmox-backup-manager datastore update "${datastore_name}" \
+    --prune-schedule "daily" || die "Could not update prune schedule for ${datastore_name}."
+
+  ## Garbage collection job
+  info "Setting up garbage collection job for ${datastore_name}..."
+  proxmox-backup-manager datastore update "${datastore_name}" \
+    --gc-schedule "Sun 04:00" || die "Could not update garbage collection schedule for ${datastore_name}."
+
+  success "Data retention policy for ${datastore_name} set up successfully."
+}
+
+###############################################################################
+## Helper: Verification job setup
+###############################################################################
+setup_verification() {
+  local datastore_name="${1}"
+  local job_id="verify-${datastore_name}"
+
+  ## Check if verification job is already configured for datastore
+  if proxmox-backup-manager verify-job list | grep -q "${job_id}"; then
+    info "Verification job ${job_id} already exists."
+    return 0
+  fi
+
+  ## Verification job
+  info "Setting up verification job for ${datastore_name}..."
+  proxmox-backup-manager verify-job create "${job_id}" \
+    --store "${datastore_name}" \
+    --schedule "Sat 04:00" || die "Could not create verification job for ${datastore_name}."
+
+  success "Verification job for ${datastore_name} set up successfully."
+}
+
+###############################################################################
+## Helper: Sync job setup
+###############################################################################
+setup_sync() {
+  local job_id="pull-from-primary"
+
+  ## Check if sync job is already configured between primary and secondary datastores
+  if proxmox-backup-manager sync-job list | grep -q "${job_id}"; then
+    info "Sync job ${job_id} already exists."
+    return 0
+  fi
+
+  ## Sync job form NVMe to NFS
+  info "Creating sync job: Primary -> Secondary..."
+  proxmox-backup-manager sync-job create "${job_id}" \
+    --remote-store "${DATASTORE_PRIMARY_NAME}" \
+    --store "${DATASTORE_SECONDARY_NAME}" \
+    --schedule "daily" || die "Could not create sync job."
+
+  success "Sync job for ${datastore_name} set up successfully."
+}
+
+###############################################################################
+## Helper: ACME account setup
+###############################################################################
+register_acme_account() {
+  ## Check if ACME account is already registered
+  if proxmox-backup-manager acme account list | grep -q "${ACME_ACCOUNT}"; then
+    info "ACME account ${ACME_ACCOUNT} already registered."
+    return 0
+  fi
+
+  ## Register ACME account
+  info "Registering ACME account ${ACME_ACCOUNT} (${ACME_EMAIL})..."
+  printf "y" | \
+  proxmox-backup-manager acme account register "${ACME_ACCOUNT}" "${ACME_EMAIL}" \
+    --directory "${ACME_DIRECTORY}" || die "Failed to register ACME account."
+
+  success "ACME account ${ACME_ACCOUNT} set up successfully."
+}
+
+###############################################################################
+## Helper: ACME DNS plugin setup
+###############################################################################
+setup_acme_plugin() {
+  local plugin_data="/tmp/acme-plugin-data"
+
+  ## Check if ACME DNS plugin is already configured
+  if proxmox-backup-manager acme plugin list | grep -q "${ACME_DNS_PLUGIN_ID}"; then
+    info "ACME plugin ${ACME_DNS_PLUGIN_ID} already configured."
+    return 0
+  fi
+
+  ## Create a temporary file for the API token
+  touch "${plugin_data}"
+  chmod 600 "${plugin_data}"
+  echo "${ACME_DNS_PLUGIN_DATA}" | tr ',' '\n' | xargs -n1 > "${plugin_data}"
+
+  ## Register ACME plugin
+  info "Registering ACME DNS plugin ${ACME_DNS_PLUGIN_ID}..."
+  proxmox-backup-manager acme plugin add dns "${ACME_DNS_PLUGIN_ID}" \
+    --api "${ACME_DNS_ID}" \
+    --data "${plugin_data}" || die "Failed to register ACME DNS plugin."
+
+  ## Remove temporary file
+  rm -f "${plugin_data}"
+
+  success "ACME DNS plugin ${ACME_DNS_PLUGIN_ID} registered successfully."
+}
+
+###############################################################################
+## Helper: ACME certificate issue
+###############################################################################
+setup_issue_certificate() {
+  ## Build Bash array from the domain list
+  readarray -t acme_domains <<< "$(echo "${ACME_DOMAINS}" | tr ',' '\n' | xargs -n1)"
+
+  ## Construct domain flags for certificate issuing
+  local -a domain_flags=()
+  for i in "${!acme_domains[@]}"; do
+    domain_flags+=("--acmedomain${i}" "domain=${acme_domains[$i]},plugin=${ACME_DNS_PLUGIN_ID}")
+  done
+
+  ## Apply ACME account and domains
+  info "Applying ACME account and domains to PBS node..."
+  proxmox-backup-manager node update \
+    --acme "account=${ACME_ACCOUNT}" \
+    "${domain_flags[@]}" || die "Failed to set ACME node configuration."
+
+  ## Force order / renewal of the certificate
+  info "Ordering ACME certificate (this may take a few minutes)..."
+  proxmox-backup-manager acme cert order \
+    --force || die "Failed to generate certificates for ${ACME_DOMAINS}."
+
+  success "ACME configuration complete."
+}
+
+###############################################################################
+## Main Script
+###############################################################################
+info "===================================="
+info " Proxmox Backup Server Bootstrap "
+info "===================================="
+
+## Load environment files
+source "${PBS_BOOTSTRAP_CONF}" || die "Bootstrap configuration file not found at ${PBS_BOOTSTRAP_CONF}."
+
+## System configuration
+info "Configuring system settings..."
+setup_system_config
+
+## Initialize users
+info "Setting up initial and backup users..."
+setup_user "${PBS_INITIAL_USERNAME}" "${PBS_INITIAL_PASSWORD}"
+setup_user "${PBS_BACKUP_USERNAME}" "${PBS_BACKUP_PASSWORD}"
+
+## Initialize datastores
+info "Setting up datastores..."
+setup_datastore "${DATASTORE_PRIMARY_NAME}" "${DATASTORE_PRIMARY_PATH}"
+setup_datastore "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
+
+## Setup data retention
+info "Setting up data retention for datastorea..."
+setup_data_retention "${DATASTORE_PRIMARY_NAME}" \
+  "${PRIMARY_KEEP_LAST}" "0" "${PRIMARY_KEEP_DAILY}" "${PRIMARY_KEEP_WEEKLY}" \
+  "${PRIMARY_KEEP_MONTHLY}" "${PRIMARY_KEEP_YEARLY}"
+setup_data_retention "${DATASTORE_SECONDARY_NAME}" \
+  "${SECONDARY_KEEP_LAST}" "${SECONDARY_KEEP_HOURLY}" "${SECONDARY_KEEP_DAILY}" \
+  "${SECONDARY_KEEP_WEEKLY}" "${SECONDARY_KEEP_MONTHLY}" "${SECONDARY_KEEP_YEARLY}"
+
+## Setup Verification
+info "Setting up verification for Primary datastores..."
+setup_verification "${DATASTORE_PRIMARY_NAME}"
+setup_verification "${DATASTORE_SECONDARY_NAME}"
+
+## Setup Sync Job
+info "Setting up Sync Job (Primary -> Secondary)..."
+setup_sync
+
+## Setup ACME
+info "Setting up ACME..."
+register_acme_account
+setup_acme_plugin
+setup_issue_certificate
+
+success "===================================="
+success " PBS Bootstrap complete!"
+success "===================================="
