@@ -36,12 +36,12 @@ download_static_curl() {
   local curl_version=""
 
   ## Check if static curl exists locally (either from backup extraction or previous run)
-  if [ -x "${CURL_PATH}" ]; then
+  if [[ -x ${CURL_PATH} ]]; then
     curl_version=$("${CURL_PATH}" -V | head -n1 | awk '{print $2}')
   fi
 
   ## Check version using binary introspection
-  if [ -x "${CURL_PATH}" ] && [ "${curl_version}" == "${CURL_VERSION}" ]; then
+  if [[ -x ${CURL_PATH} && ${curl_version} == ${CURL_VERSION} ]]; then
     info "Static curl (${CURL_VERSION}) already exists. Skipping download."
     return 0
   fi
@@ -70,12 +70,12 @@ download_omnictl() {
   local omnictl_version=""
 
   ## Check if omnictl exists locally (either from backup extraction or previous run)
-  if [ -x "${OMNICTL_PATH}" ]; then
+  if [[ -x ${OMNICTL_PATH} ]]; then
     omnictl_version=$("${OMNICTL_PATH}" -v | awk '{print $3}')
   fi
 
   ## Check version using binary introspection
-  if [ -x "${OMNICTL_PATH}" ] && [ "${omnictl_version}" == "${OMNICTL_VERSION}" ]; then
+  if [[ -x ${OMNICTL_PATH} && ${omnictl_version} == ${OMNICTL_VERSION} ]]; then
     info "Omnictl (${OMNICTL_VERSION}) already exists. Skipping download."
     return 0
   fi
@@ -198,7 +198,7 @@ setup_infra_provider_key() {
   mkdir -p "${OMNI_KEY_DIR}"
 
   ## Check if infra provider key exists locally (either from backup extraction or previous run)
-  if [ -s "${OMNI_IP_KEY_PATH}" ]; then
+  if [[ -s ${OMNI_IP_KEY_PATH} ]]; then
     info "Proxmox InfraProvider key already exists at ${OMNI_IP_KEY_PATH}. Skipping generation."
     return 0
   fi
