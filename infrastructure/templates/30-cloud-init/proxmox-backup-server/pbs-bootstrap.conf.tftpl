@@ -46,7 +46,9 @@ ACME_EMAIL="alexander@zimmermann.eu.com"
 ## ACME DNS plugin
 ACME_DNS_PLUGIN_ID="cloudflare"
 ACME_DNS_ID="cf"
-ACME_DNS_PLUGIN_DATA="CF_Account_ID=$${ACME_CF_ACCOUNT_ID},CF_Zone_ID=${ACME_CF_ZONE_ID},CF_Token=${ACME_CF_TOKEN}"
+ACME_DNS_PLUGIN_DATA="CF_Account_ID=$${ACME_CF_ACCOUNT_ID},CF_Zone_ID=$${ACME_CF_ZONE_ID},CF_Token=$${ACME_CF_TOKEN}"
 
 ## Primary and SAN domains for ACME certificates
-ACME_DOMAINS="${primary_domain},${san_domains}"
+ACME_PRIMARY_DOMAIN="backup-01.zimmermann.eu.com"
+ACME_SAN_DOMAINS="backup.zimmermann.eu.com"
+ACME_DOMAINS="$${ACME_PRIMARY_DOMAIN},$${ACME_SAN_DOMAINS}"
