@@ -99,8 +99,8 @@ def parse_algorithms(lines: List[str]) -> Dict[str, str]:
         if url_match:
             temp_url = url_match.group(1)
 
-        # Match "image_checksum_algorithm: "sha256""
-        algo_match = re.search(r'image_checksum_algorithm:\s*"(.*)"', line)
+        # Match 'image_checksum_algorithm: "sha256"' or 'image_checksum_algorithm: sha256'
+        algo_match = re.search(r'image_checksum_algorithm:\s*"?(\w+)"?', line)
         if algo_match and temp_url:
             algorithms[temp_url] = algo_match.group(1)
             temp_url = None
@@ -124,8 +124,8 @@ def update_lines(lines: List[str], algorithms: Dict[str, str], default_algo: str
     success = True
 
     for line in lines:
-        # Preserve lines that define the algorithm (don't overwrite or duplicate logic)
-        if re.search(r'image_checksum_algorithm:\s*".*"', line):
+        # Preserve lines that define the algorithm
+        if re.search(r'image_checksum_algorithm:\s*"?\w+"?', line):
             new_lines.append(line)
             continue
 
@@ -137,7 +137,7 @@ def update_lines(lines: List[str], algorithms: Dict[str, str], default_algo: str
             continue
 
         # Find and Update Checksum: search for 'image_checksum: "..."' or 'image_checksum: ...'
-        checksum_match = re.search(r'(image_checksum:\s*)("?)([a-f0-9]*)("?)', line)
+        checksum_match = re.search(r'^\s*(image_checksum:\s*)("?)([a-f0-9]*)("?)\s*$', line)
         if checksum_match and current_url:
             prefix = checksum_match.group(1)
             quote_start = checksum_match.group(2)
