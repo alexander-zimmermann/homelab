@@ -14,11 +14,13 @@ LC_ALL="de_DE.UTF-8"
 ## Certificate issuer (lego)
 ###############################################################################
 ## Cloudflare configuration
-CF_DNS_API_TOKEN="${cf_dns_api_token}"
-CF_API_EMAIL="${cf_api_email}"
+ACME_CF_TOKEN="${acme_cf_token}"
+ACME_EMAIL="alexander@zimmermann.eu.com"
 
 ## Primary and SAN domains for ACME certificates
-ACME_DOMAINS="${primary_domain},${san_domains}"
+ACME_PRIMARY_DOMAIN="cluster-mgmt-01.zimmermann.eu.com"
+ACME_SAN_DOMAINS="cluster-mgmt.zimmermann.eu.com, omni.zimmermann.eu.com"
+ACME_DOMAINS="$${ACME_PRIMARY_DOMAIN},$${ACME_SAN_DOMAINS}"
 
 ## Lego certificate output directory
 LEGO_CERT_DIR="/var/snap/lego/common/.lego/certificates"
@@ -61,13 +63,13 @@ OMNI_ACCOUNT_UUID="${omni_account_uuid}"
 OMNI_INITIAL_USERS="${omni_initial_users}"
 
 ## Omni endpoint
-OMNI_DOMAIN_NAME="${omni_domain_name}"
+OMNI_DOMAIN_NAME="omni.zimmermann.eu.com"
 OMNI_API_ENDPOINT="https://$${OMNI_DOMAIN_NAME}"
 
 ## Omni etcd encryption key
 OMNI_PRIVATE_KEY="omni.asc"
 OMNI_PRIVATE_KEY_PATH="$${OMNI_KEY_DIR}/$${OMNI_PRIVATE_KEY}"
-OMNI_PRIVATE_KEY_EMAIL="${omni_email_address}"
+OMNI_PRIVATE_KEY_EMAIL="omni@zimmermann.eu.com"
 
 ## Omni TLS key
 OMNI_TLS_KEY="$${OMNI_DOMAIN_NAME}.key"

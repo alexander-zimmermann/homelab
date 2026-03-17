@@ -111,10 +111,10 @@ setup_certificates() {
 
   ## Running lego to generate certificates
   info "Certificates not found. Generating new certificates via Let's Encrypt..."
-  CLOUDFLARE_DNS_API_TOKEN="${CF_DNS_API_TOKEN}" \
-  CLOUDFLARE_EMAIL="${CF_API_EMAIL}" \
+  CLOUDFLARE_DNS_API_TOKEN="${ACME_CF_TOKEN}" \
+  CLOUDFLARE_EMAIL="${ACME_EMAIL}" \
   lego \
-    --email="${CF_API_EMAIL}" \
+    --email="${ACME_EMAIL}" \
     --dns="cloudflare" \
     --accept-tos \
     "${domain_flags[@]}" \
