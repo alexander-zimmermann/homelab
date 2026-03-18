@@ -96,7 +96,7 @@ setup_datastore() {
   info "Initializing datastore ${datastore_name} at ${datastore_path}..."
   proxmox-backup-manager datastore create \
     "${datastore_name}" "${datastore_path}" \
-    2> /dev/null || die "Failed to create datastore ${datastore_name}."
+    &> /dev/null || die "Failed to create datastore ${datastore_name}."
 
   success "Datastore ${datastore_name} created successfully."
 }
@@ -106,30 +106,30 @@ setup_datastore() {
 ###############################################################################
 setup_data_retention() {
   local datastore_name="${1}"
-  local keep_last="${2}"
-  local keep_hourly="${3}"
-  local keep_daily="${4}"
-  local keep_weekly="${5}"
-  local keep_monthly="${6}"
-  local keep_yearly="${7}"
+  local -a labels=("last" "hourly" "daily" "weekly" "monthly" "yearly")
+  local -a values=("${@:2}")
+  local -a args=()
+
+  ## Build arguments for data retention policy
+  for i in "${!labels[@]}"; do
+    local val="${values[$i]}"
+    if [[ -n "${val}" && "${val}" -gt 0 ]]; then
+      args+=("--keep-${labels[$i]}" "${val}")
+    fi
+  done
 
   ## Update retention retention policy
-  info "Setting up data retention policy for ${datastore_name}..."
+  info "Update data retention policy for ${datastore_name}..."
   proxmox-backup-manager datastore update "${datastore_name}" \
-    --keep-last "${keep_last}" \
-    --keep-hourly "${keep_hourly}" \
-    --keep-daily "${keep_daily}" \
-    --keep-weekly "${keep_weekly}" \
-    --keep-monthly "${keep_monthly}" \
-    --keep-year "${keep_yearly}" || die "Could not update data retention policy for ${datastore_name}."
+    "${args[@]}" || die "Could not update data retention policy for ${datastore_name}."
 
   ## Prune job
-  info "Setting up prune job for ${datastore_name}..."
+  info "Update prune job for ${datastore_name}..."
   proxmox-backup-manager datastore update "${datastore_name}" \
     --prune-schedule "daily" || die "Could not update prune schedule for ${datastore_name}."
 
   ## Garbage collection job
-  info "Setting up garbage collection job for ${datastore_name}..."
+  info "Update garbage collection job for ${datastore_name}..."
   proxmox-backup-manager datastore update "${datastore_name}" \
     --gc-schedule "Sun 04:00" || die "Could not update garbage collection schedule for ${datastore_name}."
 
@@ -280,7 +280,7 @@ setup_datastore "${DATASTORE_PRIMARY_NAME}" "${DATASTORE_PRIMARY_PATH}"
 setup_datastore "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
 
 ## Setup data retention
-info "Setting up data retention for datastorea..."
+info "Setting up data retention for datastores..."
 setup_data_retention "${DATASTORE_PRIMARY_NAME}" \
   "${PRIMARY_KEEP_LAST}" "0" "${PRIMARY_KEEP_DAILY}" "${PRIMARY_KEEP_WEEKLY}" \
   "${PRIMARY_KEEP_MONTHLY}" "${PRIMARY_KEEP_YEARLY}"
