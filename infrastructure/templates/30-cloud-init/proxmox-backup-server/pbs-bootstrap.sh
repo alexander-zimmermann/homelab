@@ -56,7 +56,7 @@ setup_system_config() {
 ###############################################################################
 ## Helper: User setup
 ###############################################################################
-setup_user() {
+create_user() {
   local user="${1}@pbs"
   local password="${2}"
 
@@ -71,12 +71,23 @@ setup_user() {
   proxmox-backup-manager user create "${user}" \
     --password "${password}" || die "Failed to create user ${user}."
 
-  ## Assigning Admin role
-  info "Assigning Admin role to ${user}..."
-  proxmox-backup-manager acl update / "Admin" \
+  success "User ${user} created."
+}
+
+###############################################################################
+## Helper: ACL setup
+###############################################################################
+setup_acl() {
+  local user="${1}@pbs"
+  local role="${2}"
+  local path="${3}"
+
+  ## Assigning role
+  info "Assigning ${role} role to ${user} on ${path}..."
+  proxmox-backup-manager acl update "${path}" "${role}" \
     --auth-id "${user}" || die "Failed to assign role to ${user}."
 
-  success "User ${user} configured as Admin."
+  success "Assigned ${role} role to ${user} on ${path}."
 }
 
 ###############################################################################
@@ -114,7 +125,6 @@ move_datastore_to_nfs() {
     info "Datastore ${name} is already mounted via NFS at ${path}."
     return 0
   fi
-
 
   # Find NFS remote from /etc/fstab based on the target path
   local remote=$(awk -v p="$path" '$2 == p {print $1}' /etc/fstab)
@@ -320,15 +330,20 @@ source "${PBS_BOOTSTRAP_CONF}" || die "Bootstrap configuration file not found at
 info "Configuring system settings..."
 setup_system_config
 
-## Initialize users
-info "Setting up initial and backup users..."
-setup_user "${PBS_INITIAL_USERNAME}" "${PBS_INITIAL_PASSWORD}"
-setup_user "${PBS_BACKUP_USERNAME}" "${PBS_BACKUP_PASSWORD}"
-
 ## Initialize datastores
 info "Setting up datastores..."
 setup_datastore "${DATASTORE_PRIMARY_NAME}" "${DATASTORE_PRIMARY_PATH}"
 setup_datastore "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
+
+## Create initial user
+info "Setting up initial user..."
+create_user "${PBS_INITIAL_USERNAME}" "${PBS_INITIAL_PASSWORD}"
+setup_acl "${PBS_INITIAL_USERNAME}" "Admin" "/"
+
+## Create backup user
+info "Setting up backup user..."
+create_user "${PBS_BACKUP_USERNAME}" "${PBS_BACKUP_PASSWORD}"
+setup_acl "${PBS_BACKUP_USERNAME}" "DatastoreAdmin" "/datastore/${DATASTORE_PRIMARY_NAME}"
 
 ## Workaround: Initialize the datastore locally and then move the metadata to the NFS share
 info "Moving datastore metadata to NFS..."
