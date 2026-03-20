@@ -102,13 +102,68 @@ setup_datastore() {
 }
 
 ###############################################################################
+## Helper: Move datastore to NFS (Workaround for direct NFS creation issues)
+###############################################################################
+move_datastore_to_nfs() {
+  local name="${1}"
+  local path="${2}"
+  local temp_mount="/tmp/unas"
+
+  ## Check if datastore is already mounted via NFS
+  if findmnt -T "${path}" -n -o FSTYPE | grep -q "nfs"; then
+    info "Datastore ${name} is already mounted via NFS at ${path}."
+    return 0
+  fi
+
+
+  # Find NFS remote from /etc/fstab based on the target path
+  local remote=$(awk -v p="$path" '$2 == p {print $1}' /etc/fstab)
+
+  if [[ -z "${remote}" ]]; then
+    die "Could not find NFS remote for ${path} in /etc/fstab."
+  fi
+
+  ## Prepare temp mount and NFS store
+  info "Preparing temporary NFS mount at ${temp_mount}..."
+  mkdir -p "${temp_mount}"
+  mount -t nfs "${remote}" "${temp_mount}" || die "Failed to mount NFS to ${temp_mount}."
+
+  ## Copy metadata from local to NFS
+  info "Copying datastore metadata to NFS store..."
+  cp -a "${path}/.chunks" "${temp_mount}/"
+  cp -a "${path}/.lock" "${temp_mount}/"
+
+  ## Unmount temp
+  info "Unmounting temporary storage..."
+  umount "${temp_mount}" || die "Failed to unmount ${temp_mount}."
+
+  ## Clear local metadata before mounting over it
+  rm -rf "${path}/.chunks" "${path}/.lock"
+
+  mount "${path}" || die "Failed to mount final NFS datastore at ${path}."
+
+  ## Cleanup
+  info "Cleaning up temporary mount point..."
+  rmdir "${temp_mount}"
+
+  success "NFS Datastore ${name} configured successfully."
+}
+
+###############################################################################
 ## Helper: Data retention setup (GC & Pruning)
 ###############################################################################
 setup_data_retention() {
   local datastore_name="${1}"
+  local job_id="prune-${datastore_name}"
   local -a labels=("last" "hourly" "daily" "weekly" "monthly" "yearly")
   local -a values=("${@:2}")
   local -a args=()
+
+  ## Check if prune job is already configured for datastore
+  if proxmox-backup-manager prune-job list | grep -q "${job_id}"; then
+    info "Prune job ${job_id} already exists."
+    return 0
+  fi
 
   ## Build arguments for data retention policy
   for i in "${!labels[@]}"; do
@@ -118,17 +173,13 @@ setup_data_retention() {
     fi
   done
 
-  ## Update retention retention policy
-  info "Update data retention policy for ${datastore_name}..."
-  proxmox-backup-manager datastore update "${datastore_name}" \
-    "${args[@]}" || die "Could not update data retention policy for ${datastore_name}."
+  ## Prune job (replaces direct datastore prune settings)
+  proxmox-backup-manager prune-job create "${job_id}" \
+    --store "${datastore_name}" \
+    --schedule "daily" \
+    "${args[@]}" &> /dev/null || die "Could not create prune job for ${datastore_name}."
 
-  ## Prune job
-  info "Update prune job for ${datastore_name}..."
-  proxmox-backup-manager datastore update "${datastore_name}" \
-    --prune-schedule "daily" || die "Could not update prune schedule for ${datastore_name}."
-
-  ## Garbage collection job
+  ## Garbage collection job (still part of datastore configuration)
   info "Update garbage collection job for ${datastore_name}..."
   proxmox-backup-manager datastore update "${datastore_name}" \
     --gc-schedule "Sun 04:00" || die "Could not update garbage collection schedule for ${datastore_name}."
@@ -177,7 +228,7 @@ setup_sync() {
     --store "${DATASTORE_SECONDARY_NAME}" \
     --schedule "daily" || die "Could not create sync job."
 
-  success "Sync job for ${datastore_name} set up successfully."
+  success "Sync job for between primary and secondary datastores set up successfully."
 }
 
 ###############################################################################
@@ -194,7 +245,7 @@ register_acme_account() {
   info "Registering ACME account ${ACME_ACCOUNT} (${ACME_EMAIL})..."
   printf "y" | \
   proxmox-backup-manager acme account register "${ACME_ACCOUNT}" "${ACME_EMAIL}" \
-    --directory "${ACME_DIRECTORY}" || die "Failed to register ACME account."
+    --directory "${ACME_DIRECTORY}"  &> /dev/null || die "Failed to register ACME account."
 
   success "ACME account ${ACME_ACCOUNT} set up successfully."
 }
@@ -278,6 +329,10 @@ setup_user "${PBS_BACKUP_USERNAME}" "${PBS_BACKUP_PASSWORD}"
 info "Setting up datastores..."
 setup_datastore "${DATASTORE_PRIMARY_NAME}" "${DATASTORE_PRIMARY_PATH}"
 setup_datastore "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
+
+## Workaround: Initialize the datastore locally and then move the metadata to the NFS share
+info "Moving datastore metadata to NFS..."
+move_datastore_to_nfs "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
 
 ## Setup data retention
 info "Setting up data retention for datastores..."
