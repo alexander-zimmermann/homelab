@@ -6,12 +6,14 @@ image:
     image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
     image_checksum: 0e5edfbe49b0cca779a4a7dc9738f34c92e3ff481ee1f7d5c4e93e180654fe275eb8c96397224c6ca04a2910eaaed27489f431573ebe4cb5412ef257888b2b18
     image_checksum_algorithm: sha512
+    image_checksum_url: https://cloud.debian.org/images/cloud/trixie/latest/SHA512SUMS
 
   vm_ubuntu_noble:
     image_type: import
     image_filename: ubuntu-noble-server-cloudimg-amd64.qcow2
     image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
     image_checksum: 931dba2bec09d574f032485bda386c664481ef01208371957af28fad40bc7f2d
+    image_checksum_url: https://cloud-images.ubuntu.com/noble/current/SHA256SUMS
 
   ## Talos images
   vm_talos_1_12_5_cp-prod:
