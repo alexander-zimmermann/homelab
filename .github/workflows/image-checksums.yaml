@@ -1,0 +1,48 @@
+name: "Maintenance: Image Checksums"
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # Daily at 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-checksums:
+    name: Update Checksums
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Update Debian and Ubuntu checksums
+        run: python3 .github/scripts/update_checksums.py debian ubuntu
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Pull Request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore(images): update Debian/Ubuntu image checksums"
+          branch: automation/image-checksums
+          delete-branch: true
+          title: "chore(images): update Debian/Ubuntu image checksums"
+          body: |
+            Automated checksum update for Debian and Ubuntu cloud images.
+
+            The `latest`/`current` image URLs point to rolling releases.
+            This PR was created by the scheduled `image-checksums` workflow
+            after detecting a checksum mismatch.
+          labels: |
+            area/infrastructure
+            type/patch

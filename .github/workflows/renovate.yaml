@@ -53,7 +53,11 @@ jobs:
           RENOVATE_DRY_RUN: ${{ inputs.dryRun }}
           RENOVATE_PLATFORM: github
           RENOVATE_PLATFORM_COMMIT: "true"
-          RENOVATE_ALLOWED_POST_UPGRADE_COMMANDS: '["^python3 .github/scripts/update_checksums.py$"]'
+          RENOVATE_ALLOWED_POST_UPGRADE_COMMANDS: >-
+            [
+              "^python3 .github/scripts/update_versions.py$",
+              "^python3 .github/scripts/update_checksums.py talos$"
+            ]
         with:
           token: ${{ steps.app-token.outputs.token }}
           renovate-version: ${{ inputs.version || 'latest' }}
