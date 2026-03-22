@@ -109,7 +109,7 @@ resource "proxmox_virtual_environment_file" "vendor_config" {
       write_files:
 %{for f in var.write_files~}
         - path: ${f.path}
-          content: |
+          content: ${try(f.trim, false) ? "|-" : "|"}
             ${indent(12, f.content)}
           permissions: "${f.permissions}"
           owner: "${f.owner}"
