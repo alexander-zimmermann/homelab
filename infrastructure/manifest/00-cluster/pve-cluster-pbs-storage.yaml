@@ -1,0 +1,7 @@
+pve_cluster_pbs_storage:
+  pbs-primary:
+    pbs:
+      server: "backup-01.zimmermann.eu.com"
+      username: "backup"
+      datastore: "datastore-primary"
+  # nodes: [pve-1, pve-2]  # optional, empty = all nodes

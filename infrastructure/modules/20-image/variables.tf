@@ -1,3 +1,6 @@
+###############################################################################
+## Storage configuration
+###############################################################################
 variable "node" {
   description = <<EOT
     Name of the Proxmox node where the image will be downloaded.
@@ -14,6 +17,10 @@ variable "datastore" {
   default     = "local"
 }
 
+
+###############################################################################
+## Image source and verification
+###############################################################################
 variable "image_filename" {
   description = <<EOT
     Filename to use when saving the image on the Proxmox node. If set to `null`,

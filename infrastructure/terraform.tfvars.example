@@ -24,6 +24,17 @@ pve_cluster_acme_cf_account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"
 
 
 ###############################################################################
+## PVE cluster - PBS storage configuration
+###############################################################################
+pve_cluster_pbs_passwords = {
+  pbs-primary = "YOUR_PBS_BACKUP_PASSWORD"
+}
+pve_cluster_pbs_fingerprints = {
+  pbs-primary = "AA:BB:CC:..."  # only needed for self-signed certs
+}
+
+
+###############################################################################
 ## PVE node - core configuration
 ###############################################################################
 pve_node_core_subscription_keys = {

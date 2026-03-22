@@ -5,7 +5,7 @@ variable "pve_cluster_token_id" {
   description = <<EOT
     Identifier of the Proxmox API token used for authentication. Must follow
     the format `username!tokenname`, where `username` includes the realm (e.g.,
-    `admint@pam!mytoken`).
+    `admint@pam!mytoken`). Sensitive value.
   EOT
   type        = string
   sensitive   = true
@@ -39,7 +39,10 @@ variable "pve_cluster_password" {
 ## PVE cluster - user configuration
 ###############################################################################
 variable "pve_cluster_user_passwords" {
-  description = "Map of username => password for PVE users defined in manifest/10-pve.yaml."
+  description = <<EOT
+    Map of username => password for PVE users defined in manifest/00-cluster/pve-cluster-users.yaml.
+    This allows setting user passwords during provisioning. Sensitive value.
+  EOT
   type        = map(string)
   sensitive   = true
 }
@@ -76,12 +79,36 @@ variable "pve_cluster_acme_cf_account_id" {
 
 
 ###############################################################################
+## PVE cluster - PBS storage configuration
+###############################################################################
+variable "pve_cluster_pbs_passwords" {
+  description = <<EOT
+    Map of PBS storage ID => password for the PBS backup user defined in
+    manifest/00-cluster/pve-cluster-pbs-storage.yaml. Sensitive value.
+  EOT
+  type        = map(string)
+  sensitive   = true
+}
+
+variable "pve_cluster_pbs_fingerprints" {
+  description = <<EOT
+    Map of PBS storage ID => TLS certificate fingerprint for certificate pinning. Optional
+    when PBS uses a publicly-trusted ACME cert (Let's Encrypt). If needed, obtain via:
+    proxmox-backup-manager cert info | grep Fingerprint. Sensitive value.
+  EOT
+  type        = map(string)
+  sensitive   = true
+  default     = {}
+}
+
+
+###############################################################################
 ## PVE node - core configuration
 ###############################################################################
 variable "pve_node_core_subscription_keys" {
   description = <<EOT
-    Map of Proxmox subscription keys (node name => key).
-    If a node is not in the map or has an empty key, no subscription is set.
+    Map of Proxmox subscription keys (node name => key). If a node is not in the map
+    or has an empty key, no subscription is set. Sensitive value.
   EOT
   type        = map(string)
   default     = {}
@@ -93,7 +120,7 @@ variable "pve_node_core_subscription_keys" {
 ## Cloud-Init configurations
 ###############################################################################
 variable "ci_secrets" {
-  description = "A map of secrets used for cloud-init injection (e.g., Lego tokens)."
+  description = "A map of secrets used for cloud-init injection (e.g., Lego tokens). Sensitive value."
   type        = map(any)
   sensitive   = true
   default     = {}
