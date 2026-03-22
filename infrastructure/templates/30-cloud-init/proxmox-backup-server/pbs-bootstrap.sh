@@ -54,6 +54,36 @@ setup_system_config() {
 }
 
 ###############################################################################
+## Helper: Disable subscription nag
+###############################################################################
+disable_subscription_nag() {
+  local nag_script="/etc/apt/apt.conf.d/no-nag-script"
+
+  if [[ -f "${nag_script}" ]]; then
+    info "Subscription nag already disabled."
+    return 0
+  fi
+
+  info "Disabling subscription nag..."
+  ## APT hook: patches proxmoxlib.js after every package install/upgrade
+  local hook
+  hook='DPkg::Post-Invoke {'
+  hook+=' "if [ -s /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js ]'
+  hook+=' && ! grep -q -F '"'"'NoMoreNagging'"'"''
+  hook+='     /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js;'
+  hook+=' then sed -i '"'"'/data\.status/{s/\!//;s/active/NoMoreNagging/}'"'"''
+  hook+='     /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js;'
+  hook+=' fi" };'
+  echo "${hook}" > "${nag_script}"
+
+  ## Reinstall to immediately trigger the hook
+  apt-get --reinstall install proxmox-widget-toolkit -y &>/dev/null \
+    || die "Failed to reinstall proxmox-widget-toolkit."
+
+  success "Subscription nag disabled."
+}
+
+###############################################################################
 ## Helper: User setup
 ###############################################################################
 create_user() {
@@ -329,6 +359,10 @@ source "${PBS_BOOTSTRAP_CONF}" || die "Bootstrap configuration file not found at
 ## System configuration
 info "Configuring system settings..."
 setup_system_config
+
+## Disable subscription nag
+info "Disabling subscription nag..."
+disable_subscription_nag
 
 ## Initialize datastores
 info "Setting up datastores..."
