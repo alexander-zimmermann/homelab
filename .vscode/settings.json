@@ -4,9 +4,7 @@
   "editor.fontFamily": "FiraCode Nerd Font",
   "editor.fontLigatures": true,
   "editor.hover.delay": 1500,
-  "editor.rulers": [
-    100
-  ],
+  "editor.rulers": [100],
   "editor.stickyScroll.enabled": false,
 
   // --- Explorer & File Handling ---
@@ -24,6 +22,9 @@
 
   // --- Material Icon Theme - Color Saturation ---
   "material-icon-theme.saturation": 0.5,
+
+  // --- Material Icon Theme - Default Folder Color ---
+  "material-icon-theme.folders.color": "#42a5f5",
 
   // --- Material Icon Theme - File Mapping ---
   "material-icon-theme.files.associations": {
@@ -63,8 +64,6 @@
   "yaml.schemaStore.enable": true,
   "yaml.schemas": {
     "kubernetes": "./kubernetes/**/*.yaml",
-    "https://taskfile.dev/schema.json": [
-      "/tasks/*"
-    ]
+    "https://taskfile.dev/schema.json": ["/tasks/*"]
   }
 }
