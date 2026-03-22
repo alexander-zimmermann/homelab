@@ -61,6 +61,28 @@ module "pve_cluster_acme" {
 
 
 ###############################################################################
+## PVE cluster - PBS storage configuration
+###############################################################################
+module "pve_cluster_pbs_storage" {
+  source   = "./modules/00-pve-cluster-pbs-storage"
+  for_each = local.pve_cluster.pbs_storage
+
+  depends_on = [module.fleet_vm["backup_server_01"]]
+
+  ## Storage identity
+  storage_id = each.key
+  server     = each.value.pbs.server
+  datastore  = each.value.pbs.datastore
+  nodes      = try(each.value.nodes, null)
+
+  ## PBS connection
+  username    = each.value.pbs.username
+  password    = var.pve_cluster_pbs_passwords[each.key]
+  fingerprint = try(var.pve_cluster_pbs_fingerprints[each.key], null)
+}
+
+
+###############################################################################
 ## PVE node - core configuration
 ###############################################################################
 module "pve_node_core" {

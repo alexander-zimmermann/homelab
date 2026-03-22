@@ -16,20 +16,21 @@ locals {
 
   ## Aggregate manifests by top-level keys
   manifest = {
-    pve_cluster       = merge([for m in local.decoded_manifests : try(m.pve_cluster, {})]...)
-    pve_cluster_users = merge([for m in local.decoded_manifests : try(m.pve_cluster_users, {})]...)
-    pve_cluster_acme  = merge([for m in local.decoded_manifests : try(m.pve_cluster_acme, {})]...)
-    pve_node_core     = merge([for m in local.decoded_manifests : try(m.pve_node_core, {})]...)
-    pve_node_network  = merge([for m in local.decoded_manifests : try(m.pve_node_network, {})]...)
-    image             = merge([for m in local.decoded_manifests : try(m.image, {})]...)
-    ci_user_config    = merge([for m in local.decoded_manifests : try(m.ci_user_config, {})]...)
-    ci_vendor_config  = merge([for m in local.decoded_manifests : try(m.ci_vendor_config, {})]...)
-    ci_network_config = merge([for m in local.decoded_manifests : try(m.ci_network_config, {})]...)
-    ci_meta_config    = merge([for m in local.decoded_manifests : try(m.ci_meta_config, {})]...)
-    template_vm       = merge([for m in local.decoded_manifests : try(m.template_vm, {})]...)
-    template_lxc      = merge([for m in local.decoded_manifests : try(m.template_lxc, {})]...)
-    fleet_vm          = merge([for m in local.decoded_manifests : try(m.fleet_vm, {})]...)
-    fleet_lxc         = merge([for m in local.decoded_manifests : try(m.fleet_lxc, {})]...)
+    pve_cluster             = merge([for m in local.decoded_manifests : try(m.pve_cluster, {})]...)
+    pve_cluster_users       = merge([for m in local.decoded_manifests : try(m.pve_cluster_users, {})]...)
+    pve_cluster_acme        = merge([for m in local.decoded_manifests : try(m.pve_cluster_acme, {})]...)
+    pve_cluster_pbs_storage = merge([for m in local.decoded_manifests : try(m.pve_cluster_pbs_storage, {})]...)
+    pve_node_core           = merge([for m in local.decoded_manifests : try(m.pve_node_core, {})]...)
+    pve_node_network        = merge([for m in local.decoded_manifests : try(m.pve_node_network, {})]...)
+    image                   = merge([for m in local.decoded_manifests : try(m.image, {})]...)
+    ci_user_config          = merge([for m in local.decoded_manifests : try(m.ci_user_config, {})]...)
+    ci_vendor_config        = merge([for m in local.decoded_manifests : try(m.ci_vendor_config, {})]...)
+    ci_network_config       = merge([for m in local.decoded_manifests : try(m.ci_network_config, {})]...)
+    ci_meta_config          = merge([for m in local.decoded_manifests : try(m.ci_meta_config, {})]...)
+    template_vm             = merge([for m in local.decoded_manifests : try(m.template_vm, {})]...)
+    template_lxc            = merge([for m in local.decoded_manifests : try(m.template_lxc, {})]...)
+    fleet_vm                = merge([for m in local.decoded_manifests : try(m.fleet_vm, {})]...)
+    fleet_lxc               = merge([for m in local.decoded_manifests : try(m.fleet_lxc, {})]...)
   }
 
   ## Shortcuts
@@ -39,11 +40,12 @@ locals {
     block_storage = try(local.manifest.pve_cluster.defaults.block_storage, {})
   }
   pve_cluster = {
-    api   = try(local.manifest.pve_cluster.api_connection, {})
-    ssh   = try(local.manifest.pve_cluster.ssh_connection, {})
-    nodes = try(local.manifest.pve_cluster.nodes, {})
-    users = try(local.manifest.pve_cluster_users.users, {})
-    acme  = try(local.manifest.pve_cluster_acme, {})
+    api         = try(local.manifest.pve_cluster.api_connection, {})
+    ssh         = try(local.manifest.pve_cluster.ssh_connection, {})
+    nodes       = try(local.manifest.pve_cluster.nodes, {})
+    users       = try(local.manifest.pve_cluster_users.users, {})
+    acme        = try(local.manifest.pve_cluster_acme, {})
+    pbs_storage = try(local.manifest.pve_cluster_pbs_storage, {})
   }
   pve_node = {
     core = try(local.manifest.pve_node_core, {})

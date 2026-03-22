@@ -28,6 +28,21 @@ output "acme_order_output" {
 
 
 ###############################################################################
+## PVE cluster - PBS storage configuration
+###############################################################################
+output "pbs_ready_output" {
+  description = <<EOT
+    Log output from the PBS readiness polling script for each configured PBS
+    storage backend, which waits until the PBS API is reachable and the
+    configured datastore is available. Marked as sensitive to avoid exposing
+    credentials or internal system details.
+  EOT
+  value       = { for k, v in module.pve_cluster_pbs_storage : k => v.pbs_ready_output }
+  sensitive   = true
+}
+
+
+###############################################################################
 ## PVE node - core configuration
 ###############################################################################
 output "local_content_type_output" {
