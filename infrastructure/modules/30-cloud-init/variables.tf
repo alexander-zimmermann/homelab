@@ -206,7 +206,25 @@ variable "fs_setup" {
 variable "write_files" {
   description = <<EOT
     List of files to write to the VM filesystem during cloud-init execution.
-    Each item is an object containing path, content, permissions, owner, and encoding.
+
+    Content source (mutually exclusive, in priority order):
+      - template_file: Path to a .tftpl template rendered via templatefile().
+      - content_file:  Path to a static file read via file().
+      - content:       Inline string content.
+
+    Secret injection:
+      - secret_ref: Key into var.ci_secrets to merge into the template context.
+      - vars:       Additional variables merged into the template context.
+
+    File attributes:
+      - path:        Destination path on the VM filesystem.
+      - permissions: File mode (default: "0644").
+      - owner:       File owner in "user:group" format (default: "root:root").
+      - encoding:    cloud-init encoding type (default: "text/plain").
+      - append:      Append to existing file instead of overwriting (default: false).
+      - defer:       Write file in a later cloud-init stage (default: false).
+      - trim:        Strip trailing newline from content. Automatically set to true
+                     when secret_ref is provided (default: false).
   EOT
   type = list(object({
     path          = string
@@ -220,6 +238,7 @@ variable "write_files" {
     encoding      = optional(string, "text/plain")
     append        = optional(bool, false)
     defer         = optional(bool, false)
+    trim          = optional(bool, false)
   }))
   default = []
 }

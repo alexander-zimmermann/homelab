@@ -292,21 +292,22 @@ module "cloud_init_vendor_config" {
       encoding    = try(wf.encoding, "text/plain")
       append      = try(wf.append, false)
       defer       = try(wf.defer, false)
+      trim        = try(wf.secret_ref, null) != null
       content = try(wf.template_file, null) != null ? templatefile(wf.template_file, merge(
         ## Priority 1: Render template with merged context (Manifest Vars + OpenTofu Secrets)
         try(wf.vars, {}),
         try(wf.secret_ref, null) != null ? try(var.ci_secrets[wf.secret_ref], {}) : {}
-        )) : join("\n", [
-        ## Priority 2: Auto-generate Key-Value list from Secrets (if no template)
-        try(wf.secret_ref, null) != null ? join("\n", [for k, v in var.ci_secrets[wf.secret_ref] : "${k}=\"${v}\""]) : "",
-        ## Priority 3: Auto-generate Key-Value list from Vars (if no template)
-        try(wf.secret_ref, null) != null && try(wf.vars, null) != null ? join("\n", [for k, v in wf.vars : "${k}=\"${v}\""]) : "",
-        ## Priority 4: Fallback to standard content/file logic
-        try(wf.secret_ref, null) == null ? (
-          try(wf.content_file, null) != null ? file(wf.content_file) :
-          try(wf.content, "")
-        ) : ""
-      ])
+        )) : join("\n", compact([
+          ## Priority 2: Auto-generate Key-Value list from Secrets (if no template)
+          try(wf.secret_ref, null) != null ? join("\n", [for k, v in var.ci_secrets[wf.secret_ref] : "${k}=\"${v}\""]) : "",
+          ## Priority 3: Auto-generate Key-Value list from Vars (if no template)
+          try(wf.secret_ref, null) != null && try(wf.vars, null) != null ? join("\n", [for k, v in wf.vars : "${k}=\"${v}\""]) : "",
+          ## Priority 4: Fallback to standard content/file logic
+          try(wf.secret_ref, null) == null ? (
+            try(wf.content_file, null) != null ? file(wf.content_file) :
+            try(wf.content, "")
+          ) : ""
+      ]))
     }
   ]
 }

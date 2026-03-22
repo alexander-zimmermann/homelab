@@ -286,7 +286,7 @@ info "Ensuring GPG state is present..."
 setup_gpg
 
 ## Create .env symlink for docker compose
-ln -sf "${OMNI_CONF}" "${OMNI_LOCAL_DIR}/.env"
+ln -sf "${OMNI_BOOTSTRAP_CONF}" "${OMNI_LOCAL_DIR}/.env"
 
 ## Deploy Core Omni Service
 info "Deploying core Omni service and waiting for API to become healthy..."
