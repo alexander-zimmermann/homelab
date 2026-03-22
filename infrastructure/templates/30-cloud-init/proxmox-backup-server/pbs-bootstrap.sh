@@ -170,6 +170,7 @@ move_datastore_to_nfs() {
 
   ## Copy metadata from local to NFS
   info "Copying datastore metadata to NFS store..."
+  rm -rf /tmp/unas/.chunks /tmp/unas/.lock
   cp -a --no-preserve=ownership "${path}/.chunks" "${temp_mount}/"
   cp -a --no-preserve=ownership "${path}/.lock" "${temp_mount}/"
 
