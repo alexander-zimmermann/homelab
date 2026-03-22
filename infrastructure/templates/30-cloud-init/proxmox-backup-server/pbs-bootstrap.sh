@@ -56,7 +56,7 @@ setup_system_config() {
 ###############################################################################
 ## Helper: User setup
 ###############################################################################
-setup_user() {
+create_user() {
   local user="${1}@pbs"
   local password="${2}"
 
@@ -71,12 +71,23 @@ setup_user() {
   proxmox-backup-manager user create "${user}" \
     --password "${password}" || die "Failed to create user ${user}."
 
-  ## Assigning Admin role
-  info "Assigning Admin role to ${user}..."
-  proxmox-backup-manager acl update / "Admin" \
+  success "User ${user} created."
+}
+
+###############################################################################
+## Helper: ACL setup
+###############################################################################
+setup_acl() {
+  local user="${1}@pbs"
+  local role="${2}"
+  local path="${3}"
+
+  ## Assigning role
+  info "Assigning ${role} role to ${user} on ${path}..."
+  proxmox-backup-manager acl update "${path}" "${role}" \
     --auth-id "${user}" || die "Failed to assign role to ${user}."
 
-  success "User ${user} configured as Admin."
+  success "Assigned ${role} role to ${user} on ${path}."
 }
 
 ###############################################################################
@@ -96,9 +107,56 @@ setup_datastore() {
   info "Initializing datastore ${datastore_name} at ${datastore_path}..."
   proxmox-backup-manager datastore create \
     "${datastore_name}" "${datastore_path}" \
-    2> /dev/null || die "Failed to create datastore ${datastore_name}."
+    &> /dev/null || die "Failed to create datastore ${datastore_name}."
 
   success "Datastore ${datastore_name} created successfully."
+}
+
+###############################################################################
+## Helper: Move datastore to NFS (Workaround for direct NFS creation issues)
+###############################################################################
+move_datastore_to_nfs() {
+  local name="${1}"
+  local path="${2}"
+  local temp_mount="/tmp/unas"
+
+  ## Check if datastore is already mounted via NFS
+  if findmnt -T "${path}" -n -o FSTYPE | grep -q "nfs"; then
+    info "Datastore ${name} is already mounted via NFS at ${path}."
+    return 0
+  fi
+
+  # Find NFS remote from /etc/fstab based on the target path
+  local remote=$(awk -v p="$path" '$2 == p {print $1}' /etc/fstab)
+
+  if [[ -z "${remote}" ]]; then
+    die "Could not find NFS remote for ${path} in /etc/fstab."
+  fi
+
+  ## Prepare temp mount and NFS store
+  info "Preparing temporary NFS mount at ${temp_mount}..."
+  mkdir -p "${temp_mount}"
+  mount -t nfs "${remote}" "${temp_mount}" || die "Failed to mount NFS to ${temp_mount}."
+
+  ## Copy metadata from local to NFS
+  info "Copying datastore metadata to NFS store..."
+  cp -a "${path}/.chunks" "${temp_mount}/"
+  cp -a "${path}/.lock" "${temp_mount}/"
+
+  ## Unmount temp
+  info "Unmounting temporary storage..."
+  umount "${temp_mount}" || die "Failed to unmount ${temp_mount}."
+
+  ## Clear local metadata before mounting over it
+  rm -rf "${path}/.chunks" "${path}/.lock"
+
+  mount "${path}" || die "Failed to mount final NFS datastore at ${path}."
+
+  ## Cleanup
+  info "Cleaning up temporary mount point..."
+  rmdir "${temp_mount}"
+
+  success "NFS Datastore ${name} configured successfully."
 }
 
 ###############################################################################
@@ -106,30 +164,33 @@ setup_datastore() {
 ###############################################################################
 setup_data_retention() {
   local datastore_name="${1}"
-  local keep_last="${2}"
-  local keep_hourly="${3}"
-  local keep_daily="${4}"
-  local keep_weekly="${5}"
-  local keep_monthly="${6}"
-  local keep_yearly="${7}"
+  local job_id="prune-${datastore_name}"
+  local -a labels=("last" "hourly" "daily" "weekly" "monthly" "yearly")
+  local -a values=("${@:2}")
+  local -a args=()
 
-  ## Update retention retention policy
-  info "Setting up data retention policy for ${datastore_name}..."
-  proxmox-backup-manager datastore update "${datastore_name}" \
-    --keep-last "${keep_last}" \
-    --keep-hourly "${keep_hourly}" \
-    --keep-daily "${keep_daily}" \
-    --keep-weekly "${keep_weekly}" \
-    --keep-monthly "${keep_monthly}" \
-    --keep-year "${keep_yearly}" || die "Could not update data retention policy for ${datastore_name}."
+  ## Check if prune job is already configured for datastore
+  if proxmox-backup-manager prune-job list | grep -q "${job_id}"; then
+    info "Prune job ${job_id} already exists."
+    return 0
+  fi
 
-  ## Prune job
-  info "Setting up prune job for ${datastore_name}..."
-  proxmox-backup-manager datastore update "${datastore_name}" \
-    --prune-schedule "daily" || die "Could not update prune schedule for ${datastore_name}."
+  ## Build arguments for data retention policy
+  for i in "${!labels[@]}"; do
+    local val="${values[$i]}"
+    if [[ -n "${val}" && "${val}" -gt 0 ]]; then
+      args+=("--keep-${labels[$i]}" "${val}")
+    fi
+  done
 
-  ## Garbage collection job
-  info "Setting up garbage collection job for ${datastore_name}..."
+  ## Prune job (replaces direct datastore prune settings)
+  proxmox-backup-manager prune-job create "${job_id}" \
+    --store "${datastore_name}" \
+    --schedule "daily" \
+    "${args[@]}" &> /dev/null || die "Could not create prune job for ${datastore_name}."
+
+  ## Garbage collection job (still part of datastore configuration)
+  info "Update garbage collection job for ${datastore_name}..."
   proxmox-backup-manager datastore update "${datastore_name}" \
     --gc-schedule "Sun 04:00" || die "Could not update garbage collection schedule for ${datastore_name}."
 
@@ -177,7 +238,7 @@ setup_sync() {
     --store "${DATASTORE_SECONDARY_NAME}" \
     --schedule "daily" || die "Could not create sync job."
 
-  success "Sync job for ${datastore_name} set up successfully."
+  success "Sync job for between primary and secondary datastores set up successfully."
 }
 
 ###############################################################################
@@ -194,7 +255,7 @@ register_acme_account() {
   info "Registering ACME account ${ACME_ACCOUNT} (${ACME_EMAIL})..."
   printf "y" | \
   proxmox-backup-manager acme account register "${ACME_ACCOUNT}" "${ACME_EMAIL}" \
-    --directory "${ACME_DIRECTORY}" || die "Failed to register ACME account."
+    --directory "${ACME_DIRECTORY}"  &> /dev/null || die "Failed to register ACME account."
 
   success "ACME account ${ACME_ACCOUNT} set up successfully."
 }
@@ -269,18 +330,27 @@ source "${PBS_BOOTSTRAP_CONF}" || die "Bootstrap configuration file not found at
 info "Configuring system settings..."
 setup_system_config
 
-## Initialize users
-info "Setting up initial and backup users..."
-setup_user "${PBS_INITIAL_USERNAME}" "${PBS_INITIAL_PASSWORD}"
-setup_user "${PBS_BACKUP_USERNAME}" "${PBS_BACKUP_PASSWORD}"
-
 ## Initialize datastores
 info "Setting up datastores..."
 setup_datastore "${DATASTORE_PRIMARY_NAME}" "${DATASTORE_PRIMARY_PATH}"
 setup_datastore "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
 
+## Create initial user
+info "Setting up initial user..."
+create_user "${PBS_INITIAL_USERNAME}" "${PBS_INITIAL_PASSWORD}"
+setup_acl "${PBS_INITIAL_USERNAME}" "Admin" "/"
+
+## Create backup user
+info "Setting up backup user..."
+create_user "${PBS_BACKUP_USERNAME}" "${PBS_BACKUP_PASSWORD}"
+setup_acl "${PBS_BACKUP_USERNAME}" "DatastoreAdmin" "/datastore/${DATASTORE_PRIMARY_NAME}"
+
+## Workaround: Initialize the datastore locally and then move the metadata to the NFS share
+info "Moving datastore metadata to NFS..."
+move_datastore_to_nfs "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
+
 ## Setup data retention
-info "Setting up data retention for datastorea..."
+info "Setting up data retention for datastores..."
 setup_data_retention "${DATASTORE_PRIMARY_NAME}" \
   "${PRIMARY_KEEP_LAST}" "0" "${PRIMARY_KEEP_DAILY}" "${PRIMARY_KEEP_WEEKLY}" \
   "${PRIMARY_KEEP_MONTHLY}" "${PRIMARY_KEEP_YEARLY}"
