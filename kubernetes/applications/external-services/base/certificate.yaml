@@ -1,0 +1,178 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: proxmox-tls-cert
+  namespace: external-services
+spec:
+  secretName: proxmox-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - proxmox.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: ai-pro-1-tls-cert
+  namespace: external-services
+spec:
+  secretName: ai-pro-1-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - ai-pro-1.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: ai-pro-2-tls-cert
+  namespace: external-services
+spec:
+  secretName: ai-pro-2-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - ai-pro-2.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: ai-pro-3-tls-cert
+  namespace: external-services
+spec:
+  secretName: ai-pro-3-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - ai-pro-3.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: ai-pro-4-tls-cert
+  namespace: external-services
+spec:
+  secretName: ai-pro-4-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - ai-pro-4.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: dali-1-tls-cert
+  namespace: external-services
+spec:
+  secretName: dali-1-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - dali-1.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: dali-2-tls-cert
+  namespace: external-services
+spec:
+  secretName: dali-2-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - dali-2.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: ems-esp-tls-cert
+  namespace: external-services
+spec:
+  secretName: ems-esp-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - ems-esp.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: fritzbox-tls-cert
+  namespace: external-services
+spec:
+  secretName: fritzbox-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - fritzbox.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: knx-ip-tls-cert
+  namespace: external-services
+spec:
+  secretName: knx-ip-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - knx-ip.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: verso-tls-cert
+  namespace: external-services
+spec:
+  secretName: verso-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - verso.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: warp-tls-cert
+  namespace: external-services
+spec:
+  secretName: warp-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - warp.zimmermann.sh

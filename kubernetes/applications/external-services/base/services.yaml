@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: proxmox
+spec:
+  type: ExternalName
+  externalName: pve-1.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: ai-pro-1
+spec:
+  type: ExternalName
+  externalName: ai-pro-1.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: ai-pro-2
+spec:
+  type: ExternalName
+  externalName: ai-pro-2.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: ai-pro-3
+spec:
+  type: ExternalName
+  externalName: ai-pro-3.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: ai-pro-4
+spec:
+  type: ExternalName
+  externalName: ai-pro-4.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: dali-1
+spec:
+  type: ExternalName
+  externalName: dali-1.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: dali-2
+spec:
+  type: ExternalName
+  externalName: dali-2.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: ems-esp
+spec:
+  type: ExternalName
+  externalName: ems-esp.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: fritzbox
+spec:
+  type: ExternalName
+  externalName: fritzbox.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: knx-ip
+spec:
+  type: ExternalName
+  externalName: knx-ip.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: verso
+spec:
+  type: ExternalName
+  externalName: verso.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: warp
+spec:
+  type: ExternalName
+  externalName: warp.zimmermann.eu.com
