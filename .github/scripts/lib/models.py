@@ -29,6 +29,7 @@ class ImageEntry:
     image_checksum: str
     image_checksum_algorithm: str = "sha256"
     image_checksum_url: Optional[str] = None
+    image_checksum_filename: Optional[str] = None
 
     def matches(self, filters: List[str]) -> bool:
         """Return ``True`` when any filter is a substring of this entry's key.
