@@ -68,7 +68,7 @@ def _update_entry(
         if entry.image_checksum_url:
             new_checksum = cksum.from_sidecar(
                 entry.image_checksum_url,
-                entry.image_filename,
+                entry.image_checksum_filename or entry.image_filename,
             )
         else:
             new_checksum = cksum.from_download(entry.image_url, algorithm)

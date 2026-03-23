@@ -86,6 +86,7 @@ def parse_entries(lines: List[str]) -> List[ImageEntry]:
 
 def _build_entry(key: str, fields: Dict[str, str]) -> ImageEntry:
     checksum_url = fields.get("image_checksum_url") or None
+    checksum_filename = fields.get("image_checksum_filename") or None
     return ImageEntry(
         key=key,
         image_url=fields.get("image_url", ""),
@@ -93,6 +94,7 @@ def _build_entry(key: str, fields: Dict[str, str]) -> ImageEntry:
         image_checksum=fields.get("image_checksum", ""),
         image_checksum_algorithm=fields.get("image_checksum_algorithm", "sha256"),
         image_checksum_url=checksum_url,
+        image_checksum_filename=checksum_filename,
     )
 
 

@@ -2,66 +2,76 @@ image:
   ## Linux VM images
   vm_debian_trixie:
     image_type: import
-    image_filename: debian-13-genericcloud-amd64.qcow2
     image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
+    image_filename: debian-13-genericcloud-amd64.qcow2
     image_checksum: 0e5edfbe49b0cca779a4a7dc9738f34c92e3ff481ee1f7d5c4e93e180654fe275eb8c96397224c6ca04a2910eaaed27489f431573ebe4cb5412ef257888b2b18
     image_checksum_algorithm: sha512
     image_checksum_url: https://cloud.debian.org/images/cloud/trixie/latest/SHA512SUMS
+    image_checksum_filename: debian-13-genericcloud-amd64.qcow2
 
   vm_ubuntu_noble:
     image_type: import
-    image_filename: ubuntu-noble-server-cloudimg-amd64.qcow2
     image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+    image_filename: ubuntu-noble-server-cloudimg-amd64.qcow2
     image_checksum: 931dba2bec09d574f032485bda386c664481ef01208371957af28fad40bc7f2d
     image_checksum_url: https://cloud-images.ubuntu.com/noble/current/SHA256SUMS
+    image_checksum_filename: noble-server-cloudimg-amd64.img
 
   ## Talos images
   vm_talos_1_12_5_cp-prod:
     image_type: import
-    image_filename: talos-1.12.5-cp-prod-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/59fde51b82473c0eb57059149c67a6058327247cd7ffe13af97355856a5315e6/1.12.5/nocloud-amd64.raw
+    image_filename: talos-1.12.5-cp-prod-nocloud-amd64.raw
     image_checksum: 7d8f438b0b69acf0be4ba7ecc4c55613f2020437b4a1ae8486e200d1ac07968f
+    image_checksum_filename: nocloud-amd64.raw
 
   vm_talos_1_12_5_dp-prod:
     image_type: import
-    image_filename: talos-1.12.5-dp-prod-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/aa15fdd6a7f2c756e252f4720e4d0d2a7b3bd26b3163f3e1e6fbb188f511297b/1.12.5/nocloud-amd64.raw
+    image_filename: talos-1.12.5-dp-prod-nocloud-amd64.raw
     image_checksum: 9cf98489f4039ee8aa8133bc423f38a242f70eb350ac575202a9d307d890cc62
+    image_checksum_filename: nocloud-amd64.raw
 
   vm_talos_1_12_5_cp-dev:
     image_type: import
-    image_filename: talos-1.12.5-cp-dev-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/577869ee5d2e8ec0ba2cedd209bd19158f2fbb0720efa288107de4c6d95f5b14/1.12.5/nocloud-amd64.raw
+    image_filename: talos-1.12.5-cp-dev-nocloud-amd64.raw
     image_checksum: 523bdcc6623ab271d8a4790df22bbc4a2d32033366e2fcfd27a5618b083ac2a4
+    image_checksum_filename: nocloud-amd64.raw
 
   vm_talos_1_12_5_dp-dev:
     image_type: import
-    image_filename: talos-1.12.5-dp-dev-nocloud-amd64.raw
     image_url: https://factory.talos.dev/image/a3680b2d6cfcd2fcee1aeefd9ec5da9502bcc516c0b4ae7f83d63e1b72596b54/1.12.5/nocloud-amd64.raw
+    image_filename: talos-1.12.5-dp-dev-nocloud-amd64.raw
     image_checksum: 4946f388e96d281946fd34cb333fef9f8c66097f0bc9a0cd314bb7c200353cf4
+    image_checksum_filename: nocloud-amd64.raw
 
   ## Ubuntu LXC images
   lxc_ubuntu_noble:
     image_type: vztmpl
-    image_filename: ubuntu-noble-cloud-amd64-202602241040.tar.xz
     image_url: https://images.linuxcontainers.org/images/ubuntu/noble/amd64/cloud/20260224_10:40/rootfs.tar.xz
+    image_filename: ubuntu-noble-cloud-amd64-202602241040.tar.xz
     image_checksum: 10047c65ebe7405a186373ee7eaf3a0dc7f3b262b2e3db0dc200ebd5a088b8c5
+    image_checksum_filename: rootfs.tar.xz
 
   lxc_ubuntu_plucky:
     image_type: vztmpl
-    image_filename: ubuntu-plucky-cloud-amd64-202512220742.tar.xz
     image_url: https://images.linuxcontainers.org/images/ubuntu/noble/amd64/cloud/20251222_07:42/rootfs.tar.xz
+    image_filename: ubuntu-plucky-cloud-amd64-202512220742.tar.xz
     image_checksum: af66983f97ce1741076e6bcbf1ea535c8cd983e97bff3403a7cb10c877ab7539
+    image_checksum_filename: rootfs.tar.xz
 
   ## Windows images
   vm_windows_11_25h2:
     image_type: iso
-    image_filename: windows-11-25H2-amd64.iso
     image_url: ""
+    image_filename: windows-11-25H2-amd64.iso
     image_checksum: ""
+    image_checksum_filename: windows-11-25H2-amd64.iso
 
   vm_windows_virtio_0_1_285:
     image_type: iso
-    image_filename: windows-virtio-0.1.285.iso
     image_url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win-0.1.285.iso
+    image_filename: windows-virtio-0.1.285.iso
     image_checksum: e14cf2b94492c3e925f0070ba7fdfedeb2048c91eea9c5a5afb30232a3976331
+    image_checksum_filename: virtio-win-0.1.285.iso
