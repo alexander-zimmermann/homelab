@@ -7,6 +7,11 @@ variable "node" {
     This should match the node name as defined in your Proxmox cluster (e.g., `pve`).
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.node) > 0
+    error_message = "node must be a non-empty string."
+  }
 }
 
 variable "name" {
@@ -16,6 +21,11 @@ variable "name" {
     names (`vlan-mgmt`). Must follow Linux network interface naming conventions.
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.name) > 0
+    error_message = "name must be a non-empty string."
+  }
 }
 
 variable "address" {
@@ -161,6 +171,11 @@ variable "ssh_port" {
   EOT
   type        = number
   default     = 22
+
+  validation {
+    condition     = var.ssh_port >= 1 && var.ssh_port <= 65535
+    error_message = "ssh_port must be a valid port number between 1 and 65535."
+  }
 }
 
 variable "mode" {

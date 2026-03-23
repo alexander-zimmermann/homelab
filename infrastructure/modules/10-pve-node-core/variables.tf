@@ -7,6 +7,11 @@ variable "node" {
     as defined in your Proxmox cluster (e.g., `pve`).
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.node) > 0
+    error_message = "node must be a non-empty string."
+  }
 }
 
 variable "timezone" {
@@ -33,6 +38,11 @@ variable "dns_search_domain" {
     short hostnames within a specific domain context.
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.dns_search_domain) > 0
+    error_message = "dns_search_domain must be a non-empty string."
+  }
 }
 
 
@@ -81,6 +91,11 @@ variable "ssh_hostname" {
     This must be reachable from the system executing the configuration.
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.ssh_hostname) > 0
+    error_message = "ssh_hostname must be a non-empty string."
+  }
 }
 
 variable "ssh_username" {
@@ -108,6 +123,11 @@ variable "ssh_port" {
   EOT
   type        = number
   default     = 22
+
+  validation {
+    condition     = var.ssh_port >= 1 && var.ssh_port <= 65535
+    error_message = "ssh_port must be a valid port number between 1 and 65535."
+  }
 }
 
 variable "local_content_types" {

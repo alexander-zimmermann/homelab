@@ -28,11 +28,6 @@ variable "image_filename" {
   EOT
   type        = string
   default     = null
-
-  validation {
-    condition     = var.image_url == "" || var.image_filename != ""
-    error_message = "image_filename must be provided or derivable from image_url."
-  }
 }
 
 variable "image_url" {
