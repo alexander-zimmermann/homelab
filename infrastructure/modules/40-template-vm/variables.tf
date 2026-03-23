@@ -175,11 +175,8 @@ variable "display_type" {
   validation {
     condition = contains(
       [
-        "std", "cirrus", "vmware",
-        "qxl", "qxl2", "qxl3", "qxl4",
-        "virtio", "virtio-gl",
-        "serial0", "serial1", "serial2", "serial3",
-        "none"
+        "std", "cirrus", "vmware", "qxl", "qxl2", "qxl3", "qxl4", "virtio", "virtio-gl",
+        "serial0", "serial1", "serial2", "serial3", "none"
       ],
       lower(trimspace(var.display_type))
     )
