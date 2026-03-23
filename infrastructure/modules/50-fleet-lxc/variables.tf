@@ -374,11 +374,6 @@ variable "password" {
   type        = string
   default     = null
   sensitive   = true
-
-  validation {
-    condition     = var.password == null || length(trimspace(var.password)) > 0
-    error_message = "Password, if provided, must not be empty."
-  }
 }
 
 

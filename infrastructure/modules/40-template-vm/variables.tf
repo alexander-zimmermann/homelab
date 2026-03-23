@@ -7,6 +7,11 @@ variable "node" {
     should match the node name as defined in your Proxmox cluster (e.g., `pve`).
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.node) > 0
+    error_message = "node must be a non-empty string."
+  }
 }
 
 variable "name" {
@@ -126,6 +131,11 @@ variable "cores" {
   description = "Number of virtual CPU cores assigned to the VM."
   type        = number
   default     = 1
+
+  validation {
+    condition     = var.cores >= 1
+    error_message = "cores must be at least 1."
+  }
 }
 
 variable "vcpu_type" {
@@ -138,6 +148,11 @@ variable "memory" {
   description = "Amount of memory (in MiB) allocated to the VM. Default is 1024 MiB."
   type        = number
   default     = 1024
+
+  validation {
+    condition     = var.memory >= 128
+    error_message = "memory must be at least 128 MiB."
+  }
 }
 
 variable "memory_floating" {
@@ -147,6 +162,11 @@ variable "memory_floating" {
   EOT
   type        = number
   default     = null
+
+  validation {
+    condition     = var.memory_floating == null || var.memory_floating <= var.memory
+    error_message = "memory_floating must be less than or equal to memory."
+  }
 }
 
 
@@ -175,11 +195,8 @@ variable "display_type" {
   validation {
     condition = contains(
       [
-        "std", "cirrus", "vmware",
-        "qxl", "qxl2", "qxl3", "qxl4",
-        "virtio", "virtio-gl",
-        "serial0", "serial1", "serial2", "serial3",
-        "none"
+        "std", "cirrus", "vmware", "qxl", "qxl2", "qxl3", "qxl4", "virtio", "virtio-gl",
+        "serial0", "serial1", "serial2", "serial3", "none"
       ],
       lower(trimspace(var.display_type))
     )

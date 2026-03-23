@@ -4,16 +4,31 @@
 variable "storage_id" {
   description = "Identifier for the storage backend as it appears in Proxmox (e.g. 'pbs-primary')."
   type        = string
+
+  validation {
+    condition     = length(var.storage_id) > 0
+    error_message = "storage_id must be a non-empty string."
+  }
 }
 
 variable "server" {
   description = "Hostname or IP address of the Proxmox Backup Server."
   type        = string
+
+  validation {
+    condition     = length(var.server) > 0
+    error_message = "server must be a non-empty string."
+  }
 }
 
 variable "datastore" {
   description = "Name of the datastore on the PBS instance to expose to Proxmox."
   type        = string
+
+  validation {
+    condition     = length(var.datastore) > 0
+    error_message = "datastore must be a non-empty string."
+  }
 }
 
 variable "nodes" {
@@ -22,6 +37,11 @@ variable "nodes" {
   EOT
   type        = set(string)
   default     = null
+
+  validation {
+    condition     = var.nodes == null || length(var.nodes) > 0
+    error_message = "nodes must be null (all nodes) or a non-empty set of node names."
+  }
 }
 
 
@@ -34,6 +54,11 @@ variable "username" {
     The realm will be appended automatically (e.g., `backup@pbs`).
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.username) > 0
+    error_message = "username must be a non-empty string."
+  }
 }
 
 variable "realm" {
@@ -43,6 +68,11 @@ variable "realm" {
   EOT
   type        = string
   default     = "pbs"
+
+  validation {
+    condition     = length(var.realm) > 0
+    error_message = "realm must be a non-empty string."
+  }
 }
 
 variable "password" {

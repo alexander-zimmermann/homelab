@@ -18,6 +18,11 @@ variable "role_id" {
     creating or referencing a role.
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.role_id) > 0
+    error_message = "role_id must be a non-empty string."
+  }
 }
 
 variable "role_privileges" {
@@ -39,6 +44,11 @@ variable "username" {
     will be appended automatically (e.g., `admin@pve`).
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.username) > 0
+    error_message = "username must be a non-empty string."
+  }
 }
 
 variable "realm" {
@@ -147,6 +157,11 @@ variable "path" {
     Examples include `/` for global access or `/vms/1234` for VM-specific access.
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.path) > 0
+    error_message = "path must be a non-empty string (e.g., '/' or '/vms/1234')."
+  }
 }
 
 variable "propagate" {

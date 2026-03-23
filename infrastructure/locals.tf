@@ -20,6 +20,7 @@ locals {
     pve_cluster_users       = merge([for m in local.decoded_manifests : try(m.pve_cluster_users, {})]...)
     pve_cluster_acme        = merge([for m in local.decoded_manifests : try(m.pve_cluster_acme, {})]...)
     pve_cluster_pbs_storage = merge([for m in local.decoded_manifests : try(m.pve_cluster_pbs_storage, {})]...)
+    pve_cluster_backup_jobs = merge([for m in local.decoded_manifests : try(m.pve_cluster_backup_jobs, {})]...)
     pve_node_core           = merge([for m in local.decoded_manifests : try(m.pve_node_core, {})]...)
     pve_node_network        = merge([for m in local.decoded_manifests : try(m.pve_node_network, {})]...)
     image                   = merge([for m in local.decoded_manifests : try(m.image, {})]...)
@@ -46,6 +47,7 @@ locals {
     users       = try(local.manifest.pve_cluster_users.users, {})
     acme        = try(local.manifest.pve_cluster_acme, {})
     pbs_storage = try(local.manifest.pve_cluster_pbs_storage, {})
+    backup_jobs = try(local.manifest.pve_cluster_backup_jobs, {})
   }
   pve_node = {
     core = try(local.manifest.pve_node_core, {})

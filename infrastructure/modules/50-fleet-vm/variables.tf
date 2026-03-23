@@ -7,6 +7,11 @@ variable "node" {
     match the node name as defined in your Proxmox cluster (e.g., `pve`).
   EOT
   type        = string
+
+  validation {
+    condition     = length(var.node) > 0
+    error_message = "node must be a non-empty string."
+  }
 }
 
 variable "name" {
@@ -91,6 +96,11 @@ variable "template_id" {
     for creating a clone.
   EOT
   type        = number
+
+  validation {
+    condition     = var.template_id >= 100
+    error_message = "template_id must be >= 100 (Proxmox reserves IDs below 100)."
+  }
 }
 
 variable "full_clone" {
@@ -109,6 +119,11 @@ variable "clone_retries" {
   EOT
   type        = number
   default     = 3
+
+  validation {
+    condition     = var.clone_retries >= 0
+    error_message = "clone_retries must be a non-negative integer."
+  }
 }
 
 
@@ -173,6 +188,11 @@ variable "cores" {
   description = "Number of virtual CPU cores assigned to the VM."
   type        = number
   default     = 1
+
+  validation {
+    condition     = var.cores >= 1
+    error_message = "cores must be at least 1."
+  }
 }
 
 variable "vcpu_type" {
@@ -196,6 +216,11 @@ variable "memory" {
   description = "Amount of memory (in MiB) allocated to the VM. Default is 1024 MiB."
   type        = number
   default     = 1024
+
+  validation {
+    condition     = var.memory >= 256
+    error_message = "memory must be at least 256 MiB."
+  }
 }
 
 variable "memory_floating" {
@@ -205,6 +230,11 @@ variable "memory_floating" {
   EOT
   type        = number
   default     = null
+
+  validation {
+    condition     = var.memory_floating == null || var.memory_floating <= var.memory
+    error_message = "memory_floating must be less than or equal to memory."
+  }
 }
 
 
@@ -589,16 +619,31 @@ variable "start_order" {
   description = "Start order, e.g. `1`."
   type        = number
   default     = 1
+
+  validation {
+    condition     = var.start_order >= 1
+    error_message = "start_order must be at least 1."
+  }
 }
 
 variable "start_delay" {
   description = "Startup delay in seconds, e.g. `30`."
   type        = number
   default     = null
+
+  validation {
+    condition     = var.start_delay == null || var.start_delay >= 0
+    error_message = "start_delay must be a non-negative number of seconds."
+  }
 }
 
 variable "shutdown_delay" {
   description = "Shutdown delay in seconds, e.g. `30`."
   type        = number
   default     = null
+
+  validation {
+    condition     = var.shutdown_delay == null || var.shutdown_delay >= 0
+    error_message = "shutdown_delay must be a non-negative number of seconds."
+  }
 }

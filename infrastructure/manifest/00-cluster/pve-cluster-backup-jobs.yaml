@@ -1,0 +1,9 @@
+pve_cluster_backup_jobs:
+  daily-backup:
+    schedule: "*-*-* 04:00"
+    storage: pbs-primary
+    mode: snapshot
+    compress: zstd
+    vmids:
+      - 1001 # ubuntu_01
+      - 1100 # windows_01
