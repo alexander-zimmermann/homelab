@@ -83,6 +83,29 @@ module "pve_cluster_pbs_storage" {
 
 
 ###############################################################################
+## PVE cluster - backup jobs
+###############################################################################
+module "pve_cluster_backup_jobs" {
+  source   = "./modules/00-pve-cluster-backup-jobs"
+  for_each = local.pve_cluster.backup_jobs
+
+  depends_on = [module.pve_cluster_pbs_storage]
+
+  ## Backup job identity
+  job_id   = each.key
+  schedule = each.value.schedule
+
+  ## Backup target
+  storage = each.value.storage
+  vmids   = each.value.vmids
+
+  ## Backup options
+  mode     = try(each.value.mode, "snapshot")
+  compress = try(each.value.compress, "zstd")
+}
+
+
+###############################################################################
 ## PVE node - core configuration
 ###############################################################################
 module "pve_node_core" {
