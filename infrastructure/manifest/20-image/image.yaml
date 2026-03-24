@@ -13,7 +13,7 @@ image:
     image_type: import
     image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
     image_filename: ubuntu-noble-server-cloudimg-amd64.qcow2
-    image_checksum: 931dba2bec09d574f032485bda386c664481ef01208371957af28fad40bc7f2d
+    image_checksum: 6e7016f2c9f4d3c00f48789eb6b9043ba2172ccc1b6b1eaf3ed1e29dd3e52bb3
     image_checksum_url: https://cloud-images.ubuntu.com/noble/current/SHA256SUMS
     image_checksum_filename: noble-server-cloudimg-amd64.img
 
