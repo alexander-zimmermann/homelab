@@ -19,6 +19,7 @@
   "dependencyDashboardTitle": "Renovate Dashboard 🤖",
   "suppressNotifications": ["prEditedNotification", "prIgnoreNotification"],
   "ignorePaths": ["**/resources/**", "**/deprecated/**"],
+  "ignoreDeps": ["alexellis/arkade-get"],
   "kubernetes": {
     "managerFilePatterns": ["/\\.yaml$/"]
   },
