@@ -4,7 +4,8 @@ kind: Kustomization
 namespace: prometheus
 resources:
   - ./certificate.yaml
-  #- ./ingress-route.yaml
+  - ./ingress-route.yaml
+  - ./sealed-secret.yaml
 
 helmCharts:
   - name: kube-prometheus-stack
