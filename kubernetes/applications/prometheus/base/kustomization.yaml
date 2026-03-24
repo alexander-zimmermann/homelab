@@ -6,7 +6,7 @@ resources:
   - ./certificate.yaml
   - ./ingress-route.yaml
   - ./sealed-secret.yaml
-  - ./prometheusrules.yaml
+  - ./prometheus-rule.yaml
 
 helmCharts:
   - name: kube-prometheus-stack
