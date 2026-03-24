@@ -267,7 +267,7 @@ setup_sync() {
   proxmox-backup-manager sync-job create "${job_id}" \
     --remote-store "${DATASTORE_PRIMARY_NAME}" \
     --store "${DATASTORE_SECONDARY_NAME}" \
-    --schedule "daily" || die "Could not create sync job."
+    --schedule "*-*-* 06:00" || die "Could not create sync job."
 
   success "Sync job for between primary and secondary datastores set up successfully."
 }
