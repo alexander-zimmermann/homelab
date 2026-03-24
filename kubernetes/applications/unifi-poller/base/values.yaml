@@ -1,16 +1,11 @@
-# Add Prometheus scrape hints
-podAnnotations:
-  prometheus.io/scrape: "true"
-  prometheus.io/port: "9130"
-
-# Enable PodMonitor (Prometheus Operator) instead of ServiceMonitor
-podMonitor:
+# Enable ServiceMonitor (Prometheus Operator) for metrics scraping
+serviceMonitor:
   enabled: true
   labels:
     release: prometheus
 
-# Keep ServiceMonitor explicitly off (we rely on PodMonitor)
-serviceMonitor:
+# Keep PodMonitor explicitly off (we rely on ServiceMonitor)
+podMonitor:
   enabled: false
 
 # Expose the metrics port inside the cluster
