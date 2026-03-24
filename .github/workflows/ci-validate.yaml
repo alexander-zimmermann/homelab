@@ -150,7 +150,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Install CLI Tools
-        uses: alexellis/arkade-get@24a6bc79f04626b1407868031c02a0ddbc38112d # master
+        uses: alexellis/arkade-get@master
         with:
           kustomize: v5.8.1
           helm: v3.14.0
