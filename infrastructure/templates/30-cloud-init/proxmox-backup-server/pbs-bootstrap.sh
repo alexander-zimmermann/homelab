@@ -168,11 +168,14 @@ move_datastore_to_nfs() {
   mkdir -p "${temp_mount}"
   mount -t nfs "${remote}" "${temp_mount}" || die "Failed to mount NFS to ${temp_mount}."
 
-  ## Copy metadata from local to NFS
-  info "Copying datastore metadata to NFS store..."
-  rm -rf /tmp/unas/.chunks /tmp/unas/.lock
-  cp -a --no-preserve=ownership "${path}/.chunks" "${temp_mount}/"
-  cp -a --no-preserve=ownership "${path}/.lock" "${temp_mount}/"
+  ## Only copy metadata if NFS has no existing PBS data (initial setup only)
+  if [[ ! -d "${temp_mount}/.chunks" ]]; then
+    info "Copying datastore metadata to NFS store (initial setup)..."
+    cp -a --no-preserve=ownership "${path}/.chunks" "${temp_mount}/"
+    cp -a --no-preserve=ownership "${path}/.lock" "${temp_mount}/"
+  else
+    info "NFS already contains PBS data — skipping metadata copy to preserve existing backups."
+  fi
 
   ## Unmount temp
   info "Unmounting temporary storage..."
