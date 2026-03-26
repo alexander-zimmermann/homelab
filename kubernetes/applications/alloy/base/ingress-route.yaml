@@ -5,9 +5,17 @@ metadata:
   name: alloy-ui
   namespace: alloy
   annotations:
+    # ExternalDNS configuration for Cloudflare
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Homepage Service Discovery
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Observability"
+    gethomepage.dev/name: "Alloy"
+    gethomepage.dev/icon: "alloy.png"
+    gethomepage.dev/weight: "3"
+    gethomepage.dev/href: "https://alloy.zimmermann.sh"
 spec:
   entryPoints:
     - websecure
