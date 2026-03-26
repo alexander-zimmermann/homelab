@@ -5,9 +5,19 @@ metadata:
   name: prometheus
   namespace: prometheus
   annotations:
+    # ExternalDNS configuration for Cloudflare
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Homepage Service Discovery
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Observability"
+    gethomepage.dev/name: "Prometheus"
+    gethomepage.dev/icon: "prometheus.png"
+    gethomepage.dev/href: "https://prometheus.zimmermann.sh"
+    gethomepage.dev/weight: "1"
+    gethomepage.dev/widget.type: "prometheus"
+    gethomepage.dev/widget.url: "http://prometheus-operated.prometheus.svc.cluster.local:9090"
 spec:
   entryPoints:
     - websecure
