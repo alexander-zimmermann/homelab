@@ -60,3 +60,90 @@ alloy-singleton:
 # Alloy Logs: Collects and forwards logs to Loki
 alloy-logs:
   enabled: true
+
+# Alloy Receiver: Opens receivers for external data sources (syslog)
+alloy-receiver:
+  enabled: true
+  # Include the loki destination so the syslog extraConfig can reference loki.write.loki.receiver
+  includeDestinations:
+    - loki
+  # Expose Alloy Receiver via Cilium/BGP-announced LoadBalancer
+  service:
+    type: LoadBalancer
+    labels:
+      bgp.cilium.io/ip-pool: default
+      bgp.cilium.io/advertise-service: default
+  alloy:
+    # Syslog receiver: TCP 601 (RFC5424) and UDP 514 (RFC5424) for external infrastructure devices
+    extraPorts:
+      - name: syslog-tcp
+        port: 601
+        targetPort: 601
+        protocol: TCP
+      - name: syslog-udp
+        port: 514
+        targetPort: 514
+        protocol: UDP
+  extraConfig: |
+    discovery.relabel "syslog" {
+        targets = []
+
+        rule {
+            source_labels = ["__syslog_message_hostname"]
+            target_label  = "host"
+        }
+
+        rule {
+            source_labels = ["__syslog_message_hostname"]
+            target_label  = "hostname"
+        }
+
+        rule {
+            source_labels = ["__syslog_message_severity"]
+            target_label  = "level"
+        }
+
+        rule {
+            source_labels = ["__syslog_message_app_name"]
+            target_label  = "application"
+        }
+
+        rule {
+            source_labels = ["__syslog_message_facility"]
+            target_label  = "facility"
+        }
+
+        rule {
+            source_labels = ["__syslog_connection_hostname"]
+            target_label  = "connection_hostname"
+        }
+    }
+
+    loki.source.syslog "syslog" {
+        listener {
+            address             = "0.0.0.0:601"
+            protocol            = "tcp"
+            idle_timeout        = "0s"
+            use_rfc5424_message = true
+            labels              = {
+                job       = "syslog",
+                component = "loki.source.syslog",
+                protocol  = "tcp",
+            }
+        }
+
+        listener {
+            address             = "0.0.0.0:514"
+            protocol            = "udp"
+            idle_timeout        = "0s"
+            use_rfc5424_message = true
+            labels              = {
+                job       = "syslog",
+                component = "loki.source.syslog",
+                protocol  = "udp",
+            }
+        }
+
+        forward_to    = [loki.write.loki.receiver]
+        relabel_rules = discovery.relabel.syslog.rules
+    }
