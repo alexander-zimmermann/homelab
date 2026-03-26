@@ -9,8 +9,42 @@ grafana:
   enabled: false
 
 alertmanager:
+  # Alertmanager configuration with Pushover and Node-RED integrations
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      # Group by job to avoid alert storms when multiple alerts fire together
+      group_by: ["alertname", "job"]
+      group_wait: 30s
+      group_interval: 1m
+      repeat_interval: 6h
+      receiver: "endpoints"
+    receivers:
+      - name: "endpoints"
+        # Pushover integration for mobile notifications
+        pushover_configs:
+          - token: "$PUSHOVER_TOKEN"
+            user_key: "$PUSHOVER_USER_KEY"
+        # Node-RED endpoint for container status events
+        webhook_configs:
+          - url: "http://node-red.zimmermann.eu.com:1880/container-status"
+            send_resolved: true
+
   alertmanagerSpec:
-    # Persist Alertmanager state
+    # Credentials for Alertmanager's Pushover integration
+    env:
+      - name: PUSHOVER_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: alertmanager-pushover-tokens
+            key: token
+      - name: PUSHOVER_USER_KEY
+        valueFrom:
+          secretKeyRef:
+            name: alertmanager-pushover-tokens
+            key: user_key
+    # Persist Alertmanager state (silences, notification log)
     storage:
       volumeClaimTemplate:
         spec:
@@ -61,6 +95,9 @@ prometheus:
     # Administrative maintenance API
     enableAdminAPI: true
 
+    # Enable lifecycle API for dynamic reloads
+    enableLifecycle: true
+
     # Retention data configuration
     retention: PLACEHOLDER
     retentionSize: PLACEHOLDER
@@ -82,6 +119,7 @@ prometheus:
         - apiVersion: v2
           name: prometheus-alertmanager
           namespace: prometheus
+          port: web
 
 # Component scraping the kube api server
 kubeApiServer:
