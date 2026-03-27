@@ -4,6 +4,7 @@ kind: Certificate
 metadata:
   name: longhorn-ui-tls
   namespace: csi-block-storage-controller
+
 spec:
   secretName: longhorn-ui-tls
   issuerRef:

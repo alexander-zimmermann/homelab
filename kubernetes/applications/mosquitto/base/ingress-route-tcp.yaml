@@ -4,6 +4,7 @@ kind: IngressRouteTCP
 metadata:
   name: mosquitto
   namespace: mosquitto
+
 spec:
   entryPoints:
     - mqtt

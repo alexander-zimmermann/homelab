@@ -3,6 +3,7 @@ kind: CiliumBGPClusterConfig
 
 metadata:
   name: cilium-unifi
+
 spec:
   nodeSelector:
     matchLabels: {}

@@ -5,6 +5,7 @@ metadata:
   name: smtprelay
   # Keep the namespace explicit so the manifest is self-contained (even without kustomize/helm).
   namespace: smtprelay
+
 spec:
   # Single instance is sufficient for a simple relay; scale only if you need HA.
   replicas: 1

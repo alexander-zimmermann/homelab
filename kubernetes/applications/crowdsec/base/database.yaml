@@ -62,6 +62,7 @@ metadata:
   # Prometheus Operator label (Opt-In)
   labels:
     release: prometheus
+
 spec:
   selector:
     matchLabels:

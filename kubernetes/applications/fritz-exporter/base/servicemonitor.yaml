@@ -5,6 +5,7 @@ metadata:
   name: fritz-exporter
   labels:
     release: prometheus
+
 spec:
   selector:
     matchLabels:

@@ -4,6 +4,7 @@ kind: RecurringJob
 metadata:
   name: backup-daily
   namespace: csi-block-storage-controller
+
 spec:
   cron: "0 2 * * *" # Every day at 2am
   task: backup
@@ -18,6 +19,7 @@ kind: RecurringJob
 metadata:
   name: trim-weekly
   namespace: csi-block-storage-controller
+
 spec:
   cron: "0 1 * * 0" # Every Sunday at 1am
   task: filesystem-trim

@@ -10,6 +10,7 @@ metadata:
     policies.kyverno.io/description: >-
       This policy sets default values for cert-manager Certificate resources
       if they are not specified.
+
 spec:
   # Non-blocking to prevent outages if webhook fails
   failurePolicy: Ignore

@@ -4,4 +4,5 @@ kind: AppProject
 metadata:
   name: homelab
   namespace: gitops-controller
+
 spec: {}

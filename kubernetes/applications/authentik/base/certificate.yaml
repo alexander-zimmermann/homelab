@@ -4,6 +4,7 @@ kind: Certificate
 metadata:
   name: authentik-tls
   namespace: authentik
+
 spec:
   secretName: authentik-tls
   issuerRef:

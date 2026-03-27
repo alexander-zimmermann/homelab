@@ -3,6 +3,7 @@ kind: Deployment
 
 metadata:
   name: fritz-exporter
+
 spec:
   # Single instance is sufficient; fritz-exporter is stateless and scrapes one FritzBox.
   replicas: 1
