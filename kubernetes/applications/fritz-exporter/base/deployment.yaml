@@ -61,6 +61,7 @@ spec:
               port: metrics
             initialDelaySeconds: 10
             periodSeconds: 30
+            timeoutSeconds: 25
             failureThreshold: 3
           livenessProbe:
             # Restart if the metrics endpoint stops responding.
@@ -69,4 +70,5 @@ spec:
               port: metrics
             initialDelaySeconds: 30
             periodSeconds: 60
+            timeoutSeconds: 25
             failureThreshold: 5
