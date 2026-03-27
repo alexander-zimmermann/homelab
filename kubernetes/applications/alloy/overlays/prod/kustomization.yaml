@@ -21,6 +21,14 @@ replacements:
         options:
           delimiter: "`"
           index: 1
+      - select:
+          kind: IngressRoute
+          name: alloy-ui
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
+        options:
+          delimiter: "//"
+          index: 1
 
 patches:
   # Alloy Operator: Manages the lifecycle of Alloy instances
