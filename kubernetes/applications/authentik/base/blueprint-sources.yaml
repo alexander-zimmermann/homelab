@@ -1,0 +1,47 @@
+version: 1
+metadata:
+  name: homelab-sources
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+entries:
+  # OAuth Source: redirects users to GitHub for authentication and maps the identity locally
+  - model: authentik_sources_oauth.oauthsource
+    state: present
+    identifiers:
+      slug: github
+    attrs:
+      name: GitHub
+      slug: github
+      provider_type: github
+      consumer_key: !Env [AUTHENTIK_GITHUB_CLIENT_ID]
+      consumer_secret: !Env [AUTHENTIK_GITHUB_CLIENT_SECRET]
+      authentication_flow: !Find [authentik_flows.flow, [slug, default-source-authentication]]
+      enrollment_flow: !Find [authentik_flows.flow, [slug, default-source-enrollment]]
+      enabled: true
+
+  # Expression Policy: denies login if the GitHub account does not have 2FA enabled
+  - model: authentik_policies_expression.expressionpolicy
+    state: present
+    identifiers:
+      name: github-require-2fa
+    attrs:
+      name: github-require-2fa
+      expression: |
+        userinfo = context.get("oauth_userinfo", {})
+        if not userinfo.get("two_factor_authentication", False):
+            ak_message("GitHub 2FA muss aktiviert sein um sich einzuloggen.")
+            return False
+        return True
+
+  # Policy Binding: attaches the 2FA policy to the GitHub source
+  - model: authentik_core.policybinding
+    state: present
+    identifiers:
+      target: !Find [authentik_sources_oauth.oauthsource, [slug, github]]
+      policy: !Find [authentik_policies_expression.expressionpolicy, [name, github-require-2fa]]
+      order: 0
+    attrs:
+      target: !Find [authentik_sources_oauth.oauthsource, [slug, github]]
+      policy: !Find [authentik_policies_expression.expressionpolicy, [name, github-require-2fa]]
+      order: 0
+      enabled: true

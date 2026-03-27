@@ -20,6 +20,14 @@ helmCharts:
     apiVersions:
       - monitoring.coreos.com/v1
 
+configMapGenerator:
+  - name: authentik-blueprint-sources
+    files:
+      - blueprint-sources.yaml
+  - name: authentik-blueprint-argocd
+    files:
+      - blueprint-argocd.yaml
+
 labels:
   - includeSelectors: false
     pairs:
