@@ -40,7 +40,7 @@ spec:
             # Mount the exporter config at the expected path.
             - name: fritz-exporter-config
               mountPath: /etc/fritz-exporter.yml
-              subPath: fritz-exporter.yml
+              subPath: fritz-exporter.yaml
               readOnly: true
             # Credentials directory (read-only); referenced via password_file in config.
             - name: fritz-exporter-credentials
