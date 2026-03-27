@@ -21,6 +21,37 @@ replacements:
         options:
           delimiter: "`"
           index: 1
+      - select:
+          kind: IngressRoute
+          name: prometheus
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
+        options:
+          delimiter: "//"
+          index: 1
+  - sourceValue: alertmanager.zimmermann.sh
+    targets:
+      - select:
+          kind: Certificate
+          name: alertmanager-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: alertmanager
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: alertmanager
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
+        options:
+          delimiter: "//"
+          index: 1
 
   # Inject storage size configuration
   - sourceValue: 10Gi
