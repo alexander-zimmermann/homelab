@@ -5,6 +5,7 @@ metadata:
   name: loadbalancer-services
   labels:
     bgp.cilium.io/advertise: loadbalancer-services
+
 spec:
   advertisements:
     - advertisementType: Service

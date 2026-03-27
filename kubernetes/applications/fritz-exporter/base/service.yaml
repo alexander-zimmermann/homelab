@@ -3,6 +3,7 @@ kind: Service
 
 metadata:
   name: fritz-exporter
+
 spec:
   type: ClusterIP
   selector:

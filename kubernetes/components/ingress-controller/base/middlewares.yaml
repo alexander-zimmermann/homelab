@@ -4,6 +4,7 @@ kind: Middleware
 
 metadata:
   name: rate-limit
+
 spec:
   rateLimit:
     average: 100
@@ -17,6 +18,7 @@ kind: Middleware
 
 metadata:
   name: compress
+
 spec:
   compress: {}
 
@@ -27,6 +29,7 @@ kind: Middleware
 
 metadata:
   name: security-headers
+
 spec:
   headers:
     frameDeny: false
@@ -69,6 +72,7 @@ kind: Middleware
 
 metadata:
   name: crowdsec
+
 spec:
   plugin:
     bouncer:
@@ -88,6 +92,7 @@ kind: Middleware
 
 metadata:
   name: cloudflare
+
 spec:
   plugin:
     cloudflare:
@@ -103,6 +108,7 @@ kind: Middleware
 
 metadata:
   name: remove-headers
+
 spec:
   headers:
     customRequestHeaders:
@@ -125,6 +131,7 @@ kind: Middleware
 
 metadata:
   name: authentik
+
 spec:
   forwardAuth:
     address: "http://authentik-server.authentik.svc.cluster.local/outpost.goauthentik.io/auth/traefik"
@@ -142,6 +149,7 @@ kind: Middleware
 
 metadata:
   name: basic-auth
+
 spec:
   basicAuth:
     secret: basic-auth-users

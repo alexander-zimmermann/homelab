@@ -3,6 +3,7 @@ kind: CiliumBGPPeerConfig
 
 metadata:
   name: peer-config
+
 spec:
   authSecretRef: cilium-unifi-bgp-credentials
   gracefulRestart:

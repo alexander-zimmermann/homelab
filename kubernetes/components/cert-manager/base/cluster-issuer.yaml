@@ -3,6 +3,7 @@ kind: ClusterIssuer
 
 metadata:
   name: letsencrypt-dns01-issuer
+
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory

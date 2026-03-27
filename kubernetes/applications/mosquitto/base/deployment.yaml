@@ -3,6 +3,7 @@ kind: Deployment
 
 metadata:
   name: mosquitto
+
 spec:
   selector:
     # Must match `.spec.template.metadata.labels`.

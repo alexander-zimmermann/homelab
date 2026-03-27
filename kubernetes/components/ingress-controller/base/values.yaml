@@ -37,7 +37,7 @@ ingressRoute:
   dashboard:
     enabled: true
     annotations:
-      # Homepage annotations
+      # Homepage Service Discovery
       gethomepage.dev/enabled: "true"
       gethomepage.dev/group: Networking
       gethomepage.dev/name: Traefik

@@ -4,6 +4,7 @@ kind: GrafanaDatasource
 metadata:
   name: prometheus
   namespace: grafana-instance
+
 spec:
   valuesFrom: []
   datasource:
@@ -26,6 +27,7 @@ kind: GrafanaDatasource
 metadata:
   name: loki
   namespace: grafana-instance
+
 spec:
   valuesFrom: []
   datasource:

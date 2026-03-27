@@ -4,6 +4,7 @@ kind: Certificate
 metadata:
   name: rustfs-console-tls
   namespace: rustfs
+
 spec:
   secretName: rustfs-console-tls
   issuerRef:

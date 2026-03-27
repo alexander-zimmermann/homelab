@@ -16,6 +16,7 @@ metadata:
     gethomepage.dev/icon: "alloy.png"
     gethomepage.dev/weight: "3"
     gethomepage.dev/href: "https://PLACEHOLDER"
+
 spec:
   entryPoints:
     - websecure

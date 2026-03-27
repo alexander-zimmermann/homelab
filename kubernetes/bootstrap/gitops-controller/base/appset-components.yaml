@@ -4,6 +4,7 @@ kind: ApplicationSet
 metadata:
   name: cluster
   namespace: gitops-controller
+
 spec:
   generators:
     - git:

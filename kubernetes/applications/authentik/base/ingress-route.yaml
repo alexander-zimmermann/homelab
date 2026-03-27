@@ -6,9 +6,11 @@ metadata:
   namespace: authentik
   labels:
   annotations:
+    # ExternalDNS configuration for Cloudflare
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+
 spec:
   entryPoints:
     - websecure

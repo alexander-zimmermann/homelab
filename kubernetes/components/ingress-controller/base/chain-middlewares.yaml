@@ -4,6 +4,7 @@ kind: Middleware
 
 metadata:
   name: chain-standard
+
 spec:
   chain:
     middlewares:
@@ -20,6 +21,7 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: chain-basic-auth
+
 spec:
   chain:
     middlewares:
@@ -32,6 +34,7 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: chain-mfa-auth
+
 spec:
   chain:
     middlewares:
