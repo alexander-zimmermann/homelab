@@ -14,7 +14,7 @@ metadata:
     gethomepage.dev/group: "Observability"
     gethomepage.dev/name: "Prometheus"
     gethomepage.dev/icon: "prometheus.png"
-    gethomepage.dev/href: "https://prometheus.zimmermann.sh"
+    gethomepage.dev/href: "https://PLACEHOLDER"
     gethomepage.dev/weight: "1"
     gethomepage.dev/widget.type: "prometheus"
     gethomepage.dev/widget.url: "http://prometheus-operated.prometheus.svc.cluster.local:9090"
@@ -42,6 +42,7 @@ metadata:
   name: alertmanager
   namespace: prometheus
   annotations:
+    # ExternalDNS configuration for Cloudflare
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
@@ -51,13 +52,13 @@ metadata:
     gethomepage.dev/name: Alertmanager
     gethomepage.dev/icon: alertmanager.png
     gethomepage.dev/weight: 2
-    gethomepage.dev/href: https://alertmanager.zimmermann.sh
+    gethomepage.dev/href: https://PLACEHOLDER
 spec:
   entryPoints:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`alertmanager.zimmermann.sh`)
+      match: Host(`PLACEHOLDER`)
       priority: 10
       middlewares:
         - name: chain-mfa-auth
