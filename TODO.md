@@ -12,7 +12,6 @@
 - [ ] **ArgoCD**: Enable notification services.
 - [ ] **Update Image Script**: Move the update-image script into `infrastructure/` and wire it up as a dedicated task.
 - [ ] **Renovate – Omni Docker Cluster**: Add a Renovate task to automatically update the Omni Docker cluster image.
-- [ ] **Omni – Proxmox Infrastructure Provider**: Write configuration files for the Proxmox Infrastructure Provider (MachineClasses, provider config, etc.).
 
 ## Optimizations
 
@@ -24,4 +23,5 @@
 
 - [ ] **Omni**: Use secrets for sensitive data.
 - [ ] **Omni**: Switch to public IP.
+- [ ] **Omni – Proxmox Infrastructure Provider**: Write configuration files for the Proxmox Infrastructure Provider.
 - [ ] **Readme**: Update project readme — see [buroa/k8s-gitops](https://github.com/buroa/k8s-gitops/tree/main) as reference.
