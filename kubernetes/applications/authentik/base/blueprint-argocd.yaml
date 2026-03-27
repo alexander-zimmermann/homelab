@@ -1,0 +1,59 @@
+version: 1
+metadata:
+  name: argocd-oidc
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+entries:
+  # Group for homelab administrators
+  - model: authentik_core.group
+    state: present
+    identifiers:
+      name: platform-admins
+    attrs:
+      name: platform-admins
+
+  # Custom scope mapping to include groups claim in OIDC tokens
+  - model: authentik_providers_oauth2.scopemapping
+    state: present
+    identifiers:
+      managed: custom.homelab/scope-groups
+    attrs:
+      name: "OAuth Mapping: groups"
+      scope_name: groups
+      description: "Exposes user groups as a groups claim in OIDC tokens"
+      expression: |
+        return {"groups": [group.name for group in request.user.ak_groups.all()]}
+
+  # OAuth2/OIDC Provider for ArgoCD
+  - model: authentik_providers_oauth2.oauth2provider
+    state: present
+    identifiers:
+      name: ArgoCD
+    attrs:
+      name: ArgoCD
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: argocd
+      client_secret: !Env [ARGOCD_OIDC_CLIENT_SECRET]
+      # Accepts both prod and dev callback URLs
+      redirect_uris:
+        - matching_mode: strict
+          url: https://argocd.zimmermann.sh/auth/callback
+        - matching_mode: strict
+          url: https://argocd.zimmermann.phd/auth/callback
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !Find [authentik_providers_oauth2.scopemapping, [managed, custom.homelab/scope-groups]]
+
+  # Application entry in Authentik's app library
+  - model: authentik_core.application
+    state: present
+    identifiers:
+      slug: argocd
+    attrs:
+      name: ArgoCD
+      slug: argocd
+      provider: !Find [authentik_providers_oauth2.oauth2provider, [name, ArgoCD]]
+      policy_engine_mode: any
