@@ -6,10 +6,10 @@ global:
 
 # Remote write / push endpoints for metrics and logs.
 destinations:
-  - name: prometheus
+  prometheus:
     type: prometheus
     url: http://prometheus-operated.prometheus:9090/api/v1/write
-  - name: loki
+  loki:
     type: loki
     url: http://loki-gateway.loki.svc.cluster.local/loki/api/v1/push
     header:
@@ -21,129 +21,141 @@ clusterMetrics:
   enabled: true
   destinations:
     - prometheus
+  collector: alloy-metrics
 
 clusterEvents:
   enabled: true
   destinations:
     - loki
+  collector: alloy-singleton
 
 # Node & pod logs
 nodeLogs:
   enabled: true
   destinations:
     - loki
+  collector: alloy-logs
 
-podLogs:
+podLogsViaLoki:
   enabled: true
-  # Use the stable volumes-based pod log collection (renders `loki.source.file "pod_logs"`)
-  gatherMethod: volumes
-  # Start reading at the end of existing log files (no backfill); only new lines after Alloy starts are shipped
-  volumeGatherSettings:
-    onlyGatherNewLogLines: true
   destinations:
     - loki
+  collector: alloy-logs
 
-# Alloy Metrics: Cluster metrics & events
-alloy-metrics:
-  enabled: true
-  # Expose Alloy Metrics service via Cilium/BGP-announced LoadBalancer
-  service:
-    type: LoadBalancer
-    labels:
-      bgp.cilium.io/ip-pool: default
-      bgp.cilium.io/advertise-service: default
+# Additional telemetry services
+telemetryServices:
+  kube-state-metrics:
+    deploy: true
+  node-exporter:
+    deploy: true
 
-# Alloy Singleton: Per-cluster tasks like event processing
-alloy-singleton:
-  enabled: true
+collectors:
+  # Alloy Metrics: Cluster metrics & events
+  alloy-metrics:
+    presets:
+      - clustered
+      - statefulset
+    # Expose Alloy Metrics service via Cilium/BGP-announced LoadBalancer
+    alloy:
+      service:
+        type: LoadBalancer
+        labels:
+          bgp.cilium.io/ip-pool: default
+          bgp.cilium.io/advertise-service: default
 
-# Alloy Logs: Collects and forwards logs to Loki
-alloy-logs:
-  enabled: true
+  # Alloy Singleton: Per-cluster tasks like event processing
+  alloy-singleton:
+    presets:
+      - singleton
 
-# Alloy Receiver: Opens receivers for external data sources (syslog)
-alloy-receiver:
-  enabled: true
-  # Include the loki destination so the syslog extraConfig can reference loki.write.loki.receiver
-  includeDestinations:
-    - loki
-  # Expose Alloy Receiver via Cilium/BGP-announced LoadBalancer
-  service:
-    type: LoadBalancer
-    labels:
-      bgp.cilium.io/ip-pool: default
-      bgp.cilium.io/advertise-service: default
-  alloy:
-    # Syslog receiver: TCP 601 (RFC5424) and UDP 514 (RFC5424) for external infrastructure devices
-    extraPorts:
-      - name: syslog-tcp
-        port: 601
-        targetPort: 601
-        protocol: TCP
-      - name: syslog-udp
-        port: 514
-        targetPort: 514
-        protocol: UDP
-  extraConfig: |
-    discovery.relabel "syslog" {
-        targets = []
+  # Alloy Logs: Collects and forwards logs to Loki
+  alloy-logs:
+    presets:
+      - filesystem-log-reader
+      - daemonset
 
-        rule {
-            source_labels = ["__syslog_message_hostname"]
-            target_label  = "host"
-        }
+  # Alloy Receiver: Opens receivers for external data sources (syslog)
+  alloy-receiver:
+    # Include the loki destination so the syslog extraConfig can reference loki.write.loki.receiver
+    includeDestinations:
+      - loki
+    # Expose Alloy Receiver via Cilium/BGP-announced LoadBalancer
+    alloy:
+      service:
+        type: LoadBalancer
+        labels:
+          bgp.cilium.io/ip-pool: default
+          bgp.cilium.io/advertise-service: default
+      # Syslog receiver: TCP 601 (RFC5424) and UDP 514 (RFC5424) for external infrastructure devices
+      extraPorts:
+        - name: syslog-tcp
+          port: 601
+          targetPort: 601
+          protocol: TCP
+        - name: syslog-udp
+          port: 514
+          targetPort: 514
+          protocol: UDP
+    extraConfig: |
+      discovery.relabel "syslog" {
+          targets = []
 
-        rule {
-            source_labels = ["__syslog_message_hostname"]
-            target_label  = "hostname"
-        }
+          rule {
+              source_labels = ["__syslog_message_hostname"]
+              target_label  = "host"
+          }
 
-        rule {
-            source_labels = ["__syslog_message_severity"]
-            target_label  = "level"
-        }
+          rule {
+              source_labels = ["__syslog_message_hostname"]
+              target_label  = "hostname"
+          }
 
-        rule {
-            source_labels = ["__syslog_message_app_name"]
-            target_label  = "application"
-        }
+          rule {
+              source_labels = ["__syslog_message_severity"]
+              target_label  = "level"
+          }
 
-        rule {
-            source_labels = ["__syslog_message_facility"]
-            target_label  = "facility"
-        }
+          rule {
+              source_labels = ["__syslog_message_app_name"]
+              target_label  = "application"
+          }
 
-        rule {
-            source_labels = ["__syslog_connection_hostname"]
-            target_label  = "connection_hostname"
-        }
-    }
+          rule {
+              source_labels = ["__syslog_message_facility"]
+              target_label  = "facility"
+          }
 
-    loki.source.syslog "syslog" {
-        listener {
-            address             = "0.0.0.0:601"
-            protocol            = "tcp"
-            idle_timeout        = "0s"
-            use_rfc5424_message = true
-            labels              = {
-                job       = "syslog",
-                component = "loki.source.syslog",
-                protocol  = "tcp",
-            }
-        }
+          rule {
+              source_labels = ["__syslog_connection_hostname"]
+              target_label  = "connection_hostname"
+          }
+      }
 
-        listener {
-            address             = "0.0.0.0:514"
-            protocol            = "udp"
-            idle_timeout        = "0s"
-            use_rfc5424_message = true
-            labels              = {
-                job       = "syslog",
-                component = "loki.source.syslog",
-                protocol  = "udp",
-            }
-        }
+      loki.source.syslog "syslog" {
+          listener {
+              address             = "0.0.0.0:601"
+              protocol            = "tcp"
+              idle_timeout        = "0s"
+              use_rfc5424_message = true
+              labels              = {
+                  job       = "syslog",
+                  component = "loki.source.syslog",
+                  protocol  = "tcp",
+              }
+          }
 
-        forward_to    = [loki.write.loki.receiver]
-        relabel_rules = discovery.relabel.syslog.rules
-    }
+          listener {
+              address             = "0.0.0.0:514"
+              protocol            = "udp"
+              idle_timeout        = "0s"
+              use_rfc5424_message = true
+              labels              = {
+                  job       = "syslog",
+                  component = "loki.source.syslog",
+                  protocol  = "udp",
+              }
+          }
+
+          forward_to    = [loki.write.loki.receiver]
+          relabel_rules = discovery.relabel.syslog.rules
+      }
