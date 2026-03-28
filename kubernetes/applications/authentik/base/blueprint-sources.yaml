@@ -33,6 +33,15 @@ entries:
             return False
         return True
 
+  # Identification Stage: show GitHub as a login option on the login page
+  - model: authentik_stages_identification.identificationstage
+    state: present
+    identifiers:
+      name: default-authentication-identification
+    attrs:
+      sources:
+        - !Find [authentik_sources_oauth.oauthsource, [slug, github]]
+
   # Policy Binding: attaches the 2FA policy to the GitHub source
   - model: authentik_policies.policybinding
     state: present
