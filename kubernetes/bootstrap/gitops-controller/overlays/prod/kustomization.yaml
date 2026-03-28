@@ -13,7 +13,7 @@ replacements:
           kind: ConfigMap
           name: argocd-cm
         fieldPaths:
-          - data.[url]
+          - data.url
         options:
           delimiter: "/"
           index: 2
