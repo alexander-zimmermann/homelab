@@ -78,7 +78,7 @@ spec:
     bouncer:
       enabled: true
       loglevel: INFO
-      crowdseclapihost: "crowdsec-lapi.crowdsec.svc.cluster.local:8080"
+      crowdseclapihost: "crowdsec-service.crowdsec.svc.cluster.local:8080"
       crowdseclapikeyfile: "/etc/traefik/secrets/crowdsec_lapi_key"
       forwardedheaderstrustedips: "PLACEHOLDER"
       clientTrustedIPs: "PLACEHOLDER"
