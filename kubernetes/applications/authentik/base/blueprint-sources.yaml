@@ -13,8 +13,8 @@ entries:
       name: GitHub
       slug: github
       provider_type: github
-      consumer_key: !Env [AUTHENTIK_GITHUB_CLIENT_ID]
-      consumer_secret: !Env [AUTHENTIK_GITHUB_CLIENT_SECRET]
+      consumer_key: !Env AUTHENTIK_GITHUB_CLIENT_ID
+      consumer_secret: !Env AUTHENTIK_GITHUB_CLIENT_SECRET
       authentication_flow: !Find [authentik_flows.flow, [slug, default-source-authentication]]
       enrollment_flow: !Find [authentik_flows.flow, [slug, default-source-enrollment]]
       enabled: true
