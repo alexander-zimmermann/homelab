@@ -1,0 +1,257 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: proxmox
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`proxmox.zimmermann.sh`)
+      priority: 10
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - kind: Service
+          name: proxmox
+          port: 8006
+          scheme: https
+          serversTransport: insecure-transport
+  tls:
+    secretName: proxmox-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ai-pro-1
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`ai-pro-1.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-basic-auth
+          namespace: ingress-controller
+      services:
+        - name: ai-pro-1
+          port: 443
+          scheme: https
+          serversTransport: insecure-transport
+  tls:
+    secretName: ai-pro-1-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ai-pro-2
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`ai-pro-2.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-basic-auth
+          namespace: ingress-controller
+      services:
+        - name: ai-pro-2
+          port: 443
+          scheme: https
+          serversTransport: insecure-transport
+  tls:
+    secretName: ai-pro-2-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ai-pro-3
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`ai-pro-3.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-basic-auth
+          namespace: ingress-controller
+      services:
+        - name: ai-pro-3
+          port: 443
+          scheme: https
+          serversTransport: insecure-transport
+  tls:
+    secretName: ai-pro-3-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ai-pro-4
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`ai-pro-4.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-basic-auth
+          namespace: ingress-controller
+      services:
+        - name: ai-pro-4
+          port: 443
+          scheme: https
+          serversTransport: insecure-transport
+  tls:
+    secretName: ai-pro-4-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dali-1
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`dali-1.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - name: dali-1
+          port: 443
+          scheme: https
+          serversTransport: insecure-transport
+  tls:
+    secretName: dali-1-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dali-2
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`dali-2.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - name: dali-2
+          port: 443
+          scheme: https
+          serversTransport: insecure-transport
+  tls:
+    secretName: dali-2-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ems-esp
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`ems-esp.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - name: ems-esp
+          port: 80
+  tls:
+    secretName: ems-esp-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: fritzbox
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`fritzbox.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - name: fritzbox
+          port: 80
+  tls:
+    secretName: fritzbox-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: knx-ip
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`knx-ip.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - name: knx-ip
+          port: 8080
+  tls:
+    secretName: knx-ip-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: verso
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`verso.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - name: verso
+          port: 443
+          scheme: https
+          serversTransport: insecure-transport
+  tls:
+    secretName: verso-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: warp
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`warp.zimmermann.sh`)
+      kind: Rule
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - name: warp
+          port: 80
+  tls:
+    secretName: warp-tls-cert
