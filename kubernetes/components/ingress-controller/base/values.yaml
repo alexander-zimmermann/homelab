@@ -176,8 +176,10 @@ tlsOptions:
     sniStrict: true
 
 service:
-  # Expose Traefik UI via Cilium/BGP-announced LoadBalancer
+  # Expose Traefik via Cilium/BGP-announced LoadBalancer with source IP preservation
   type: LoadBalancer
+  spec:
+    externalTrafficPolicy: Local
   labels:
     bgp.cilium.io/ip-pool: default
     bgp.cilium.io/advertise-service: default
