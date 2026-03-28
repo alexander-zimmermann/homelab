@@ -34,7 +34,7 @@ entries:
         return True
 
   # Policy Binding: attaches the 2FA policy to the GitHub source
-  - model: authentik_core.policybinding
+  - model: authentik_policies.policybinding
     state: present
     identifiers:
       target: !Find [authentik_sources_oauth.oauthsource, [slug, github]]
