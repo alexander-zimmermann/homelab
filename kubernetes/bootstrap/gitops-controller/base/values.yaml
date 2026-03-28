@@ -14,6 +14,8 @@ configs:
           - Endpoints
         clusters:
           - "*"
+    # ArgoCD server URL – PLACEHOLDER is replaced per environment via overlay replacements
+    url: https://argocd.PLACEHOLDER
     # OIDC via Authentik – PLACEHOLDER is replaced per environment via overlay replacements
     oidc.config: |
       name: Authentik
