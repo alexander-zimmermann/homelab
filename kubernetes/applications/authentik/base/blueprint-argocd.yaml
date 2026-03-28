@@ -34,7 +34,7 @@ entries:
       authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
       client_type: confidential
       client_id: argocd
-      client_secret: !Env [ARGOCD_OIDC_CLIENT_SECRET]
+      client_secret: !Env ARGOCD_OIDC_CLIENT_SECRET
       # Accepts both prod and dev callback URLs
       redirect_uris:
         - matching_mode: strict
