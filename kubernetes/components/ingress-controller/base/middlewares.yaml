@@ -84,6 +84,7 @@ spec:
       clientTrustedIPs: "PLACEHOLDER"
       rediscacheenabled: true
       rediscachehost: "redis-master.redis.svc.cluster.local:6379"
+      redisCachePasswordFile: "/etc/traefik/redis-secrets/redis_password"
 
 ---
 # Cloudflare Integration: Validates that traffic is coming from trusted Cloudflare CIDRs
