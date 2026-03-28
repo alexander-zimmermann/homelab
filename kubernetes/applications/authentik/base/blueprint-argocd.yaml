@@ -36,6 +36,7 @@ entries:
       client_type: confidential
       client_id: argocd
       client_secret: !Env ARGOCD_OIDC_CLIENT_SECRET
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
       # Accepts both prod and dev callback URLs
       redirect_uris:
         - matching_mode: strict
