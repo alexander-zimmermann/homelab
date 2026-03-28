@@ -4,7 +4,7 @@ container_runtime: containerd
 secrets:
   # External secret to avoid Helm lookup issues with ArgoCD
   externalSecret:
-    name: "crowdsec-credentials"
+    name: "crowdsec-secrets"
 
 lapi:
   # Enables LAPI (Local API): central management component of CrowdSec
@@ -15,8 +15,8 @@ lapi:
     - name: ENROLL_KEY
       valueFrom:
         secretKeyRef:
-          name: crowdsec-credentials
-          key: ENROLL_KEY
+          name: crowdsec-secrets
+          key: enroll_key
 
     # Name of this instance in the console
     - name: ENROLL_INSTANCE_NAME
@@ -30,8 +30,8 @@ lapi:
     - name: BOUNCER_KEY_TRAEFIK
       valueFrom:
         secretKeyRef:
-          name: crowdsec-credentials
-          key: BOUNCER_KEY_TRAEFIK
+          name: crowdsec-lapi-key
+          key: crowdsec_lapi_key
 
     # Database password from a Secret created by the CloudNativePG Cluster
     - name: CROWDSEC_POSTGRESQL_PASSWORD

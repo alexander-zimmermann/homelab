@@ -19,7 +19,7 @@ deployment:
 # Additional volumeMounts to add to the Traefik container
 additionalVolumeMounts:
   - name: crowdsec-lapi-key
-    mountPath: /etc/traefik/secrets
+    mountPath: /etc/traefik/crowdsec-secrets
     readOnly: true
   - name: redis-password
     mountPath: /etc/traefik/redis-secrets
