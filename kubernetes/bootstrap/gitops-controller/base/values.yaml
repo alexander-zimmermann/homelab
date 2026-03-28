@@ -14,6 +14,25 @@ configs:
           - Endpoints
         clusters:
           - "*"
+    # OIDC via Authentik – PLACEHOLDER is replaced per environment via overlay replacements
+    oidc.config: |
+      name: Authentik
+      issuer: https://PLACEHOLDER/application/o/argocd/
+      clientID: argocd
+      clientSecret: $argocd-oidc-secret:oidc.authentik.clientSecret
+      requestedScopes:
+        - openid
+        - profile
+        - email
+        - groups
+      groupsClaim: groups
+
+  rbac:
+    # Default role for authenticated users without a matching group
+    policy.default: role:readonly
+    policy.csv: |
+      g, platform-admins, role:admin
+    scopes: "[groups, email]"
 
   params:
     # TLS is terminated externally via Ingress / reverse proxy.

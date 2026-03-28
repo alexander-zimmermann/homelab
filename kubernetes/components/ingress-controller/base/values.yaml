@@ -9,11 +9,20 @@ deployment:
         items:
           - key: crowdsec_lapi_key
             path: crowdsec_lapi_key
+    - name: redis-password
+      secret:
+        secretName: redis-admin-credentials
+        items:
+          - key: redis-password
+            path: redis_password
 
 # Additional volumeMounts to add to the Traefik container
 additionalVolumeMounts:
   - name: crowdsec-lapi-key
     mountPath: /etc/traefik/secrets
+    readOnly: true
+  - name: redis-password
+    mountPath: /etc/traefik/redis-secrets
     readOnly: true
 
 # Pod Disruption Budget: Ensure at least one replica is available during maintenance
@@ -176,8 +185,10 @@ tlsOptions:
     sniStrict: true
 
 service:
-  # Expose Traefik UI via Cilium/BGP-announced LoadBalancer
+  # Expose Traefik via Cilium/BGP-announced LoadBalancer with source IP preservation
   type: LoadBalancer
+  spec:
+    externalTrafficPolicy: Local
   labels:
     bgp.cilium.io/ip-pool: default
     bgp.cilium.io/advertise-service: default

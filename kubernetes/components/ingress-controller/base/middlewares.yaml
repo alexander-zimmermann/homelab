@@ -78,12 +78,13 @@ spec:
     bouncer:
       enabled: true
       loglevel: INFO
-      crowdseclapihost: "crowdsec-lapi.crowdsec.svc.cluster.local:8080"
+      crowdseclapihost: "crowdsec-service.crowdsec.svc.cluster.local:8080"
       crowdseclapikeyfile: "/etc/traefik/secrets/crowdsec_lapi_key"
       forwardedheaderstrustedips: "PLACEHOLDER"
       clientTrustedIPs: "PLACEHOLDER"
       rediscacheenabled: true
       rediscachehost: "redis-master.redis.svc.cluster.local:6379"
+      redisCachePasswordFile: "/etc/traefik/redis-secrets/redis_password"
 
 ---
 # Cloudflare Integration: Validates that traffic is coming from trusted Cloudflare CIDRs
