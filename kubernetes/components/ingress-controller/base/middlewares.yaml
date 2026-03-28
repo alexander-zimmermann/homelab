@@ -79,7 +79,7 @@ spec:
       enabled: true
       loglevel: INFO
       crowdseclapihost: "crowdsec-service.crowdsec.svc.cluster.local:8080"
-      crowdseclapikeyfile: "/etc/traefik/secrets/crowdsec_lapi_key"
+      crowdseclapikeyfile: "/etc/traefik/crowdsec-secrets/crowdsec_lapi_key"
       forwardedheaderstrustedips: "PLACEHOLDER"
       clientTrustedIPs: "PLACEHOLDER"
       rediscacheenabled: true
