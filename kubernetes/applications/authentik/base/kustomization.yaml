@@ -7,7 +7,7 @@ resources:
   - ./database.yaml
   - ./ingress-route.yaml
   - ./certificate.yaml
-  - ./sealed-secrets.yaml
+  - ./sealed-secret.yaml
 
 helmCharts:
   - name: authentik
