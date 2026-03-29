@@ -15,7 +15,6 @@
 
 ## Optimizations
 
-- [ ] **Traefik**: Configure log retention.
 - [ ] **InfluxDB**: Configure data retention policies.
 - [ ] **Cilium**: Implement network policies.
 

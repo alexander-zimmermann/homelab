@@ -71,14 +71,14 @@ logs:
   # General Traefik logs (startup, configuration, events, shutdown, ...)
   general:
     format: json
-    level: INFO
+    level: WARN
   # Access logs (HTTP requests)
   access:
     enabled: true
     format: json
     bufferingSize: 100
     filters:
-      statuscodes: "204-299,400-599"
+      statuscodes: "400-599"
 
 metrics:
   # Prometheus Monitoring
