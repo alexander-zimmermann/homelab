@@ -40,6 +40,21 @@ die() {
 }
 
 ###############################################################################
+## Helper: Format sealed secret output
+###############################################################################
+format_sealed_secret() {
+  local file="${1}"
+
+  ## Remove leading --- separator on first line
+  sed -i '1{/^---$/d}' "${file}"
+
+  ## Add blank line before --- separators, top-level metadata and spec blocks
+  sed -i '/^---$/i\\' "${file}"
+  sed -i '/^metadata:/i\\' "${file}"
+  sed -i '/^spec:/i\\' "${file}"
+}
+
+###############################################################################
 ## Helper: Seal a single secret file
 ###############################################################################
 seal_file() {
@@ -52,6 +67,8 @@ seal_file() {
     --controller-name sealed-secrets-controller \
     -f "${input}" \
     -w "${output}" || die "Failed to seal ${input}."
+
+  format_sealed_secret "${output}"
 }
 
 ###############################################################################
@@ -62,7 +79,7 @@ seal_base_secrets() {
   for file in "${SECRETS_DIR}/base/"*.yaml; do
     [[ -f "${file}" ]] || continue
     local app=$(basename "${file}" .yaml)
-    local target=$(find "${KUBE_DIR}" -type d -name "${app}" -path "*/base" 2>/dev/null | head -1)
+    local target=$(find "${KUBE_DIR}/applications" "${KUBE_DIR}/components" -type d -path "*/${app}/base" 2>/dev/null | head -1)
 
     if [[ -n "${target}" ]]; then
       seal_file "${file}" "${target}/sealed-secret.yaml"
