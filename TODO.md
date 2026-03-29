@@ -9,7 +9,6 @@
 
 - [ ] **Velero Backup**: Install Helm Chart, configure S3 backend (RustFS), schedule backups.
 - [ ] **Split Ingress Architecture**: Dual Traefik strategy (`traefik-internal` & `traefik-external`) with UDM VLAN/DMZ separation.
-- [ ] **ArgoCD**: Enable notification services.
 - [ ] **Update Image Script**: Move the update-image script into `infrastructure/` and wire it up as a dedicated task.
 - [ ] **Renovate – Omni Docker Cluster**: Add a Renovate task to automatically update the Omni Docker cluster image.
 
