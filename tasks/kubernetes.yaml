@@ -1,7 +1,7 @@
 version: "3"
 
 tasks:
-  create:
+  init:
     desc: "apply sealed secrets key [env]"
     summary: |
       Apply Sealed Secrets master key.

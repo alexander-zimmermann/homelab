@@ -1,7 +1,7 @@
 version: "3"
 
 tasks:
-  create:
+  init:
     desc: "register machine classes"
     summary: |
       Register Machine Classes in Omni.
@@ -16,8 +16,9 @@ tasks:
     cmds:
       - omnictl apply -f cluster/homelab-machine-classes.yaml
 
-  update:
+  create:
     desc: "sync cluster template [env]"
+    aliases: [update]
     summary: |
       Sync local cluster template with Omni.
       Arguments: [env] (default: prod)
