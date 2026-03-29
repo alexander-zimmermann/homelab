@@ -1,7 +1,7 @@
 version: "3"
 
 tasks:
-  create:
+  init:
     desc: "apply sealed secrets key [env]"
     summary: |
       Apply Sealed Secrets master key.
@@ -16,22 +16,22 @@ tasks:
     preconditions:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
-      - sh: test -f kubernetes/.secrets/sealed-secrets-key.yaml
-        msg: "kubernetes/.secrets/sealed-secrets-key.yaml not found. Cluster bootstrap requires sealed secrets key."
-      - sh: test -f kubernetes/.secrets/dhi-registry-credentials.yaml
-        msg: "kubernetes/.secrets/dhi-registry-credentials.yaml not found. Cluster bootstrap requires DHI credentials."
+      - sh: test -f kubernetes/.secrets/sealed-secret.yaml
+        msg: "kubernetes/.secrets/sealed-secret.yaml not found. Cluster bootstrap requires sealed secrets key."
+      - sh: test -f kubernetes/.secrets/base/sealed-secrets-controller.yaml
+        msg: "kubernetes/.secrets/base/sealed-secrets-controller.yaml not found. Cluster bootstrap requires DHI credentials."
     cmds:
       # wait for Kubernetes API readiness (trigger OIDC flow if needed)
       - kubectl cluster-info
       # ensure namespace exists before injecting secrets
       - kubectl create namespace sealed-secrets-controller --dry-run=client -o yaml | kubectl apply -f -
       # inject sealed secrets master key
-      - kubectl apply -f kubernetes/.secrets/sealed-secrets-key.yaml
+      - kubectl apply -f kubernetes/.secrets/sealed-secret.yaml
       # inject dhi registry credentials (needed for sealed-secrets-controller bootstrap)
-      - kubectl apply -f kubernetes/.secrets/dhi-registry-credentials.yaml
+      - kubectl apply -f kubernetes/.secrets/base/sealed-secrets-controller.yaml
       - kubectl annotate secret dhi-registry-secret -n sealed-secrets-controller sealed-secrets.bitnami.com/managed="true" --overwrite
       # inject dhi registry credentials into kube-system (needed for metrics-server, as Kyverno excludes this ns)
-      - "cat kubernetes/.secrets/dhi-registry-credentials.yaml | sed 's/namespace: sealed-secrets-controller/namespace: kube-system/' | kubectl apply -f -"
+      - "cat kubernetes/.secrets/base/sealed-secrets-controller.yaml | sed 's/namespace: sealed-secrets-controller/namespace: kube-system/' | kubectl apply -f -"
 
   delete:
     desc: "wipe all cluster resources"
@@ -92,3 +92,25 @@ tasks:
         msg: "kubectl is not installed"
     cmds:
       - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d)"
+
+  seal:
+    desc: "seal all secrets for an environment [env]"
+    summary: |
+      Seals all secrets from kubernetes/.secrets/base/ and kubernetes/.secrets/overlays/{env}/
+      into the corresponding Kustomize directories.
+      Secret filename must match the Kustomize directory name.
+      Prerequisites: kubectl context must already point to the target cluster.
+      Arguments: [env] (default: prod)
+    vars:
+      ENVIRONMENT: "{{if gt (len .CLI_ARGS_LIST) 0}}{{index .CLI_ARGS_LIST 0}}{{else}}prod{{end}}"
+    requires:
+      vars:
+        - name: ENVIRONMENT
+          enum: [dev, prod]
+    preconditions:
+      - sh: command -v kubectl
+        msg: "kubectl is not installed"
+      - sh: command -v kubeseal
+        msg: "kubeseal is not installed"
+    cmds:
+      - bash scripts/seal-secrets.sh {{.ENVIRONMENT}}
