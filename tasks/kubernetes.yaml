@@ -93,7 +93,7 @@ tasks:
     cmds:
       - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d)"
 
-  seal:secrets:
+  seal:
     desc: "seal all secrets for an environment [env]"
     summary: |
       Seals all secrets from kubernetes/.secrets/base/ and kubernetes/.secrets/overlays/{env}/
