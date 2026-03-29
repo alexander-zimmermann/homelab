@@ -5,7 +5,7 @@ resources:
   - ../../base
 
 replacements:
-  # Inject the domain name into the Certificate and IngressRoute
+  # Inject the domain name into the Certificate, IngressRoute and Homepage annotation
   - sourceValue: traefik.zimmermann.phd
     targets:
       - select:
@@ -20,6 +20,14 @@ replacements:
           - spec.routes.0.match
         options:
           delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: traefik-dashboard
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
+        options:
+          delimiter: "//"
           index: 1
 
 patches:
