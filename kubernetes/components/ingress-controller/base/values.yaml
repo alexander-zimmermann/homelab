@@ -52,7 +52,7 @@ ingressRoute:
       gethomepage.dev/name: Traefik
       gethomepage.dev/icon: traefik.png
       gethomepage.dev/weight: 3
-      gethomepage.dev/href: https://traefik.zimmermann.sh
+      gethomepage.dev/href: https://PLACEHOLDER
       gethomepage.dev/widget.type: "traefik"
       gethomepage.dev/widget.url: "http://traefik.ingress-controller.svc.cluster.local:9000"
     matchRule: Host(`PLACEHOLDER`)
