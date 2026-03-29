@@ -51,4 +51,10 @@ fi
 echo "${new_key}" > "${OMNI_IP_KEY_PATH}"
 chown "${OMNI_OWNER}" "${OMNI_IP_KEY_PATH}"
 
+## Restart infra provider container with the new key
+info "Restarting omni-infra-provider-proxmox with new key..."
+cd "${OMNI_LOCAL_DIR}"
+OMNI_SERVICE_ACCOUNT_KEY="${new_key}" \
+docker compose up -d omni-infra-provider-proxmox &> /dev/null || die "Failed to restart omni-infra-provider-proxmox."
+
 success "InfraProvider '${OMNI_IP_NAME}' key renewed and updated at ${OMNI_IP_KEY_PATH}."
