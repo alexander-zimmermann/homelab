@@ -18,12 +18,22 @@ patches:
 
 ---
 ###############################################################################
-## Control Plane definition
+## Control Plane definition (auto-provisioned via Proxmox)
 ###############################################################################
 kind: ControlPlane
+name: control-plane-auto
 machineClass:
-  name: control-plane-dev
-  size: 1
+  name: control-plane-auto-dev
+  size: 0
+
+systemExtensions:
+  - siderolabs/qemu-guest-agent
+  - siderolabs/util-linux-tools
+  - siderolabs/i915
+  - siderolabs/intel-ucode
+  - siderolabs/nvidia-open-gpu-kernel-modules-lts
+  - siderolabs/iscsi-tools
+  - siderolabs/zfs
 
 patches:
   - name: control-plane-settings
@@ -31,15 +41,61 @@ patches:
 
 ---
 ###############################################################################
-## Data plane definition
+## Control Plane definition (manual)
 ###############################################################################
-kind: Workers
+kind: ControlPlane
+name: control-plane-manual
 machineClass:
-  name: data-plane-dev
+  name: control-plane-manual-dev
   size: 3
 
-## Update Strategies: critical for storage nodes: Ensure only one node
-## reboots at a time to maintain data availability.
+patches:
+  - name: control-plane-settings
+    file: patches/control-plane-settings.yaml
+
+---
+###############################################################################
+## Data plane definition (auto-provisioned via Proxmox)
+###############################################################################
+kind: Workers
+name: data-plane-auto
+machineClass:
+  name: data-plane-auto-dev
+  size: 0
+
+systemExtensions:
+  - siderolabs/qemu-guest-agent
+  - siderolabs/util-linux-tools
+  - siderolabs/i915
+  - siderolabs/intel-ucode
+  - siderolabs/nvidia-open-gpu-kernel-modules-lts
+  - siderolabs/iscsi-tools
+  - siderolabs/zfs
+
+## Update Strategies: critical for storage nodes: Ensure only one node reboots at a time
+updateStrategy:
+  rolling:
+    maxParallelism: 1
+deleteStrategy:
+  type: Rolling
+  rolling:
+    maxParallelism: 1
+
+patches:
+  - name: data-plane-settings
+    file: patches/data-plane-settings.yaml
+
+---
+###############################################################################
+## Data plane definition (manual)
+###############################################################################
+kind: Workers
+name: data-plane-manual
+machineClass:
+  name: data-plane-manual-dev
+  size: 3
+
+## Update Strategies: critical for storage nodes: Ensure only one node reboots at a time
 updateStrategy:
   rolling:
     maxParallelism: 1
