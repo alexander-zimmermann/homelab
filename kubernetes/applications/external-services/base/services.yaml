@@ -5,7 +5,27 @@ metadata:
   name: proxmox
 spec:
   type: ExternalName
-  externalName: pve-1.zimmermann.eu.com
+  externalName: proxmox.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: backup
+spec:
+  type: ExternalName
+  externalName: backup.zimmermann.eu.com
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: omni
+spec:
+  type: ExternalName
+  externalName: omni.zimmermann.eu.com
 
 ---
 apiVersion: v1

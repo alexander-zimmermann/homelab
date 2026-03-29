@@ -18,9 +18,51 @@ spec:
           name: proxmox
           port: 8006
           scheme: https
-          serversTransport: insecure-transport
   tls:
     secretName: proxmox-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: backup
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`backup.zimmermann.sh`)
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - name: backup
+          port: 8007
+          scheme: https
+  tls:
+    secretName: backup-tls-cert
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: omni
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`omni.zimmermann.sh`)
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - name: omni
+          port: 443
+          scheme: https
+          serversTransport: insecure-transport
+  tls:
+    secretName: omni-tls-cert
 
 ---
 apiVersion: traefik.io/v1alpha1
