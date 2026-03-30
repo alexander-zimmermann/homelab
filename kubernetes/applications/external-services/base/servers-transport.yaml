@@ -3,5 +3,6 @@ kind: ServersTransport
 
 metadata:
   name: insecure-transport
+
 spec:
   insecureSkipVerify: true

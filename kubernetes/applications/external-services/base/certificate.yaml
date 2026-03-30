@@ -4,6 +4,7 @@ kind: Certificate
 metadata:
   name: proxmox-tls-cert
   namespace: external-services
+
 spec:
   secretName: proxmox-tls-cert
   issuerRef:
@@ -19,6 +20,7 @@ kind: Certificate
 metadata:
   name: backup-tls-cert
   namespace: external-services
+
 spec:
   secretName: backup-tls-cert
   issuerRef:
@@ -34,6 +36,7 @@ kind: Certificate
 metadata:
   name: omni-tls-cert
   namespace: external-services
+
 spec:
   secretName: omni-tls-cert
   issuerRef:
@@ -49,6 +52,7 @@ kind: Certificate
 metadata:
   name: ai-pro-1-tls-cert
   namespace: external-services
+
 spec:
   secretName: ai-pro-1-tls-cert
   issuerRef:
@@ -64,6 +68,7 @@ kind: Certificate
 metadata:
   name: ai-pro-2-tls-cert
   namespace: external-services
+
 spec:
   secretName: ai-pro-2-tls-cert
   issuerRef:
@@ -79,6 +84,7 @@ kind: Certificate
 metadata:
   name: ai-pro-3-tls-cert
   namespace: external-services
+
 spec:
   secretName: ai-pro-3-tls-cert
   issuerRef:
@@ -94,6 +100,7 @@ kind: Certificate
 metadata:
   name: ai-pro-4-tls-cert
   namespace: external-services
+
 spec:
   secretName: ai-pro-4-tls-cert
   issuerRef:
@@ -109,6 +116,7 @@ kind: Certificate
 metadata:
   name: dali-1-tls-cert
   namespace: external-services
+
 spec:
   secretName: dali-1-tls-cert
   issuerRef:
@@ -124,6 +132,7 @@ kind: Certificate
 metadata:
   name: dali-2-tls-cert
   namespace: external-services
+
 spec:
   secretName: dali-2-tls-cert
   issuerRef:
@@ -139,6 +148,7 @@ kind: Certificate
 metadata:
   name: ems-esp-tls-cert
   namespace: external-services
+
 spec:
   secretName: ems-esp-tls-cert
   issuerRef:
@@ -154,6 +164,7 @@ kind: Certificate
 metadata:
   name: fritzbox-tls-cert
   namespace: external-services
+
 spec:
   secretName: fritzbox-tls-cert
   issuerRef:
@@ -169,6 +180,7 @@ kind: Certificate
 metadata:
   name: knx-ip-tls-cert
   namespace: external-services
+
 spec:
   secretName: knx-ip-tls-cert
   issuerRef:
@@ -184,6 +196,7 @@ kind: Certificate
 metadata:
   name: verso-tls-cert
   namespace: external-services
+
 spec:
   secretName: verso-tls-cert
   issuerRef:
@@ -199,6 +212,7 @@ kind: Certificate
 metadata:
   name: warp-tls-cert
   namespace: external-services
+
 spec:
   secretName: warp-tls-cert
   issuerRef:
