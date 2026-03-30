@@ -30,13 +30,13 @@ LEGO_CERT_DIR="/var/snap/lego/common/.lego/certificates"
 ## Binaries
 ###############################################################################
 ## curl binary
-CURL_VERSION="8.18.0"
+CURL_VERSION="8.18.0" # datasource=github-releases depName=stunnel/static-curl
 CURL_TAR="curl-linux-x86_64-musl-$${CURL_VERSION}.tar.xz"
 CURL_URL="https://github.com/stunnel/static-curl/releases/download/$${CURL_VERSION}/$${CURL_TAR}"
 CURL_PATH="/usr/local/bin/curl"
 
 ## omnictl binary
-OMNI_VERSION="v1.6.1"
+OMNI_VERSION="v1.6.1" # datasource=github-releases depName=siderolabs/omni
 OMNICTL_VERSION="$${OMNI_VERSION}"
 OMNICTL_URL="https://github.com/siderolabs/omni/releases/download/$${OMNICTL_VERSION}/omnictl-linux-amd64"
 OMNICTL_PATH="/usr/local/bin/omnictl"
@@ -96,7 +96,7 @@ AUTH0_ISSUER="${auth0_issuer}"
 ## Docker Volume Backup
 ###############################################################################
 ## Backup directory and settings
-DOCKER_VOLUME_BACKUP_VERSION="v2.47.2"
+DOCKER_VOLUME_BACKUP_VERSION="v2.47.2" # datasource=github-releases depName=offen/docker-volume-backup
 DOCKER_VOLUME_BACKUP_DIR="$${OMNI_BACKUP_DIR}/volumes"
 
 ## Backup cycle & retention
