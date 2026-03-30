@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - ./sealed-secret.yaml
 
 replacements:
   # Inject domain name into the Certificate and IngressRoute
