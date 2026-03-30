@@ -3,6 +3,7 @@ kind: IngressRoute
 
 metadata:
   name: proxmox
+
 spec:
   entryPoints:
     - websecure
@@ -24,6 +25,7 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: backup
 spec:
@@ -45,6 +47,7 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: omni
 spec:
@@ -67,8 +70,10 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: ai-pro-1
+
 spec:
   entryPoints:
     - websecure
@@ -89,8 +94,10 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: ai-pro-2
+
 spec:
   entryPoints:
     - websecure
@@ -111,8 +118,10 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: ai-pro-3
+
 spec:
   entryPoints:
     - websecure
@@ -133,8 +142,10 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: ai-pro-4
+
 spec:
   entryPoints:
     - websecure
@@ -155,8 +166,10 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: dali-1
+
 spec:
   entryPoints:
     - websecure
@@ -177,6 +190,7 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: dali-2
 spec:
@@ -199,6 +213,7 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: ems-esp
 spec:
@@ -219,8 +234,10 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: fritzbox
+
 spec:
   entryPoints:
     - websecure
@@ -239,8 +256,10 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: knx-ip
+
 spec:
   entryPoints:
     - websecure
@@ -259,8 +278,10 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: verso
+
 spec:
   entryPoints:
     - websecure
@@ -281,8 +302,10 @@ spec:
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
+
 metadata:
   name: warp
+
 spec:
   entryPoints:
     - websecure
