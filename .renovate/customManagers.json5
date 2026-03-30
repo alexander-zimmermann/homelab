@@ -19,6 +19,15 @@
     },
     {
       "customType": "regex",
+      "description": "Process shell config file versions",
+      "managerFilePatterns": ["\\.conf\\.tftpl$"],
+      "matchStrings": [
+        "[^=]+=\"(?<currentValue>[^\"]+)\"\\s*#\\s*datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)"
+      ],
+      "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}"
+    },
+    {
+      "customType": "regex",
       "description": "Process Talos factory images",
       "managerFilePatterns": ["infrastructure/manifest/20-image/image.yaml"],
       "matchStrings": [

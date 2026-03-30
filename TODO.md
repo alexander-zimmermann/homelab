@@ -11,7 +11,6 @@
 - [ ] **Split Ingress Architecture**: Dual Traefik strategy (`traefik-internal` & `traefik-external`) with UDM VLAN/DMZ separation.
 - [ ] **Update Image Script**: Move the update-image script into `infrastructure/` and wire it up as a dedicated task.
 - [ ] **PBS Bootstrap**: Make re-bootstrap idempotent. Add a systemd timer to back up `/etc/proxmox-backup/` to NFS, so the bootstrap script can restore config first and all existing-checks (datastore, users, jobs) pass without re-initializing.
-- [ ] **Renovate – Omni Docker Cluster**: Add a Renovate task to automatically update the Omni Docker cluster image.
 
 ## Optimizations
 
