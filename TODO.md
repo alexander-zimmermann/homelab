@@ -21,5 +21,4 @@
 ## Platform
 
 - [ ] **Omni**: Use secrets for sensitive data.
-- [ ] **Omni – Proxmox Infrastructure Provider**: Write configuration files for the Proxmox Infrastructure Provider.
 - [ ] **Readme**: Update project readme — see [buroa/k8s-gitops](https://github.com/buroa/k8s-gitops/tree/main) as reference.
