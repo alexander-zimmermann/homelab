@@ -17,6 +17,36 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 
 metadata:
+  name: backup-tls-cert
+  namespace: external-services
+spec:
+  secretName: backup-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - backup.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: omni-tls-cert
+  namespace: external-services
+spec:
+  secretName: omni-tls-cert
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - omni.zimmermann.sh
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
   name: ai-pro-1-tls-cert
   namespace: external-services
 spec:
