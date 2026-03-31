@@ -33,11 +33,13 @@ jobs:
           echo "::group::Rendering Prod"
           kustomize build --enable-helm kubernetes/bootstrap/cilium/overlays/prod > dist/prod/cilium.yaml
           kustomize build --enable-helm kubernetes/bootstrap/gitops-controller/overlays/prod > dist/prod/argocd.yaml
+          kustomize build --enable-helm kubernetes/bootstrap/talos-ccm/overlays/prod > dist/prod/talos-ccm.yaml
           echo "::endgroup::"
 
           echo "::group::Rendering Dev"
           kustomize build --enable-helm kubernetes/bootstrap/cilium/overlays/dev > dist/dev/cilium.yaml
           kustomize build --enable-helm kubernetes/bootstrap/gitops-controller/overlays/dev > dist/dev/argocd.yaml
+          kustomize build --enable-helm kubernetes/bootstrap/talos-ccm/overlays/dev > dist/dev/talos-ccm.yaml
           echo "::endgroup::"
 
       - name: Deploy to Bootstrap Branch
