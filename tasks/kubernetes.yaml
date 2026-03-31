@@ -90,6 +90,32 @@ tasks:
     cmds:
       - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d)"
 
+  unseal:
+    desc: "unseal a sealed-secret.yaml [path/to/sealed-secret.yaml]"
+    summary: |
+      Decrypts a sealed-secret.yaml back to plaintext secret.yaml in the same directory.
+      Arguments: [path/to/sealed-secret.yaml]
+      Underlying command: kubeseal --recovery-unseal --recovery-private-key master-key.yaml
+    vars:
+      INPUT: '{{index .CLI_ARGS_LIST 0}}'
+    requires:
+      vars:
+        - INPUT
+    preconditions:
+      - sh: command -v kubeseal
+        msg: "kubeseal is not installed"
+      - sh: test -f kubernetes/components/sealed-secrets-controller/base/master-key.yaml
+        msg: "master-key.yaml not found"
+      - sh: test -f "{{.INPUT}}"
+        msg: "'{{.INPUT}}' not found"
+    cmds:
+      - cmd: |
+          kubeseal \
+            --recovery-unseal \
+            --recovery-private-key kubernetes/components/sealed-secrets-controller/base/master-key.yaml \
+            < "{{.INPUT}}" \
+            -o yaml > "$(dirname "{{.INPUT}}")/secret.yaml"
+
   seal:
     desc: "seal a secret.yaml [path/to/secret.yaml]"
     summary: |
