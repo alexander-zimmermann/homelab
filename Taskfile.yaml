@@ -38,6 +38,7 @@ tasks:
         cilium-cli
         siderolabs/tap/sidero-tools
         actionlint
+        yq
       PACKAGES: >-
         pre-commit
     preconditions:
