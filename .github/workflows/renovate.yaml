@@ -55,8 +55,7 @@ jobs:
           RENOVATE_PLATFORM_COMMIT: "true"
           RENOVATE_ALLOWED_POST_UPGRADE_COMMANDS: >-
             [
-              "^python3 .github/scripts/update_versions.py$",
-              "^python3 .github/scripts/update_checksums.py talos$"
+              "^python3 .github/scripts/update_checksums.py debian ubuntu$"
             ]
         with:
           token: ${{ steps.app-token.outputs.token }}
