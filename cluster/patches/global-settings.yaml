@@ -50,6 +50,12 @@ machine:
       forwardKubeDNSToHost: true # Forward DNS from pods to host resolver
 
 ---
+## Stable auto-generated hostname based on machine identity (Talos v1.12+)
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: stable
+
+---
 ## Disable Talos userspace OOM controller (Talos v1.12.x mitigation)
 apiVersion: v1alpha1
 kind: OOMConfig
