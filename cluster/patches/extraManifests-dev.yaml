@@ -1,3 +1,6 @@
+###############################################################################
+## Development Kubernetes manifests
+###############################################################################
 cluster:
   extraManifests:
     - "https://raw.githubusercontent.com/alexander-zimmermann/homelab/bootstrap/dist/dev/cilium.yaml"

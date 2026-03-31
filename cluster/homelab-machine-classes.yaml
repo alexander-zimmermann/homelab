@@ -1,52 +1,8 @@
 ###############################################################################
-## Machine classes for manual deployment
+## Production machine classes
 ###############################################################################
-## Production control plane
 metadata:
-  id: control-plane-manual-prod
-  type: MachineClasses.omni.sidero.dev
-  namespace: default
-spec:
-  matchlabels:
-    - "cluster = homelab, environment = prod, role = control-plane"
-
----
-## Development control plane
-metadata:
-  id: control-plane-manual-dev
-  type: MachineClasses.omni.sidero.dev
-  namespace: default
-spec:
-  matchlabels:
-    - "cluster = homelab, environment = dev, role = control-plane"
-
----
-## Production data plane
-metadata:
-  id: data-plane-manual-prod
-  type: MachineClasses.omni.sidero.dev
-  namespace: default
-spec:
-  matchlabels:
-    - "cluster = homelab, environment = prod, role = data-plane"
-
----
-## Development data plane
-metadata:
-  id: data-plane-manual-dev
-  type: MachineClasses.omni.sidero.dev
-  namespace: default
-spec:
-  matchlabels:
-    - "cluster = homelab, environment = dev, role = data-plane"
-
----
-###############################################################################
-## Machine classes for auto-provisioning (Proxmox Infrastructure Provider)
-###############################################################################
-## Production control plane
-metadata:
-  id: control-plane-auto-prod
+  id: control-plane-prod
   type: MachineClasses.omni.sidero.dev
   namespace: default
 spec:
@@ -80,45 +36,8 @@ spec:
       network_bridge: vmbr0
 
 ---
-## Development control plane
 metadata:
-  id: control-plane-auto-dev
-  type: MachineClasses.omni.sidero.dev
-  namespace: default
-spec:
-  matchlabels: []
-  autoprovision:
-    providerid: proxmox-infra
-    kernelargs: []
-    metavalues: []
-    providerdata: |
-      # Resource allocation
-      cores: 2
-      sockets: 1
-      memory: 2048
-      disk_size: 32
-
-      # CPU & memory optimizations
-      cpu_type: host
-      machine_type: q35
-      numa: true
-      balloon: false
-
-      # Storage configuration
-      storage_selector: name == "local-zfs"
-      disk_ssd: true
-      disk_discard: true
-      disk_iothread: true
-      disk_cache: none
-      disk_aio: io_uring
-
-      # Network configuration
-      network_bridge: vmbr0
-
----
-## Production data plane
-metadata:
-  id: data-plane-auto-prod
+  id: data-plane-prod
   type: MachineClasses.omni.sidero.dev
   namespace: default
 spec:
@@ -169,9 +88,46 @@ spec:
       network_bridge: vmbr0
 
 ---
-## Development data plane
+###############################################################################
+## Development machine classes
+###############################################################################
 metadata:
-  id: data-plane-auto-dev
+  id: control-plane-dev
+  type: MachineClasses.omni.sidero.dev
+  namespace: default
+spec:
+  matchlabels: []
+  autoprovision:
+    providerid: proxmox-infra
+    kernelargs: []
+    metavalues: []
+    providerdata: |
+      # Resource allocation
+      cores: 2
+      sockets: 1
+      memory: 2048
+      disk_size: 32
+
+      # CPU & memory optimizations
+      cpu_type: host
+      machine_type: q35
+      numa: true
+      balloon: false
+
+      # Storage configuration
+      storage_selector: name == "local-zfs"
+      disk_ssd: true
+      disk_discard: true
+      disk_iothread: true
+      disk_cache: none
+      disk_aio: io_uring
+
+      # Network configuration
+      network_bridge: vmbr0
+
+---
+metadata:
+  id: data-plane-dev
   type: MachineClasses.omni.sidero.dev
   namespace: default
 spec:

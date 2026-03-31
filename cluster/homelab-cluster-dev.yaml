@@ -4,9 +4,9 @@
 kind: Cluster
 name: homelab-dev
 kubernetes:
-  version: v1.32.0
+  version: v1.33.10
 talos:
-  version: v1.12.0
+  version: v1.12.6
 features:
   diskEncryption: true
 
@@ -18,13 +18,12 @@ patches:
 
 ---
 ###############################################################################
-## Control Plane definition (auto-provisioned via Proxmox)
+## Control plane definition
 ###############################################################################
 kind: ControlPlane
-name: control-plane-auto
 machineClass:
-  name: control-plane-auto-dev
-  size: 0
+  name: control-plane-dev
+  size: 3
 
 systemExtensions:
   - siderolabs/qemu-guest-agent
@@ -41,27 +40,13 @@ patches:
 
 ---
 ###############################################################################
-## Control Plane definition (manual)
-###############################################################################
-kind: ControlPlane
-name: control-plane-manual
-machineClass:
-  name: control-plane-manual-dev
-  size: 3
-
-patches:
-  - name: control-plane-settings
-    file: patches/control-plane-settings.yaml
-
----
-###############################################################################
-## Data plane definition (auto-provisioned via Proxmox)
+## Data Plane definition
 ###############################################################################
 kind: Workers
-name: data-plane-auto
+name: data-plane
 machineClass:
-  name: data-plane-auto-dev
-  size: 0
+  name: data-plane-dev
+  size: 3
 
 systemExtensions:
   - siderolabs/qemu-guest-agent
@@ -71,29 +56,6 @@ systemExtensions:
   - siderolabs/nvidia-open-gpu-kernel-modules-lts
   - siderolabs/iscsi-tools
   - siderolabs/zfs
-
-## Update Strategies: critical for storage nodes: Ensure only one node reboots at a time
-updateStrategy:
-  rolling:
-    maxParallelism: 1
-deleteStrategy:
-  type: Rolling
-  rolling:
-    maxParallelism: 1
-
-patches:
-  - name: data-plane-settings
-    file: patches/data-plane-settings.yaml
-
----
-###############################################################################
-## Data plane definition (manual)
-###############################################################################
-kind: Workers
-name: data-plane-manual
-machineClass:
-  name: data-plane-manual-dev
-  size: 3
 
 ## Update Strategies: critical for storage nodes: Ensure only one node reboots at a time
 updateStrategy:
