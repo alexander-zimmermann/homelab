@@ -4,7 +4,7 @@
 kind: Cluster
 name: homelab-prod
 kubernetes:
-  version: v1.33.10
+  version: v1.34.6
 talos:
   version: v1.12.6
 features:
