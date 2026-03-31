@@ -2,35 +2,29 @@ image:
   ## Linux VM images
   vm_debian_trixie:
     image_type: import
-    image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
+    image_url: https://cloud.debian.org/images/cloud/trixie/20260327-2429/debian-13-genericcloud-amd64-20260327-2429.qcow2
     image_filename: debian-13-genericcloud-amd64.qcow2
     image_checksum: 09559ec27d263997827dd8cddf76e97ea8e0f1803380aa501ea7eaa4b4968cd76ffef4ec7eb07ef1a9ccbeb0925a5020492ea9ed53eb167d62f3a2285039912c
     image_checksum_algorithm: sha512
-    image_checksum_url: https://cloud.debian.org/images/cloud/trixie/latest/SHA512SUMS
-    image_checksum_filename: debian-13-genericcloud-amd64.qcow2
 
   vm_ubuntu_noble:
     image_type: import
-    image_url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+    image_url: https://cloud-images.ubuntu.com/noble/20260323/noble-server-cloudimg-amd64.img
     image_filename: ubuntu-noble-server-cloudimg-amd64.qcow2
     image_checksum: 6e7016f2c9f4d3c00f48789eb6b9043ba2172ccc1b6b1eaf3ed1e29dd3e52bb3
-    image_checksum_url: https://cloud-images.ubuntu.com/noble/current/SHA256SUMS
-    image_checksum_filename: noble-server-cloudimg-amd64.img
 
   ## Ubuntu LXC images
   lxc_ubuntu_noble:
     image_type: vztmpl
-    image_url: https://images.linuxcontainers.org/images/ubuntu/noble/amd64/cloud/20260224_10:40/rootfs.tar.xz
-    image_filename: ubuntu-noble-cloud-amd64-202602241040.tar.xz
-    image_checksum: 10047c65ebe7405a186373ee7eaf3a0dc7f3b262b2e3db0dc200ebd5a088b8c5
-    image_checksum_filename: rootfs.tar.xz
+    image_url: https://images.linuxcontainers.org/images/ubuntu/noble/amd64/cloud/20260330_07:42/rootfs.tar.xz
+    image_filename: ubuntu-noble-cloud-amd64-202603300742.tar.xz
+    image_checksum: 97f1e355e5df25725b3557697d4d61adb0e5671aee1b2470abc75d1db821c5e4
 
   lxc_ubuntu_plucky:
     image_type: vztmpl
-    image_url: https://images.linuxcontainers.org/images/ubuntu/noble/amd64/cloud/20251222_07:42/rootfs.tar.xz
-    image_filename: ubuntu-plucky-cloud-amd64-202512220742.tar.xz
-    image_checksum: af66983f97ce1741076e6bcbf1ea535c8cd983e97bff3403a7cb10c877ab7539
-    image_checksum_filename: rootfs.tar.xz
+    image_url: https://images.linuxcontainers.org/images/ubuntu/plucky/amd64/cloud/20260330_07:42/rootfs.tar.xz
+    image_filename: ubuntu-plucky-cloud-amd64-202603300742.tar.xz
+    image_checksum: 2a87c930c22b56445a9c0283fda9c6a2617d1ef97a911d4fc0091c7d688abae8
 
   ## Windows images
   vm_windows_11_25h2:
@@ -38,11 +32,9 @@ image:
     image_url: ""
     image_filename: windows-11-25H2-amd64.iso
     image_checksum: ""
-    image_checksum_filename: windows-11-25H2-amd64.iso
 
   vm_windows_virtio_0_1_285:
     image_type: iso
     image_url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win-0.1.285.iso
     image_filename: windows-virtio-0.1.285.iso
     image_checksum: e14cf2b94492c3e925f0070ba7fdfedeb2048c91eea9c5a5afb30232a3976331
-    image_checksum_filename: virtio-win-0.1.285.iso
