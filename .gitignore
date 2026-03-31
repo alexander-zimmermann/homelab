@@ -30,9 +30,8 @@ certs/
 *.pem
 *.crt
 *.key
-.secrets/
-secrets.yaml
-local-secrets.yaml
+secret.yaml
+master-key.yaml
 .env
 .env.*
 charts/

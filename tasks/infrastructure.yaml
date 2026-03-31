@@ -2,15 +2,13 @@ version: "3"
 
 tasks:
   init:
-    desc: "initialize tofu and sync images"
+    desc: "initialize tofu modules"
     summary: |
-      Initialize OpenTofu modules and sync Talos images.
-      Underlying command: tofu init, python update_images.py
+      Initialize OpenTofu modules.
+      Underlying command: tofu init
     preconditions:
       - sh: command -v tofu
         msg: "OpenTofu (tofu) is not installed"
-      - sh: command -v omnictl
-        msg: "omnictl is not installed"
     sources:
       - versions.tf
       - providers.tf
@@ -19,7 +17,6 @@ tasks:
       - manifest/**/*.yaml
     cmds:
       - tofu init -upgrade
-      - "{{.PYTHON}} {{.SCRIPTS_DIR}}/update_images.py"
 
   create:
     desc: "apply infrastructure resources"
