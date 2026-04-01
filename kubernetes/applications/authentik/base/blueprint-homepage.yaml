@@ -1,0 +1,16 @@
+version: 1
+metadata:
+  name: homepage-api-token
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+entries:
+  # API token used by Homepage to query Authentik widget stats
+  - model: authentik_core.token
+    state: present
+    identifiers:
+      identifier: homepage-api-token
+    attrs:
+      identifier: homepage-api-token
+      intent: api
+      user: !Find [authentik_core.user, [username, akadmin]]
+      key: !Env AUTHENTIK_HOMEPAGE_API_TOKEN
