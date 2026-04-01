@@ -9,13 +9,16 @@
 
 - [ ] **Velero Backup**: Install Helm Chart, configure S3 backend (RustFS), schedule backups.
 - [ ] **Split Ingress Architecture**: Dual Traefik strategy (`traefik-internal` & `traefik-external`) with UDM VLAN/DMZ separation.
-- [ ] **Update Image Script**: Move the update-image script into `infrastructure/` and wire it up as a dedicated task.
 - [ ] **PBS Bootstrap**: Make re-bootstrap idempotent. Add a systemd timer to back up `/etc/proxmox-backup/` to NFS, so the bootstrap script can restore config first and all existing-checks (datastore, users, jobs) pass without re-initializing.
 
 ## Optimizations
 
 - [ ] **InfluxDB**: Configure data retention policies.
 - [ ] **Cilium**: Implement network policies.
+
+## GitOps
+
+- [ ] **ArgoCD Source Hydrator**: Evaluate the [Source Hydrator](https://argo-cd.readthedocs.io/en/latest/user-guide/source-hydrator/) for pre-rendering manifests before sync (replaces ApplicationSet + Kustomize render at sync time).
 
 ## Platform
 
