@@ -21,7 +21,7 @@ resource "proxmox_virtual_environment_vm" "vm_template" {
   template  = true
   started   = false
 
-  description = var.description
+  description = var.description != null ? var.description : "Created by OpenTofu - ${timestamp()}"
   tags        = var.tags
 
   lifecycle {
