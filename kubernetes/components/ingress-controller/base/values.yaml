@@ -3,11 +3,11 @@ deployment:
   kind: Deployment
 
   additionalVolumes:
-    - name: crowdsec-lapi-key
+    - name: crowdsec-traefik-lapi-key
       secret:
-        secretName: crowdsec-lapi-key
+        secretName: crowdsec-traefik-lapi-key
         items:
-          - key: crowdsec_lapi_key
+          - key: crowdsec_traefik_lapi_key
             path: crowdsec_lapi_key
     - name: redis-password
       secret:
@@ -18,7 +18,7 @@ deployment:
 
 # Additional volumeMounts to add to the Traefik container
 additionalVolumeMounts:
-  - name: crowdsec-lapi-key
+  - name: crowdsec-traefik-lapi-key
     mountPath: /etc/traefik/crowdsec-secrets
     readOnly: true
   - name: redis-password
