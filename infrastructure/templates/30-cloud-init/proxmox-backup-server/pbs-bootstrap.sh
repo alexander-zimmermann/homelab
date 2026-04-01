@@ -226,7 +226,7 @@ setup_data_retention() {
   ## Garbage collection job (still part of datastore configuration)
   info "Update garbage collection job for ${datastore_name}..."
   proxmox-backup-manager datastore update "${datastore_name}" \
-    --gc-schedule "Sun 04:00" || die "Could not update garbage collection schedule for ${datastore_name}."
+    --gc-schedule "daily" || die "Could not update garbage collection schedule for ${datastore_name}."
 
   success "Data retention policy for ${datastore_name} set up successfully."
 }
