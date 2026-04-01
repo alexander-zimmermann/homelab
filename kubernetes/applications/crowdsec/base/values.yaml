@@ -30,8 +30,14 @@ lapi:
     - name: BOUNCER_KEY_TRAEFIK
       valueFrom:
         secretKeyRef:
-          name: crowdsec-lapi-key
-          key: crowdsec_lapi_key
+          name: crowdsec-traefik-lapi-key
+          key: crowdsec_traefik_lapi_key
+    # API key used by Homepage widget
+    - name: BOUNCER_KEY_HOMEPAGE
+      valueFrom:
+        secretKeyRef:
+          name: crowdsec-homepage-lapi-key
+          key: crowdsec_homepage_lapi_key
 
     # Database password from a Secret created by the CloudNativePG Cluster
     - name: CROWDSEC_POSTGRESQL_PASSWORD
