@@ -10,6 +10,16 @@ metadata:
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Homepage Service Discovery
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Security & Identity"
+    gethomepage.dev/name: "Authentik"
+    gethomepage.dev/icon: "authentik.png"
+    gethomepage.dev/href: "https://PLACEHOLDER"
+    gethomepage.dev/weight: "1"
+    gethomepage.dev/widget.type: "authentik"
+    gethomepage.dev/widget.url: "http://authentik-server.authentik.svc.cluster.local"
+    gethomepage.dev/widget.key: "{{HOMEPAGE_VAR_AUTHENTIK_KEY}}"
 
 spec:
   entryPoints:

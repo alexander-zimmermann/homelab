@@ -6,7 +6,7 @@ resources:
   - ./sealed-secret.yaml
 
 replacements:
-  # Inject domain name into the Certificate and IngressRoute
+  # Inject domain name into Certificate, IngressRoute, and Homepage href annotation
   - sourceValue: auth.zimmermann.sh
     targets:
       - select:
@@ -21,6 +21,14 @@ replacements:
           - spec.routes.0.match
         options:
           delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: authentik
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
+        options:
+          delimiter: "//"
           index: 1
 
   # Inject database storage size

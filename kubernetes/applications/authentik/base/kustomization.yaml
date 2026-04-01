@@ -27,6 +27,12 @@ configMapGenerator:
   - name: authentik-blueprint-argocd
     files:
       - blueprint-argocd.yaml
+  - name: authentik-blueprint-homepage
+    files:
+      - blueprint-homepage.yaml
+  - name: authentik-blueprint-forward-auth
+    files:
+      - blueprint-forward-auth.yaml
 
 labels:
   - includeSelectors: false
