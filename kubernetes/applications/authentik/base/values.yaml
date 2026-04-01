@@ -73,6 +73,7 @@ blueprints:
     - authentik-blueprint-sources
     - authentik-blueprint-argocd
     - authentik-blueprint-homepage
+    - authentik-blueprint-forward-auth
 
 server:
   # Expose Authentik service via Cilium/BGP-announced LoadBalancer
