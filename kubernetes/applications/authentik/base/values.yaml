@@ -35,6 +35,12 @@ global:
         secretKeyRef:
           name: argocd-oidc-secret
           key: oidc.authentik.clientSecret
+    # Homepage API token for the homepage-api-token blueprint
+    - name: AUTHENTIK_HOMEPAGE_API_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: authentik-credentials
+          key: AUTHENTIK_HOMEPAGE_API_TOKEN
 
     # Optimization: Fewer workers and no preloading saves RAM in small setups
     - name: AUTHENTIK_WEB__WORKERS
@@ -66,6 +72,7 @@ blueprints:
   configMaps:
     - authentik-blueprint-sources
     - authentik-blueprint-argocd
+    - authentik-blueprint-homepage
 
 server:
   # Expose Authentik service via Cilium/BGP-announced LoadBalancer

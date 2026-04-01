@@ -27,6 +27,9 @@ configMapGenerator:
   - name: authentik-blueprint-argocd
     files:
       - blueprint-argocd.yaml
+  - name: authentik-blueprint-homepage
+    files:
+      - blueprint-homepage.yaml
 
 labels:
   - includeSelectors: false
