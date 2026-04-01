@@ -57,6 +57,8 @@ lapi:
       gethomepage.dev/weight: "2"
       gethomepage.dev/widget.type: "crowdsec"
       gethomepage.dev/widget.url: "http://crowdsec-lapi.crowdsec.svc.cluster.local:8080"
+      gethomepage.dev/widget.username: "{{HOMEPAGE_VAR_CROWDSEC_USERNAME}}"
+      gethomepage.dev/widget.password: "{{HOMEPAGE_VAR_CROWDSEC_LAPI_KEY}}"
 
   metrics:
     # Prometheus Monitoring
