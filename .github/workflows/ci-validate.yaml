@@ -177,7 +177,7 @@ jobs:
 
       - name: Validate Images (crane)
         run: |
-          grep -r "^[[:space:]]*image:" rendered/manifests.yaml | awk '{print $2}' | sort -u > images.txt
+          grep -r "^[[:space:]]*image:" rendered/manifests.yaml | awk '{print $2}' | grep -v "^/" | sort -u > images.txt
           while read -r image; do
             if [ -z "$image" ]; then continue; fi
             if [[ "$image" == "docker.io/"* ]] && [[ "$image" != *"/"*"/"* ]]; then
