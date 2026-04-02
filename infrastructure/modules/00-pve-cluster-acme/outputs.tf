@@ -3,7 +3,7 @@ output "acme_account_name" {
     Name of the ACME account registered on the Proxmox node. This is used for
     certificate issuance and management via the ACME protocol.
   EOT
-  value       = proxmox_virtual_environment_acme_account.this.name
+  value       = proxmox_acme_account.this.name
 }
 
 output "dns_plugin_id" {
@@ -11,7 +11,7 @@ output "dns_plugin_id" {
     Identifier of the ACME DNS plugin used for DNS-01 challenge validation.
     Typically corresponds to the plugin type (e.g., `cloudflare`).
   EOT
-  value       = proxmox_virtual_environment_acme_dns_plugin.this.plugin
+  value       = proxmox_acme_dns_plugin.this.plugin
 }
 
 output "dns_api_id" {
@@ -19,7 +19,7 @@ output "dns_api_id" {
     Short identifier for the DNS API provider used by the ACME plugin.
     For example, `cf` for Cloudflare.
   EOT
-  value       = proxmox_virtual_environment_acme_dns_plugin.this.api
+  value       = proxmox_acme_dns_plugin.this.api
 }
 
 

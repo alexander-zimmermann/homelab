@@ -17,7 +17,7 @@ output "vlans" {
     resource management operations.
   EOT
   value = {
-    for k, v in proxmox_virtual_environment_network_linux_vlan.vlans :
+    for k, v in proxmox_network_linux_vlan.vlans :
     k => v.id
   }
 }
@@ -30,7 +30,7 @@ output "bridges" {
     or other modules that require bridge resource identifiers.
   EOT
   value = {
-    for k, b in proxmox_virtual_environment_network_linux_bridge.bridges :
+    for k, b in proxmox_network_linux_bridge.bridges :
     k => b.id
   }
 }

@@ -37,7 +37,7 @@ resource "proxmox_virtual_environment_user" "this" {
   }
 }
 
-resource "proxmox_virtual_environment_user_token" "this" {
+resource "proxmox_user_token" "this" {
   count                 = var.create_token ? 1 : 0
   token_name            = var.token_name
   user_id               = proxmox_virtual_environment_user.this.user_id
@@ -46,7 +46,7 @@ resource "proxmox_virtual_environment_user_token" "this" {
 }
 
 ## ACL for the user account
-resource "proxmox_virtual_environment_acl" "this" {
+resource "proxmox_acl" "this" {
   user_id   = proxmox_virtual_environment_user.this.user_id
   role_id   = var.create_role ? proxmox_virtual_environment_role.this[0].role_id : var.role_id
   path      = var.path
@@ -54,9 +54,9 @@ resource "proxmox_virtual_environment_acl" "this" {
 }
 
 ## Separate ACL for the token (only if privileges_separation is enabled)
-resource "proxmox_virtual_environment_acl" "token" {
+resource "proxmox_acl" "token" {
   count     = var.create_token && var.privileges_separation ? 1 : 0
-  token_id  = proxmox_virtual_environment_user_token.this[0].id
+  token_id  = proxmox_user_token.this[0].id
   role_id   = var.create_role ? proxmox_virtual_environment_role.this[0].role_id : var.role_id
   path      = var.path
   propagate = var.propagate

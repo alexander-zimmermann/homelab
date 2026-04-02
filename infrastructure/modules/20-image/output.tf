@@ -7,5 +7,5 @@ output "image_id" {
     When image_url is empty (manual upload), constructs the ID from datastore
     and filename. Otherwise, returns the ID from the downloaded resource.
   EOT
-  value       = length(proxmox_virtual_environment_download_file.image) > 0 ? proxmox_virtual_environment_download_file.image[0].id : "${var.datastore}:${var.image_type}/${var.image_filename}"
+  value       = length(proxmox_download_file.image) > 0 ? proxmox_download_file.image[0].id : "${var.datastore}:${var.image_type}/${var.image_filename}"
 }

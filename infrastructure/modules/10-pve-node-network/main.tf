@@ -136,7 +136,7 @@ resource "terraform_data" "bonds_apply" {
 ###############################################################################
 ## VLAN interfaces
 ###############################################################################
-resource "proxmox_virtual_environment_network_linux_vlan" "vlans" {
+resource "proxmox_network_linux_vlan" "vlans" {
   count = var.create_vlan ? 1 : 0
 
   ## If we create bonds via SSH, ensure they exist before VLANs like bond0.30
@@ -159,12 +159,12 @@ resource "proxmox_virtual_environment_network_linux_vlan" "vlans" {
 ###############################################################################
 ## Bridges
 ###############################################################################
-resource "proxmox_virtual_environment_network_linux_bridge" "bridges" {
+resource "proxmox_network_linux_bridge" "bridges" {
   count = var.create_bridge ? 1 : 0
 
   ## Ensure VLANs (and optionally bonds) are ready before we attach ports
   depends_on = [
-    proxmox_virtual_environment_network_linux_vlan.vlans,
+    proxmox_network_linux_vlan.vlans,
     terraform_data.bonds_apply
   ]
 
