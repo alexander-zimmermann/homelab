@@ -8,7 +8,6 @@ tasks:
       - Creates the sealed-secrets-controller namespace
       - Injects the Sealed Secrets master key
       - Injects DHI registry credentials into sealed-secrets-controller and kube-system
-      - Copies homepage background images into the homepage PVC
       Underlying command: kubectl apply
     preconditions:
       - sh: command -v kubectl
@@ -17,10 +16,6 @@ tasks:
         msg: "kubernetes/components/sealed-secrets-controller/base/master-key.yaml not found. Cluster bootstrap requires sealed secrets key."
       - sh: test -f kubernetes/components/sealed-secrets-controller/base/secret.yaml
         msg: "kubernetes/components/sealed-secrets-controller/base/secret.yaml not found. Cluster bootstrap requires DHI credentials."
-      - sh: test -f kubernetes/applications/homepage/base/images/house.jpeg
-        msg: "kubernetes/applications/homepage/base/images/house.jpeg not found. Homepage background images are required."
-      - sh: test -f kubernetes/applications/homepage/base/images/garden.jpeg
-        msg: "kubernetes/applications/homepage/base/images/garden.jpeg not found. Homepage background images are required."
     cmds:
       # wait for Kubernetes API readiness (trigger OIDC flow if needed)
       - kubectl cluster-info
@@ -33,13 +28,6 @@ tasks:
       - kubectl annotate secret dhi-registry-secret -n sealed-secrets-controller sealed-secrets.bitnami.com/managed="true" --overwrite
       # inject dhi registry credentials into kube-system (needed for metrics-server, as Kyverno excludes this ns)
       - "sed 's/namespace: sealed-secrets-controller/namespace: kube-system/' kubernetes/components/sealed-secrets-controller/base/secret.yaml | kubectl apply -f -"
-      # wait for homepage pod to be ready
-      - kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=homepage -n homepage --timeout=120s
-      # copy homepage background images into PVC
-      - cmd: |
-          POD=$(kubectl get pod -l app.kubernetes.io/name=homepage -n homepage -o name | head -1 | cut -d/ -f2)
-          kubectl cp kubernetes/applications/homepage/base/images/house.jpeg homepage/${POD}:/app/public/images/house.jpeg
-          kubectl cp kubernetes/applications/homepage/base/images/garden.jpeg homepage/${POD}:/app/public/images/garden.jpeg
 
   delete:
     desc: "wipe all cluster resources"
