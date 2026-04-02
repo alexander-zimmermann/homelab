@@ -2,9 +2,9 @@ version: "3"
 
 tasks:
   init:
-    desc: "bootstrap cluster with sealed secrets key, registry credentials, and homepage images"
+    desc: "initialize cluster prerequisites"
     summary: |
-      Bootstrap cluster prerequisites:
+      Initialize cluster prerequisites:
       - Creates the sealed-secrets-controller namespace
       - Injects the Sealed Secrets master key
       - Injects DHI registry credentials into sealed-secrets-controller and kube-system
@@ -32,7 +32,7 @@ tasks:
       - kubectl apply -f kubernetes/components/sealed-secrets-controller/base/secret.yaml
       - kubectl annotate secret dhi-registry-secret -n sealed-secrets-controller sealed-secrets.bitnami.com/managed="true" --overwrite
       # inject dhi registry credentials into kube-system (needed for metrics-server, as Kyverno excludes this ns)
-      - "cat kubernetes/components/sealed-secrets-controller/base/secret.yaml | sed 's/namespace: sealed-secrets-controller/namespace: kube-system/' | kubectl apply -f -"
+      - "sed 's/namespace: sealed-secrets-controller/namespace: kube-system/' kubernetes/components/sealed-secrets-controller/base/secret.yaml | kubectl apply -f -"
       # wait for homepage pod to be ready
       - kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=homepage -n homepage --timeout=120s
       # copy homepage background images into PVC
@@ -54,25 +54,27 @@ tasks:
           grep -rh "namespace:" {{.COMPONENTS_DIR}}/*/base/kustomization.yaml kubernetes/applications/*/base/kustomization.yaml \
           | awk '{print $2}' \
           | sort -u \
-          | grep -vE '^(default|kube-system|kube-public|kube-node-lease)$' \
-          | tr '\n' ' '
+          | grep -vE '^(default|kube-system|kube-public|kube-node-lease)$'
     preconditions:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
     prompt: "Are you sure you want to wipe the cluster?"
     cmds:
       # async delete
-      - echo "{{.MANAGED_NAMESPACES}}" | xargs kubectl delete ns --ignore-not-found=true --wait=false
+      - for:
+          var: MANAGED_NAMESPACES
+          as: NS
+        cmd: kubectl delete ns {{.NS}} --ignore-not-found=true --wait=false
       # force cleanup
-      - cmd: |
-          echo "Waiting for namespaces to terminate or force cleanup..."
-          for ns in {{.MANAGED_NAMESPACES}}; do
-            kubectl wait --for=delete ns/$ns --timeout=10s >/dev/null 2>&1 || true
-            if kubectl get ns $ns >/dev/null 2>&1; then
-              echo "Force removing finalizers for $ns..."
-              kubectl patch ns $ns -p '{"spec":{"finalizers":[]}}' --type=merge >/dev/null 2>&1
-            fi
-          done
+      - for:
+          var: MANAGED_NAMESPACES
+          as: NS
+        cmd: |
+          kubectl wait --for=delete ns/{{.NS}} --timeout=10s >/dev/null 2>&1 || true
+          if kubectl get ns {{.NS}} >/dev/null 2>&1; then
+            echo "Force removing finalizers for {{.NS}}..."
+            kubectl patch ns {{.NS}} -p '{"spec":{"finalizers":[]}}' --type=merge >/dev/null 2>&1
+          fi
       # system component cleanup
       - kubectl delete secret hubble-tls-cert -n default --ignore-not-found=true
 
@@ -96,37 +98,14 @@ tasks:
     summary: |
       Show important cluster secrets (ArgoCD admin).
       Underlying command: kubectl get secret
+    vars:
+      ARGOCD_PASSWORD:
+        sh: kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d
     preconditions:
       - sh: command -v kubectl
         msg: "kubectl is not installed"
     cmds:
-      - echo "ArgoCD admin password is $(kubectl get secret/argocd-initial-admin-secret -n gitops-controller -o jsonpath='{.data.password}' | base64 -d)"
-
-  unseal:
-    desc: "unseal a sealed-secret.yaml [path/to/sealed-secret.yaml]"
-    summary: |
-      Decrypts a sealed-secret.yaml back to plaintext secret.yaml in the same directory.
-      Arguments: [path/to/sealed-secret.yaml]
-      Underlying command: kubeseal --recovery-unseal --recovery-private-key master-key.yaml
-    vars:
-      INPUT: '{{index .CLI_ARGS_LIST 0}}'
-    requires:
-      vars:
-        - INPUT
-    preconditions:
-      - sh: command -v kubeseal
-        msg: "kubeseal is not installed"
-      - sh: test -f kubernetes/components/sealed-secrets-controller/base/master-key.yaml
-        msg: "master-key.yaml not found"
-      - sh: test -f "{{.INPUT}}"
-        msg: "'{{.INPUT}}' not found"
-    cmds:
-      - cmd: |
-          kubeseal \
-            --recovery-unseal \
-            --recovery-private-key kubernetes/components/sealed-secrets-controller/base/master-key.yaml \
-            < "{{.INPUT}}" \
-            -o yaml > "$(dirname "{{.INPUT}}")/secret.yaml"
+      - echo "ArgoCD admin password is {{.ARGOCD_PASSWORD}}"
 
   seal:
     desc: "seal a secret.yaml [path/to/secret.yaml]"
@@ -135,7 +114,11 @@ tasks:
       Arguments: [path/to/secret.yaml]
       Underlying command: kubeseal --cert master-key.yaml
     vars:
-      INPUT: '{{index .CLI_ARGS_LIST 0}}'
+      INPUT: "{{index .CLI_ARGS_LIST 0}}"
+      DIR:
+        sh: dirname "{{.INPUT}}"
+      CERT:
+        sh: yq '.items[0].data["tls.crt"]' kubernetes/components/sealed-secrets-controller/base/master-key.yaml | base64 -d
     requires:
       vars:
         - INPUT
@@ -149,12 +132,32 @@ tasks:
       - sh: test -f "{{.INPUT}}"
         msg: "'{{.INPUT}}' not found"
     cmds:
-      - cmd: |
-          dir=$(dirname "{{.INPUT}}")
-          cert=$(yq '.items[0].data["tls.crt"]' \
-            kubernetes/components/sealed-secrets-controller/base/master-key.yaml | base64 -d)
-          echo "${cert}" | kubeseal --cert /dev/stdin -f "{{.INPUT}}" -w "${dir}/sealed-secret.yaml"
-          sed -i '1{/^---$/d}' "${dir}/sealed-secret.yaml"
-          sed -i '/^---$/i\\' "${dir}/sealed-secret.yaml"
-          sed -i '/^metadata:/i\\' "${dir}/sealed-secret.yaml"
-          sed -i '/^spec:/i\\' "${dir}/sealed-secret.yaml"
+      - echo "{{.CERT}}" | kubeseal --cert /dev/stdin -f "{{.INPUT}}" -w "{{.DIR}}/sealed-secret.yaml"
+      - sed -i -e '1{/^---$/d}' -e '/^---$/i\\' -e '/^metadata:/i\\' -e '/^spec:/i\\' "{{.DIR}}/sealed-secret.yaml"
+
+  unseal:
+    desc: "unseal a sealed-secret.yaml [path/to/sealed-secret.yaml]"
+    summary: |
+      Decrypts a sealed-secret.yaml back to plaintext secret.yaml in the same directory.
+      Arguments: [path/to/sealed-secret.yaml]
+      Underlying command: kubeseal --recovery-unseal --recovery-private-key master-key.yaml
+    vars:
+      INPUT: "{{index .CLI_ARGS_LIST 0}}"
+      DIR:
+        sh: dirname "{{.INPUT}}"
+    requires:
+      vars:
+        - INPUT
+    preconditions:
+      - sh: command -v kubeseal
+        msg: "kubeseal is not installed"
+      - sh: test -f kubernetes/components/sealed-secrets-controller/base/master-key.yaml
+        msg: "master-key.yaml not found"
+      - sh: test -f "{{.INPUT}}"
+        msg: "'{{.INPUT}}' not found"
+    cmds:
+      - kubeseal \
+        --recovery-unseal \
+        --recovery-private-key kubernetes/components/sealed-secrets-controller/base/master-key.yaml \
+        < "{{.INPUT}}" \
+        -o yaml > "{{.DIR}}/secret.yaml"
