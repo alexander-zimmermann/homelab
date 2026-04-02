@@ -1,6 +1,6 @@
 output "id" {
   description = "Identifier of the registered storage backend in Proxmox."
-  value       = proxmox_virtual_environment_storage_pbs.this.id
+  value       = proxmox_storage_pbs.this.id
 }
 
 output "pbs_ready_output" {

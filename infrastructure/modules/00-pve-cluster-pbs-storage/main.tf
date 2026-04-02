@@ -83,7 +83,7 @@ data "external" "pbs_ready_output" {
 ###############################################################################
 ## Storage configuration
 ###############################################################################
-resource "proxmox_virtual_environment_storage_pbs" "this" {
+resource "proxmox_storage_pbs" "this" {
   depends_on = [terraform_data.pbs_ready]
 
   id        = var.storage_id

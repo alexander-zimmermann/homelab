@@ -16,7 +16,7 @@ terraform {
 ## ACME account & ACME DNS plugin
 ###############################################################################
 ## Cluster-level ACME account
-resource "proxmox_virtual_environment_acme_account" "this" {
+resource "proxmox_acme_account" "this" {
   provider     = proxmox.root
   name         = var.account_name
   contact      = var.contact_email
@@ -40,7 +40,7 @@ locals {
 }
 
 ## Cluster-level ACME DNS plugin (Cloudflare default)
-resource "proxmox_virtual_environment_acme_dns_plugin" "this" {
+resource "proxmox_acme_dns_plugin" "this" {
   plugin = var.dns_plugin_id
   api    = var.dns_api
   data   = local.plugin_data
@@ -77,12 +77,12 @@ locals {
     # Construct domain flags for certificate issuing
     DOMAIN_FLAGS=()
     for i in $${!DOMAINS[@]}; do
-      DOMAIN_FLAGS+=("--acmedomain$${i}" "domain=$${DOMAINS[$i]},plugin=${proxmox_virtual_environment_acme_dns_plugin.this.plugin}")
+      DOMAIN_FLAGS+=("--acmedomain$${i}" "domain=$${DOMAINS[$i]},plugin=${proxmox_acme_dns_plugin.this.plugin}")
     done
 
     # Apply ACME account and domains
     sudo /usr/bin/pvenode config set \
-      --acme "account=${proxmox_virtual_environment_acme_account.this.name}" \
+      --acme "account=${proxmox_acme_account.this.name}" \
       "$${DOMAIN_FLAGS[@]}"
 
     # Force order / renewal of the certificate
@@ -93,15 +93,15 @@ locals {
 resource "terraform_data" "acme_order" {
   ## Esure ACME account & plugin are created first
   depends_on = [
-    proxmox_virtual_environment_acme_account.this,
-    proxmox_virtual_environment_acme_dns_plugin.this
+    proxmox_acme_account.this,
+    proxmox_acme_dns_plugin.this
   ]
 
   ## Re-execute if any attribute changes
   triggers_replace = [
     join(",", compact(concat([var.primary_domain], var.san_domains))),
-    proxmox_virtual_environment_acme_account.this.name,
-    proxmox_virtual_environment_acme_dns_plugin.this.plugin
+    proxmox_acme_account.this.name,
+    proxmox_acme_dns_plugin.this.plugin
   ]
 
   connection {

@@ -21,7 +21,7 @@ output "token_id" {
     Identifier of the API token associated with the user. This is used for
     programmatic access to the Proxmox API. Returns `null` if no token was created.
   EOT
-  value       = try(proxmox_virtual_environment_user_token.this[0].id, null)
+  value       = try(proxmox_user_token.this[0].id, null)
 }
 
 output "token_value" {
@@ -30,7 +30,7 @@ output "token_value" {
     token is created and should be stored securely. Marked as sensitive to avoid
     accidental exposure.
   EOT
-  value       = try(proxmox_virtual_environment_user_token.this[0].value, null)
+  value       = try(proxmox_user_token.this[0].value, null)
   sensitive   = true
 }
 
@@ -40,5 +40,5 @@ output "acl_id" {
     the user, role, and propagation settings used to manage access control
     within the Proxmox environment.
   EOT
-  value       = proxmox_virtual_environment_acl.this.id
+  value       = proxmox_acl.this.id
 }

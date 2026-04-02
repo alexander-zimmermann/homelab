@@ -14,7 +14,7 @@ terraform {
 ###############################################################################
 ## Virtual machine images
 ###############################################################################
-resource "proxmox_virtual_environment_download_file" "image" {
+resource "proxmox_download_file" "image" {
   count = var.image_url != "" && var.image_url != null ? 1 : 0
 
   node_name    = var.node
