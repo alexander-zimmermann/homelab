@@ -51,17 +51,15 @@ tasks:
           Python3 is not installed. Please install Python3 using Homebrew:
           brew install python3
     cmds:
-      # Phase 1: Install System Packages
+      # Install System Packages
       - for:
           var: FORMULAS
           as: FORMULA
         cmd: "brew list {{.FORMULA}} >/dev/null 2>&1 || brew install {{.FORMULA}} >/dev/null 2>&1"
-
-      # Phase 2: Setup Python Environment
+      # Setup Python Environment
       - test -d .venv || python3 -m venv .venv
       - "{{.PIP}} install --upgrade pip >/dev/null 2>&1"
-
-      # Phase 3: Install Python Dependencies
+      # Install Python Dependencies
       - for:
           var: PACKAGES
           as: PACKAGE
