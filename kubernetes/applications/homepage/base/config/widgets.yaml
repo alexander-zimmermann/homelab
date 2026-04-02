@@ -1,0 +1,18 @@
+- resources:
+    cpu: true
+    memory: true
+    disk: /
+
+- search:
+    provider: google
+    target: _blank
+
+- openmeteo:
+    label: Eupen
+    latitude: 50.6261002
+    longitude: 6.0245446
+    timezone: Europe/Brussels
+    units: metric
+    cache: 5
+    format:
+      maximumFractionDigits: 1

@@ -1,0 +1,58 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+replacements:
+  # Inject domain name into Certificate, IngressRoute, and HOMEPAGE_ALLOWED_HOSTS
+  - sourceValue: www.zimmermann.sh
+    targets:
+      - select:
+          kind: Certificate
+          name: homepage-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: homepage
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: homepage
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
+        options:
+          delimiter: "//"
+          index: 1
+      - select:
+          kind: Deployment
+          name: homepage
+        fieldPaths:
+          - spec.template.spec.containers.[name=homepage].env.[name=HOMEPAGE_ALLOWED_HOSTS].value
+        options:
+          delimiter: ","
+          index: 1
+
+  # Inject image storage size
+  - sourceValue: 200Mi
+    targets:
+      - select:
+          kind: PersistentVolumeClaim
+          name: homepage-images
+        fieldPaths:
+          - spec.resources.requests.storage
+
+patches:
+  # Homepage service with static IP and BGP advertisement
+  - target:
+      kind: Service
+      name: homepage
+    patch: |-
+      - op: add
+        path: /metadata/annotations/io.cilium~1lb-ipam-ips
+        value: "192.168.10.31"
