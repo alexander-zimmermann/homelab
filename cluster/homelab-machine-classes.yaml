@@ -13,8 +13,8 @@ spec:
     metavalues: []
     providerdata: |
       # Resource allocation
-      cores: 4
       sockets: 1
+      cores: 4
       memory: 4096
       disk_size: 32
 
@@ -103,8 +103,8 @@ spec:
     metavalues: []
     providerdata: |
       # Resource allocation
-      cores: 2
       sockets: 1
+      cores: 2
       memory: 2048
       disk_size: 32
 
