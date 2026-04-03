@@ -7,8 +7,7 @@ transformations:
           - key: Hostname
             operator: Regexp
             values:
-              - ^talos-dp-.*$
-              - ^homelab-.*-data-plane-.*$
+              - ^(talos-dp|homelab-.*-data-plane)-.*$
     labels:
       node-role.kubernetes.io/worker: ""
 
@@ -19,7 +18,6 @@ transformations:
           - key: Hostname
             operator: Regexp
             values:
-              - ^talos-dp-.*$
-              - ^homelab-.*-data-plane-.*$
+              - ^(talos-dp|homelab-.*-data-plane)-.*$
     labels:
       node.longhorn.io/create-default-disk: "true"
