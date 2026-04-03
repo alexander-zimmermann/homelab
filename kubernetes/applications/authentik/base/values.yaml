@@ -39,7 +39,7 @@ global:
     - name: AUTHENTIK_HOMEPAGE_API_TOKEN
       valueFrom:
         secretKeyRef:
-          name: authentik-credentials
+          name: authentik-homepage-token
           key: AUTHENTIK_HOMEPAGE_API_TOKEN
 
     # Optimization: Fewer workers and no preloading saves RAM in small setups
