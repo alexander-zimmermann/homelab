@@ -25,7 +25,7 @@ tasks:
       - kubectl apply -f kubernetes/components/sealed-secrets-controller/base/master-key.yaml
       # inject dhi registry credentials (needed for sealed-secrets-controller bootstrap)
       - kubectl apply -f kubernetes/components/sealed-secrets-controller/base/secret.yaml
-      - kubectl annotate secret dhi-registry-secret -n sealed-secrets-controller sealed-secrets.bitnami.com/managed="true" --overwrite
+      - kubectl annotate secret dhi-registry-secret -n sealed-secrets-controller sealedsecrets.bitnami.com/managed="true" --overwrite
       # inject dhi registry credentials into kube-system (needed for metrics-server, as Kyverno excludes this ns)
       - "sed 's/namespace: sealed-secrets-controller/namespace: kube-system/' kubernetes/components/sealed-secrets-controller/base/secret.yaml | kubectl apply -f -"
 
