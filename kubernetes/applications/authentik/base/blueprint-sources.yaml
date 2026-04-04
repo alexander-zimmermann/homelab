@@ -29,7 +29,7 @@ entries:
       expression: |
         userinfo = context.get("oauth_userinfo", {})
         if not userinfo.get("two_factor_authentication", False):
-            ak_message("GitHub 2FA muss aktiviert sein um sich einzuloggen.")
+            ak_message("GitHub 2FA must be enabled to log in.")
             return False
         return True
 

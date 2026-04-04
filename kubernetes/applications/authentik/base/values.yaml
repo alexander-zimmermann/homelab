@@ -42,6 +42,16 @@ global:
           name: authentik-homepage-token
           key: AUTHENTIK_HOMEPAGE_API_TOKEN
 
+    # Blueprint variables — injected per environment via overlay replacements
+    - name: AUTHENTIK_ARGOCD_REDIRECT_URI
+      value: https://PLACEHOLDER_ARGOCD_HOST/auth/callback
+    - name: AUTHENTIK_COOKIE_DOMAIN
+      value: PLACEHOLDER_COOKIE_DOMAIN
+    - name: AUTHENTIK_HOST
+      value: https://PLACEHOLDER_AUTH_HOST
+    - name: AUTHENTIK_EXTERNAL_HOST
+      value: https://PLACEHOLDER_AUTH_HOST/outpost.goauthentik.io/
+
     # Optimization: Fewer workers and no preloading saves RAM in small setups
     - name: AUTHENTIK_WEB__WORKERS
       value: "1"

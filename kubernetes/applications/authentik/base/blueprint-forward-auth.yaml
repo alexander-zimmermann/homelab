@@ -14,9 +14,8 @@ entries:
       authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
       invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
       mode: forward_domain
-      # Covers all subdomains on both prod and dev
-      cookie_domain: zimmermann.sh
-      external_host: https://auth.zimmermann.sh/outpost.goauthentik.io/
+      cookie_domain: !Env AUTHENTIK_COOKIE_DOMAIN
+      external_host: !Env AUTHENTIK_EXTERNAL_HOST
 
   # Application entry in Authentik's app library
   - model: authentik_core.application
@@ -38,3 +37,6 @@ entries:
       name: authentik Embedded Outpost
       providers:
         - !Find [authentik_providers_proxy.proxyprovider, [name, forward-auth-proxy]]
+      _config:
+        authentik_host: !Env AUTHENTIK_HOST
+        authentik_host_browser: !Env AUTHENTIK_HOST

@@ -6,7 +6,7 @@ resources:
   - ./sealed-secret.yaml
 
 replacements:
-  # Inject domain name into Certificate, IngressRoute, and Homepage href annotation
+  # Inject domain name into Certificate, IngressRoute, Homepage href, and blueprint env vars
   - sourceValue: auth.zimmermann.sh
     targets:
       - select:
@@ -30,6 +30,39 @@ replacements:
         options:
           delimiter: "//"
           index: 1
+
+  # Blueprint env var injections — resolved at runtime via !Env tags in blueprints
+  - sourceValue: https://argocd.zimmermann.sh/auth/callback
+    targets:
+      - select:
+          kind: Deployment
+          name: authentik-worker
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_ARGOCD_REDIRECT_URI].value
+
+  - sourceValue: https://auth.zimmermann.sh
+    targets:
+      - select:
+          kind: Deployment
+          name: authentik-worker
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_HOST].value
+
+  - sourceValue: https://auth.zimmermann.sh/outpost.goauthentik.io/
+    targets:
+      - select:
+          kind: Deployment
+          name: authentik-worker
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_EXTERNAL_HOST].value
+
+  - sourceValue: zimmermann.sh
+    targets:
+      - select:
+          kind: Deployment
+          name: authentik-worker
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_COOKIE_DOMAIN].value
 
   # Inject database storage size
   - sourceValue: 2Gi
