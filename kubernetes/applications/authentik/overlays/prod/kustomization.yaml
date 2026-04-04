@@ -58,19 +58,6 @@ replacements:
         fieldPaths:
           - spec.template.spec.containers.0.env.[name=AUTHENTIK_HOST].value
 
-  - sourceValue: https://auth.zimmermann.sh/outpost.goauthentik.io/
-    targets:
-      - select:
-          kind: Deployment
-          name: authentik-worker
-        fieldPaths:
-          - spec.template.spec.containers.0.env.[name=AUTHENTIK_EXTERNAL_HOST].value
-      - select:
-          kind: Deployment
-          name: authentik-server
-        fieldPaths:
-          - spec.template.spec.containers.0.env.[name=AUTHENTIK_EXTERNAL_HOST].value
-
   - sourceValue: zimmermann.sh
     targets:
       - select:

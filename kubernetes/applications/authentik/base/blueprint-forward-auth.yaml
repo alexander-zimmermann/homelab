@@ -15,7 +15,7 @@ entries:
       invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
       mode: forward_domain
       cookie_domain: !Env AUTHENTIK_COOKIE_DOMAIN
-      external_host: !Env AUTHENTIK_EXTERNAL_HOST
+      external_host: !Env AUTHENTIK_HOST
 
   # Application entry in Authentik's app library
   - model: authentik_core.application

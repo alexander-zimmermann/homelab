@@ -49,8 +49,6 @@ global:
       value: PLACEHOLDER_COOKIE_DOMAIN
     - name: AUTHENTIK_HOST
       value: https://PLACEHOLDER_AUTH_HOST
-    - name: AUTHENTIK_EXTERNAL_HOST
-      value: https://PLACEHOLDER_AUTH_HOST/outpost.goauthentik.io/
 
     # Optimization: Fewer workers and no preloading saves RAM in small setups
     - name: AUTHENTIK_WEB__WORKERS
