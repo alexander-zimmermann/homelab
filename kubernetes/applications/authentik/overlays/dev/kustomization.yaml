@@ -63,6 +63,11 @@ replacements:
           name: authentik-worker
         fieldPaths:
           - spec.template.spec.containers.0.env.[name=AUTHENTIK_COOKIE_DOMAIN].value
+      - select:
+          kind: Deployment
+          name: authentik-server
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_COOKIE_DOMAIN].value
 
   # Inject database storage size
   - sourceValue: 1Gi
