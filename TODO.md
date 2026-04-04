@@ -9,7 +9,13 @@
 
 - [ ] **Velero Backup**: Install Helm Chart, configure S3 backend (RustFS), schedule backups.
 - [ ] **Restore Task**: Add `task k8s:restore` that replays Velero backups into DBs and PVCs after a bootstrap (e.g. Homepage images PVC).
-- [ ] **Split Ingress Architecture**: Dual Traefik strategy (`traefik-internal` & `traefik-external`) with UDM VLAN/DMZ separation.
+- [ ] **Split Ingress Architecture**: Dual Traefik strategy with UDM VLAN/DMZ separation.
+  - `traefik-external` (DMZ VLAN) → `*.zimmermann.sh` via Cloudflare, all services publicly accessible
+  - `traefik-internal` (internal VLAN) → `*.zimmermann.eu.com` via internal DNS resolver
+  - Each service gets two IngressRoutes (one per Traefik instance / domain)
+  - All backend services migrate from LoadBalancer to ClusterIP
+  - ExternalDNS split: `.sh` → Cloudflare, `.eu.com` → internal resolver
+  - BGP announces only two IPs (one per Traefik) instead of one per service
 - [ ] **PBS Bootstrap**: Make re-bootstrap idempotent. Add a systemd timer to back up `/etc/proxmox-backup/` to NFS, so the bootstrap script can restore config first and all existing-checks (datastore, users, jobs) pass without re-initializing.
 
 ## Optimizations
