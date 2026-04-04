@@ -31,6 +31,39 @@ replacements:
           delimiter: "//"
           index: 1
 
+  # Blueprint env var injections — resolved at runtime via !Env tags in blueprints
+  - sourceValue: https://argocd.zimmermann.phd/auth/callback
+    targets:
+      - select:
+          kind: Deployment
+          name: authentik-worker
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_ARGOCD_REDIRECT_URI].value
+
+  - sourceValue: https://auth.zimmermann.phd
+    targets:
+      - select:
+          kind: Deployment
+          name: authentik-worker
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_HOST].value
+
+  - sourceValue: https://auth.zimmermann.phd/outpost.goauthentik.io/
+    targets:
+      - select:
+          kind: Deployment
+          name: authentik-worker
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_EXTERNAL_HOST].value
+
+  - sourceValue: zimmermann.phd
+    targets:
+      - select:
+          kind: Deployment
+          name: authentik-worker
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_COOKIE_DOMAIN].value
+
   # Inject database storage size
   - sourceValue: 1Gi
     targets:
