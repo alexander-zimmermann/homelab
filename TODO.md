@@ -20,6 +20,7 @@
 ## GitOps
 
 - [ ] **ArgoCD Source Hydrator**: Evaluate the [Source Hydrator](https://argo-cd.readthedocs.io/en/latest/user-guide/source-hydrator/) for pre-rendering manifests before sync (replaces ApplicationSet + Kustomize render at sync time).
+- [ ] **ArgoCD OIDC Bootstrap**: ArgoCD caches a failed OIDC state when it starts before Authentik is healthy. After a fresh bootstrap a manual ArgoCD server restart is currently required.
 
 ## Platform
 
