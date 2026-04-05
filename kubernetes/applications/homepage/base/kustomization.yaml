@@ -17,12 +17,15 @@ configMapGenerator:
     options:
       disableNameSuffixHash: true
     files:
-      - config/kubernetes.yaml
-      - config/settings.yaml
-      - config/services.yaml
       - config/bookmarks.yaml
-      - config/widgets.yaml
+      - config/custom.css
+      - config/custom.js
+      - config/docker.yaml
+      - config/kubernetes.yaml
       - config/proxmox.yaml
+      - config/services.yaml
+      - config/settings.yaml
+      - config/widgets.yaml
   - name: homepage-icons
     options:
       disableNameSuffixHash: true
