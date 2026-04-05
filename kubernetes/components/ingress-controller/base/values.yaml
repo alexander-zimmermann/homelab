@@ -66,6 +66,8 @@ providers:
   kubernetesCRD:
     # Allows IngressRoute to reference resources in namespace other than theirs (e.g. middlewares)
     allowCrossNamespace: true
+    # Allows IngressRoute to use ExternalName services as backends
+    allowExternalNameServices: true
 
 logs:
   # General Traefik logs (startup, configuration, events, shutdown, ...)
