@@ -156,7 +156,7 @@ patches:
   # Prometheus service with static IP and BGP advertisement
   - target:
       kind: Service
-      name: prometheus-server
+      name: prometheus-prometheus
     patch: |-
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
