@@ -20,6 +20,12 @@ alertmanager:
       group_interval: 1m
       repeat_interval: 6h
       receiver: "endpoints"
+      routes:
+        # Watchdog heartbeat: fires continuously so we know alerting works
+        - matchers:
+            - alertname = "Watchdog"
+          receiver: "endpoints"
+          repeat_interval: 12h
     receivers:
       - name: "endpoints"
         # Pushover integration for mobile notifications
