@@ -34,7 +34,7 @@ spec:
             claimName: node-red-data
       containers:
         - name: node-red
-          image: docker.io/nodered/node-red:4
+          image: docker.io/nodered/node-red:4.1.8
           imagePullPolicy: IfNotPresent
           env:
             # Keep logs/timestamps consistent with local timezone.
