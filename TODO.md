@@ -7,7 +7,6 @@
 
 ## Infrastructure
 
-- [ ] **Velero Backup**: Install Helm Chart, configure S3 backend (RustFS), schedule backups.
 - [ ] **Restore Task**: Add `task k8s:restore` that replays Velero backups into DBs and PVCs after a bootstrap (e.g. Homepage images PVC).
 - [ ] **Split Ingress Architecture**: Dual Traefik strategy with UDM VLAN/DMZ separation.
   - `traefik-external` (DMZ VLAN) → `*.zimmermann.sh` via Cloudflare, all services publicly accessible
