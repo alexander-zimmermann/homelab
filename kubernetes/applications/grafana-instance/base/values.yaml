@@ -46,6 +46,7 @@ env:
   GF_AUTH_GENERIC_OAUTH_AUTH_URL: "https://PLACEHOLDER_AUTH_HOST/application/o/authorize/"
   GF_AUTH_GENERIC_OAUTH_TOKEN_URL: "https://PLACEHOLDER_AUTH_HOST/application/o/token/"
   GF_AUTH_GENERIC_OAUTH_API_URL: "https://PLACEHOLDER_AUTH_HOST/application/o/userinfo/"
+  GF_AUTH_SIGNOUT_REDIRECT_URL: "https://PLACEHOLDER_AUTH_HOST/application/o/grafana/end-session/"
 
 # Primary Configuration (grafana.ini)
 grafana.ini:

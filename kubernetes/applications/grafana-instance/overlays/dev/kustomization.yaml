@@ -39,24 +39,32 @@ replacements:
         fieldPaths:
           - spec.template.spec.containers.2.env.[name=GF_AUTH_GENERIC_OAUTH_AUTH_URL].value
         options:
-          delimiter: "//"
-          index: 1
+          delimiter: "/"
+          index: 2
       - select:
           kind: Deployment
           name: grafana
         fieldPaths:
           - spec.template.spec.containers.2.env.[name=GF_AUTH_GENERIC_OAUTH_TOKEN_URL].value
         options:
-          delimiter: "//"
-          index: 1
+          delimiter: "/"
+          index: 2
       - select:
           kind: Deployment
           name: grafana
         fieldPaths:
           - spec.template.spec.containers.2.env.[name=GF_AUTH_GENERIC_OAUTH_API_URL].value
         options:
-          delimiter: "//"
-          index: 1
+          delimiter: "/"
+          index: 2
+      - select:
+          kind: Deployment
+          name: grafana
+        fieldPaths:
+          - spec.template.spec.containers.2.env.[name=GF_AUTH_SIGNOUT_REDIRECT_URL].value
+        options:
+          delimiter: "/"
+          index: 2
 
 patches:
   # Configure resources for Grafana Instance containers (main container & dashboard/datasource sidecars)
