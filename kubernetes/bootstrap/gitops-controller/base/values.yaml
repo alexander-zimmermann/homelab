@@ -151,7 +151,7 @@ notifications:
   # Global subscriptions apply to all apps without per-app annotation
   subscriptions:
     - recipients:
-        - webhook:pushover
+        - pushover
       triggers:
         - on-sync-failed
         - on-health-degraded
