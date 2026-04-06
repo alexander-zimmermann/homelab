@@ -146,12 +146,12 @@ patches:
             cpu: 100m
             memory: 256Mi
       - op: add
-        path: /spec/containers/-
+        path: /spec/containers
         value:
-          name: alertmanager
-          env:
-            - name: GOMEMLIMIT
-              value: "241172480"
+          - name: alertmanager
+            env:
+              - name: GOMEMLIMIT
+                value: "241172480"
 
   # Prometheus service with static IP and BGP advertisement
   - target:
