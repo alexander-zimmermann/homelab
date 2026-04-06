@@ -18,8 +18,8 @@ ACME_CF_TOKEN="${acme_cf_token}"
 ACME_EMAIL="alexander@zimmermann.eu.com"
 
 ## Primary and SAN domains for ACME certificates
-ACME_PRIMARY_DOMAIN="cluster-mgmt-01.zimmermann.eu.com"
-ACME_SAN_DOMAINS="cluster-mgmt.zimmermann.eu.com, omni.zimmermann.eu.com"
+ACME_PRIMARY_DOMAIN="omni.zimmermann.eu.com"
+ACME_SAN_DOMAINS="cluster-mgmt-01.zimmermann.eu.com, cluster-mgmt.zimmermann.eu.com"
 ACME_DOMAINS="$${ACME_PRIMARY_DOMAIN},$${ACME_SAN_DOMAINS}"
 
 ## Lego certificate output directory

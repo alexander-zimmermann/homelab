@@ -37,10 +37,10 @@ for domain in "${domains_arr[@]}"; do
   domain_flags+=("--domains=${domain}")
 done
 
-## Define Renew Hook. It copies the new certs to the destination and restarts Omni
+## Define Renew Hook. Copies renewed certs to the Omni cert dir and restarts Omni
 hook_cmd="cp \"${LEGO_CERT_DIR}/\"* \"${OMNI_CERT_DIR}\" && \
           chown -R \"${OMNI_OWNER}\" \"${OMNI_CERT_DIR}\" && \
-          docker restart omni || true"
+          docker restart omni"
 
 ## Run lego renew. This runs ONLY if the certificate is actually renewed
 info "Checking for SSL renewal..."
