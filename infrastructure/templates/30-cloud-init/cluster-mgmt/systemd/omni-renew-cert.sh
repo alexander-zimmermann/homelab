@@ -31,8 +31,8 @@ die() {
 ###############################################################################
 ## Construct domain flags for running lego
 info "Configuring domains..."
-domain_flags=("--domains=${PRIMARY_DOMAIN}")
-IFS=',' read -ra domains_arr <<< "${SAN_DOMAINS:-}"
+domain_flags=("--domains=${ACME_PRIMARY_DOMAIN}")
+IFS=',' read -ra domains_arr <<< "${ACME_SAN_DOMAINS:-}"
 for domain in "${domains_arr[@]}"; do
   domain_flags+=("--domains=${domain}")
 done
@@ -44,14 +44,14 @@ hook_cmd="cp \"${LEGO_CERT_DIR}/\"* \"${OMNI_CERT_DIR}\" && \
 
 ## Run lego renew. This runs ONLY if the certificate is actually renewed
 info "Checking for SSL renewal..."
-CLOUDFLARE_DNS_API_TOKEN="${CF_DNS_API_TOKEN}" \
-CLOUDFLARE_EMAIL="${CF_API_EMAIL}" \
+CLOUDFLARE_DNS_API_TOKEN="${ACME_CF_TOKEN}" \
+CLOUDFLARE_EMAIL="${ACME_EMAIL}" \
 lego \
-  --email="${CF_API_EMAIL}" \
+  --email="${ACME_EMAIL}" \
   --dns="cloudflare" \
   --accept-tos \
   "${domain_flags[@]}" \
   renew \
-  --renew-hook "${hook_cmd}" || die "Failed to renew SSL certificate for ${PRIMARY_DOMAIN}."
+  --renew-hook "${hook_cmd}" || die "Failed to renew SSL certificate for ${ACME_PRIMARY_DOMAIN}."
 
 success "SSL renewal check completed."
