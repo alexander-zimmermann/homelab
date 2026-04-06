@@ -5,6 +5,15 @@ resources:
   - ../../base
 
 replacements:
+  # Inject PVC storage size for Grafana
+  - sourceValue: 256Mi
+    targets:
+      - select:
+          kind: PersistentVolumeClaim
+          name: grafana
+        fieldPaths:
+          - spec.resources.requests.storage
+
   # Inject domain name into Certificate, IngressRoute, and root URL env var
   - sourceValue: grafana.zimmermann.sh
     targets:

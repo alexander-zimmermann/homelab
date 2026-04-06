@@ -77,6 +77,14 @@ imageRenderer:
   networkPolicy:
     limitIngress: false
 
+persistence:
+  enabled: true
+  type: pvc
+  storageClassName: longhorn
+  size: PLACEHOLDER
+  accessModes:
+    - ReadWriteOnce
+
 extraObjects:
   # Register the Grafana instance with the Grafana Operator for advanced management
   - apiVersion: grafana.integreatly.org/v1beta1
