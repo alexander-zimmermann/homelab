@@ -30,29 +30,17 @@ alertmanager:
       - name: "endpoints"
         # Pushover integration for mobile notifications
         pushover_configs:
-          - token: "$PUSHOVER_TOKEN"
-            user_key: "$PUSHOVER_USER_KEY"
+          - token_file: /etc/alertmanager/secrets/alertmanager-pushover-tokens/token
+            user_key_file: /etc/alertmanager/secrets/alertmanager-pushover-tokens/user_key
         # Node-RED endpoint for container status events
         webhook_configs:
           - url: "http://node-red.zimmermann.eu.com:1880/container-status"
             send_resolved: true
 
   alertmanagerSpec:
-    # Inject Pushover credentials into the config-reloader sidecar so that
-    # envsubst can replace $PUSHOVER_TOKEN / $PUSHOVER_USER_KEY in the config
-    containers:
-      - name: config-reloader
-        env:
-          - name: PUSHOVER_TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: alertmanager-pushover-tokens
-                key: token
-          - name: PUSHOVER_USER_KEY
-            valueFrom:
-              secretKeyRef:
-                name: alertmanager-pushover-tokens
-                key: user_key
+    # Mount the Pushover secret so token_file / user_key_file can reference it
+    secrets:
+      - alertmanager-pushover-tokens
     # Persist Alertmanager state (silences, notification log)
     storage:
       volumeClaimTemplate:
