@@ -38,7 +38,7 @@ entries:
       policy_engine_mode: any
 
   # Restrict Grafana access to platform-admins group
-  - model: authentik_policies_binding.policybinding
+  - model: authentik_policies.policybinding
     state: present
     identifiers:
       target: !Find [authentik_core.application, [slug, grafana]]
