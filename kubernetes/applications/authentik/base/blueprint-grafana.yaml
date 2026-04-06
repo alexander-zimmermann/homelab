@@ -36,3 +36,13 @@ entries:
       slug: grafana
       provider: !Find [authentik_providers_oauth2.oauth2provider, [name, Grafana]]
       policy_engine_mode: any
+
+  # Restrict Grafana access to platform-admins group
+  - model: authentik_policies_binding.policybinding
+    state: present
+    identifiers:
+      target: !Find [authentik_core.application, [slug, grafana]]
+      group: !Find [authentik_core.group, [name, platform-admins]]
+      order: 0
+    attrs:
+      enabled: true
