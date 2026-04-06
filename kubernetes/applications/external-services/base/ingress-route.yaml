@@ -228,6 +228,7 @@ spec:
       services:
         - name: ems-esp
           port: 80
+          passHostHeader: false
   tls:
     secretName: ems-esp-tls-cert
 
@@ -272,6 +273,7 @@ spec:
       services:
         - name: knx-ip
           port: 8080
+          passHostHeader: false
   tls:
     secretName: knx-ip-tls-cert
 
