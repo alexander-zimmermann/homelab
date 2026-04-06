@@ -22,6 +22,31 @@ replacements:
           delimiter: "`"
           index: 1
 
+  # Inject Authentik OAuth URLs into Grafana Deployment env vars
+  - sourceValue: https://auth.zimmermann.phd/application/o/authorize/
+    targets:
+      - select:
+          kind: Deployment
+          name: grafana
+        fieldPaths:
+          - spec.template.spec.containers.2.env.[name=GF_AUTH_GENERIC_OAUTH_AUTH_URL].value
+
+  - sourceValue: https://auth.zimmermann.phd/application/o/token/
+    targets:
+      - select:
+          kind: Deployment
+          name: grafana
+        fieldPaths:
+          - spec.template.spec.containers.2.env.[name=GF_AUTH_GENERIC_OAUTH_TOKEN_URL].value
+
+  - sourceValue: https://auth.zimmermann.phd/application/o/userinfo/
+    targets:
+      - select:
+          kind: Deployment
+          name: grafana
+        fieldPaths:
+          - spec.template.spec.containers.2.env.[name=GF_AUTH_GENERIC_OAUTH_API_URL].value
+
 patches:
   # Configure resources for Grafana Instance containers (main container & dashboard/datasource sidecars)
   - target:

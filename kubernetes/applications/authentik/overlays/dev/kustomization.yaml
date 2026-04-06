@@ -45,6 +45,19 @@ replacements:
         fieldPaths:
           - spec.template.spec.containers.0.env.[name=AUTHENTIK_ARGOCD_REDIRECT_URI].value
 
+  - sourceValue: https://grafana.zimmermann.phd/login/generic_oauth
+    targets:
+      - select:
+          kind: Deployment
+          name: authentik-worker
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_GRAFANA_REDIRECT_URI].value
+      - select:
+          kind: Deployment
+          name: authentik-server
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_GRAFANA_REDIRECT_URI].value
+
   - sourceValue: https://auth.zimmermann.phd
     targets:
       - select:
