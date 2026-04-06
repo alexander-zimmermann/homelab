@@ -146,9 +146,9 @@ patches:
             cpu: 50m
             memory: 128Mi
       - op: add
-        path: /spec/containers
+        path: /spec/containers/-
         value:
-          - name: alertmanager
-            env:
-              - name: GOMEMLIMIT
-                value: "120586240"
+          name: alertmanager
+          env:
+            - name: GOMEMLIMIT
+              value: "120586240"

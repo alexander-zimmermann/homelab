@@ -38,18 +38,21 @@ alertmanager:
             send_resolved: true
 
   alertmanagerSpec:
-    # Credentials for Alertmanager's Pushover integration
-    env:
-      - name: PUSHOVER_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: alertmanager-pushover-tokens
-            key: token
-      - name: PUSHOVER_USER_KEY
-        valueFrom:
-          secretKeyRef:
-            name: alertmanager-pushover-tokens
-            key: user_key
+    # Inject Pushover credentials into the config-reloader sidecar so that
+    # envsubst can replace $PUSHOVER_TOKEN / $PUSHOVER_USER_KEY in the config
+    containers:
+      - name: config-reloader
+        env:
+          - name: PUSHOVER_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: alertmanager-pushover-tokens
+                key: token
+          - name: PUSHOVER_USER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: alertmanager-pushover-tokens
+                key: user_key
     # Persist Alertmanager state (silences, notification log)
     storage:
       volumeClaimTemplate:
