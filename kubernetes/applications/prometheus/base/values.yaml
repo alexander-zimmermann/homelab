@@ -32,6 +32,7 @@ alertmanager:
         pushover_configs:
           - token_file: /etc/alertmanager/secrets/alertmanager-pushover-tokens/token
             user_key_file: /etc/alertmanager/secrets/alertmanager-pushover-tokens/user_key
+            sound: siren
         # Node-RED endpoint for container status events
         webhook_configs:
           - url: "http://node-red.zimmermann.eu.com:1880/container-status"
