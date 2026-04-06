@@ -35,6 +35,12 @@ global:
         secretKeyRef:
           name: argocd-oidc-secret
           key: oidc.authentik.clientSecret
+    # Grafana OIDC client secret for the grafana-oidc blueprint
+    - name: GRAFANA_OIDC_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: grafana-oidc-secret
+          key: GRAFANA_OIDC_CLIENT_SECRET
     # Homepage API token for the homepage-api-token blueprint
     - name: AUTHENTIK_HOMEPAGE_API_TOKEN
       valueFrom:
@@ -45,6 +51,8 @@ global:
     # Blueprint variables — injected per environment via overlay replacements
     - name: AUTHENTIK_ARGOCD_REDIRECT_URI
       value: https://PLACEHOLDER_ARGOCD_HOST/auth/callback
+    - name: AUTHENTIK_GRAFANA_REDIRECT_URI
+      value: https://PLACEHOLDER_GRAFANA_HOST/login/generic_oauth
     - name: AUTHENTIK_COOKIE_DOMAIN
       value: PLACEHOLDER_COOKIE_DOMAIN
     - name: AUTHENTIK_HOST
@@ -82,6 +90,7 @@ blueprints:
     - authentik-blueprint-argocd
     - authentik-blueprint-homepage
     - authentik-blueprint-forward-auth
+    - authentik-blueprint-grafana
 
 server:
   # Expose Authentik service via Cilium/BGP-announced LoadBalancer

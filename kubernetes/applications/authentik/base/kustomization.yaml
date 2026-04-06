@@ -33,6 +33,9 @@ configMapGenerator:
   - name: authentik-blueprint-forward-auth
     files:
       - blueprint-forward-auth.yaml
+  - name: authentik-blueprint-grafana
+    files:
+      - blueprint-grafana.yaml
 
 labels:
   - includeSelectors: false

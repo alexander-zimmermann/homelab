@@ -33,12 +33,32 @@ extraSecretMounts:
     defaultMode: 0440
     mountPath: /etc/grafana/secrets
     readOnly: true
+  # Mount the OIDC client secret for generic_oauth authentication
+  - name: grafana-oidc-credentials
+    secretName: grafana-oidc-credentials
+    defaultMode: 0440
+    mountPath: /etc/grafana/secrets-oidc
+    readOnly: true
+
+# OIDC URL env vars — injected per environment via overlay replacements
+env:
+  GF_AUTH_GENERIC_OAUTH_AUTH_URL: "PLACEHOLDER_OAUTH_AUTH_URL"
+  GF_AUTH_GENERIC_OAUTH_TOKEN_URL: "PLACEHOLDER_OAUTH_TOKEN_URL"
+  GF_AUTH_GENERIC_OAUTH_API_URL: "PLACEHOLDER_OAUTH_API_URL"
 
 # Primary Configuration (grafana.ini)
 grafana.ini:
   security:
     admin_user: admin
     admin_password_file: /etc/grafana/secrets/admin-password
+  auth.generic_oauth:
+    enabled: "true"
+    name: Authentik
+    client_id: grafana
+    client_secret: "$__file{/etc/grafana/secrets-oidc/GRAFANA_OIDC_CLIENT_SECRET}"
+    scopes: "openid profile email"
+    role_attribute_path: "contains(groups[*], 'platform-admins') && 'Admin' || 'Viewer'"
+    auto_login: "false"
 
 # Sidecar Configuration (Auto-import)
 sidecar:
