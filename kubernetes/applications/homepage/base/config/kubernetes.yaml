@@ -1,1 +1,5 @@
+# Uses a service account inside the cluster
 mode: cluster
+
+# Enable Traefik ingressRoute service discovery
+traefik: true
