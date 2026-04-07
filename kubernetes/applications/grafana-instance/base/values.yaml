@@ -1,3 +1,7 @@
+deploymentStrategy:
+  # Recreate avoids Multi-Attach errors on RWO PVCs — old pod must terminate before new one starts
+  type: Recreate
+
 rbac:
   # Allows Grafana to retrieve metadata about services and pods for service discovery
   extraClusterRoleRules:
