@@ -36,6 +36,9 @@ configMapGenerator:
   - name: authentik-blueprint-grafana
     files:
       - blueprint-grafana.yaml
+  - name: authentik-blueprint-node-red
+    files:
+      - blueprint-node-red.yaml
 
 labels:
   - includeSelectors: false

@@ -58,6 +58,19 @@ replacements:
         fieldPaths:
           - spec.template.spec.containers.0.env.[name=AUTHENTIK_GRAFANA_REDIRECT_URI].value
 
+  - sourceValue: https://node-red.zimmermann.phd/auth/strategy/callback/
+    targets:
+      - select:
+          kind: Deployment
+          name: authentik-worker
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_NODE_RED_REDIRECT_URI].value
+      - select:
+          kind: Deployment
+          name: authentik-server
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_NODE_RED_REDIRECT_URI].value
+
   - sourceValue: https://auth.zimmermann.phd
     targets:
       - select:
