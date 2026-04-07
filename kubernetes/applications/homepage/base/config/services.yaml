@@ -53,6 +53,16 @@
         siteMonitor: http://fritzbox.zimmermann.eu.com
         weight: 2
 
+- Security & Identity:
+    - CrowdSec:
+        icon: crowdsec.png
+        weight: 2
+        widget:
+          type: crowdsec
+          url: http://crowdsec-service.crowdsec.svc.cluster.local:8080
+          username: "{{HOMEPAGE_VAR_CROWDSEC_USERNAME}}"
+          password: "{{HOMEPAGE_VAR_CROWDSEC_LAPI_KEY}}"
+
 - Infrastructure:
     - Proxmox:
         icon: proxmox.png
