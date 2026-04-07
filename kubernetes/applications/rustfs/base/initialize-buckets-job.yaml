@@ -14,18 +14,20 @@ spec:
     spec:
       serviceAccountName: default
       restartPolicy: OnFailure
-      # wait until RustFS is reachable
+      # Wait until RustFS is reachable
       initContainers:
         - name: wait-for-rustfs
           image: curlimages/curl:8.18.0
           command: ["/bin/sh", "-c"]
           args:
             - |
-              until curl -sSf http://rustfs-svc.rustfs.svc.cluster.local:9000/health >/dev/null; do
-                echo "Warte auf S3 Endpoint..."
+              until curl -sSf "$RUSTFS_URL/health" >/dev/null; do
+                echo "Waiting for RustFS..."
                 sleep 3
               done
-      # create buckets for applications
+          env:
+            - name: RUSTFS_URL
+              value: "http://rustfs-svc.rustfs.svc.cluster.local:9000"
       containers:
         - name: mc
           image: minio/mc:latest
@@ -36,19 +38,12 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
             readOnlyRootFilesystem: true
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              set -euo pipefail
-              export MC_CONFIG_DIR=$(mktemp -d)
-              mc alias set --debug rustfs http://rustfs-svc.rustfs.svc.cluster.local:9000 "$ACCESS_KEY" "$SECRET_KEY"
-
-              echo "Creating authentik-backups bucket..."
-              mc mb --ignore-existing rustfs/authentik-backups
-
-              echo "Creating longhorn-backups bucket..."
-              mc mb --ignore-existing rustfs/longhorn-backups
+          command: ["/bin/sh", "/scripts/initialize-rustfs-buckets.sh"]
           env:
+            - name: RUSTFS_URL
+              value: "http://rustfs-svc.rustfs.svc.cluster.local:9000"
+            - name: BUCKETS
+              value: "authentik-backups longhorn-backups"
             - name: ACCESS_KEY
               valueFrom:
                 secretKeyRef:
@@ -67,8 +62,14 @@ spec:
               cpu: "200m"
               memory: "128Mi"
           volumeMounts:
+            - name: scripts
+              mountPath: /scripts
             - name: tmp
               mountPath: /tmp
       volumes:
+        - name: scripts
+          configMap:
+            name: rustfs-bucket-init-script
+            defaultMode: 0555
         - name: tmp
           emptyDir: {}
