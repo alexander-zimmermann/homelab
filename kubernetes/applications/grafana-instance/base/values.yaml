@@ -84,7 +84,7 @@ imageRenderer:
 persistence:
   enabled: true
   type: pvc
-  storageClassName: longhorn
+  storageClassName: longhorn-backup
   size: PLACEHOLDER
   accessModes:
     - ReadWriteOnce
