@@ -57,6 +57,12 @@ spec:
             # CrowdSec widget username — static value, not a secret.
             - name: HOMEPAGE_VAR_CROWDSEC_USERNAME
               value: "localhost"
+            # Grafana Service Account token — cloned from grafana-instance namespace by Kyverno.
+            - name: HOMEPAGE_VAR_GRAFANA_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-homepage-sa-token
+                  key: GRAFANA_HOMEPAGE_SA_TOKEN
           envFrom:
             # Proxmox, Unifi, and other API credentials.
             - secretRef:

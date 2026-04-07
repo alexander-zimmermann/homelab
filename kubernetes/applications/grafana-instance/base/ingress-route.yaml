@@ -9,6 +9,16 @@ metadata:
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Homepage Service Discovery
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Observability"
+    gethomepage.dev/name: "Grafana"
+    gethomepage.dev/icon: "grafana.png"
+    gethomepage.dev/href: "https://PLACEHOLDER"
+    gethomepage.dev/weight: "0"
+    gethomepage.dev/widget.type: "grafana"
+    gethomepage.dev/widget.url: "http://grafana.grafana-instance.svc.cluster.local:80"
+    gethomepage.dev/widget.key: "{{HOMEPAGE_VAR_GRAFANA_KEY}}"
 
 spec:
   entryPoints:
