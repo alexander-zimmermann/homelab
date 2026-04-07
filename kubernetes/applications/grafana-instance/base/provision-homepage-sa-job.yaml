@@ -22,10 +22,13 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              until curl -sf http://grafana.grafana-instance.svc.cluster.local/api/health >/dev/null; do
+              until curl -sf "$GRAFANA_URL/api/health" >/dev/null; do
                 echo "Waiting for Grafana..."
                 sleep 3
               done
+          env:
+            - name: GRAFANA_URL
+              value: "http://grafana.grafana-instance.svc.cluster.local"
       containers:
         - name: provision
           image: alpine/k8s:1.35.3
