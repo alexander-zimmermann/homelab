@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - energy-wallbox.yaml
+  - energy-inverter.yaml
+  - energy-meter.yaml
+  - hvac-heating-unit.yaml
+  - hvac-ventilation.yaml
+  - k8s-traefik.yaml
+  - network-unifi-ap.yaml
+  - network-unifi-client.yaml
+  - knx-alarm-basement.yaml
+  - knx-alarm-ground-floor.yaml
+  - knx-alarm-upper-floor.yaml
+  - knx-alarm-attic.yaml
+  - knx-alarm-exterior.yaml
+  - knx-sensor-basement.yaml
+  - knx-sensor-basement2.yaml
+  - knx-sensor-ground-floor.yaml
+  - knx-sensor-ground-floor2.yaml
+  - knx-sensor-upper-floor.yaml
+  - knx-sensor-attic.yaml
+  - knx-sensor-exterior.yaml

@@ -3,6 +3,7 @@ kind: Kustomization
 
 namespace: grafana-instance
 resources:
+  - ./dashboards/
   - ./namespace.yaml
   - ./rbac.yaml
   - ./datasources.yaml
