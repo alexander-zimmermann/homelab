@@ -4,10 +4,12 @@ kind: Kustomization
 namespace: grafana-instance
 resources:
   - ./namespace.yaml
+  - ./rbac.yaml
   - ./datasources.yaml
   - ./sealed-secret.yaml
   - ./certificate.yaml
   - ./ingress-route.yaml
+  - ./provision-homepage-sa-job.yaml
 
 helmCharts:
   - name: grafana
@@ -33,6 +35,13 @@ patches:
         path: /spec/selector
         value:
           component: grafana-server
+
+configMapGenerator:
+  - name: grafana-sa-provisioner-script
+    options:
+      disableNameSuffixHash: true
+    files:
+      - scripts/provision-grafana-sa.sh
 
 labels:
   - includeSelectors: false
