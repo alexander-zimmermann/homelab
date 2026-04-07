@@ -52,7 +52,31 @@ module.exports = {
  *  - adminAuth
  ******************************************************************************/
 
-    // adminAuth: OIDC via Authentik (to be configured)
+    adminAuth: {
+        type: "strategy",
+        strategy: {
+            name: "openidconnect",
+            label: "Sign in with Authentik",
+            icon: "fa-shield",
+            strategy: require("passport-openidconnect"),
+            options: {
+                issuer:           process.env.AUTHENTIK_HOST + "/application/o/node-red/",
+                authorizationURL: process.env.AUTHENTIK_HOST + "/application/o/authorize/",
+                tokenURL:         process.env.AUTHENTIK_HOST + "/application/o/token/",
+                userInfoURL:      process.env.AUTHENTIK_HOST + "/application/o/userinfo/",
+                clientID:         "node-red",
+                clientSecret:     process.env.NODE_RED_OIDC_CLIENT_SECRET,
+                callbackURL:      process.env.NODE_RED_CALLBACK_URL,
+                scope:            ["email", "profile", "openid"],
+                verify: function(_issuer, profile, done) {
+                    done(null, profile);
+                },
+            },
+        },
+        users: function(user) {
+            return Promise.resolve({ username: user.emails[0].value });
+        },
+    },
 
 /*******************************************************************************
  * Server Settings

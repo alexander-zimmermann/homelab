@@ -39,6 +39,24 @@ replacements:
         fieldPaths:
           - spec.resources.requests.storage
 
+  # Inject Authentik base URL for OIDC
+  - sourceValue: https://auth.zimmermann.sh
+    targets:
+      - select:
+          kind: Deployment
+          name: node-red
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_HOST].value
+
+  # Inject Node-RED OIDC callback URL
+  - sourceValue: https://node-red.zimmermann.sh/auth/strategy/callback/
+    targets:
+      - select:
+          kind: Deployment
+          name: node-red
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=NODE_RED_CALLBACK_URL].value
+
 patches:
   # node-red service with static IP and BGP advertisement
   - target:

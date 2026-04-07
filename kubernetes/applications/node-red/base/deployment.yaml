@@ -36,6 +36,18 @@ spec:
         - name: node-red-settings
           configMap:
             name: node-red-settings
+      initContainers:
+        # Installs passport-openidconnect into /data/node_modules for OIDC adminAuth.
+        # NODE_PATH on the main container makes this available to require() in settings.js.
+        - name: install-oidc-deps
+          image: docker.io/library/node:lts-alpine
+          command: ["sh", "-c", "npm install --prefix /data --no-save passport-openidconnect"]
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - name: node-red-data
+              mountPath: /data
       containers:
         - name: node-red
           image: docker.io/nodered/node-red:4.1.8
@@ -53,6 +65,21 @@ spec:
                 secretKeyRef:
                   name: node-red-credentials
                   key: credential-secret
+            # OIDC: makes /data/node_modules available to require() in settings.js.
+            - name: NODE_PATH
+              value: /data/node_modules
+            # OIDC: Authentik base URL — injected per environment via overlay replacements.
+            - name: AUTHENTIK_HOST
+              value: PLACEHOLDER
+            # OIDC: callback URL after authentication — injected per environment via overlay replacements.
+            - name: NODE_RED_CALLBACK_URL
+              value: PLACEHOLDER
+            # OIDC: client secret synced from authentik namespace by Kyverno.
+            - name: NODE_RED_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: node-red-oidc-secret
+                  key: NODE_RED_OIDC_CLIENT_SECRET
           resources:
             # Ensure Burstable QoS (no BestEffort) and prevent runaway usage.
             requests:

@@ -47,6 +47,12 @@ global:
         secretKeyRef:
           name: authentik-homepage-token
           key: AUTHENTIK_HOMEPAGE_API_TOKEN
+    # Node-RED OIDC client secret for the node-red-oidc blueprint
+    - name: NODE_RED_OIDC_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: node-red-oidc-secret
+          key: NODE_RED_OIDC_CLIENT_SECRET
 
     # Blueprint variables — injected per environment via overlay replacements
     - name: AUTHENTIK_ARGOCD_REDIRECT_URI
@@ -57,6 +63,8 @@ global:
       value: PLACEHOLDER_COOKIE_DOMAIN
     - name: AUTHENTIK_HOST
       value: https://PLACEHOLDER_AUTH_HOST
+    - name: AUTHENTIK_NODE_RED_REDIRECT_URI
+      value: https://PLACEHOLDER_NODE_RED_HOST/auth/strategy/callback/
 
     # Optimization: Fewer workers and no preloading saves RAM in small setups
     - name: AUTHENTIK_WEB__WORKERS
@@ -91,6 +99,7 @@ blueprints:
     - authentik-blueprint-homepage
     - authentik-blueprint-forward-auth
     - authentik-blueprint-grafana
+    - authentik-blueprint-node-red
 
 server:
   # Expose Authentik service via Cilium/BGP-announced LoadBalancer

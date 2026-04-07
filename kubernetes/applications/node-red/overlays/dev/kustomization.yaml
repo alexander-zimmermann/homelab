@@ -30,6 +30,24 @@ replacements:
           delimiter: "//"
           index: 1
 
+  # Inject Authentik base URL for OIDC
+  - sourceValue: https://auth.zimmermann.phd
+    targets:
+      - select:
+          kind: Deployment
+          name: node-red
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=AUTHENTIK_HOST].value
+
+  # Inject Node-RED OIDC callback URL
+  - sourceValue: https://node-red.zimmermann.phd/auth/strategy/callback/
+    targets:
+      - select:
+          kind: Deployment
+          name: node-red
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=NODE_RED_CALLBACK_URL].value
+
   # Inject storage size
   - sourceValue: 128Mi
     targets:
