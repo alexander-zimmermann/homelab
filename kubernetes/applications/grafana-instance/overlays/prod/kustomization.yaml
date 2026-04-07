@@ -14,7 +14,7 @@ replacements:
         fieldPaths:
           - spec.resources.requests.storage
 
-  # Inject domain name into Certificate, IngressRoute, and root URL env var
+  # Inject domain name into Certificate, IngressRoute, and Homepage href annotation
   - sourceValue: grafana.zimmermann.sh
     targets:
       - select:
@@ -35,6 +35,14 @@ replacements:
           name: grafana
         fieldPaths:
           - spec.template.spec.containers.2.env.[name=GF_SERVER_ROOT_URL].value
+        options:
+          delimiter: "//"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: grafana
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
         options:
           delimiter: "//"
           index: 1
