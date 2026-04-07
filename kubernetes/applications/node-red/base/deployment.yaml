@@ -28,10 +28,14 @@ spec:
         runAsNonRoot: true
         fsGroup: 1000
       volumes:
-        # Persistent data directory (flows, credentials, settings, node_modules).
+        # Persistent data directory (flows, credentials, node_modules, etc.).
         - name: node-red-data
           persistentVolumeClaim:
             claimName: node-red-data
+        # settings.js is managed via ConfigMap; subPath mount overrides the PVC file.
+        - name: node-red-settings
+          configMap:
+            name: node-red-settings
       containers:
         - name: node-red
           image: docker.io/nodered/node-red:4.1.8
@@ -40,6 +44,12 @@ spec:
             # Keep logs/timestamps consistent with local timezone.
             - name: TZ
               value: "Europe/Berlin"
+            # Credential encryption key for flows_cred.json (sourced from SealedSecret).
+            - name: NODE_RED_CREDENTIAL_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: node-red-credentials
+                  key: credential-secret
           resources:
             # Ensure Burstable QoS (no BestEffort) and prevent runaway usage.
             requests:
@@ -68,6 +78,10 @@ spec:
             periodSeconds: 60
             failureThreshold: 5
           volumeMounts:
-            # Node-RED stores flows, credentials and settings under /data.
+            # Node-RED stores flows, credentials and node_modules under /data.
             - name: node-red-data
               mountPath: /data
+            # Override /data/settings.js with the ConfigMap version.
+            - name: node-red-settings
+              mountPath: /data/settings.js
+              subPath: settings.js
