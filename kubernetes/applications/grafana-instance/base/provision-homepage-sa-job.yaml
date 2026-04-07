@@ -28,7 +28,7 @@ spec:
               done
       containers:
         - name: provision
-          image: alpine/k8s:1.31.4
+          image: alpine/k8s:1.35.3
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
