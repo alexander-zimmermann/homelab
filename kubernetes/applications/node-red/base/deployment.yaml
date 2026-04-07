@@ -32,7 +32,7 @@ spec:
         - name: node-red-data
           persistentVolumeClaim:
             claimName: node-red-data
-        # settings.js is managed via ConfigMap; subPath mount overrides the PVC file.
+        # settings.js is managed via ConfigMap; mounted at a separate path.
         - name: node-red-settings
           configMap:
             name: node-red-settings
@@ -40,6 +40,9 @@ spec:
         - name: node-red
           image: docker.io/nodered/node-red:4.1.8
           imagePullPolicy: IfNotPresent
+          args:
+            - --settings
+            - /config/settings.js
           env:
             # Keep logs/timestamps consistent with local timezone.
             - name: TZ
@@ -81,7 +84,7 @@ spec:
             # Node-RED stores flows, credentials and node_modules under /data.
             - name: node-red-data
               mountPath: /data
-            # Override /data/settings.js with the ConfigMap version.
+            # ConfigMap settings.js mounted at /config (no overlap with PVC).
             - name: node-red-settings
-              mountPath: /data/settings.js
+              mountPath: /config/settings.js
               subPath: settings.js
