@@ -7,6 +7,9 @@ metadata:
 
 spec:
   replicas: 1
+  # Recreate avoids Multi-Attach errors on RWO PVCs — old pod must terminate before new one starts
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: homepage
