@@ -5,10 +5,16 @@ namespace: node-red
 resources:
   - ./namespace.yaml
   - ./persistentvolume.yaml
+  - ./sealed-secret.yaml
   - ./deployment.yaml
   - ./service.yaml
   - ./certificate.yaml
   - ./ingress-route.yaml
+
+configMapGenerator:
+  - name: node-red-settings
+    files:
+      - settings.js
 
 labels:
   - includeSelectors: false
