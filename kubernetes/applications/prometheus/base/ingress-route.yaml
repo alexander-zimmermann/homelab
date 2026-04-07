@@ -14,8 +14,8 @@ metadata:
     gethomepage.dev/group: "Observability"
     gethomepage.dev/name: "Prometheus"
     gethomepage.dev/icon: "prometheus.png"
-    gethomepage.dev/href: "https://PLACEHOLDER"
     gethomepage.dev/weight: "1"
+    gethomepage.dev/href: "https://PLACEHOLDER"
     gethomepage.dev/widget.type: "prometheus"
     gethomepage.dev/widget.url: "http://prometheus-operated.prometheus.svc.cluster.local:9090"
 
