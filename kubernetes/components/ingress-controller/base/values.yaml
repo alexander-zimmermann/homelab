@@ -53,6 +53,7 @@ ingressRoute:
       gethomepage.dev/icon: traefik.png
       gethomepage.dev/weight: 3
       gethomepage.dev/href: https://PLACEHOLDER
+      gethomepage.dev/pod-selector: "app.kubernetes.io/name=traefik"
       gethomepage.dev/widget.type: "traefik"
       gethomepage.dev/widget.url: "http://traefik.ingress-controller.svc.cluster.local:9000"
     matchRule: Host(`PLACEHOLDER`)
