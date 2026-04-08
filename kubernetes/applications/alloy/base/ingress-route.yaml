@@ -14,7 +14,7 @@ metadata:
     gethomepage.dev/group: "Observability"
     gethomepage.dev/name: "Alloy"
     gethomepage.dev/icon: "alloy.png"
-    gethomepage.dev/weight: "3"
+    gethomepage.dev/weight: "4"
     gethomepage.dev/href: "https://PLACEHOLDER"
     gethomepage.dev/pod-selector: "app.kubernetes.io/instance=alloy-alloy-metrics"
 

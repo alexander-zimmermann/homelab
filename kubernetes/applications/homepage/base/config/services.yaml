@@ -47,11 +47,21 @@
           type: unifi
           url: https://gateway.zimmermann.eu.com
           key: "{{HOMEPAGE_VAR_UNIFI_KEY}}"
+    - Unifi Drive:
+        icon: unifi.png
+        href: http://storage.zimmermann.eu.com
+        siteMonitor: http://storage.zimmermann.eu.com
+        weight: 2
+        widget:
+          type: unifi_drive
+          url: http://storage.zimmermann.eu.com
+          username: "{{HOMEPAGE_VAR_UNIFI_DRIVE_USERNAME}}"
+          password: "{{HOMEPAGE_VAR_UNIFI_DRIVE_PASSWORD}}"
     - FritzBox:
         icon: avm-fritzbox.png
         href: http://fritzbox.zimmermann.eu.com
         siteMonitor: http://fritzbox.zimmermann.eu.com
-        weight: 2
+        weight: 3
 
 - Security & Identity:
     - CrowdSec:
@@ -73,10 +83,22 @@
           url: https://proxmox.zimmermann.eu.com:8006
           username: "{{HOMEPAGE_VAR_PROXMOX_USERNAME}}"
           password: "{{HOMEPAGE_VAR_PROXMOX_PASSWORD}}"
+    - Proxmox Backup Server:
+        icon: proxmox.png
+        href: https://backup.zimmermann.sh
+        siteMonitor: https://backup.zimmermann.eu.com:8007
+        widget:
+          type: proxmoxbackupserver
+          url: https://backup.zimmermann.eu.com:8007
+          username: "{{HOMEPAGE_VAR_PBS_USERNAME}}"
+          password: "{{HOMEPAGE_VAR_PBS_PASSWORD}}"
     - ThinkStation AMT:
         icon: /icons/thinkstation.png
         href: https://pve-1-amt.zimmermann.eu.com:16993
-    - APC Smartconnect:
-        icon: apc
+    - APC UPS:
+        icon: apc.png
         href: https://smartconnect.apc.com/auth/login
         ping: apc-ups.zimmermann.eu.com
+        widget:
+          type: apcups
+          url: tcp://apc-ups.zimmermann.eu.com:3551

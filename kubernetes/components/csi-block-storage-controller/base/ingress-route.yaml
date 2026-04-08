@@ -9,6 +9,13 @@ metadata:
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Homepage Service Discovery
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Kubernetes"
+    gethomepage.dev/name: "Longhorn"
+    gethomepage.dev/icon: "longhorn.png"
+    gethomepage.dev/weight: "2"
+    gethomepage.dev/href: "https://PLACEHOLDER"
 
 spec:
   entryPoints:

@@ -1,7 +1,33 @@
-- resources:
-    cpu: true
-    memory: true
-    disk: /
+- kubernetes:
+    cluster:
+      # Shows cluster-wide statistics
+      show: true
+      # Shows aggregate CPU stats
+      cpu: true
+      # Shows aggregate memory stats
+      memory: true
+      # Shows a custom label
+      showLabel: true
+      label: "homelab"
+    nodes:
+      # Shows node-specific statistics
+      show: true
+      # Shows CPU for each node
+      cpu: true
+      # Shows memory for each node
+      memory: true
+      # Shows the label, which is always the node name
+      showLabel: true
+
+- longhorn:
+    # Show the expanded view
+    expanded: true
+    # Shows a node representing the aggregate values
+    total: true
+    # Shows node names as labels
+    labels: true
+    # Show all nodes
+    nodes: true
 
 - search:
     provider: google

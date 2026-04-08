@@ -23,3 +23,11 @@ replacements:
           name: argocd-tls-cert
         fieldPaths:
           - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: argocd-server
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
+        options:
+          delimiter: "//"
+          index: 1

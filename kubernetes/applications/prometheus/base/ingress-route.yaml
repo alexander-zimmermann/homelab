@@ -14,7 +14,7 @@ metadata:
     gethomepage.dev/group: "Observability"
     gethomepage.dev/name: "Prometheus"
     gethomepage.dev/icon: "prometheus.png"
-    gethomepage.dev/weight: "1"
+    gethomepage.dev/weight: "2"
     gethomepage.dev/href: "https://PLACEHOLDER"
     gethomepage.dev/widget.type: "prometheus"
     gethomepage.dev/widget.url: "http://prometheus-operated.prometheus.svc.cluster.local:9090"
@@ -49,11 +49,11 @@ metadata:
     kubernetes.io/ingress.class: traefik
     # Homepage annotations
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: Observability
-    gethomepage.dev/name: Alertmanager
-    gethomepage.dev/icon: alertmanager.png
-    gethomepage.dev/weight: 2
-    gethomepage.dev/href: https://PLACEHOLDER
+    gethomepage.dev/group: "Observability"
+    gethomepage.dev/name: "Alertmanager"
+    gethomepage.dev/icon: "alertmanager.png"
+    gethomepage.dev/weight: "3"
+    gethomepage.dev/href: "https://PLACEHOLDER"
 
 spec:
   entryPoints:
