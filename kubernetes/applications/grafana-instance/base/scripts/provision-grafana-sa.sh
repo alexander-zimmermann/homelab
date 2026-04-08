@@ -4,6 +4,7 @@ set -euo pipefail
 # Required environment variables:
 #   GRAFANA_URL        - e.g. http://grafana.grafana-instance.svc.cluster.local
 #   SA_NAME            - Grafana service account name
+#   SA_ROLE            - Grafana service account role (e.g. Viewer, Editor, Admin)
 #   TOKEN_NAME         - Grafana token name
 #   SECRET_NAME        - Kubernetes secret name to create
 #   SECRET_NAMESPACE   - Namespace for the Kubernetes secret
@@ -26,7 +27,7 @@ if [ -z "$SA_ID" ]; then
   SA_ID=$(curl -sf -X POST -u "$ADMIN_USER:$ADMIN_PASS" \
     -H "Content-Type: application/json" \
     "$GRAFANA_URL/api/serviceaccounts" \
-    -d "{\"name\":\"$SA_NAME\",\"role\":\"Viewer\"}" | jq -r '.id')
+    -d "{\"name\":\"$SA_NAME\",\"role\":\"$SA_ROLE\"}" | jq -r '.id')
 fi
 echo "SA ID: $SA_ID"
 

@@ -44,6 +44,8 @@ spec:
               value: "http://grafana.grafana-instance.svc.cluster.local"
             - name: SA_NAME
               value: "homepage"
+            - name: SA_ROLE
+              value: "Admin"
             - name: TOKEN_NAME
               value: "homepage-token"
             - name: SECRET_NAME
