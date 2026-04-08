@@ -15,10 +15,13 @@ metadata:
     gethomepage.dev/name: "Grafana"
     gethomepage.dev/icon: "grafana.png"
     gethomepage.dev/href: "https://PLACEHOLDER"
-    gethomepage.dev/weight: "0"
+    gethomepage.dev/weight: "1"
     gethomepage.dev/widget.type: "grafana"
+    gethomepage.dev/widget.version: "2"
     gethomepage.dev/widget.url: "http://grafana.grafana-instance.svc.cluster.local:80"
-    gethomepage.dev/widget.key: "{{HOMEPAGE_VAR_GRAFANA_KEY}}"
+    gethomepage.dev/widget.username: "{{HOMEPAGE_VAR_GRAFANA_USERNAME}}"
+    gethomepage.dev/widget.password: "{{HOMEPAGE_VAR_GRAFANA_PASSWORD}}"
+    gethomepage.dev/widget.fields: '["dashboards", "datasources"]'
 
 spec:
   entryPoints:

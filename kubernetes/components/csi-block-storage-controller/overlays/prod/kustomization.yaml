@@ -23,7 +23,7 @@ replacements:
         fieldPaths:
           - 'data.storageclass\.yaml.reclaimPolicy'
 
-  # Inject the domain name into the Certificate and IngressRoute
+  # Inject the domain name into the Certificate, IngressRoute, and Homepage href annotation
   - sourceValue: longhorn.zimmermann.sh
     targets:
       - select:
@@ -38,6 +38,14 @@ replacements:
           - spec.routes.0.match
         options:
           delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: longhorn-ui
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
+        options:
+          delimiter: "//"
           index: 1
 
 patches:
