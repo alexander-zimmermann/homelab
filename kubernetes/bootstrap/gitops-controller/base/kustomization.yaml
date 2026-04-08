@@ -7,6 +7,7 @@ resources:
   - ./appset-applications.yaml
   - ./appset-components.yaml
   - ./appproject.yaml
+  - ./sealed-secret.yaml
 
 helmCharts:
   - name: argo-cd
