@@ -1,4 +1,8 @@
 configs:
+  secret:
+    # argocd-secret is managed via SealedSecret to pin server.secretkey across bootstraps
+    createSecret: false
+
   cm:
     # Allows Argo CD to render Kustomize projects that use `helmCharts:`
     kustomize.buildOptions: --enable-helm
@@ -14,6 +18,8 @@ configs:
           - Endpoints
         clusters:
           - "*"
+    # Homepage service account – read-only API key for the homepage widget
+    accounts.homepage: apiKey
     # ArgoCD server URL – PLACEHOLDER is replaced per environment via overlay replacements
     url: https://argocd.PLACEHOLDER
     # OIDC via Authentik – PLACEHOLDER is replaced per environment via overlay replacements
