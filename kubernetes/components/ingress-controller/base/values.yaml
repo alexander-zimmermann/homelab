@@ -41,6 +41,11 @@ experimental:
       moduleName: github.com/agence-gaya/traefik-plugin-cloudflare
       version: v1.2.0
 
+api:
+  # Enable insecure API access on the traefik entrypoint port (8080)
+  # Safe because the port is only exposed via internal ClusterIP service
+  insecure: true
+
 ingressRoute:
   # Create an IngressRoute for the dashboard
   dashboard:
@@ -55,7 +60,7 @@ ingressRoute:
       gethomepage.dev/href: https://PLACEHOLDER
       gethomepage.dev/pod-selector: "app.kubernetes.io/name=traefik"
       gethomepage.dev/widget.type: "traefik"
-      gethomepage.dev/widget.url: "http://traefik.ingress-controller.svc.cluster.local:9000"
+      gethomepage.dev/widget.url: "http://traefik-internal.ingress-controller.svc.cluster.local:8080"
     matchRule: Host(`PLACEHOLDER`)
     entryPoints: ["websecure"]
     middlewares:
@@ -120,6 +125,12 @@ env:
         key: CLOUDFLARE_IPv6
 
 ports:
+  # Traefik dashboard/API – only exposed on internal ClusterIP service for homepage widget
+  traefik:
+    expose:
+      default: false
+      internal: true
+
   # Web entry point (Port 80)
   web:
     exposedPort: 80
@@ -195,6 +206,9 @@ service:
   labels:
     bgp.cilium.io/ip-pool: default
     bgp.cilium.io/advertise-service: default
+  # Internal ClusterIP service for homepage widget (dashboard/API port)
+  internal:
+    type: ClusterIP
 
 affinity:
   # Pod anti-affinity forces scheduler to put Traefik pods on nodes where no other Traefik are
