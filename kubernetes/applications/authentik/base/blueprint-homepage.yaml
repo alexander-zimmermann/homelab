@@ -12,5 +12,6 @@ entries:
     attrs:
       identifier: homepage-api-token
       intent: api
+      expiring: false
       user: !Find [authentik_core.user, [username, akadmin]]
       key: !Env AUTHENTIK_HOMEPAGE_API_TOKEN
