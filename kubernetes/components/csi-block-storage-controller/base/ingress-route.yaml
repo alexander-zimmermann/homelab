@@ -11,7 +11,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
     # Homepage Service Discovery
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: "Kubernetes"
+    gethomepage.dev/group: "Data & AI"
     gethomepage.dev/name: "Longhorn"
     gethomepage.dev/icon: "longhorn.png"
     gethomepage.dev/weight: "2"
