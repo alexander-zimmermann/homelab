@@ -16,6 +16,7 @@ metadata:
     gethomepage.dev/icon: "longhorn.png"
     gethomepage.dev/weight: "2"
     gethomepage.dev/href: "https://PLACEHOLDER"
+    gethomepage.dev/pod-selector: "app=longhorn-ui"
 
 spec:
   entryPoints:
