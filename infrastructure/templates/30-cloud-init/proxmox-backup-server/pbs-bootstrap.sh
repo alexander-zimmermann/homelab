@@ -383,6 +383,11 @@ info "Setting up backup user..."
 create_user "${PBS_BACKUP_USERNAME}" "${PBS_BACKUP_PASSWORD}"
 setup_acl "${PBS_BACKUP_USERNAME}" "DatastoreAdmin" "/datastore/${DATASTORE_PRIMARY_NAME}"
 
+## Create homepage user (read-only monitoring)
+info "Setting up homepage user..."
+create_user "${PBS_HOMEPAGE_USERNAME}" "${PBS_HOMEPAGE_PASSWORD}"
+setup_acl "${PBS_HOMEPAGE_USERNAME}" "Audit" "/"
+
 ## Workaround: Initialize the datastore locally and then move the metadata to the NFS share
 info "Moving datastore metadata to NFS..."
 move_datastore_to_nfs "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
