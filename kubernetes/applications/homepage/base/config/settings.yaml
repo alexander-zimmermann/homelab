@@ -33,3 +33,7 @@ layout:
     icon: mdi-all-inclusive-#FFFFFF
   Security & Identity:
     icon: mdi-shield-lock-#FFFFFF
+
+providers:
+  longhorn:
+    url: http://longhorn-frontend.csi-block-storage-controller.svc.cluster.local
