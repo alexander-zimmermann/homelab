@@ -51,15 +51,9 @@ spec:
                 secretKeyRef:
                   name: authentik-homepage-token
                   key: AUTHENTIK_HOMEPAGE_API_TOKEN
-            # CrowdSec LAPI key — cloned from crowdsec namespace by Kyverno.
-            - name: HOMEPAGE_VAR_CROWDSEC_LAPI_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: crowdsec-homepage-lapi-key
-                  key: crowdsec_homepage_lapi_key
-            # CrowdSec widget username — static value, not a secret.
+            # CrowdSec widget username — static value, matches machine name in CrowdSec LAPI.
             - name: HOMEPAGE_VAR_CROWDSEC_USERNAME
-              value: "localhost"
+              value: "homepage"
           envFrom:
             # Proxmox, Unifi, and other API credentials.
             - secretRef:

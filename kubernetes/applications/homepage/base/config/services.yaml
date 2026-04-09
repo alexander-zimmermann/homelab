@@ -71,7 +71,7 @@
           type: crowdsec
           url: http://crowdsec-service.crowdsec.svc.cluster.local:8080
           username: "{{HOMEPAGE_VAR_CROWDSEC_USERNAME}}"
-          password: "{{HOMEPAGE_VAR_CROWDSEC_LAPI_KEY}}"
+          password: "{{HOMEPAGE_VAR_CROWDSEC_PASSWORD}}"
 
 - Infrastructure:
     - Proxmox:
