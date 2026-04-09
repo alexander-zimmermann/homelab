@@ -5,7 +5,7 @@ terraform {
     proxmox = {
       ## https://search.opentofu.org/provider/bpg/proxmox/latest
       source  = "bpg/proxmox"
-      version = "0.100.0"
+      version = "0.101.0"
     }
     external = {
       ## https://search.opentofu.org/provider/hashicorp/external/latest
