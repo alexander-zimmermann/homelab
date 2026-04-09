@@ -13,7 +13,7 @@ metadata:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: "GitOps"
     gethomepage.dev/name: "ArgoCD"
-    gethomepage.dev/icon: "argocd.png"
+    gethomepage.dev/icon: "argo-cd.png"
     gethomepage.dev/weight: "1"
     gethomepage.dev/href: "https://PLACEHOLDER"
     gethomepage.dev/widget.type: "argocd"
