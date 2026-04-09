@@ -72,6 +72,7 @@
           url: http://crowdsec-service.crowdsec.svc.cluster.local:8080
           username: "{{HOMEPAGE_VAR_CROWDSEC_USERNAME}}"
           password: "{{HOMEPAGE_VAR_CROWDSEC_PASSWORD}}"
+          limit24h: true
 
 - Infrastructure:
     - Proxmox:
