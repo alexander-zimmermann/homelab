@@ -78,6 +78,9 @@ ci_secrets = {
     pbs_initial_password = "YOUR_PBS_INITIAL_PASSWORD"
     pbs_backup_username  = "YOUR_PBS_BACKUP_USERNAME"
     pbs_backup_password  = "YOUR_PBS_BACKUP_PASSWORD"
+    ## Homepage read-only monitoring user
+    pbs_homepage_username = "YOUR_PBS_HOMEPAGE_USERNAME"
+    pbs_homepage_password = "YOUR_PBS_HOMEPAGE_PASSWORD"
     ## ACME Cloudflare DNS plugin
     acme_cf_account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"
     acme_cf_zone_id    = "YOUR_CLOUDFLARE_ZONE_ID"
