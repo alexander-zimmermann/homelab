@@ -96,11 +96,11 @@ patches:
         path: /spec/template/spec/containers/0/resources
         value:
           requests:
-            cpu: 50m
-            memory: 256Mi
+            cpu: 10m
+            memory: 32Mi
           limits:
-            cpu: 1000m
-            memory: 1Gi
+            cpu: 100m
+            memory: 128Mi
 
       - op: test
         path: /spec/template/spec/containers/1/name
@@ -122,11 +122,11 @@ patches:
         path: /spec/template/spec/containers/2/resources
         value:
           requests:
-            cpu: 10m
-            memory: 32Mi
+            cpu: 50m
+            memory: 256Mi
           limits:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 1000m
+            memory: 1Gi
 
   # Configure resources for Grafana Image Renderer
   - target:
