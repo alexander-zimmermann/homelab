@@ -66,6 +66,7 @@
 - Security & Identity:
     - CrowdSec:
         icon: crowdsec.png
+        href: https://app.crowdsec.net
         weight: 2
         widget:
           type: crowdsec
