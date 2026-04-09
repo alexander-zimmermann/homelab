@@ -15,12 +15,15 @@
           href: https://discord.com/
 
 - Artificial Intelligence:
-    - ChatGPT:
-        - icon: chatgpt.png
-          href: https://chat.openai.com/
+    - Claude:
+        - icon: claude.png
+          href: https://claude.ai/
     - Gemini:
         - icon: google-gemini.png
           href: https://gemini.google.com/app
+    - ChatGPT:
+        - icon: chatgpt.png
+          href: https://chat.openai.com/
 
 - Entertainment:
     - YouTube:
