@@ -2,7 +2,7 @@ pve_cluster_hw_mapping_usb:
   ups-apc:
     comment: "APC UPS for power monitoring"
     map:
-      - id: "051d:0002"
+      - id: "051d:0003"
         node: "pve-1"
 
   knx-license:
