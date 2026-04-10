@@ -66,8 +66,8 @@ template_vm:
     vm_id: 10007
     image_id: vm_ubuntu_noble
     os_type: l26
-    ## Resources (minimal - apcupsd is lightweight)
-    memory: 256
+    ## Resources
+    memory: 512
     cores: 1
     disk_size: 4
     vnic_bridge: vmbr0
