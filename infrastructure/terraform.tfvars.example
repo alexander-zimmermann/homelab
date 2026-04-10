@@ -90,4 +90,10 @@ ci_secrets = {
     primary_domain   = "YOUR_PRIMARY_DOMAIN"
     san_domains      = "YOUR_SAN_DOMAINS" # comma-separated list of domains
   }
+
+  ## UPS Monitor (apcupsd) configuration
+  ups_monitor_bootstrap_conf = {
+    pve_api_token_id     = "YOUR_PVE_API_TOKEN_ID"
+    pve_api_token_secret = "YOUR_PVE_API_TOKEN_SECRET"
+  }
 }

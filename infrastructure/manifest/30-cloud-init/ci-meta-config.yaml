@@ -10,3 +10,7 @@ ci_meta_config:
   ## Proxmox Backup Server VM
   proxmox_backup:
     hostname: backup-01
+
+  ## UPS Monitor VM
+  ups_monitor:
+    hostname: ups-monitor-01
