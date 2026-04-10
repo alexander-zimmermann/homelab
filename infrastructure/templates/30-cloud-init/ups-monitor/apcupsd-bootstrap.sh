@@ -46,7 +46,7 @@ configure_apcupsd() {
 
   ## Patch the default config in-place
   sed -i \
-    -e "s|^UPSNAME.*|UPSNAME ${APCUPSD_UPSNAME}|" \
+    -e "0,/^#*\s*UPSNAME/s|^#*\s*UPSNAME.*|UPSNAME ${APCUPSD_UPSNAME}|" \
     -e "s|^UPSCABLE.*|UPSCABLE usb|" \
     -e "s|^UPSTYPE.*|UPSTYPE ${APCUPSD_UPSTYPE}|" \
     -e "s|^DEVICE.*|DEVICE ${APCUPSD_DEVICE}|" \
