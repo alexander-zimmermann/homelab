@@ -51,6 +51,17 @@ spec:
                 secretKeyRef:
                   name: authentik-homepage-token
                   key: AUTHENTIK_HOMEPAGE_API_TOKEN
+            # Grafana admin credentials — cloned from grafana-instance namespace by Kyverno.
+            - name: HOMEPAGE_VAR_GRAFANA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin-credentials
+                  key: admin-user
+            - name: HOMEPAGE_VAR_GRAFANA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin-credentials
+                  key: admin-password
             # CrowdSec widget username — static value, matches machine name in CrowdSec LAPI.
             - name: HOMEPAGE_VAR_CROWDSEC_USERNAME
               value: "homepage"
