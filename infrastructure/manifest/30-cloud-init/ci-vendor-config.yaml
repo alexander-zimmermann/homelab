@@ -162,8 +162,6 @@ ci_vendor_config:
 
   ## Proxmox Backup Server VM
   proxmox_backup:
-    locale: ""
-    timezone: ""
     apt:
       sources:
         proxmox_backup:

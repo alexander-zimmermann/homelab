@@ -105,6 +105,34 @@ create_user() {
 }
 
 ###############################################################################
+## Helper: API token setup
+###############################################################################
+create_api_token() {
+  local user="${1}@pbs"
+  local token_name="${2}"
+
+  ## Check if token already exists
+  if proxmox-backup-manager user list-tokens "${user}" | grep -q "${token_name}"; then
+    info "API token ${user}!${token_name} already exists."
+    return 0
+  fi
+
+  ## Create API token and capture secret
+  info "Creating API token ${user}!${token_name}..."
+  local token_output
+  token_output=$(proxmox-backup-manager user generate-token "${user}" "${token_name}") \
+    || die "Failed to create API token for ${user}."
+
+  ## Extract and store token secret for external consumption
+  local token_secret
+  token_secret=$(echo "${token_output}" | grep -oP '(?<=value: ).*')
+  echo "${token_secret}" > "/etc/pbs/api-token-${1}-${token_name}.secret"
+  chmod 600 "/etc/pbs/api-token-${1}-${token_name}.secret"
+
+  success "API token ${user}!${token_name} created. Secret stored in /etc/pbs/api-token-${1}-${token_name}.secret"
+}
+
+###############################################################################
 ## Helper: ACL setup
 ###############################################################################
 setup_acl() {
@@ -270,7 +298,7 @@ setup_sync() {
   proxmox-backup-manager sync-job create "${job_id}" \
     --remote-store "${DATASTORE_PRIMARY_NAME}" \
     --store "${DATASTORE_SECONDARY_NAME}" \
-    --schedule "*-*-* 06:00" || die "Could not create sync job."
+    --schedule "*-*-* 05:00" || die "Could not create sync job."
 
   success "Sync job for between primary and secondary datastores set up successfully."
 }
@@ -383,10 +411,11 @@ info "Setting up backup user..."
 create_user "${PBS_BACKUP_USERNAME}" "${PBS_BACKUP_PASSWORD}"
 setup_acl "${PBS_BACKUP_USERNAME}" "DatastoreAdmin" "/datastore/${DATASTORE_PRIMARY_NAME}"
 
-## Create homepage user (read-only monitoring)
+## Create homepage user (read-only monitoring via API token)
 info "Setting up homepage user..."
 create_user "${PBS_HOMEPAGE_USERNAME}" "${PBS_HOMEPAGE_PASSWORD}"
 setup_acl "${PBS_HOMEPAGE_USERNAME}" "Audit" "/"
+create_api_token "${PBS_HOMEPAGE_USERNAME}" "homepage"
 
 ## Workaround: Initialize the datastore locally and then move the metadata to the NFS share
 info "Moving datastore metadata to NFS..."
