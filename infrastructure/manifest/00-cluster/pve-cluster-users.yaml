@@ -19,3 +19,11 @@ pve_cluster_users:
     omni:
       path: "/"
       role_id: "Administrator"
+
+    ups_monitor:
+      path: "/nodes"
+      create_role: true
+      role_id: "UPSPowerMgmt"
+      role_privileges: ["Sys.PowerMgmt"]
+      create_token: true
+      token_name: "ups-monitor"

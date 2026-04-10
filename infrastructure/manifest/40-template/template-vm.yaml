@@ -61,6 +61,22 @@ template_vm:
     ci_network_config: proxmox_backup
     ci_meta_config: proxmox_backup
 
+  ## UPS Monitor template
+  vm_ubuntu_noble_ups_monitor:
+    vm_id: 10007
+    image_id: vm_ubuntu_noble
+    os_type: l26
+    ## Resources
+    memory: 512
+    cores: 1
+    disk_size: 4
+    vnic_bridge: vmbr0
+    ## Cloud-init
+    ci_user_config: ups_monitor
+    ci_vendor_config: ups_monitor
+    ci_network_config: ups_monitor
+    ci_meta_config: ups_monitor
+
   ## Windows templates
   vm_windows_11_25h2:
     vm_id: 10004

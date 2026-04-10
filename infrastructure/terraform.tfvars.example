@@ -10,8 +10,9 @@ pve_cluster_password     = "YOUR_PVE_PASSWORD"
 ## PVE cluster - user configuration
 ###############################################################################
 pve_user_passwords = {
-  alice = "YOUR_ALICE_PASSWORD"
-  bob   = "YOUR_BOB_PASSWORD"
+  alice       = "YOUR_ALICE_PASSWORD"
+  bob         = "YOUR_BOB_PASSWORD"
+  ups_monitor = "YOUR_UPS_MONITOR_PASSWORD"
 }
 
 
@@ -88,5 +89,11 @@ ci_secrets = {
     ## Primary and SAN domains for ACME certificates
     primary_domain   = "YOUR_PRIMARY_DOMAIN"
     san_domains      = "YOUR_SAN_DOMAINS" # comma-separated list of domains
+  }
+
+  ## UPS Monitor (apcupsd) configuration
+  ups_monitor_bootstrap_conf = {
+    pve_api_token_id     = "YOUR_PVE_API_TOKEN_ID"
+    pve_api_token_secret = "YOUR_PVE_API_TOKEN_SECRET"
   }
 }

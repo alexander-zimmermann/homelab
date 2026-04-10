@@ -19,3 +19,10 @@ ci_network_config:
     dhcp6: false
     accept_ra: true
     dns_search_domain: [zimmermann.eu.com]
+
+  ## UPS Monitor VM
+  ups_monitor:
+    dhcp4: true
+    dhcp6: false
+    accept_ra: true
+    dns_search_domain: [zimmermann.eu.com]

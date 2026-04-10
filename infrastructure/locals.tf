@@ -16,22 +16,23 @@ locals {
 
   ## Aggregate manifests by top-level keys
   manifest = {
-    pve_cluster             = merge([for m in local.decoded_manifests : try(m.pve_cluster, {})]...)
-    pve_cluster_users       = merge([for m in local.decoded_manifests : try(m.pve_cluster_users, {})]...)
-    pve_cluster_acme        = merge([for m in local.decoded_manifests : try(m.pve_cluster_acme, {})]...)
-    pve_cluster_pbs_storage = merge([for m in local.decoded_manifests : try(m.pve_cluster_pbs_storage, {})]...)
-    pve_cluster_backup_jobs = merge([for m in local.decoded_manifests : try(m.pve_cluster_backup_jobs, {})]...)
-    pve_node_core           = merge([for m in local.decoded_manifests : try(m.pve_node_core, {})]...)
-    pve_node_network        = merge([for m in local.decoded_manifests : try(m.pve_node_network, {})]...)
-    image                   = merge([for m in local.decoded_manifests : try(m.image, {})]...)
-    ci_user_config          = merge([for m in local.decoded_manifests : try(m.ci_user_config, {})]...)
-    ci_vendor_config        = merge([for m in local.decoded_manifests : try(m.ci_vendor_config, {})]...)
-    ci_network_config       = merge([for m in local.decoded_manifests : try(m.ci_network_config, {})]...)
-    ci_meta_config          = merge([for m in local.decoded_manifests : try(m.ci_meta_config, {})]...)
-    template_vm             = merge([for m in local.decoded_manifests : try(m.template_vm, {})]...)
-    template_lxc            = merge([for m in local.decoded_manifests : try(m.template_lxc, {})]...)
-    fleet_vm                = merge([for m in local.decoded_manifests : try(m.fleet_vm, {})]...)
-    fleet_lxc               = merge([for m in local.decoded_manifests : try(m.fleet_lxc, {})]...)
+    pve_cluster                = merge([for m in local.decoded_manifests : try(m.pve_cluster, {})]...)
+    pve_cluster_users          = merge([for m in local.decoded_manifests : try(m.pve_cluster_users, {})]...)
+    pve_cluster_acme           = merge([for m in local.decoded_manifests : try(m.pve_cluster_acme, {})]...)
+    pve_cluster_pbs_storage    = merge([for m in local.decoded_manifests : try(m.pve_cluster_pbs_storage, {})]...)
+    pve_cluster_backup_jobs    = merge([for m in local.decoded_manifests : try(m.pve_cluster_backup_jobs, {})]...)
+    pve_cluster_hw_mapping_usb = merge([for m in local.decoded_manifests : try(m.pve_cluster_hw_mapping_usb, {})]...)
+    pve_node_core              = merge([for m in local.decoded_manifests : try(m.pve_node_core, {})]...)
+    pve_node_network           = merge([for m in local.decoded_manifests : try(m.pve_node_network, {})]...)
+    image                      = merge([for m in local.decoded_manifests : try(m.image, {})]...)
+    ci_user_config             = merge([for m in local.decoded_manifests : try(m.ci_user_config, {})]...)
+    ci_vendor_config           = merge([for m in local.decoded_manifests : try(m.ci_vendor_config, {})]...)
+    ci_network_config          = merge([for m in local.decoded_manifests : try(m.ci_network_config, {})]...)
+    ci_meta_config             = merge([for m in local.decoded_manifests : try(m.ci_meta_config, {})]...)
+    template_vm                = merge([for m in local.decoded_manifests : try(m.template_vm, {})]...)
+    template_lxc               = merge([for m in local.decoded_manifests : try(m.template_lxc, {})]...)
+    fleet_vm                   = merge([for m in local.decoded_manifests : try(m.fleet_vm, {})]...)
+    fleet_lxc                  = merge([for m in local.decoded_manifests : try(m.fleet_lxc, {})]...)
   }
 
   ## Shortcuts
@@ -98,6 +99,7 @@ locals {
       wait_for_agent = try(spec.wait_for_agent, true)
       vm_name        = k ## No vm_name field in spec -> use key as name
       disks          = try(spec.disks, [])
+      usb_devices    = try(spec.usb_devices, [])
       protection     = try(spec.protection, true)
     } if try(spec.count, 0) == 0 },
 
@@ -111,6 +113,7 @@ locals {
           wait_for_agent = try(spec.wait_for_agent, true)
           vm_name        = format("%s_%d", group_key, i)
           disks          = try(spec.disks, [])
+          usb_devices    = try(spec.usb_devices, [])
           protection     = try(spec.protection, true)
         }
       } if try(spec.count, 0) > 0
