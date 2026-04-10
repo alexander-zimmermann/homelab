@@ -94,17 +94,26 @@ enable_service() {
 }
 
 ###############################################################################
-## Helper: Verify UPS connectivity
+## Helper: Wait for USB HID device and verify UPS connectivity
 ###############################################################################
 verify_ups() {
-  info "Verifying UPS connectivity..."
+  local hiddev="/dev/usb/hiddev0"
+  local retries=30
 
-  if apcaccess status &>/dev/null; then
-    success "UPS connectivity verified."
-    apcaccess status | head -10
-  else
-    info "UPS not yet reachable (may need USB device passthrough). Skipping verification."
-  fi
+  info "Waiting for USB HID device..."
+  for i in $(seq 1 ${retries}); do
+    if [[ -e "${hiddev}" ]]; then
+      success "USB HID device found at ${hiddev}."
+      ## Restart apcupsd so it picks up the device
+      systemctl restart apcupsd
+      sleep 2
+      apcaccess status | head -10
+      return 0
+    fi
+    sleep 2
+  done
+
+  info "USB HID device not found after ${retries} attempts. apcupsd may reconnect later."
 }
 
 ###############################################################################
