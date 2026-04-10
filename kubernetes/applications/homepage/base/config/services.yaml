@@ -103,4 +103,4 @@
         ping: apc-ups.zimmermann.eu.com
         widget:
           type: apcups
-          url: tcp://apc-ups.zimmermann.eu.com:3551
+          url: tcp://ups-monitor.zimmermann.eu.com:3551
