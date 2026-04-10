@@ -251,6 +251,8 @@ ci_vendor_config:
       - ["localectl", "set-locale", "LANG=de_DE.UTF-8"]
       ## Set permissions for data disk and config directory
       - ["chown", "-R", "backup:backup", "/mnt/datastore-primary"]
+      ## Manually mount NFS share (after nfs-common install)
+      - ["mount", "/mnt/datastore-secondary"]
       - ["chown", "-R", "backup:backup", "/mnt/datastore-secondary"]
       ## Setup PBS
       - ["bash", "/usr/local/bin/pbs-bootstrap.sh"]

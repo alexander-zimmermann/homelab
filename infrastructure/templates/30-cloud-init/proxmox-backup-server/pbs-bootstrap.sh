@@ -40,15 +40,9 @@ setup_system_config() {
   info "Setting root password..."
   echo "root:${PBS_ROOT_PASSWORD}" | chpasswd || die "Failed to set root password."
 
-  ## Check if enterprise repo is already disabled
-  if [[ -f "${enterprise_source}" ]] && grep -q "Enabled: false" "${enterprise_source}"; then
-    info "Enterprise repository already disabled."
-    return 0
-  fi
-
   ## Disable enterprise repo
   info "Disabling enterprise repository..."
-  echo "Enabled: false" >> "${enterprise_source}"
+  sed -i 's/^Enabled:.*/Enabled: false/' "${enterprise_source}"
 
   success "System configuration set up successfully."
 }
@@ -91,7 +85,7 @@ create_user() {
   local password="${2}"
 
   ### Check if user already exists
-  if proxmox-backup-manager user list | grep -q "${user}"; then
+  if proxmox-backup-manager user list | grep -qw "${user}"; then
     info "User ${user} already exists."
     return 0
   fi
@@ -112,7 +106,7 @@ create_api_token() {
   local token_name="${2}"
 
   ## Check if token already exists
-  if proxmox-backup-manager user list-tokens "${user}" | grep -q "${token_name}"; then
+  if proxmox-backup-manager user list-tokens "${user}" | grep -qw "${token_name}"; then
     info "API token ${user}!${token_name} already exists."
     return 0
   fi
@@ -140,7 +134,12 @@ setup_acl() {
   local role="${2}"
   local path="${3}"
 
-  ## Assigning role
+  ## Check if ACL is already set
+  if proxmox-backup-manager acl list | grep -w "${user}" | grep -qw "${role}"; then
+    info "ACL ${role} for ${user} on ${path} already set."
+    return 0
+  fi
+
   info "Assigning ${role} role to ${user} on ${path}..."
   proxmox-backup-manager acl update "${path}" "${role}" \
     --auth-id "${user}" || die "Failed to assign role to ${user}."
@@ -156,7 +155,7 @@ setup_datastore() {
   local datastore_path="${2}"
 
   ## Check if datastore is already configured in PBS
-  if proxmox-backup-manager datastore list | grep -q "${datastore_name}"; then
+  if proxmox-backup-manager datastore list | grep -qw "${datastore_name}"; then
     info "Datastore ${datastore_name} already exists in PBS configuration."
     return 0
   fi
@@ -171,54 +170,52 @@ setup_datastore() {
 }
 
 ###############################################################################
-## Helper: Move datastore to NFS (Workaround for direct NFS creation issues)
+## Helper: NFS-backed datastore setup
 ###############################################################################
-move_datastore_to_nfs() {
-  local name="${1}"
-  local path="${2}"
-  local temp_mount="/tmp/unas"
+## PBS cannot create .chunks directly on NFS (root_squash / UID mismatch).
+## This function handles three cases:
+##   1. Datastore already registered in PBS — skip.
+##   2. NFS has existing data (.chunks) — register with --reuse-datastore.
+##   3. Fresh NFS — move NFS aside, create locally, seed NFS, move back.
+setup_nfs_datastore() {
+  local datastore_name="${1}"
+  local datastore_path="${2}"
 
-  ## Check if datastore is already mounted via NFS
-  if findmnt -T "${path}" -n -o FSTYPE | grep -q "nfs"; then
-    info "Datastore ${name} is already mounted via NFS at ${path}."
+  ## Already registered in PBS — nothing to do
+  if proxmox-backup-manager datastore list | grep -qw "${datastore_name}"; then
+    info "Datastore ${datastore_name} already exists in PBS configuration."
     return 0
   fi
 
-  # Find NFS remote from /etc/fstab based on the target path
-  local remote=$(awk -v p="$path" '$2 == p {print $1}' /etc/fstab)
-
-  if [[ -z "${remote}" ]]; then
-    die "Could not find NFS remote for ${path} in /etc/fstab."
+  ## NFS has existing data — register with PBS
+  if [[ -d "${datastore_path}/.chunks" ]]; then
+    info "Existing datastore found on NFS. Registering with PBS..."
+    proxmox-backup-manager datastore create \
+      "${datastore_name}" "${datastore_path}" \
+      --reuse-datastore true \
+      &> /dev/null || die "Failed to register datastore ${datastore_name}."
+    success "Datastore ${datastore_name} registered from existing NFS data."
+    return 0
   fi
 
-  ## Prepare temp mount and NFS store
-  info "Preparing temporary NFS mount at ${temp_mount}..."
-  mkdir -p "${temp_mount}"
-  mount -t nfs "${remote}" "${temp_mount}" || die "Failed to mount NFS to ${temp_mount}."
+  ## Fresh NFS — move mount aside, let PBS create locally, seed NFS
+  info "Fresh NFS detected. Initializing datastore locally..."
+  local temp_mount
+  temp_mount=$(mktemp -d)
+  mount --move "${datastore_path}" "${temp_mount}"
 
-  ## Only copy metadata if NFS has no existing PBS data (initial setup only)
-  if [[ ! -d "${temp_mount}/.chunks" ]]; then
-    info "Copying datastore metadata to NFS store (initial setup)..."
-    cp -a --no-preserve=ownership "${path}/.chunks" "${temp_mount}/"
-    cp -a --no-preserve=ownership "${path}/.lock" "${temp_mount}/"
-  else
-    info "NFS already contains PBS data — skipping metadata copy to preserve existing backups."
-  fi
+  proxmox-backup-manager datastore create \
+    "${datastore_name}" "${datastore_path}" \
+    &> /dev/null || die "Failed to create datastore ${datastore_name}."
 
-  ## Unmount temp
-  info "Unmounting temporary storage..."
-  umount "${temp_mount}" || die "Failed to unmount ${temp_mount}."
+  cp -a --no-preserve=ownership "${datastore_path}/.chunks" "${temp_mount}/"
+  cp -a --no-preserve=ownership "${datastore_path}/.lock" "${temp_mount}/"
+  rm -rf "${datastore_path}/.chunks" "${datastore_path}/.lock"
 
-  ## Clear local metadata before mounting over it
-  rm -rf "${path}/.chunks" "${path}/.lock"
-
-  mount "${path}" || die "Failed to mount final NFS datastore at ${path}."
-
-  ## Cleanup
-  info "Cleaning up temporary mount point..."
+  mount --move "${temp_mount}" "${datastore_path}"
   rmdir "${temp_mount}"
 
-  success "NFS Datastore ${name} configured successfully."
+  success "Datastore ${datastore_name} created and mounted via NFS."
 }
 
 ###############################################################################
@@ -232,7 +229,7 @@ setup_data_retention() {
   local -a args=()
 
   ## Check if prune job is already configured for datastore
-  if proxmox-backup-manager prune-job list | grep -q "${job_id}"; then
+  if proxmox-backup-manager prune-job list | grep -qw "${job_id}"; then
     info "Prune job ${job_id} already exists."
     return 0
   fi
@@ -267,7 +264,7 @@ setup_verification() {
   local job_id="verify-${datastore_name}"
 
   ## Check if verification job is already configured for datastore
-  if proxmox-backup-manager verify-job list | grep -q "${job_id}"; then
+  if proxmox-backup-manager verify-job list | grep -qw "${job_id}"; then
     info "Verification job ${job_id} already exists."
     return 0
   fi
@@ -288,7 +285,7 @@ setup_sync() {
   local job_id="pull-from-primary"
 
   ## Check if sync job is already configured between primary and secondary datastores
-  if proxmox-backup-manager sync-job list | grep -q "${job_id}"; then
+  if proxmox-backup-manager sync-job list | grep -qw "${job_id}"; then
     info "Sync job ${job_id} already exists."
     return 0
   fi
@@ -308,7 +305,7 @@ setup_sync() {
 ###############################################################################
 register_acme_account() {
   ## Check if ACME account is already registered
-  if proxmox-backup-manager acme account list | grep -q "${ACME_ACCOUNT}"; then
+  if proxmox-backup-manager acme account list | grep -qw "${ACME_ACCOUNT}"; then
     info "ACME account ${ACME_ACCOUNT} already registered."
     return 0
   fi
@@ -329,7 +326,7 @@ setup_acme_plugin() {
   local plugin_data="/tmp/acme-plugin-data"
 
   ## Check if ACME DNS plugin is already configured
-  if proxmox-backup-manager acme plugin list | grep -q "${ACME_DNS_PLUGIN_ID}"; then
+  if proxmox-backup-manager acme plugin list | grep -qw "${ACME_DNS_PLUGIN_ID}"; then
     info "ACME plugin ${ACME_DNS_PLUGIN_ID} already configured."
     return 0
   fi
@@ -370,7 +367,13 @@ setup_issue_certificate() {
     --acme "account=${ACME_ACCOUNT}" \
     "${domain_flags[@]}" || die "Failed to set ACME node configuration."
 
-  ## Force order / renewal of the certificate
+  ## Skip renewal if certificate is still valid (more than 30 days remaining)
+  if [[ -f /etc/proxmox-backup/proxy.pem ]] \
+    && openssl x509 -checkend 2592000 -noout -in /etc/proxmox-backup/proxy.pem 2>/dev/null; then
+    info "Valid ACME certificate exists. Skipping renewal."
+    return 0
+  fi
+
   info "Ordering ACME certificate (this may take a few minutes)..."
   proxmox-backup-manager acme cert order \
     --force || die "Failed to generate certificates for ${ACME_DOMAINS}."
@@ -399,7 +402,7 @@ disable_subscription_nag
 ## Initialize datastores
 info "Setting up datastores..."
 setup_datastore "${DATASTORE_PRIMARY_NAME}" "${DATASTORE_PRIMARY_PATH}"
-setup_datastore "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
+setup_nfs_datastore "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
 
 ## Create initial user
 info "Setting up initial user..."
@@ -416,10 +419,6 @@ info "Setting up homepage user..."
 create_user "${PBS_HOMEPAGE_USERNAME}" "${PBS_HOMEPAGE_PASSWORD}"
 setup_acl "${PBS_HOMEPAGE_USERNAME}" "Audit" "/"
 create_api_token "${PBS_HOMEPAGE_USERNAME}" "homepage"
-
-## Workaround: Initialize the datastore locally and then move the metadata to the NFS share
-info "Moving datastore metadata to NFS..."
-move_datastore_to_nfs "${DATASTORE_SECONDARY_NAME}" "${DATASTORE_SECONDARY_PATH}"
 
 ## Setup data retention
 info "Setting up data retention for datastores..."
