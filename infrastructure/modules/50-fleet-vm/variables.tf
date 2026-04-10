@@ -368,6 +368,23 @@ variable "efi_disk_pre_enrolled_keys" {
 
 
 ###############################################################################
+## USB device passthrough
+###############################################################################
+variable "usb_devices" {
+  description = <<EOT
+    USB devices to pass through to the VM. Use 'mapping' (Proxmox resource
+    mapping name) or 'host' (vendorid:productid format, e.g., "051d:0003").
+  EOT
+  type = list(object({
+    host    = optional(string, null)
+    mapping = optional(string, null)
+    usb3    = optional(bool, false)
+  }))
+  default = []
+}
+
+
+###############################################################################
 ## Block device variables for additional disks
 ###############################################################################
 variable "disks" {

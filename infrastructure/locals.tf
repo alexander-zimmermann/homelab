@@ -99,6 +99,7 @@ locals {
       wait_for_agent = try(spec.wait_for_agent, true)
       vm_name        = k ## No vm_name field in spec -> use key as name
       disks          = try(spec.disks, [])
+      usb_devices    = try(spec.usb_devices, [])
       protection     = try(spec.protection, true)
     } if try(spec.count, 0) == 0 },
 
@@ -112,6 +113,7 @@ locals {
           wait_for_agent = try(spec.wait_for_agent, true)
           vm_name        = format("%s_%d", group_key, i)
           disks          = try(spec.disks, [])
+          usb_devices    = try(spec.usb_devices, [])
           protection     = try(spec.protection, true)
         }
       } if try(spec.count, 0) > 0

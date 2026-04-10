@@ -499,6 +499,9 @@ module "fleet_vm" {
       disk_datastore = try(d.disk_datastore, local.defaults.block_storage)
     })
   ]
+
+  ## USB device passthrough
+  usb_devices = try(each.value.usb_devices, [])
 }
 
 module "fleet_lxc" {
