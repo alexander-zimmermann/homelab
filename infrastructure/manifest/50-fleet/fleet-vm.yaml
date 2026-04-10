@@ -26,7 +26,7 @@ fleet_vm:
 
   ## UPS Monitor VM (apcupsd)
   ups_monitor_01:
-    template_id: vm_debian_trixie_ups_monitor
+    template_id: vm_ubuntu_noble_ups_monitor
     vm_id: 1004
     usb_devices:
       - mapping: "ups-apc"

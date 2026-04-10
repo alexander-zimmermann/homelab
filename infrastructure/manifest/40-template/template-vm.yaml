@@ -62,9 +62,9 @@ template_vm:
     ci_meta_config: proxmox_backup
 
   ## UPS Monitor template
-  vm_debian_trixie_ups_monitor:
+  vm_ubuntu_noble_ups_monitor:
     vm_id: 10007
-    image_id: vm_debian_trixie
+    image_id: vm_ubuntu_noble
     os_type: l26
     ## Resources (minimal - apcupsd is lightweight)
     memory: 256
