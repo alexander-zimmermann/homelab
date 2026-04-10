@@ -106,6 +106,19 @@ module "pve_cluster_backup_jobs" {
 
 
 ###############################################################################
+## PVE cluster - USB hardware mappings
+###############################################################################
+module "pve_cluster_hw_mapping_usb" {
+  source   = "./modules/00-pve-cluster-hw-mapping-usb"
+  for_each = local.manifest.pve_cluster_hw_mapping_usb
+
+  name    = each.key
+  comment = try(each.value.comment, null)
+  map     = each.value.map
+}
+
+
+###############################################################################
 ## PVE node - core configuration
 ###############################################################################
 module "pve_node_core" {
@@ -486,6 +499,9 @@ module "fleet_vm" {
       disk_datastore = try(d.disk_datastore, local.defaults.block_storage)
     })
   ]
+
+  ## USB device passthrough
+  usb_devices = try(each.value.usb_devices, [])
 }
 
 module "fleet_lxc" {

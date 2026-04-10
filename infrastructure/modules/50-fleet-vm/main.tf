@@ -123,6 +123,15 @@ resource "proxmox_virtual_environment_vm" "vm" {
     }
   }
 
+  dynamic "usb" {
+    for_each = var.usb_devices
+    content {
+      host    = usb.value.host
+      mapping = usb.value.mapping
+      usb3    = usb.value.usb3
+    }
+  }
+
   dynamic "initialization" {
     ## Render cloud-init initialization disk only when explicitly enabled AND at
     ## least one cloud-init data file (user/vendor/network/meta) is provided. This

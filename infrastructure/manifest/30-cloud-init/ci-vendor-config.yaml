@@ -274,3 +274,33 @@ ci_vendor_config:
         permissions: "0755"
         owner: "backup:backup"
         defer: true
+
+  ## UPS Monitor VM (apcupsd)
+  ups_monitor:
+    packages:
+      - qemu-guest-agent
+      - apcupsd
+
+    runcmd:
+      - ["bash", "/usr/local/bin/apcupsd-bootstrap.sh"]
+      - ["systemctl", "enable", "--now", "qemu-guest-agent"]
+
+    write_files:
+      ## apcupsd bootstrap configuration (secrets)
+      - path: /etc/apcupsd/apcupsd-bootstrap.conf
+        template_file: templates/30-cloud-init/ups-monitor/apcupsd-bootstrap.conf.tftpl
+        secret_ref: ups_monitor_bootstrap_conf
+        permissions: "0640"
+        defer: true
+
+      ## apcupsd bootstrap script
+      - path: /usr/local/bin/apcupsd-bootstrap.sh
+        content_file: templates/30-cloud-init/ups-monitor/apcupsd-bootstrap.sh
+        permissions: "0755"
+        defer: true
+
+      ## Custom doshutdown script (Proxmox API shutdown)
+      - path: /usr/local/bin/apcupsd-doshutdown.sh
+        content_file: templates/30-cloud-init/ups-monitor/doshutdown.sh
+        permissions: "0755"
+        defer: true
