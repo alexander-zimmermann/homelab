@@ -104,3 +104,4 @@
         widget:
           type: apcups
           url: tcp://ups-monitor.zimmermann.eu.com:3551
+          fields: ["status", "bcharge", "timeleft"]
