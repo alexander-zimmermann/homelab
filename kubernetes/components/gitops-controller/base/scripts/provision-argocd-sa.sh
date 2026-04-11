@@ -49,6 +49,7 @@ while [ "$i" -lt "$COUNT" ]; do
   echo "Generating token for account '$ACCOUNT'..."
   TOKEN=$(curl -sf -X POST \
     -H "Authorization: Bearer $SESSION_TOKEN" \
+    -H "Content-Type: application/json" \
     "$ARGOCD_URL/api/v1/account/$ACCOUNT/token" \
     | jq -r '.token')
 
