@@ -11,11 +11,11 @@ metadata:
     kubernetes.io/ingress.class: traefik
     # Homepage Service Discovery
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: "Management"
+    gethomepage.dev/group: "Productivity"
     gethomepage.dev/name: "Homepage"
     gethomepage.dev/icon: "homepage.png"
-    gethomepage.dev/href: "https://PLACEHOLDER"
     gethomepage.dev/weight: "1"
+    gethomepage.dev/href: "https://PLACEHOLDER"
 
 spec:
   entryPoints:

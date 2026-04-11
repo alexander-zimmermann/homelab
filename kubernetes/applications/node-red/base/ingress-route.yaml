@@ -14,8 +14,8 @@ metadata:
     gethomepage.dev/group: "Smart Home Integration"
     gethomepage.dev/name: "Node-Red"
     gethomepage.dev/icon: "node-red.png"
-    gethomepage.dev/href: "https://PLACEHOLDER"
     gethomepage.dev/weight: "1"
+    gethomepage.dev/href: "https://PLACEHOLDER"
 
 spec:
   entryPoints:
