@@ -162,8 +162,6 @@ ci_vendor_config:
 
   ## Proxmox Backup Server VM
   proxmox_backup:
-    locale: de_DE.UTF-8
-
     apt:
       sources:
         proxmox_backup:
@@ -206,6 +204,7 @@ ci_vendor_config:
       - htop
       - vim
       - nfs-common
+      - locales
       - proxmox-backup-server
 
     disk_setup:
@@ -243,12 +242,13 @@ ci_vendor_config:
     mount_default_fields: [None, None, "auto", "defaults", "0", "0"]
 
     bootcmd:
-      ## Install locales early so cloud-init's locale module succeeds
-      - ["apt-get", "install", "-y", "-qq", "locales"]
       - ["mkdir", "-p", "/mnt/datastore-primary"]
       - ["mkdir", "-p", "/mnt/datastore-secondary"]
 
     runcmd:
+      ## Set locale (after locales package is installed)
+      - ["locale-gen", "de_DE.UTF-8"]
+      - ["localectl", "set-locale", "LANG=de_DE.UTF-8"]
       ## Set permissions for data disk and config directory
       - ["chown", "-R", "backup:backup", "/mnt/datastore-primary"]
       ## Mount NFS (noauto — requires nfs-common to be installed first)
