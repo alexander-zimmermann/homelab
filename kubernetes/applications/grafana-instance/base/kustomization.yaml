@@ -10,7 +10,7 @@ resources:
   - ./sealed-secret.yaml
   - ./certificate.yaml
   - ./ingress-route.yaml
-  - ./provision-homepage-sa-job.yaml
+  - ./provision-sa-job.yaml
 
 helmCharts:
   - name: grafana
@@ -43,6 +43,11 @@ configMapGenerator:
       disableNameSuffixHash: true
     files:
       - scripts/provision-grafana-sa.sh
+  - name: grafana-sa-provisioner-config
+    options:
+      disableNameSuffixHash: true
+    files:
+      - service-accounts.yaml=scripts/service-accounts.yaml
 
 labels:
   - includeSelectors: false
