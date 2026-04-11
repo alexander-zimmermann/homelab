@@ -6,6 +6,20 @@ resources:
   - ./certificate.yaml
   - ./ingress-route.yaml
   - ./sealed-secret.yaml
+  - ./rbac.yaml
+  - ./provision-sa-job.yaml
+
+configMapGenerator:
+  - name: argocd-sa-provisioner-script
+    options:
+      disableNameSuffixHash: true
+    files:
+      - scripts/provision-argocd-sa.sh
+  - name: argocd-sa-provisioner-config
+    options:
+      disableNameSuffixHash: true
+    files:
+      - service-accounts.yaml=scripts/service-accounts.yaml
 
 labels:
   - includeSelectors: false
