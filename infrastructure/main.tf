@@ -304,7 +304,7 @@ module "cloud_init_vendor_config" {
   package_reboot_if_required = try(each.value.package_reboot_if_required, true)
 
   ## Localization
-  locale   = try(each.value.locale, "de_DE.UTF-8")
+  locale   = try(each.value.locale, "")
   timezone = try(each.value.timezone, "Europe/Berlin")
 
   ## Custom commands
