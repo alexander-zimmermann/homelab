@@ -314,7 +314,7 @@ register_acme_account() {
 
   ## Register ACME account
   info "Registering ACME account ${ACME_ACCOUNT} (${ACME_EMAIL})..."
-  printf "y" | \
+  printf "y\nn\n" | \
   proxmox-backup-manager acme account register "${ACME_ACCOUNT}" "${ACME_EMAIL}" \
     --directory "${ACME_DIRECTORY}"  &> /dev/null || die "Failed to register ACME account."
 
