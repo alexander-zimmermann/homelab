@@ -15,7 +15,6 @@
   - All backend services migrate from LoadBalancer to ClusterIP
   - ExternalDNS split: `.sh` → Cloudflare, `.eu.com` → internal resolver
   - BGP announces only two IPs (one per Traefik) instead of one per service
-- [ ] **PBS Bootstrap**: Make re-bootstrap idempotent. Add a systemd timer to back up `/etc/proxmox-backup/` to NFS, so the bootstrap script can restore config first and all existing-checks (datastore, users, jobs) pass without re-initializing.
 
 ## Optimizations
 
