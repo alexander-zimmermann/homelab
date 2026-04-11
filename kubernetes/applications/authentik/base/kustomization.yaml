@@ -39,6 +39,9 @@ configMapGenerator:
   - name: authentik-blueprint-node-red
     files:
       - blueprint-node-red.yaml
+  - name: authentik-blueprint-wikijs
+    files:
+      - blueprint-wikijs.yaml
 
 labels:
   - includeSelectors: false

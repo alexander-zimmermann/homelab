@@ -1,0 +1,34 @@
+# Disable built-in PostgreSQL (using CloudNativePG instead)
+postgresql:
+  enabled: false
+
+# Disable built-in ingress (using Traefik IngressRoute instead)
+ingress:
+  enabled: false
+
+# No service account needed
+serviceAccount:
+  create: false
+
+# LoadBalancer for Cilium BGP advertisement
+service:
+  type: LoadBalancer
+
+# Database connection via CloudNativePG
+extraEnvVars:
+  - name: DB_HOST
+    value: wiki-js-db-rw
+  - name: DB_PORT
+    value: "5432"
+  - name: DB_NAME
+    value: wikijs
+  - name: DB_USER
+    valueFrom:
+      secretKeyRef:
+        name: wiki-js-db-app
+        key: username
+  - name: DB_PASS
+    valueFrom:
+      secretKeyRef:
+        name: wiki-js-db-app
+        key: password
