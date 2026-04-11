@@ -369,8 +369,9 @@ setup_issue_certificate() {
     --acme "account=${ACME_ACCOUNT}" \
     "${domain_flags[@]}" || die "Failed to set ACME node configuration."
 
-  ## Skip renewal if certificate is still valid (more than 30 days remaining)
+  ## Skip renewal if a valid ACME certificate exists (not self-signed, >30 days remaining)
   if [[ -f /etc/proxmox-backup/proxy.pem ]] \
+    && ! openssl x509 -noout -issuer -in /etc/proxmox-backup/proxy.pem 2>/dev/null | grep -q "O=Proxmox Backup Server" \
     && openssl x509 -checkend 2592000 -noout -in /etc/proxmox-backup/proxy.pem 2>/dev/null; then
     info "Valid ACME certificate exists. Skipping renewal."
     return 0
