@@ -119,7 +119,7 @@ create_api_token() {
 
   ## Extract and store token secret for external consumption
   local token_secret
-  token_secret=$(echo "${token_output}" | grep -oP '(?<=value: ).*')
+  token_secret=$(echo "${token_output}" | grep -oP '"value":\s*"\K[^"]*')
   echo "${token_secret}" > "/etc/pbs/api-token-${1}-${token_name}.secret"
   chmod 600 "/etc/pbs/api-token-${1}-${token_name}.secret"
 
@@ -170,16 +170,18 @@ setup_datastore() {
 }
 
 ###############################################################################
-## Helper: NFS-backed datastore setup
+## Helper: NFS-backed datastore setup (with all_squash remapping - Unifi UNAS)
 ###############################################################################
-## PBS cannot create .chunks directly on NFS (root_squash / UID mismatch).
-## This function handles three cases:
+## NFS with all_squash remaps UID/GID and the server may alter permissions,
+## so PBS cannot create .chunks directly on NFS. This function handles:
 ##   1. Datastore already registered in PBS — skip.
-##   2. NFS has existing data (.chunks) — register with --reuse-datastore.
-##   3. Fresh NFS — move NFS aside, create locally, seed NFS, move back.
+##   2. Unmount NFS, let PBS create the datastore locally (correct perms).
+##   3. If the NFS has no existing data, seed it with the local .chunks/.lock.
+##   4. Remove local metadata and remount NFS.
 setup_nfs_datastore() {
   local datastore_name="${1}"
   local datastore_path="${2}"
+  local temp_dir=$(mktemp -d)
 
   ## Already registered in PBS — nothing to do
   if proxmox-backup-manager datastore list | grep -qw "${datastore_name}"; then
@@ -187,35 +189,35 @@ setup_nfs_datastore() {
     return 0
   fi
 
-  ## NFS has existing data — register with PBS
-  if [[ -d "${datastore_path}/.chunks" ]]; then
-    info "Existing datastore found on NFS. Registering with PBS..."
-    proxmox-backup-manager datastore create \
-      "${datastore_name}" "${datastore_path}" \
-      --reuse-datastore true \
-      &> /dev/null || die "Failed to register datastore ${datastore_name}."
-    success "Datastore ${datastore_name} registered from existing NFS data."
-    return 0
-  fi
+  ## Unmount NFS so PBS can create the datastore on the local filesystem
+  info "Unmounting NFS at ${datastore_path} for local datastore creation..."
+  umount "${datastore_path}" || die "Failed to unmount ${datastore_path}."
 
-  ## Fresh NFS — move mount aside, let PBS create locally, seed NFS
-  info "Fresh NFS detected. Initializing datastore locally..."
-  local temp_mount
-  temp_mount=$(mktemp -d)
-  mount --move "${datastore_path}" "${temp_mount}"
-
+  ## Create datastore locally (PBS sets correct permissions and ownership)
+  info "Creating datastore ${datastore_name} locally..."
   proxmox-backup-manager datastore create \
     "${datastore_name}" "${datastore_path}" \
     &> /dev/null || die "Failed to create datastore ${datastore_name}."
 
-  cp -a --no-preserve=ownership "${datastore_path}/.chunks" "${temp_mount}/"
-  cp -a --no-preserve=ownership "${datastore_path}/.lock" "${temp_mount}/"
-  rm -rf "${datastore_path}/.chunks" "${datastore_path}/.lock"
+  ## Preserve local metadata before remounting
+  mv "${datastore_path}/.chunks" "${temp_dir}/"
+  mv "${datastore_path}/.lock" "${temp_dir}/"
 
-  mount --move "${temp_mount}" "${datastore_path}"
-  rmdir "${temp_mount}"
+  mount "${datastore_path}" || die "Failed to remount NFS at ${datastore_path}."
 
-  success "Datastore ${datastore_name} created and mounted via NFS."
+  ## Seed NFS with local metadata if no existing data
+  if [[ ! -d "${datastore_path}/.chunks" ]]; then
+    info "Fresh NFS detected. Seeding with datastore metadata..."
+    cp -a --no-preserve=ownership "${temp_dir}/.chunks" "${datastore_path}/"
+    cp -a --no-preserve=ownership "${temp_dir}/.lock" "${datastore_path}/"
+  else
+    info "Existing datastore data found on NFS."
+  fi
+
+  ## Clean up local temp
+  rm -rf "${temp_dir}"
+
+  success "Datastore ${datastore_name} set up on NFS successfully."
 }
 
 ###############################################################################

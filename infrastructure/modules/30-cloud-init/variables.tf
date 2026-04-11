@@ -108,10 +108,12 @@ variable "package_reboot_if_required" {
 
 variable "locale" {
   description = <<EOT
-    System locale. Defaults to `de_DE.UTF-8`.
+    System locale (e.g. de_DE.UTF-8). When set, the 'locales' package is
+    installed via bootcmd to ensure it is available before cloud-init's
+    locale module runs.
   EOT
   type        = string
-  default     = "de_DE.UTF-8"
+  default     = ""
 }
 
 variable "timezone" {
