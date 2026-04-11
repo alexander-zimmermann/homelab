@@ -1,6 +1,16 @@
 ###############################################################################
 ## Control plane patches
 ###############################################################################
+cluster:
+  ## Expose metrics endpoints on all interfaces (default: 127.0.0.1)
+  ## Required for Prometheus ServiceMonitor scraping from within the cluster
+  controllerManager:
+    extraArgs:
+      bind-address: "0.0.0.0"
+  scheduler:
+    extraArgs:
+      bind-address: "0.0.0.0"
+
 machine:
   features:
     ## Enable Talos API access from within Kubernetes
