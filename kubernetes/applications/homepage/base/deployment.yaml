@@ -62,6 +62,12 @@ spec:
                 secretKeyRef:
                   name: grafana-admin-credentials
                   key: admin-password
+            # ArgoCD API token — provisioned by post-sync job, cloned by Kyverno.
+            - name: HOMEPAGE_VAR_ARGOCD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: argocd-homepage-token
+                  key: token
             # CrowdSec widget username — static value, matches machine name in CrowdSec LAPI.
             - name: HOMEPAGE_VAR_CROWDSEC_USERNAME
               value: "homepage"

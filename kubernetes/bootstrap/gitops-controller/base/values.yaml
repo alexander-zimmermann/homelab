@@ -1,8 +1,4 @@
 configs:
-  secret:
-    # argocd-secret is managed via SealedSecret to pin server.secretkey across bootstraps
-    createSecret: false
-
   cm:
     # Allows Argo CD to render Kustomize projects that use `helmCharts:`
     kustomize.buildOptions: --enable-helm

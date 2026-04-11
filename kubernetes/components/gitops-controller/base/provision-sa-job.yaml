@@ -1,0 +1,75 @@
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: provision-argocd-sa
+  namespace: gitops-controller
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      serviceAccountName: argocd-sa-provisioner
+      restartPolicy: OnFailure
+      initContainers:
+        # Wait until ArgoCD is ready before provisioning
+        - name: wait-for-argocd
+          image: curlimages/curl:8.19.0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              until curl -sf "$ARGOCD_URL/healthz" >/dev/null; do
+                echo "Waiting for ArgoCD..."
+                sleep 3
+              done
+          env:
+            - name: ARGOCD_URL
+              value: "http://argocd-server.gitops-controller.svc.cluster.local"
+      containers:
+        - name: provision
+          image: alpine/k8s:1.35.3
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            readOnlyRootFilesystem: true
+          command: ["/bin/sh", "/scripts/provision-argocd-sa.sh"]
+          env:
+            - name: ARGOCD_URL
+              value: "http://argocd-server.gitops-controller.svc.cluster.local"
+            - name: ADMIN_USER
+              value: "admin"
+            - name: ADMIN_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: argocd-initial-admin-secret
+                  key: password
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: config
+              mountPath: /config
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: scripts
+          configMap:
+            name: argocd-sa-provisioner-script
+            defaultMode: 0555
+        - name: config
+          configMap:
+            name: argocd-sa-provisioner-config
+        - name: tmp
+          emptyDir: {}
