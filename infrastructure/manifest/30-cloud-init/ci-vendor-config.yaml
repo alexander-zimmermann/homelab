@@ -7,7 +7,7 @@ ci_vendor_config:
       - vim
 
     runcmd:
-      - systemctl enable --now qemu-guest-agent
+      - ["systemctl", "enable", "--now", "qemu-guest-agent"]
 
   ## Cluster management VM (Omni)
   cluster_mgmt:
@@ -61,9 +61,9 @@ ci_vendor_config:
     mount_default_fields: [None, None, "auto", "defaults", "0", "0"]
 
     bootcmd:
-      - mkdir -p /opt/omni
-      - mkdir -p /mnt/omni
-      - mkdir -p /mnt/backup
+      - ["mkdir", "-p", "/opt/omni"]
+      - ["mkdir", "-p", "/mnt/omni"]
+      - ["mkdir", "-p", "/mnt/backup"]
 
     runcmd:
       ## Symlinks for snap packages
@@ -242,18 +242,17 @@ ci_vendor_config:
     mount_default_fields: [None, None, "auto", "defaults", "0", "0"]
 
     bootcmd:
-      - mkdir -p /mnt/datastore-primary
-      - mkdir -p /mnt/datastore-secondary
+      - ["mkdir", "-p", "/mnt/datastore-primary"]
+      - ["mkdir", "-p", "/mnt/datastore-secondary"]
 
     runcmd:
-      ## Set locale
+      ## Set locale (after locales package is installed)
       - ["locale-gen", "de_DE.UTF-8"]
       - ["localectl", "set-locale", "LANG=de_DE.UTF-8"]
       ## Set permissions for data disk and config directory
       - ["chown", "-R", "backup:backup", "/mnt/datastore-primary"]
-      ## Manually mount NFS share (after nfs-common install)
+      ## Mount NFS (noauto — requires nfs-common to be installed first)
       - ["mount", "/mnt/datastore-secondary"]
-      - ["chown", "-R", "backup:backup", "/mnt/datastore-secondary"]
       ## Setup PBS
       - ["bash", "/usr/local/bin/pbs-bootstrap.sh"]
       ## Systemd services
