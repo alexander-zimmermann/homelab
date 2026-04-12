@@ -159,6 +159,10 @@ ci_vendor_config:
         permissions: "0640"
         owner: "omni:omni"
         defer: true
+        generated_token:
+          user: omni
+          template_var_id: proxmox_token_id
+          template_var_secret: proxmox_token_secret
 
   ## Proxmox Backup Server VM
   proxmox_backup:
@@ -288,9 +292,12 @@ ci_vendor_config:
       ## apcupsd bootstrap configuration (secrets)
       - path: /etc/apcupsd/apcupsd-bootstrap.conf
         template_file: templates/30-cloud-init/ups-monitor/apcupsd-bootstrap.conf.tftpl
-        secret_ref: ups_monitor_bootstrap_conf
         permissions: "0640"
         defer: true
+        generated_token:
+          user: ups_monitor
+          template_var_id: pve_api_token_id
+          template_var_secret: pve_api_token_secret
 
       ## apcupsd bootstrap script
       - path: /usr/local/bin/apcupsd-bootstrap.sh

@@ -64,10 +64,6 @@ ci_secrets = {
     ## Docker volume backup container stack configuration
     pushover_token = "YOUR_PUSHOVER_TOKEN"
     pushover_user  = "YOUR_PUSHOVER_USER"
-    ## Omni Proxmox Infrastructure Provider container stack configuration
-    proxmox_username = "YOUR_PVE_USER"
-    proxmox_password = "YOUR_PVE_PASSWORD"
-    proxmox_url      = "YOUR_PVE_URL"
   }
 
   ## PBS bootstrap configuration
@@ -89,11 +85,5 @@ ci_secrets = {
     ## Primary and SAN domains for ACME certificates
     primary_domain   = "YOUR_PRIMARY_DOMAIN"
     san_domains      = "YOUR_SAN_DOMAINS" # comma-separated list of domains
-  }
-
-  ## UPS Monitor (apcupsd) configuration
-  ups_monitor_bootstrap_conf = {
-    pve_api_token_id     = "YOUR_PVE_API_TOKEN_ID"
-    pve_api_token_secret = "YOUR_PVE_API_TOKEN_SECRET"
   }
 }

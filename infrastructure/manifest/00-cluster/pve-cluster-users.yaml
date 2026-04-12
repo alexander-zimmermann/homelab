@@ -19,6 +19,8 @@ pve_cluster_users:
     omni:
       path: "/"
       role_id: "Administrator"
+      create_token: true
+      token_name: "infra-provider"
 
     ups_monitor:
       path: "/nodes"
