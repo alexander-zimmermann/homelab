@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: nats
+resources:
+  - ./namespace.yaml
+
+helmCharts:
+  - name: nack
+    repo: https://nats-io.github.io/k8s/helm/charts/
+    releaseName: nats-crds
+    version: 0.33.2
+    valuesFile: values.yaml
+    namespace: nats
+    includeCRDs: true
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.component: nats-crds
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-5"
