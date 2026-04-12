@@ -15,6 +15,24 @@ replacements:
           - spec.volumeClaimTemplates.0.spec.resources.requests.storage
 
 patches:
+  # Loki Gateway (Deployment)
+  - target:
+      kind: Deployment
+      name: loki-gateway
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: nginx
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+
   # Loki SingleBinary (StatefulSet)
   - target:
       kind: StatefulSet
@@ -55,24 +73,6 @@ patches:
         value:
           name: GOMEMLIMIT
           value: "120795955"
-
-  # Loki Gateway (Deployment)
-  - target:
-      kind: Deployment
-      name: loki-gateway
-    patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: nginx
-      - op: add
-        path: /spec/template/spec/containers/0/resources
-        value:
-          requests:
-            cpu: 10m
-            memory: 32Mi
-          limits:
-            cpu: 100m
-            memory: 128Mi
 
   # Loki Chunks Cache (StatefulSet)
   - target:
