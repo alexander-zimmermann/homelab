@@ -85,6 +85,26 @@ patches:
             cpu: 50m
             memory: 32Mi
 
+  # Alloy Logs: Collects and forwards logs to Loki
+  - target:
+      kind: Alloy
+      name: alloy-alloy-logs
+    patch: |-
+      - op: add
+        path: /spec/alloy/resources
+        value:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+      - op: add
+        path: /spec/alloy/env
+        value:
+          - name: GOMEMLIMIT
+            value: "120795955"
+
   # Alloy Metrics: Handles cluster and application metrics
   - target:
       kind: Alloy
@@ -109,26 +129,6 @@ patches:
   - target:
       kind: Alloy
       name: alloy-alloy-singleton
-    patch: |-
-      - op: add
-        path: /spec/alloy/resources
-        value:
-          requests:
-            cpu: 20m
-            memory: 64Mi
-          limits:
-            cpu: 200m
-            memory: 128Mi
-      - op: add
-        path: /spec/alloy/env
-        value:
-          - name: GOMEMLIMIT
-            value: "120795955"
-
-  # Alloy Logs: Collects and forwards logs to Loki
-  - target:
-      kind: Alloy
-      name: alloy-alloy-logs
     patch: |-
       - op: add
         path: /spec/alloy/resources
