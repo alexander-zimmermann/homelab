@@ -332,7 +332,12 @@ module "cloud_init_vendor_config" {
       content = try(wf.template_file, null) != null ? templatefile(wf.template_file, merge(
         ## Priority 1: Render template with merged context (Manifest Vars + OpenTofu Secrets)
         try(wf.vars, {}),
-        try(wf.secret_ref, null) != null ? try(var.ci_secrets[wf.secret_ref], {}) : {}
+        try(wf.secret_ref, null) != null ? try(var.ci_secrets[wf.secret_ref], {}) : {},
+        ## Generated API token credentials from pve_cluster_user module
+        try(wf.generated_token, null) != null ? {
+          (wf.generated_token.template_var_id)     = module.pve_cluster_user[wf.generated_token.user].token_id
+          (wf.generated_token.template_var_secret) = module.pve_cluster_user[wf.generated_token.user].token_value
+        } : {}
         )) : join("\n", compact([
           ## Priority 2: Auto-generate Key-Value list from Secrets (if no template)
           try(wf.secret_ref, null) != null ? join("\n", [for k, v in var.ci_secrets[wf.secret_ref] : "${k}=\"${v}\""]) : "",
