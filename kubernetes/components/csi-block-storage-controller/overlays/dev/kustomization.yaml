@@ -40,6 +40,42 @@ replacements:
           index: 1
 
 patches:
+  # Longhorn Driver Deployer resources
+  - target:
+      kind: Deployment
+      name: longhorn-driver-deployer
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: longhorn-driver-deployer
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+
+  # Longhorn UI resources
+  - target:
+      kind: Deployment
+      name: longhorn-ui
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: longhorn-ui
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+
   # Longhorn Manager resources
   - target:
       kind: DaemonSet
@@ -70,39 +106,3 @@ patches:
           limits:
             cpu: 50m
             memory: 64Mi
-
-  # Longhorn UI resources
-  - target:
-      kind: Deployment
-      name: longhorn-ui
-    patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: longhorn-ui
-      - op: add
-        path: /spec/template/spec/containers/0/resources
-        value:
-          requests:
-            cpu: 10m
-            memory: 32Mi
-          limits:
-            cpu: 200m
-            memory: 128Mi
-
-  # Longhorn Driver Deployer resources
-  - target:
-      kind: Deployment
-      name: longhorn-driver-deployer
-    patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: longhorn-driver-deployer
-      - op: add
-        path: /spec/template/spec/containers/0/resources
-        value:
-          requests:
-            cpu: 50m
-            memory: 64Mi
-          limits:
-            cpu: 500m
-            memory: 256Mi
