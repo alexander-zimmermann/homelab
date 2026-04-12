@@ -33,24 +33,6 @@ replacements:
           - spec.postgresql.parameters.max_wal_size
 
 patches:
-  # CrowdSec LAPI: central management component
-  - target:
-      kind: Deployment
-      name: crowdsec-lapi
-    patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: crowdsec-lapi
-      - op: replace
-        path: /spec/template/spec/containers/0/resources
-        value:
-          requests:
-            cpu: 50m
-            memory: 64Mi
-          limits:
-            cpu: 200m
-            memory: 128Mi
-
   # CrowdSec AppSec: WAF-like security component
   - target:
       kind: Deployment
@@ -67,6 +49,24 @@ patches:
             memory: 64Mi
           limits:
             cpu: 100m
+            memory: 128Mi
+
+  # CrowdSec LAPI: central management component
+  - target:
+      kind: Deployment
+      name: crowdsec-lapi
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: crowdsec-lapi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
             memory: 128Mi
 
   # CrowdSec Agent: DaemonSet resources for log parsing
