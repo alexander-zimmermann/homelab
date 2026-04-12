@@ -70,6 +70,9 @@ patches:
       kind: Service
       name: rustfs-svc
     patch: |-
+      - op: test
+        path: /spec/type
+        value: LoadBalancer
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.32"
