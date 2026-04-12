@@ -49,10 +49,10 @@ replacements:
           index: 100
 
 patches:
-  # ArgoCD controller manages state of Applications, and performs sync/health checks
+  # ArgoCD repo-server renders/manages repos/Helm/Kustomize
   - target:
-      kind: StatefulSet
-      name: argocd-application-controller
+      kind: Deployment
+      name: argocd-repo-server
     patch: |-
       - op: test
         path: /spec/template/spec/containers/0/resources
@@ -61,16 +61,16 @@ patches:
         path: /spec/template/spec/containers/0/resources
         value:
           requests:
-            cpu: 125m
-            memory: 256Mi
+            cpu: 50m
+            memory: 128Mi
           limits:
             cpu: 250m
-            memory: 512Mi
+            memory: 256Mi
       - op: add
         path: /spec/template/spec/containers/0/env/-
         value:
           name: GOMEMLIMIT
-          value: "483183821"
+          value: "241172480"
 
   # ArgoCD API/UI server
   - target:
@@ -95,10 +95,10 @@ patches:
           name: GOMEMLIMIT
           value: "120586240"
 
-  # ArgoCD repo-server renders/manages repos/Helm/Kustomize
+  # ArgoCD controller manages state of Applications, and performs sync/health checks
   - target:
-      kind: Deployment
-      name: argocd-repo-server
+      kind: StatefulSet
+      name: argocd-application-controller
     patch: |-
       - op: test
         path: /spec/template/spec/containers/0/resources
@@ -107,13 +107,13 @@ patches:
         path: /spec/template/spec/containers/0/resources
         value:
           requests:
-            cpu: 50m
-            memory: 128Mi
+            cpu: 125m
+            memory: 256Mi
           limits:
             cpu: 250m
-            memory: 256Mi
+            memory: 512Mi
       - op: add
         path: /spec/template/spec/containers/0/env/-
         value:
           name: GOMEMLIMIT
-          value: "241172480"
+          value: "483183821"
