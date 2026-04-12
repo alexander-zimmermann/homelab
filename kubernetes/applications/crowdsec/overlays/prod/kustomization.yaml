@@ -92,6 +92,9 @@ patches:
       kind: Cluster
       name: crowdsec-db
     patch: |-
+      - op: test
+        path: /spec/instances
+        value: 2
       - op: add
         path: /spec/resources
         value:
