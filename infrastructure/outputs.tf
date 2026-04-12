@@ -7,7 +7,7 @@ output "token_value" {
     API requests to the Proxmox cluster. Only populated when a new token is created.
     Marked as sensitive to prevent exposure of credentials.
   EOT
-  value       = { for k, v in module.pve_cluster_user : k => try(v.token_value, null) }
+  value       = { for k, v in module.pve_cluster_user : v.token_id => v.token_value if v.token_id != null }
   sensitive   = true
 }
 
