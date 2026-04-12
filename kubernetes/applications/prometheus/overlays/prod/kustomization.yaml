@@ -114,6 +114,9 @@ patches:
       kind: Prometheus
       name: prometheus
     patch: |-
+      - op: test
+        path: /spec/replicas
+        value: 1
       - op: add
         path: /spec/resources
         value:
@@ -136,6 +139,9 @@ patches:
       kind: Alertmanager
       name: prometheus
     patch: |-
+      - op: test
+        path: /spec/image
+        value: quay.io/prometheus/alertmanager:v0.32.0
       - op: add
         path: /spec/resources
         value:
@@ -158,6 +164,9 @@ patches:
       kind: Service
       name: prometheus-prometheus
     patch: |-
+      - op: test
+        path: /spec/type
+        value: LoadBalancer
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.27"
