@@ -188,6 +188,9 @@ patches:
       kind: Cluster
       name: authentik-db
     patch: |-
+      - op: test
+        path: /spec/instances
+        value: 2
       - op: add
         path: /spec/resources
         value:
@@ -203,6 +206,9 @@ patches:
       kind: Service
       name: authentik-server
     patch: |-
+      - op: test
+        path: /spec/type
+        value: LoadBalancer
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.30"
