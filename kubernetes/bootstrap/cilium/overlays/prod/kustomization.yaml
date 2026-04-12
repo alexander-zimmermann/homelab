@@ -6,24 +6,6 @@ resources:
   - ../../base
 
 patches:
-  # Cilium Agent: eBPF-heavy workload, requires sufficient memory for maps and CPU for packet processing
-  - target:
-      kind: DaemonSet
-      name: cilium
-    patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: cilium-agent
-      - op: add
-        path: /spec/template/spec/containers/0/resources
-        value:
-          requests:
-            cpu: 200m
-            memory: 512Mi
-          limits:
-            cpu: 1000m
-            memory: 1Gi
-
   # Cilium Operator: Manage Cilium state, lightweight but needs stability
   - target:
       kind: Deployment
@@ -41,6 +23,24 @@ patches:
           limits:
             cpu: 500m
             memory: 512Mi
+
+  # Cilium Agent: eBPF-heavy workload, requires sufficient memory for maps and CPU for packet processing
+  - target:
+      kind: DaemonSet
+      name: cilium
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: cilium-agent
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
 
   # Cilium Envoy: L7 Proxy for Hubble visibility and L7 policies
   - target:
