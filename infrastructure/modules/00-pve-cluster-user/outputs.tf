@@ -26,11 +26,11 @@ output "token_id" {
 
 output "token_value" {
   description = <<EOT
-    API token value used for authentication. This is only populated when a new
-    token is created and should be stored securely. Marked as sensitive to avoid
-    accidental exposure.
+    API token secret (UUID portion only) used for authentication. The provider
+    returns the full "id=secret" string, so this output extracts just the secret.
+    Marked as sensitive to avoid accidental exposure.
   EOT
-  value       = try(proxmox_user_token.this[0].value, null)
+  value       = try(split("=", proxmox_user_token.this[0].value)[1], null)
   sensitive   = true
 }
 
