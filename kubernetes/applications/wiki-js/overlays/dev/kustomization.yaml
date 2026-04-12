@@ -67,24 +67,6 @@ replacements:
           - spec.plugins.0.parameters.serverName
 
 patches:
-  # PostgreSQL Cluster resources
-  - target:
-      kind: Cluster
-      name: wiki-js-db
-    patch: |-
-      - op: test
-        path: /spec/instances
-        value: 1
-      - op: add
-        path: /spec/resources
-        value:
-          requests:
-            cpu: 20m
-            memory: 64Mi
-          limits:
-            cpu: 100m
-            memory: 128Mi
-
   # Wiki.js Deployment resources
   - target:
       kind: Deployment
@@ -102,3 +84,21 @@ patches:
           limits:
             cpu: 250m
             memory: 256Mi
+
+  # PostgreSQL Cluster resources
+  - target:
+      kind: Cluster
+      name: wiki-js-db
+    patch: |-
+      - op: test
+        path: /spec/instances
+        value: 1
+      - op: add
+        path: /spec/resources
+        value:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
