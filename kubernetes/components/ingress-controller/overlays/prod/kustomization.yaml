@@ -36,6 +36,9 @@ patches:
       kind: Deployment
       name: traefik
     patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: traefik
       - op: replace
         path: /spec/replicas
         value: 2
@@ -63,6 +66,9 @@ patches:
       kind: Service
       name: traefik
     patch: |-
+      - op: test
+        path: /spec/type
+        value: LoadBalancer
       - op: add
         path: /metadata/annotations/io.cilium~1lb-ipam-ips
         value: "192.168.10.20"
