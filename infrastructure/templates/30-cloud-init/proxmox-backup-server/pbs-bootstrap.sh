@@ -133,18 +133,25 @@ setup_acl() {
   local user="${1}@pbs"
   local role="${2}"
   local path="${3}"
+  local token_name="${4:-}"
+
+  ## Build auth-id: user@pbs or user@pbs!token
+  local auth_id="${user}"
+  if [[ -n "${token_name}" ]]; then
+    auth_id="${user}!${token_name}"
+  fi
 
   ## Check if ACL is already set
-  if proxmox-backup-manager acl list | grep -w "${user}" | grep -qw "${role}"; then
-    info "ACL ${role} for ${user} on ${path} already set."
+  if proxmox-backup-manager acl list | grep -w "${auth_id}" | grep -qw "${role}"; then
+    info "ACL ${role} for ${auth_id} on ${path} already set."
     return 0
   fi
 
-  info "Assigning ${role} role to ${user} on ${path}..."
+  info "Assigning ${role} role to ${auth_id} on ${path}..."
   proxmox-backup-manager acl update "${path}" "${role}" \
-    --auth-id "${user}" || die "Failed to assign role to ${user}."
+    --auth-id "${auth_id}" || die "Failed to assign role to ${auth_id}."
 
-  success "Assigned ${role} role to ${user} on ${path}."
+  success "Assigned ${role} role to ${auth_id} on ${path}."
 }
 
 ###############################################################################
@@ -422,6 +429,7 @@ info "Setting up homepage user..."
 create_user "${PBS_HOMEPAGE_USERNAME}" "${PBS_HOMEPAGE_PASSWORD}"
 setup_acl "${PBS_HOMEPAGE_USERNAME}" "Audit" "/"
 create_api_token "${PBS_HOMEPAGE_USERNAME}" "homepage"
+setup_acl "${PBS_HOMEPAGE_USERNAME}" "Audit" "/" "homepage"
 
 ## Setup data retention
 info "Setting up data retention for datastores..."
