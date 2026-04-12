@@ -71,7 +71,7 @@ replacements:
         fieldPaths:
           - spec.template.spec.containers.0.env.[name=AUTHENTIK_NODE_RED_REDIRECT_URI].value
 
-  - sourceValue: https://wiki.zimmermann.phd/login/oidc/callback
+  - sourceValue: https://wiki.zimmermann.phd/login/b7746d63-71b4-47c1-bd32-903833a0a8ca/callback
     targets:
       - select:
           kind: Deployment

@@ -72,7 +72,7 @@ global:
     - name: AUTHENTIK_NODE_RED_REDIRECT_URI
       value: https://PLACEHOLDER_NODE_RED_HOST/auth/strategy/callback/
     - name: AUTHENTIK_WIKIJS_REDIRECT_URI
-      value: https://PLACEHOLDER_WIKIJS_HOST/login/oidc/callback
+      value: https://PLACEHOLDER_WIKIJS_HOST/login/b7746d63-71b4-47c1-bd32-903833a0a8ca/callback
 
     # Optimization: Fewer workers and no preloading saves RAM in small setups
     - name: AUTHENTIK_WEB__WORKERS
