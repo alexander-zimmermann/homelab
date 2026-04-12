@@ -23,25 +23,25 @@ helmCharts:
 configMapGenerator:
   - name: authentik-blueprint-sources
     files:
-      - blueprint-sources.yaml
+      - blueprints/sources.yaml
   - name: authentik-blueprint-argocd
     files:
-      - blueprint-argocd.yaml
+      - blueprints/argocd.yaml
   - name: authentik-blueprint-homepage
     files:
-      - blueprint-homepage.yaml
+      - blueprints/homepage.yaml
   - name: authentik-blueprint-forward-auth
     files:
-      - blueprint-forward-auth.yaml
+      - blueprints/forward-auth.yaml
   - name: authentik-blueprint-grafana
     files:
-      - blueprint-grafana.yaml
+      - blueprints/grafana.yaml
   - name: authentik-blueprint-node-red
     files:
-      - blueprint-node-red.yaml
+      - blueprints/node-red.yaml
   - name: authentik-blueprint-wikijs
     files:
-      - blueprint-wikijs.yaml
+      - blueprints/wikijs.yaml
 
 labels:
   - includeSelectors: false
