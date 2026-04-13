@@ -1,0 +1,4 @@
+devices:
+- hostname: http://fritzbox.zimmermann.eu.com
+  username: fritz-exporter
+  password_file: /etc/fritz-exporter/secrets/password
