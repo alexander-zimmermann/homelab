@@ -1,0 +1,33 @@
+interval: 5
+logging_level: INFO
+
+modbus:
+  host: solaredge-1.zimmermann.eu.com
+  port: 1502
+  timeout: 1
+  unit: 1
+  meter:
+    - true
+    - false
+    - false
+  battery:
+    - false
+    - false
+  check_grid_status: false
+  advanced_power_controls: disabled
+
+mqtt:
+  client_id: solaredge2mqtt
+  broker: nats.nats.svc.cluster.local
+  port: 1883
+  username: solaredge2mqtt
+  password: !secret mqtt_password
+  topic_prefix: solaredge
+  retain: false
+
+powerflow:
+  external_production: false
+  retain: false
+
+energy:
+  retain: false
