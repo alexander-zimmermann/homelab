@@ -1,0 +1,106 @@
+deploymentStrategy:
+  # Recreate avoids Multi-Attach errors on RWO PVCs — old pod must terminate before new one starts
+  type: Recreate
+
+rbac:
+  # Allows Grafana to retrieve metadata about services and pods for service discovery
+  extraClusterRoleRules:
+    - apiGroups: [""]
+      resources: ["services", "endpoints", "pods"]
+      verbs: ["get", "list", "watch"]
+
+serviceAccount:
+  # Explicit name for the ServiceAccount for better traceability
+  name: grafana
+
+service:
+  # Expose Grafana service via Cilium/BGP-announced LoadBalancer
+  type: LoadBalancer
+  labels:
+    bgp.cilium.io/ip-pool: default
+    bgp.cilium.io/advertise-service: default
+
+podLabels:
+  # Additional label for consistent selectors in services and network policies
+  component: grafana-server
+
+admin:
+  # Reference to a SealedSecret containing the username and password for admin access
+  existingSecret: "grafana-admin-credentials"
+  userKey: admin-user
+  passwordKey: admin-password
+
+extraSecretMounts:
+  # Mount the admin credentials secret into the container for grafana.ini access
+  - name: grafana-admin-credentials
+    secretName: grafana-admin-credentials
+    defaultMode: 0440
+    mountPath: /etc/grafana/secrets
+    readOnly: true
+  # Mount the OIDC client secret for generic_oauth authentication
+  - name: grafana-oidc-credentials
+    secretName: grafana-oidc-credentials
+    defaultMode: 0440
+    mountPath: /etc/grafana/secrets-oidc
+    readOnly: true
+
+# OIDC URL env vars — injected per environment via overlay replacements
+env:
+  GF_SERVER_ROOT_URL: "https://PLACEHOLDER_GRAFANA_HOST"
+  GF_AUTH_GENERIC_OAUTH_AUTH_URL: "https://PLACEHOLDER_AUTH_HOST/application/o/authorize/"
+  GF_AUTH_GENERIC_OAUTH_TOKEN_URL: "https://PLACEHOLDER_AUTH_HOST/application/o/token/"
+  GF_AUTH_GENERIC_OAUTH_API_URL: "https://PLACEHOLDER_AUTH_HOST/application/o/userinfo/"
+  GF_AUTH_SIGNOUT_REDIRECT_URL: "https://PLACEHOLDER_AUTH_HOST/application/o/grafana/end-session/"
+
+# Primary Configuration (grafana.ini)
+grafana.ini:
+  security:
+    admin_user: admin
+    admin_password_file: /etc/grafana/secrets/admin-password
+  auth.generic_oauth:
+    enabled: "true"
+    name: Authentik
+    client_id: grafana
+    client_secret: "$__file{/etc/grafana/secrets-oidc/GRAFANA_OIDC_CLIENT_SECRET}"
+    scopes: "openid profile email"
+    role_attribute_path: "contains(groups[*], 'platform-admins') && 'Admin' || 'Viewer'"
+    auto_login: "false"
+
+# Sidecar Configuration (Auto-import)
+sidecar:
+  dashboards:
+    enabled: true
+    searchNamespace: ALL
+  datasources:
+    enabled: true
+    searchNamespace: ALL
+
+# Image Rendering (PNG Exports)
+imageRenderer:
+  enabled: true
+  networkPolicy:
+    limitIngress: false
+
+persistence:
+  enabled: true
+  type: pvc
+  storageClassName: longhorn-backup
+  size: PLACEHOLDER
+  accessModes:
+    - ReadWriteOnce
+
+extraObjects:
+  # Register the Grafana instance with the Grafana Operator for advanced management
+  - apiVersion: grafana.integreatly.org/v1beta1
+    kind: Grafana
+    metadata:
+      name: grafana
+    spec:
+      external:
+        url: "http://grafana.grafana.svc.cluster.local:80"
+        adminUser:
+          name: grafana-admin-credentials
+          key: admin-user
+        adminPassword:
+          name: grafana-admin-credentials
+          key: admin-password

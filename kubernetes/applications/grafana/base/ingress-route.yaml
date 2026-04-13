@@ -1,0 +1,41 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: grafana
+  namespace: grafana
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
+    # Homepage Service Discovery
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Observability"
+    gethomepage.dev/name: "Grafana"
+    gethomepage.dev/icon: "grafana.png"
+    gethomepage.dev/weight: "1"
+    gethomepage.dev/href: "https://PLACEHOLDER"
+    gethomepage.dev/widget.type: "grafana"
+    gethomepage.dev/widget.version: "2"
+    gethomepage.dev/widget.url: "http://grafana.grafana.svc.cluster.local:80"
+    gethomepage.dev/widget.username: "{{HOMEPAGE_VAR_GRAFANA_USERNAME}}"
+    gethomepage.dev/widget.password: "{{HOMEPAGE_VAR_GRAFANA_PASSWORD}}"
+    gethomepage.dev/widget.fields: '["dashboards", "datasources"]'
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`PLACEHOLDER`)
+      priority: 10
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - kind: Service
+          name: grafana
+          port: 80
+  tls:
+    secretName: grafana-tls-cert

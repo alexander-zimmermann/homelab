@@ -1,0 +1,42 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+
+metadata:
+  name: prometheus
+  namespace: grafana
+
+spec:
+  valuesFrom: []
+  datasource:
+    name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus-operated.prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: "30s"
+  instanceSelector:
+    matchLabels:
+      homelab.app: grafana
+
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+
+metadata:
+  name: loki
+  namespace: grafana
+
+spec:
+  valuesFrom: []
+  datasource:
+    name: Loki
+    type: loki
+    access: proxy
+    url: http://loki-gateway.loki.svc:80
+    isDefault: false
+    editable: false
+  instanceSelector:
+    matchLabels:
+      homelab.app: grafana

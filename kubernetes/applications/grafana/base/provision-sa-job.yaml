@@ -1,0 +1,78 @@
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: provision-grafana-sa
+  namespace: grafana
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      serviceAccountName: grafana-sa-provisioner
+      restartPolicy: OnFailure
+      initContainers:
+        # Wait until Grafana is ready before provisioning
+        - name: wait-for-grafana
+          image: curlimages/curl:8.19.0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              until curl -sf "$GRAFANA_URL/api/health" >/dev/null; do
+                echo "Waiting for Grafana..."
+                sleep 3
+              done
+          env:
+            - name: GRAFANA_URL
+              value: "http://grafana.grafana.svc.cluster.local"
+      containers:
+        - name: provision
+          image: alpine/k8s:1.35.3
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            readOnlyRootFilesystem: true
+          command: ["/bin/sh", "/scripts/provision-grafana-sa.sh"]
+          env:
+            - name: GRAFANA_URL
+              value: "http://grafana.grafana.svc.cluster.local"
+            - name: ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin-credentials
+                  key: admin-user
+            - name: ADMIN_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin-credentials
+                  key: admin-password
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: config
+              mountPath: /config
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: scripts
+          configMap:
+            name: grafana-sa-provisioner-script
+            defaultMode: 0555
+        - name: config
+          configMap:
+            name: grafana-sa-provisioner-config
+        - name: tmp
+          emptyDir: {}
