@@ -16,7 +16,7 @@ config:
 
   # Include authentication config from mounted secret
   merge:
-    $include: /etc/nats/secrets/auth.conf
+    $include: secrets/auth.conf
 
 # Mount auth credentials secret (patch to append, not replace existing volumes)
 podTemplate:
@@ -34,7 +34,7 @@ container:
       path: /volumeMounts/-
       value:
         name: nats-secret
-        mountPath: /etc/nats/secrets
+        mountPath: /etc/nats-config/secrets
         readOnly: true
 
 # Disable utility/debug pod

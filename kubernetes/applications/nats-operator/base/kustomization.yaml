@@ -8,7 +8,7 @@ resources:
 helmCharts:
   - name: nack
     repo: https://nats-io.github.io/k8s/helm/charts/
-    releaseName: nats-crds
+    releaseName: nats-operator
     version: 0.33.2
     valuesFile: values.yaml
     namespace: nats
@@ -17,7 +17,7 @@ helmCharts:
 labels:
   - includeSelectors: false
     pairs:
-      homelab.component: nats-crds
+      homelab.app: nats-operator
 
 commonAnnotations:
-  argocd.argoproj.io/sync-wave: "-5"
+  argocd.argoproj.io/sync-wave: "9"
