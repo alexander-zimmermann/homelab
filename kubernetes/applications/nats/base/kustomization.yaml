@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: nats
+resources:
+  - ./certificate.yaml
+  - ./ingress-route-tcp.yaml
+  - ./sealed-secret.yaml
+
+helmCharts:
+  - name: nats
+    repo: https://nats-io.github.io/k8s/helm/charts/
+    releaseName: nats
+    version: 1.3.16
+    valuesFile: values.yaml
+    namespace: nats
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.app: nats
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "10"
