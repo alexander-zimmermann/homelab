@@ -3,3 +3,8 @@ jetstream:
   nats:
     # Connect to the NATS server in the same namespace
     url: nats://nats.nats.svc.cluster.local:4222
+    # Authenticate via NKey
+    nkey:
+      secret:
+        name: nats-operator-nkey
+        key: nkey.seed
