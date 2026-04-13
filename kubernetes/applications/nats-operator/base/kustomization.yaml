@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: nats
 resources:
   - ./namespace.yaml
+  - ./sealed-secret.yaml
 
 helmCharts:
   - name: nack
