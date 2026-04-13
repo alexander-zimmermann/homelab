@@ -10,10 +10,10 @@ resources:
 configMapGenerator:
   - name: solaredge2mqtt-1-config
     files:
-      - configuration.yml=configuration/solaredge-1.yaml
+      - configuration.yml=config/solaredge-1.yaml
   - name: solaredge2mqtt-2-config
     files:
-      - configuration.yml=configuration/solaredge-2.yaml
+      - configuration.yml=config/solaredge-2.yaml
 
 labels:
   - includeSelectors: false
