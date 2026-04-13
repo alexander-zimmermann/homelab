@@ -14,7 +14,7 @@ resources:
 configMapGenerator:
   - name: node-red-settings
     files:
-      - settings.js
+      - config/settings.js
 
 labels:
   - includeSelectors: false
