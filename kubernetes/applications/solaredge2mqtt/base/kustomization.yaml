@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: solaredge2mqtt
+
+resources:
+  - ./namespace.yaml
+  - ./deployment.yaml
+
+configMapGenerator:
+  - name: solaredge2mqtt-1-config
+    files:
+      - configuration.yml=configuration/solaredge-1.yaml
+  - name: solaredge2mqtt-2-config
+    files:
+      - configuration.yml=configuration/solaredge-2.yaml
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.app: solaredge2mqtt
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "10"
