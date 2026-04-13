@@ -184,6 +184,7 @@ spec:
           port: 443
           scheme: https
           serversTransport: insecure-transport
+          passHostHeader: false
   tls:
     secretName: dali-1-tls-cert
 
@@ -207,6 +208,7 @@ spec:
           port: 443
           scheme: https
           serversTransport: insecure-transport
+          passHostHeader: false
   tls:
     secretName: dali-2-tls-cert
 
