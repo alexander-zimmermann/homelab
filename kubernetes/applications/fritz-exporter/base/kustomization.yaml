@@ -12,7 +12,7 @@ resources:
 configMapGenerator:
   - name: fritz-exporter-config
     files:
-      - fritz-exporter.yaml
+      - config/fritz-exporter.yaml
 
 labels:
   - includeSelectors: false
