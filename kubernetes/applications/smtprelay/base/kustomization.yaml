@@ -11,7 +11,7 @@ resources:
 configMapGenerator:
   - name: smtprelay-config
     files:
-      - smtprelay.ini
+      - config/smtprelay.ini
 
 labels:
   - includeSelectors: false
