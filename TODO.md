@@ -20,6 +20,7 @@
 
 - [ ] **InfluxDB**: Configure data retention policies.
 - [ ] **Cilium**: Implement network policies.
+- [ ] **Telegraf NATS native**: Migrate Telegraf from MQTT protocol (`inputs.mqtt_consumer`) to native NATS protocol (`inputs.nats_consumer`) for solaredge topics. Enables direct JetStream access (replay, persistence).
 
 ## GitOps
 

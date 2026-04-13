@@ -1,5 +1,12 @@
-# Inject secrets as env vars from K8s Secret
+# Inject secrets as env vars from K8s Secrets
 envFromSecret: "telegraf-credentials"
+
+env:
+  - name: NATS_MQTT_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: telegraf-mqtt-credentials
+        key: NATS_MQTT_PASSWORD
 
 # Load input configs from config directory
 args:
