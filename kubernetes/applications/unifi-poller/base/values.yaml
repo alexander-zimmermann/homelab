@@ -19,7 +19,7 @@ dashboards:
   grafana:
     create: false
     selectorLabels:
-      homelab.app: grafana-instance
+      homelab.app: grafana
 
 # Unpoller configuration
 upConfig: |

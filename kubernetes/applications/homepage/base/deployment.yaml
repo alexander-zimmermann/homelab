@@ -51,7 +51,7 @@ spec:
                 secretKeyRef:
                   name: authentik-homepage-token
                   key: AUTHENTIK_HOMEPAGE_API_TOKEN
-            # Grafana admin credentials — cloned from grafana-instance namespace by Kyverno.
+            # Grafana admin credentials — cloned from grafana namespace by Kyverno.
             - name: HOMEPAGE_VAR_GRAFANA_USERNAME
               valueFrom:
                 secretKeyRef:
