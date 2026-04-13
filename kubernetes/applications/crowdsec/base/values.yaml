@@ -142,6 +142,6 @@ config:
       port: 5432
       flush:
         bouncers_autodelete:
-          api_key: 1h
+          api_key: 168h
         agents_autodelete:
-          login_password: 1h
+          login_password: 168h
