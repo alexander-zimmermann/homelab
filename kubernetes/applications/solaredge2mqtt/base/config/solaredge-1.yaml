@@ -22,7 +22,7 @@ mqtt:
   port: 1883
   username: solaredge2mqtt
   password: !secret mqtt_password
-  topic_prefix: solaredge
+  topic_prefix: solaredge-1
   retain: false
 
 powerflow:
