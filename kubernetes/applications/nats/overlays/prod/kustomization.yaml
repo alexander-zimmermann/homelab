@@ -59,6 +59,11 @@ patches:
         value:
           name: GOMEMLIMIT
           value: "966367641"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: JETSTREAM_MAX_STORE
+          value: "1Gi"
 
   # NATS service with static IP
   - target:
