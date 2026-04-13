@@ -1,0 +1,5 @@
+# NACK JetStream Controller configuration
+jetstream:
+  nats:
+    # Connect to the NATS server in the same namespace
+    url: nats://nats.nats.svc.cluster.local:4222

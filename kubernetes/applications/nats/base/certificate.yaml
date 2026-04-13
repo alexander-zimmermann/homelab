@@ -3,7 +3,7 @@ kind: Certificate
 
 metadata:
   name: mqtt-tls-cert
-  namespace: mosquitto
+  namespace: nats
 
 spec:
   secretName: mqtt-tls-cert

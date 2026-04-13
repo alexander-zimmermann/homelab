@@ -1,0 +1,62 @@
+# Stable resource name for all rendered objects
+fullnameOverride: nats
+
+config:
+  jetstream:
+    enabled: true
+    fileStore:
+      pvc:
+        enabled: true
+        size: PLACEHOLDER
+        storageClassName: longhorn
+
+  # MQTT gateway for IoT device compatibility
+  mqtt:
+    enabled: true
+
+  # Include authentication config from mounted secret
+  merge:
+    $include: /etc/nats/secrets/auth.conf
+
+# Mount auth credentials secret
+podTemplate:
+  merge:
+    spec:
+      volumes:
+        - name: nats-secret
+          secret:
+            secretName: nats-auth-config
+
+container:
+  merge:
+    volumeMounts:
+      - name: nats-secret
+        mountPath: /etc/nats/secrets
+        readOnly: true
+
+# Disable utility/debug pod
+natsBox:
+  enabled: false
+
+# Expose NATS and MQTT via Cilium/BGP LoadBalancer
+service:
+  merge:
+    spec:
+      type: LoadBalancer
+    metadata:
+      annotations:
+        coredns.io/hostname: PLACEHOLDER
+      labels:
+        bgp.cilium.io/ip-pool: default
+        bgp.cilium.io/advertise-service: default
+
+# Prometheus metrics exporter sidecar
+promExporter:
+  enabled: true
+  podMonitor:
+    enabled: true
+    merge:
+      metadata:
+        labels:
+          # Prometheus Operator label (Opt-In)
+          release: prometheus
