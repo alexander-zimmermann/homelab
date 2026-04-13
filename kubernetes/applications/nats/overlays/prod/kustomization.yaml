@@ -55,10 +55,10 @@ patches:
             cpu: 500m
             memory: 1Gi
       - op: add
-        path: /spec/template/spec/containers/0/env
+        path: /spec/template/spec/containers/0/env/-
         value:
-          - name: GOMEMLIMIT
-            value: "966367641"
+          name: GOMEMLIMIT
+          value: "966367641"
 
   # NATS service with static IP
   - target:

@@ -55,7 +55,7 @@ patches:
             cpu: 250m
             memory: 512Mi
       - op: add
-        path: /spec/template/spec/containers/0/env
+        path: /spec/template/spec/containers/0/env/-
         value:
-          - name: GOMEMLIMIT
-            value: "482344960"
+          name: GOMEMLIMIT
+          value: "482344960"
