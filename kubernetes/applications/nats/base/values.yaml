@@ -9,6 +9,7 @@ config:
         enabled: true
         size: PLACEHOLDER
         storageClassName: longhorn
+      maxSize: $JETSTREAM_MAX_STORE
 
   # MQTT gateway for IoT device compatibility
   mqtt:
