@@ -18,19 +18,22 @@ config:
   merge:
     $include: /etc/nats/secrets/auth.conf
 
-# Mount auth credentials secret
+# Mount auth credentials secret (patch to append, not replace existing volumes)
 podTemplate:
-  merge:
-    spec:
-      volumes:
-        - name: nats-secret
-          secret:
-            secretName: nats-auth-config
+  patch:
+    - op: add
+      path: /spec/volumes/-
+      value:
+        name: nats-secret
+        secret:
+          secretName: nats-auth-config
 
 container:
-  merge:
-    volumeMounts:
-      - name: nats-secret
+  patch:
+    - op: add
+      path: /volumeMounts/-
+      value:
+        name: nats-secret
         mountPath: /etc/nats/secrets
         readOnly: true
 
