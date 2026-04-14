@@ -177,14 +177,13 @@ spec:
     - match: Host(`dali-1.zimmermann.sh`)
       kind: Rule
       middlewares:
-        - name: chain-mfa-auth
+        - name: chain-debug-auth
           namespace: ingress-controller
       services:
         - name: dali-1
           port: 443
           scheme: https
           serversTransport: insecure-transport
-          passHostHeader: false
   tls:
     secretName: dali-1-tls-cert
 
@@ -208,7 +207,6 @@ spec:
           port: 443
           scheme: https
           serversTransport: insecure-transport
-          passHostHeader: false
   tls:
     secretName: dali-2-tls-cert
 
