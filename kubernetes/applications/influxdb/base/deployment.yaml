@@ -111,7 +111,7 @@ spec:
             claimName: influxdb-explorer-db
       containers:
         - name: explorer
-          image: influxdata/influxdb3-ui:1.6.3
+          image: influxdata/influxdb3-ui:1.7.0
           imagePullPolicy: IfNotPresent
           args:
             - --mode=admin
