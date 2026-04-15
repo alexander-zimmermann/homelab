@@ -102,6 +102,13 @@ spec:
         app.kubernetes.io/name: influxdb-explorer
     spec:
       automountServiceAccountToken: false
+      securityContext:
+        # Explorer 1.7.0+ runs as non-root user 'influxui' (uid 1500);
+        # fsGroup chowns the PVC on mount so /db is writable.
+        runAsUser: 1500
+        runAsGroup: 1500
+        runAsNonRoot: true
+        fsGroup: 1500
       volumes:
         # Default connection settings for the Explorer UI.
         - name: config
