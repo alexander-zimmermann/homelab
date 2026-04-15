@@ -1,0 +1,63 @@
+# Post-sync Job that creates the homelab database in InfluxDB 3 Core.
+# Runs after every ArgoCD sync; the script is idempotent.
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: initialize-influxdb-databases
+  namespace: influxdb
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      serviceAccountName: default
+      restartPolicy: OnFailure
+      # Wait until InfluxDB 3 HTTP API is reachable before running the init script.
+      initContainers:
+        - name: wait-for-influxdb
+          image: curlimages/curl:8.19.0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              until curl -sSf "$INFLUXDB_URL/health" >/dev/null; do
+                echo "Waiting for InfluxDB..."
+                sleep 3
+              done
+          env:
+            - name: INFLUXDB_URL
+              value: "http://influxdb.influxdb.svc.cluster.local:8181"
+      containers:
+        - name: influxdb3
+          image: influxdb:3-core
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "/scripts/initialize-influxdb-databases.sh"]
+          env:
+            - name: INFLUXDB_URL
+              value: "http://influxdb.influxdb.svc.cluster.local:8181"
+            # Space-separated list of databases to create.
+            - name: DATABASES
+              value: "homelab"
+            - name: INFLUXDB3_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-credentials
+                  key: admin-token
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+      volumes:
+        - name: scripts
+          configMap:
+            name: influxdb-database-init-script
+            defaultMode: 0555

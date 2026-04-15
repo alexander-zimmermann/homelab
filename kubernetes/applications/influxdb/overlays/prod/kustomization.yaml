@@ -1,0 +1,59 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+replacements:
+  # Inject domain name into Certificate, IngressRoute Host, and Homepage href
+  - sourceValue: influx.zimmermann.sh
+    targets:
+      - select:
+          kind: Certificate
+          name: influxdb-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: influxdb
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: influxdb
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
+        options:
+          delimiter: "//"
+          index: 1
+
+  # Inject storage size for InfluxDB data PVC
+  - sourceValue: 10Gi
+    targets:
+      - select:
+          kind: PersistentVolumeClaim
+          name: influxdb-data
+        fieldPaths:
+          - spec.resources.requests.storage
+
+patches:
+  # Resource limits for InfluxDB 3 Core container (prod)
+  - target:
+      kind: Deployment
+      name: influxdb
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: influxdb
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
