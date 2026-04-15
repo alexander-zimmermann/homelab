@@ -50,6 +50,8 @@ spec:
             - --node-id=node0
             - --object-store=file
             - --data-dir=/var/lib/influxdb3/data
+            # Allow unauthenticated access to /health, /ping, /metrics for probes and scraping.
+            - --disable-authz=health,ping,metrics
           env:
             # Load preconfigured admin token at startup (idempotent across restarts).
             - name: INFLUXDB3_ADMIN_TOKEN_FILE
