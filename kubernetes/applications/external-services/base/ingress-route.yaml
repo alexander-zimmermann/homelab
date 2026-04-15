@@ -177,7 +177,7 @@ spec:
     - match: Host(`dali-1.zimmermann.sh`)
       kind: Rule
       middlewares:
-        - name: chain-debug-auth
+        - name: chain-standard
           namespace: ingress-controller
       services:
         - name: dali-1
