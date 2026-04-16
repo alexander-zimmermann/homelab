@@ -328,7 +328,7 @@ spec:
     - match: Host(`knx-ip.zimmermann.sh`)
       kind: Rule
       middlewares:
-        - name: chain-mfa-auth
+        - name: chain-debug-auth
           namespace: ingress-controller
       services:
         - name: knx-ip
