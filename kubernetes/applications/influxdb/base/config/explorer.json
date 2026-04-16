@@ -1,5 +1,0 @@
-{
-  "DEFAULT_INFLUX_SERVER": "http://influxdb:8181",
-  "DEFAULT_INFLUX_DATABASE": "homelab",
-  "DEFAULT_SERVER_NAME": "Homelab InfluxDB"
-}

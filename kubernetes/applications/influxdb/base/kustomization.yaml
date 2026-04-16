@@ -2,22 +2,38 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: influxdb
+
 resources:
   - ./namespace.yaml
-  - ./persistentvolume.yaml
-  - ./deployment.yaml
-  - ./service.yaml
   - ./initialize-influxdb-databases-job.yaml
   - ./sealed-secret.yaml
-  - ./certificate.yaml
-  - ./ingress-route.yaml
+
+helmCharts:
+  - name: influxdb3-enterprise
+    repo: https://helm.influxdata.com
+    releaseName: influxdb3
+    version: 0.2.0
+    valuesFile: values.yaml
+    namespace: influxdb
+
+# Chart hard-codes the S3 secret keys as access-key-id / secret-access-key,
+# but the shared rustfs-admin-credentials uses RUSTFS_ACCESS_KEY / RUSTFS_SECRET_KEY.
+# Remap the chart-generated secretKeyRef keys to point to the existing RustFS keys.
+replacements:
+  - sourceValue: RUSTFS_ACCESS_KEY
+    targets:
+      - select:
+          kind: StatefulSet
+        fieldPaths:
+          - spec.template.spec.containers.[name=influxdb3].env.[name=AWS_ACCESS_KEY_ID].valueFrom.secretKeyRef.key
+  - sourceValue: RUSTFS_SECRET_KEY
+    targets:
+      - select:
+          kind: StatefulSet
+        fieldPaths:
+          - spec.template.spec.containers.[name=influxdb3].env.[name=AWS_SECRET_ACCESS_KEY].valueFrom.secretKeyRef.key
 
 configMapGenerator:
-  - name: influxdb-explorer-config
-    options:
-      disableNameSuffixHash: true
-    files:
-      - config.json=config/explorer.json
   - name: influxdb-database-init-script
     options:
       disableNameSuffixHash: true
