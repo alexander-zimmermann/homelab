@@ -3,6 +3,11 @@ kind: IngressRoute
 
 metadata:
   name: proxmox
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 
 spec:
   entryPoints:
@@ -28,6 +33,11 @@ kind: IngressRoute
 
 metadata:
   name: backup
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:
     - websecure
@@ -50,6 +60,11 @@ kind: IngressRoute
 
 metadata:
   name: omni
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:
     - websecure
@@ -73,6 +88,11 @@ kind: IngressRoute
 
 metadata:
   name: ai-pro-1
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 
 spec:
   entryPoints:
@@ -97,6 +117,11 @@ kind: IngressRoute
 
 metadata:
   name: ai-pro-2
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 
 spec:
   entryPoints:
@@ -121,6 +146,11 @@ kind: IngressRoute
 
 metadata:
   name: ai-pro-3
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 
 spec:
   entryPoints:
@@ -145,6 +175,11 @@ kind: IngressRoute
 
 metadata:
   name: ai-pro-4
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 
 spec:
   entryPoints:
@@ -169,6 +204,11 @@ kind: IngressRoute
 
 metadata:
   name: dali-1
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 
 spec:
   entryPoints:
@@ -193,6 +233,11 @@ kind: IngressRoute
 
 metadata:
   name: dali-2
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:
     - websecure
@@ -216,6 +261,11 @@ kind: IngressRoute
 
 metadata:
   name: ems-esp
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:
     - websecure
@@ -238,6 +288,11 @@ kind: IngressRoute
 
 metadata:
   name: fritzbox
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 
 spec:
   entryPoints:
@@ -260,6 +315,11 @@ kind: IngressRoute
 
 metadata:
   name: knx-ip
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 
 spec:
   entryPoints:
@@ -283,6 +343,11 @@ kind: IngressRoute
 
 metadata:
   name: verso
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 
 spec:
   entryPoints:
@@ -307,6 +372,11 @@ kind: IngressRoute
 
 metadata:
   name: warp
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
 
 spec:
   entryPoints:
