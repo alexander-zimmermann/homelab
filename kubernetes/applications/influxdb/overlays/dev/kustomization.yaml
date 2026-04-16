@@ -5,55 +5,66 @@ resources:
   - ../../base
 
 replacements:
-  # Inject domain name into Certificate, IngressRoute Host, and Homepage href
-  - sourceValue: influx.zimmermann.phd
-    targets:
-      - select:
-          kind: Certificate
-          name: influxdb-tls-cert
-        fieldPaths:
-          - spec.dnsNames.0
-      - select:
-          kind: IngressRoute
-          name: influxdb
-        fieldPaths:
-          - spec.routes.0.match
-        options:
-          delimiter: "`"
-          index: 1
-      - select:
-          kind: IngressRoute
-          name: influxdb
-        fieldPaths:
-          - metadata.annotations.[gethomepage.dev/href]
-        options:
-          delimiter: "//"
-          index: 1
-
-  # Inject storage size for InfluxDB data PVC
+  # Ingester WAL PVC size
   - sourceValue: 512Mi
     targets:
       - select:
-          kind: PersistentVolumeClaim
-          name: influxdb-data
+          kind: StatefulSet
+          name: influxdb3-ingester
         fieldPaths:
-          - spec.resources.requests.storage
+          - spec.volumeClaimTemplates.0.spec.resources.requests.storage
 
 patches:
-  # Resource limits for InfluxDB 3 Core container (dev)
+  # Ingester: writes + WAL flush to object store
   - target:
-      kind: Deployment
-      name: influxdb
+      kind: StatefulSet
+      name: influxdb3-ingester
     patch: |-
       - op: test
         path: /spec/template/spec/containers/0/name
-        value: influxdb
-      - op: add
+        value: influxdb3
+      - op: replace
         path: /spec/template/spec/containers/0/resources
         value:
           requests:
-            cpu: 50m
-            memory: 128Mi
+            cpu: 25m
+            memory: 64Mi
           limits:
-            cpu: 500m
-            memory: 512Mi
+            cpu: 200m
+            memory: 256Mi
+
+  # Querier: SQL/InfluxQL over Parquet files
+  - target:
+      kind: StatefulSet
+      name: influxdb3-querier
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: influxdb3
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+
+  # Compactor: Parquet optimisation (CPU-bound, intermittent)
+  - target:
+      kind: StatefulSet
+      name: influxdb3-compactor
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: influxdb3
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi

@@ -1,4 +1,4 @@
-# Post-sync Job that creates the homelab database in InfluxDB 3 Core.
+# Post-sync Job that creates the homelab database in InfluxDB 3 Enterprise.
 # Runs after every ArgoCD sync; the script is idempotent.
 apiVersion: batch/v1
 kind: Job
@@ -29,15 +29,15 @@ spec:
               done
           env:
             - name: INFLUXDB_URL
-              value: "http://influxdb.influxdb.svc.cluster.local:8181"
+              value: "http://influxdb3-querier.influxdb.svc.cluster.local:8181"
       containers:
         - name: influxdb3
-          image: influxdb:3-core
+          image: influxdb:3-enterprise
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "/scripts/initialize-influxdb-databases.sh"]
           env:
             - name: INFLUXDB_URL
-              value: "http://influxdb.influxdb.svc.cluster.local:8181"
+              value: "http://influxdb3-querier.influxdb.svc.cluster.local:8181"
             # Space-separated list of databases to create.
             - name: DATABASES
               value: "homelab"
