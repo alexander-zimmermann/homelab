@@ -126,6 +126,21 @@ spec:
       Cdn-Loop: ""
 
 ---
+# Cookie Stripping: Removes the Cookie header before forwarding to upstream.
+# Used for embedded devices with small HTTP header buffers that 502 when
+# browsers send large Authentik session cookies.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+
+metadata:
+  name: strip-cookies
+
+spec:
+  headers:
+    customRequestHeaders:
+      Cookie: ""
+
+---
 # Authentik integration (ForwardAuth): Delegates authentication to the Authentik outpost
 apiVersion: traefik.io/v1alpha1
 kind: Middleware

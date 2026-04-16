@@ -42,9 +42,9 @@ spec:
       - name: authentik
 
 ---
-# Debug Chain: Only Authentik ForwardAuth, no security/cloudflare/crowdsec/etc.
-# Used to isolate whether issues are caused by Authentik or the surrounding
-# middleware chain.
+# Debug Chain: Authentik ForwardAuth + upstream cookie stripping.
+# Used to isolate whether issues are caused by the surrounding middleware chain
+# or by large session cookies overflowing embedded-device header buffers.
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
@@ -54,3 +54,4 @@ spec:
   chain:
     middlewares:
       - name: authentik
+      - name: strip-cookies
