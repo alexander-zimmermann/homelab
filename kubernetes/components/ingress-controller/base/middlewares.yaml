@@ -103,12 +103,13 @@ spec:
       overwriteRequestHeader: false
 
 ---
-# Header Cleanup: Removes sensitive or unnecessary proxy headers before passing to upstream
+# Header Stripping: Removes sensitive or unnecessary proxy headers before
+# passing to upstream
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 
 metadata:
-  name: remove-headers
+  name: strip-headers
 
 spec:
   headers:
@@ -126,9 +127,14 @@ spec:
       Cdn-Loop: ""
 
 ---
-# Cookie Stripping: Removes the Cookie header before forwarding to upstream.
-# Used for embedded devices with small HTTP header buffers that 502 when
-# browsers send large Authentik session cookies.
+# Cookie Stripping: Removes Authentik session cookies before forwarding to
+# upstream. No backend needs these — Authentik forwardAuth validates them in
+# a prior middleware step. Prevents embedded devices with small header buffers
+# from 502-ing on the ~4 KB cookie payload.
+#
+# The authentik_proxy_* hash is derived from the OAuth2 client ID:
+#   echo -n "<client_id>" | sha256sum | cut -c1-8
+# If a new Authentik Proxy Provider is created, add its cookie here.
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 
@@ -136,9 +142,12 @@ metadata:
   name: strip-cookies
 
 spec:
-  headers:
-    customRequestHeaders:
-      Cookie: ""
+  plugin:
+    stripcookie:
+      cookies:
+        - authentik_device
+        - authentik_proxy_da05bc94
+        - authentik_session
 
 ---
 # Authentik integration (ForwardAuth): Delegates authentication to the Authentik outpost

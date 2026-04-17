@@ -40,6 +40,10 @@ experimental:
     cloudflare:
       moduleName: github.com/agence-gaya/traefik-plugin-cloudflare
       version: v1.2.0
+    # Strip Cookies: selectively remove cookies by name from requests
+    stripcookie:
+      moduleName: github.com/nilskohrs/stripcookie
+      version: v0.1.0
 
 api:
   # Enable insecure API access on the traefik entrypoint port (8080)

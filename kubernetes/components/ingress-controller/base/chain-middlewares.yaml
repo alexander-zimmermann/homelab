@@ -1,9 +1,10 @@
-# Standard Middleware Chain: Applies global security headers, rate limiting, and request cleaning
+# Pre-Auth Chain: Runs before any authentication middleware. Authentik
+# forwardAuth runs AFTER this so it can see original X-Forwarded-* / Cf-*
+# headers.
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
-
 metadata:
-  name: chain-standard
+  name: chain-pre-auth
 
 spec:
   chain:
@@ -13,10 +14,36 @@ spec:
       - name: rate-limit
       - name: security-headers
       - name: compress
-      - name: remove-headers
 
 ---
-# Basic Authentication Chain: Standard security + Basic Auth
+# Post-Auth Chain: Runs after authentication. Strips Authentik session cookies
+# and internal proxy headers before forwarding to upstream backends.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: chain-post-auth
+
+spec:
+  chain:
+    middlewares:
+      - name: strip-cookies
+      - name: strip-headers
+
+---
+# Standard Chain (no auth): pre-auth + post-auth.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: chain-standard
+
+spec:
+  chain:
+    middlewares:
+      - name: chain-pre-auth
+      - name: chain-post-auth
+
+---
+# Basic Auth Chain: pre-auth + basic-auth + post-auth.
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
@@ -25,11 +52,12 @@ metadata:
 spec:
   chain:
     middlewares:
-      - name: chain-standard
+      - name: chain-pre-auth
       - name: basic-auth
+      - name: chain-post-auth
 
 ---
-# Authentik/SSO Chain: Standard security + Authentik ForwardAuth
+# MFA Auth Chain: pre-auth + Authentik forwardAuth + post-auth.
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
@@ -38,13 +66,14 @@ metadata:
 spec:
   chain:
     middlewares:
-      - name: chain-standard
+      - name: chain-pre-auth
       - name: authentik
+      - name: chain-post-auth
 
 ---
-# Debug Chain: Authentik ForwardAuth + upstream cookie stripping.
-# Used to isolate whether issues are caused by the surrounding middleware chain
-# or by large session cookies overflowing embedded-device header buffers.
+# Debug Chain: Only Authentik ForwardAuth, no security/cloudflare/crowdsec/etc.
+# Used to isolate whether issues are caused by Authentik or the surrounding
+# middleware chain.
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
@@ -54,4 +83,3 @@ spec:
   chain:
     middlewares:
       - name: authentik
-      - name: strip-cookies
