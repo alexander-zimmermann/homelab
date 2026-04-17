@@ -23,6 +23,11 @@ objectStorage:
     allowHttp: true
     existingSecret: rustfs-admin-credentials
 
+security:
+  auth:
+    # Allow Prometheus to scrape /metrics and kubelet to probe /health without a token.
+    disableAuthz: ["health", "metrics"]
+
 # Chart declares security.auth.adminTokenFile but templates don't render it.
 # Inject the env var via extraEnv until the chart implements it.
 extraEnv:
