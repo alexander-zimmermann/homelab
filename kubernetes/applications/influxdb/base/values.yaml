@@ -28,17 +28,22 @@ security:
     # Preconfigured admin token file (mounted via extraVolumes below)
     adminTokenFile: /etc/influxdb3/tokens/admin-token.json
 
-# Single replica per component (at-home license: 2 cores total across cluster).
+# At-Home license allows only ONE node. Run the ingester as the sole component —
+# Kustomize patches strip --mode=ingest so it starts in combined mode
+# (ingest + query + compact in a single process).
 ingester:
   replicas: 1
   persistence:
     storageClass: longhorn
     size: PLACEHOLDER
 
+# Disable separate querier/compactor — the single combined node handles all roles.
 querier:
-  replicas: 1
+  enabled: false
 
-# Python processing engine not needed for homelab.
+compactor:
+  enabled: false
+
 processingEngine:
   enabled: false
 

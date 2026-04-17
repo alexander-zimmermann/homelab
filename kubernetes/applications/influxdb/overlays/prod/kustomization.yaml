@@ -15,46 +15,10 @@ replacements:
           - spec.volumeClaimTemplates.0.spec.resources.requests.storage
 
 patches:
-  # Ingester: writes + WAL flush to object store
+  # Combined node: handles ingest + query + compact in a single process
   - target:
       kind: StatefulSet
       name: influxdb3-ingester
-    patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: influxdb3
-      - op: replace
-        path: /spec/template/spec/containers/0/resources
-        value:
-          requests:
-            cpu: 50m
-            memory: 128Mi
-          limits:
-            cpu: 300m
-            memory: 512Mi
-
-  # Querier: SQL/InfluxQL over Parquet files
-  - target:
-      kind: StatefulSet
-      name: influxdb3-querier
-    patch: |-
-      - op: test
-        path: /spec/template/spec/containers/0/name
-        value: influxdb3
-      - op: replace
-        path: /spec/template/spec/containers/0/resources
-        value:
-          requests:
-            cpu: 50m
-            memory: 128Mi
-          limits:
-            cpu: 300m
-            memory: 512Mi
-
-  # Compactor: Parquet optimisation (CPU-bound, intermittent)
-  - target:
-      kind: StatefulSet
-      name: influxdb3-compactor
     patch: |-
       - op: test
         path: /spec/template/spec/containers/0/name

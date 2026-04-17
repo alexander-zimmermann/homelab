@@ -33,19 +33,32 @@ replacements:
         fieldPaths:
           - spec.template.spec.containers.[name=influxdb3].env.[name=AWS_SECRET_ACCESS_KEY].valueFrom.secretKeyRef.key
 
-# Chart emits INFLUXDB3_ENTERPRISE_LICENSE_FILE (env index 1) whenever
-# license.existingSecret is set, but we only provide license-email (at-home flow).
-# InfluxDB prefers the file over the email and fails. Remove it via JSON Patch —
-# the test op ensures the patch breaks loudly if the chart reorders the array.
 patches:
+  # Chart emits INFLUXDB3_ENTERPRISE_LICENSE_FILE (env index 1) whenever
+  # license.existingSecret is set, but we only provide license-email (at-home flow).
+  # InfluxDB prefers the file over the email and fails.
   - target:
       kind: StatefulSet
+      name: influxdb3-ingester
     patch: |-
       - op: test
         path: /spec/template/spec/containers/0/env/1/name
         value: INFLUXDB3_ENTERPRISE_LICENSE_FILE
       - op: remove
         path: /spec/template/spec/containers/0/env/1
+
+  # Strip --mode=ingest so the single node starts in combined mode
+  # (ingest + query + compact). Home license allows only one node.
+  - target:
+      kind: StatefulSet
+      name: influxdb3-ingester
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/command/2
+        value: "exec influxdb3 \\\n  serve \\\n  --mode=ingest \\\n  --node-id=$(hostname)\n"
+      - op: replace
+        path: /spec/template/spec/containers/0/command/2
+        value: "exec influxdb3 \\\n  serve \\\n  --node-id=$(hostname)\n"
 
 configMapGenerator:
   - name: influxdb-database-init-script

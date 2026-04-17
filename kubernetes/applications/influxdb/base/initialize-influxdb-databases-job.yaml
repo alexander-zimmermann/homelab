@@ -29,7 +29,7 @@ spec:
               done
           env:
             - name: INFLUXDB_URL
-              value: "http://influxdb3-querier.influxdb.svc.cluster.local:8181"
+              value: "http://influxdb3-ingester.influxdb.svc.cluster.local:8181"
       containers:
         - name: influxdb3
           image: influxdb:3-enterprise
@@ -37,7 +37,7 @@ spec:
           command: ["/bin/sh", "/scripts/initialize-influxdb-databases.sh"]
           env:
             - name: INFLUXDB_URL
-              value: "http://influxdb3-querier.influxdb.svc.cluster.local:8181"
+              value: "http://influxdb3-ingester.influxdb.svc.cluster.local:8181"
             # Space-separated list of databases to create.
             - name: DATABASES
               value: "homelab"
