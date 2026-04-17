@@ -28,12 +28,6 @@ security:
     # Preconfigured admin token file (mounted via extraVolumes below)
     adminTokenFile: /etc/influxdb3/tokens/admin-token.json
 
-# Workaround: chart sets LICENSE_FILE env when existingSecret is used, but we only
-# provide license-email — InfluxDB prefers file over email and fails. Unset it.
-extraEnv:
-  - name: INFLUXDB3_UNSET_VARS
-    value: INFLUXDB3_ENTERPRISE_LICENSE_FILE
-
 # Single replica per component (at-home license: 2 cores total across cluster).
 ingester:
   replicas: 1

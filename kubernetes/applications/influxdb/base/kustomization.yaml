@@ -33,6 +33,20 @@ replacements:
         fieldPaths:
           - spec.template.spec.containers.[name=influxdb3].env.[name=AWS_SECRET_ACCESS_KEY].valueFrom.secretKeyRef.key
 
+# Chart emits INFLUXDB3_ENTERPRISE_LICENSE_FILE (env index 1) whenever
+# license.existingSecret is set, but we only provide license-email (at-home flow).
+# InfluxDB prefers the file over the email and fails. Remove it via JSON Patch —
+# the test op ensures the patch breaks loudly if the chart reorders the array.
+patches:
+  - target:
+      kind: StatefulSet
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/env/1/name
+        value: INFLUXDB3_ENTERPRISE_LICENSE_FILE
+      - op: remove
+        path: /spec/template/spec/containers/0/env/1
+
 configMapGenerator:
   - name: influxdb-database-init-script
     options:
