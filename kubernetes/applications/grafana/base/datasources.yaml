@@ -40,3 +40,67 @@ spec:
   instanceSelector:
     matchLabels:
       homelab.app: grafana
+
+---
+# InfluxDB 3 Enterprise — SQL (native, Flight SQL over gRPC/HTTP2)
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+
+metadata:
+  name: influxdb-sql
+  namespace: grafana
+
+spec:
+  valuesFrom:
+    - targetPath: secureJsonData.token
+      valueFrom:
+        secretKeyRef:
+          name: influxdb-credentials
+          key: admin-token
+  datasource:
+    name: InfluxDB (SQL)
+    type: influxdb
+    access: proxy
+    url: http://influxdb3.influxdb.svc.cluster.local:8181
+    isDefault: false
+    editable: false
+    jsonData:
+      version: SQL
+      dbName: homelab
+      httpMode: POST
+  instanceSelector:
+    matchLabels:
+      homelab.app: grafana
+
+---
+# InfluxDB 3 Enterprise — InfluxQL (v1 compatibility, plain HTTP/1.1)
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+
+metadata:
+  name: influxdb-influxql
+  namespace: grafana
+
+spec:
+  valuesFrom:
+    - targetPath: secureJsonData.password
+      valueFrom:
+        secretKeyRef:
+          name: influxdb-credentials
+          key: admin-token
+  datasource:
+    name: InfluxDB (InfluxQL)
+    type: influxdb
+    access: proxy
+    url: http://influxdb3.influxdb.svc.cluster.local:8181
+    isDefault: false
+    editable: false
+    database: homelab
+    user: ignored
+    jsonData:
+      version: InfluxQL
+      dbName: homelab
+      httpMode: POST
+  instanceSelector:
+    matchLabels:
+      homelab.app: grafana
