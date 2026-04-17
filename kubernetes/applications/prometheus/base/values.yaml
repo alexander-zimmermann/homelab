@@ -149,13 +149,9 @@ coreDns:
         sourceLabels: [__name__]
         regex: (coredns_dns_request_duration_seconds_(sum|count)|coredns_dns_requests_total|coredns_forward_request_duration_seconds_(sum|count)|coredns_forward_requests_total|coredns_build_info|coredns_panics_total|coredns_dns_responses_total|coredns_cache_hits_total|coredns_cache_misses_total|coredns_cache_entries|process_resident_memory_bytes|process_cpu_seconds_total|go_goroutines|kubernetes_build_info)
 
-# Component scraping kube proxy
+# Component scraping kube proxy (disabled: Cilium runs in kube-proxy replacement mode)
 kubeProxy:
-  serviceMonitor:
-    metricRelabelings:
-      - action: keep
-        sourceLabels: [__name__]
-        regex: (kubeproxy_sync_proxy_rules_duration_seconds_(sum|count)|kubeproxy_network_programming_duration_seconds_(sum|count)|rest_client_requests_total|process_resident_memory_bytes|process_cpu_seconds_total|go_goroutines|kubernetes_build_info)
+  enabled: false
 
 # Component scraping the kube controller manager
 kubeControllerManager:
