@@ -16,6 +16,7 @@ metadata:
     gethomepage.dev/icon: "wikijs.png"
     gethomepage.dev/weight: "2"
     gethomepage.dev/href: "https://PLACEHOLDER"
+    gethomepage.dev/pod-selector: "app.kubernetes.io/name=wiki"
 
 spec:
   entryPoints:
