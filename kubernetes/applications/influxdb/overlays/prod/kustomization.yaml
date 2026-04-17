@@ -10,7 +10,7 @@ replacements:
     targets:
       - select:
           kind: StatefulSet
-          name: influxdb3-ingester
+          name: influxdb3
         fieldPaths:
           - spec.volumeClaimTemplates.0.spec.resources.requests.storage
 
@@ -18,7 +18,7 @@ patches:
   # Combined node: handles ingest + query + compact in a single process
   - target:
       kind: StatefulSet
-      name: influxdb3-ingester
+      name: influxdb3
     patch: |-
       - op: test
         path: /spec/template/spec/containers/0/name

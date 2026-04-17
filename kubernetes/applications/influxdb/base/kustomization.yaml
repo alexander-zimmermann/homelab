@@ -60,6 +60,32 @@ patches:
         path: /spec/template/spec/containers/0/command/2
         value: "exec influxdb3 \\\n  serve \\\n  --node-id=$(hostname)\n"
 
+  # Rename influxdb3-ingester → influxdb3 since the single node runs all roles.
+  - target:
+      kind: StatefulSet
+      name: influxdb3-ingester
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: influxdb3
+      - op: replace
+        path: /spec/serviceName
+        value: influxdb3
+  - target:
+      kind: Service
+      name: influxdb3-ingester
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: influxdb3
+  - target:
+      kind: ServiceMonitor
+      name: influxdb3-ingester
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: influxdb3
+
 configMapGenerator:
   - name: influxdb-database-init-script
     options:

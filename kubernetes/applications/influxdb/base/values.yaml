@@ -23,10 +23,11 @@ objectStorage:
     allowHttp: true
     existingSecret: rustfs-admin-credentials
 
-security:
-  auth:
-    # Preconfigured admin token file (mounted via extraVolumes below)
-    adminTokenFile: /etc/influxdb3/tokens/admin-token.json
+# Chart declares security.auth.adminTokenFile but templates don't render it.
+# Inject the env var via extraEnv until the chart implements it.
+extraEnv:
+  - name: INFLUXDB3_ADMIN_TOKEN_FILE
+    value: /etc/influxdb3/tokens/admin-token.json
 
 # At-Home license allows only ONE node. Run the ingester as the sole component —
 # Kustomize patches strip --mode=ingest so it starts in combined mode
