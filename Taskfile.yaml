@@ -37,6 +37,7 @@ tasks:
         opentofu
         cilium-cli
         siderolabs/tap/sidero-tools
+        nats-io/nats-tools/nats
         nats-io/nats-tools/nsc
         actionlint
         yq
