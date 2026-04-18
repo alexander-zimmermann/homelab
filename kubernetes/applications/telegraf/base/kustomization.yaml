@@ -5,7 +5,6 @@ namespace: telegraf
 resources:
   - ./namespace.yaml
   - ./servicemonitor.yaml
-  - ./sealed-secret.yaml
 
 helmCharts:
   - name: telegraf
