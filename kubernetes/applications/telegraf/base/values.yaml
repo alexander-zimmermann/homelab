@@ -7,6 +7,13 @@ env:
       secretKeyRef:
         name: telegraf-mqtt-credentials
         key: NATS_MQTT_PASSWORD
+  # Admin token for the new in-cluster InfluxDB 3 Enterprise.
+  # Secret is cloned from the influxdb namespace by Kyverno.
+  - name: INFLUXDB_V3_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: influxdb-credentials
+        key: admin-token
 
 # Load input configs from config directory
 args:
@@ -17,11 +24,19 @@ args:
 config:
   processors: []
   outputs:
+    # Legacy Docker InfluxDB v2 — receives everything EXCEPT metrics already migrated to v3.
     - influxdb_v2:
         urls: ["http://influx.zimmermann.eu.com:8086"]
         token: "$INFLUXDB_TOKEN"
         organization: "zimmermann.eu.com"
         bucket: "telegraf/autogen"
+        namedrop: ["solaredge.*"]
+    # In-cluster InfluxDB 3 Enterprise — receives metrics as they are migrated over.
+    - influxdb_v3:
+        urls: ["http://influxdb3.influxdb.svc.cluster.local:8181"]
+        token: "$INFLUXDB_V3_TOKEN"
+        database: "homelab"
+        namepass: ["solaredge.*"]
     - prometheus_client:
         listen: ":9273"
   inputs: []
