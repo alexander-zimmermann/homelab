@@ -93,10 +93,13 @@ deployment:
       cpu: 200m
       memory: 256Mi
 
-# Plain ClusterIP — Traefik IngressRoute handles external access
+# LoadBalancer with BGP advertisement via Cilium — static IP injected per environment via overlay
 service:
   enabled: true
-  type: ClusterIP
+  type: LoadBalancer
+  additionalLabels:
+    bgp.cilium.io/ip-pool: default
+    bgp.cilium.io/advertise-service: default
   ports:
     - port: 80
       name: http
