@@ -3,6 +3,7 @@
 ## Observability
 
 - [ ] **RustFS Monitoring**: Enable OTLP metrics export via Alloy once RustFS exposes meaningful S3 metrics (bucket ops, disk status). Configure `otelcol.receiver.otlp` in Alloy and add `PrometheusRule` for RustFS.
+- [ ] **Grafana dashboards Flux → InfluxQL/SQL**: 17 dashboards (`energy-*`, `hvac-*`, `knx-*`) still contain Flux queries (`from(bucket:...)`) targeting stale InfluxDB v2 datasource UIDs. InfluxDB 3 dropped Flux — rewrite to InfluxQL or SQL and point to the `InfluxDB (InfluxQL)` / `InfluxDB (SQL)` datasources (UIDs `ab06323c-...` / `3b275c55-...`).
 
 ## Infrastructure
 
