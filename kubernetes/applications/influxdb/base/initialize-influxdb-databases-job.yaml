@@ -38,9 +38,10 @@ spec:
           env:
             - name: INFLUXDB_URL
               value: "http://influxdb3.influxdb.svc.cluster.local:8181"
-            # Space-separated "name:retention" pairs. "0" = infinite retention.
+            # Space-separated "name:retention" pairs; retention uses the
+            # influxdb3 CLI vocabulary ("365d", "none", …).
             - name: DATABASES
-              value: "homelab:365d homelab_1h:0"
+              value: "homelab:365d homelab_1h:none"
             - name: INFLUXDB3_AUTH_TOKEN
               valueFrom:
                 secretKeyRef:

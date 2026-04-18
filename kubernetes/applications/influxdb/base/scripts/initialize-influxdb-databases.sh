@@ -1,11 +1,12 @@
 #!/bin/sh
-# Idempotently create/update InfluxDB 3 Enterprise databases with optional retention.
+# Idempotently create/update InfluxDB 3 Enterprise databases with retention.
 # Inputs (environment):
 #   INFLUXDB_URL         — InfluxDB 3 base URL (e.g. http://influxdb3:8181)
 #   INFLUXDB3_AUTH_TOKEN — admin token with create permissions
-#   DATABASES            — space-separated list of "name:retention" pairs.
-#                          Use "0" for infinite retention (flag omitted).
-#                          Example: "homelab:365d homelab_1h:0"
+#   DATABASES            — space-separated "name:retention" pairs.
+#                          Retention values are passed through to the CLI:
+#                          a duration like "365d" or "none" to clear.
+#                          Example: "homelab:365d homelab_1h:none"
 set -eu
 
 db_exists() {
@@ -15,22 +16,22 @@ db_exists() {
 for entry in $DATABASES; do
   name="${entry%%:*}"
   retention="${entry#*:}"
-  if [ "$name" = "$retention" ]; then
-    retention="0"
-  fi
-
-  retention_args=""
-  if [ "$retention" != "0" ]; then
-    retention_args="--retention-period $retention"
-  fi
 
   if db_exists "$name"; then
-    echo "Database '$name' already exists — updating retention to '$retention'"
-    # shellcheck disable=SC2086
-    influxdb3 update database --host "$INFLUXDB_URL" --token "$INFLUXDB3_AUTH_TOKEN" --database "$name" $retention_args
+    echo "Updating '$name' retention → $retention"
+    influxdb3 update database --host "$INFLUXDB_URL" --token "$INFLUXDB3_AUTH_TOKEN" \
+      --database "$name" --retention-period "$retention"
   else
+    # CLI doesn't support "none" for creation, so we have to conditionally include the argument.
+    if [ "$retention" != "none" ]; then
+      retention_args="--retention-period $retention"
+    else
+      retention_args=""
+    fi
+
+    echo "Creating '$name' (retention=$retention)"
     # shellcheck disable=SC2086
-    influxdb3 create database --host "$INFLUXDB_URL" --token "$INFLUXDB3_AUTH_TOKEN" $retention_args "$name"
-    echo "Created database '$name' (retention=$retention)"
+    influxdb3 create database --host "$INFLUXDB_URL" --token "$INFLUXDB3_AUTH_TOKEN" \
+      $retention_args "$name"
   fi
 done
