@@ -1,3 +1,6 @@
+# Post-sync Job that provisions a Grafana service account + API token via the
+# admin HTTP API. Runs after every ArgoCD sync; the script is idempotent,
+# and the hook-delete-policy cleans up the Job object on success.
 apiVersion: batch/v1
 kind: Job
 

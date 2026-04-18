@@ -1,3 +1,5 @@
+# Post-sync Job that creates the S3 buckets RustFS tenants rely on.
+# Runs after every ArgoCD sync; the script is idempotent.
 apiVersion: batch/v1
 kind: Job
 
