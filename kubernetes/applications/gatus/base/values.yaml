@@ -93,6 +93,17 @@ deployment:
       cpu: 200m
       memory: 256Mi
 
+  # Gatus image ships without a non-root USER — pin UID/GID explicitly so runAsNonRoot is satisfied
+  containerSecurityContext:
+    runAsUser: 65534
+    runAsGroup: 65534
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+
+  # Pod-level fsGroup so mounted volumes (emptyDir + ConfigMap subPath) are group-readable by the non-root user
+  securityContext:
+    fsGroup: 65534
+
 # LoadBalancer with BGP advertisement via Cilium — static IP injected per environment via overlay
 service:
   enabled: true
