@@ -1,0 +1,124 @@
+# Override chart's default resource naming (`application`) — everything gets prefixed `gatus`
+applicationName: gatus
+
+deployment:
+  enabled: true
+  image:
+    repository: ghcr.io/twin/gatus
+    tag: v5.35.0
+    pullPolicy: IfNotPresent
+
+  # gatus-sidecar watches Traefik IngressRoutes cluster-wide and writes a generated
+  # endpoint config to /config/gatus-sidecar.yaml; runs as native sidecar (restartPolicy: Always)
+  initContainers:
+    gatus-sidecar:
+      image: ghcr.io/home-operations/gatus-sidecar:0.0.13
+      imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      args:
+        # Opt-in only: endpoints need annotation `gatus.home-operations.com/enabled: "true"`
+        - --enable-ingressroute
+      volumeMounts:
+        - name: config
+          mountPath: /config
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          cpu: 100m
+          memory: 64Mi
+
+  env:
+    # Directory mode: Gatus merges all YAMLs in /config (static config.yaml + sidecar-written gatus-sidecar.yaml)
+    GATUS_CONFIG_PATH:
+      value: /config
+    # Postgres connection string from the CloudNativePG-managed Cluster
+    GATUS_POSTGRES_DSN:
+      valueFrom:
+        secretKeyRef:
+          name: gatus-db-app
+          key: uri
+    # Pushover credentials for native alert provider
+    PUSHOVER_APP_TOKEN:
+      valueFrom:
+        secretKeyRef:
+          name: gatus-secrets
+          key: PUSHOVER_APP_TOKEN
+    PUSHOVER_USER_KEY:
+      valueFrom:
+        secretKeyRef:
+          name: gatus-secrets
+          key: PUSHOVER_USER_KEY
+
+  # Shared config dir: emptyDir as base, ConfigMap file overlayed via subPath
+  volumes:
+    config:
+      emptyDir: {}
+    config-file:
+      configMap:
+        name: gatus-config
+
+  volumeMounts:
+    config:
+      mountPath: /config
+    # Mount kustomize-generated ConfigMap as a single file; sidecar writes sibling gatus-sidecar.yaml
+    config-file:
+      mountPath: /config/config.yaml
+      subPath: config.yaml
+
+  ports:
+    - containerPort: 8080
+      name: http
+      protocol: TCP
+
+  # Gatus exposes /health — used for both liveness and readiness
+  livenessProbe:
+    enabled: true
+    httpGet:
+      path: /health
+      port: http
+
+  readinessProbe:
+    enabled: true
+    httpGet:
+      path: /health
+      port: http
+
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# LoadBalancer with BGP advertisement via Cilium — static IP injected per environment via overlay
+service:
+  enabled: true
+  type: LoadBalancer
+  additionalLabels:
+    bgp.cilium.io/ip-pool: default
+    bgp.cilium.io/advertise-service: default
+  ports:
+    - port: 80
+      name: http
+      protocol: TCP
+      targetPort: http
+
+# Prometheus scrapes Gatus metrics (gatus_results_*) for long-term SLO storage
+serviceMonitor:
+  enabled: true
+  additionalLabels:
+    # Prometheus Operator label (Opt-In)
+    release: prometheus
+  endpoints:
+    - port: http
+      interval: 60s
+      path: /metrics
+
+# ServiceAccount bound to ClusterRole in rbac.yaml (needed by sidecar to watch IngressRoutes cluster-wide)
+rbac:
+  serviceAccount:
+    enabled: true
+    name: gatus

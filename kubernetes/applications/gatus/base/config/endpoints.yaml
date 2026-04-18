@@ -1,0 +1,43 @@
+storage:
+  type: postgres
+  path: "${GATUS_POSTGRES_DSN}"
+  caching: true
+  maximum-number-of-results-per-endpoint: 100
+
+metrics: true
+
+ui:
+  title: "Home Lab Status"
+  header: "Home Lab Status"
+
+alerting:
+  pushover:
+    application-token: "${PUSHOVER_APP_TOKEN}"
+    user-key: "${PUSHOVER_USER_KEY}"
+    default-alert:
+      failure-threshold: 3
+      success-threshold: 2
+      send-on-resolved: true
+
+# External dependencies (dashboard-only, no alerts)
+endpoints:
+  - name: Cloudflare DNS
+    group: External
+    url: https://1.1.1.1
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: GitHub
+    group: External
+    url: https://github.com
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: Pushover API
+    group: External
+    url: https://api.pushover.net
+    interval: 5m
+    conditions:
+      - "[STATUS] == any(200, 404)"
