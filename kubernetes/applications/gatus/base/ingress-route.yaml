@@ -1,0 +1,44 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: gatus
+  namespace: gatus
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
+    # Homepage Service Discovery
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Observability"
+    gethomepage.dev/name: "Gatus"
+    gethomepage.dev/icon: "gatus.png"
+    gethomepage.dev/weight: "5"
+    gethomepage.dev/href: "https://PLACEHOLDER"
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    # Public badge endpoints for GitHub README consumption — no auth so GitHub's image proxy can fetch SVGs
+    - kind: Rule
+      match: Host(`PLACEHOLDER`) && PathRegexp(`/api/v1/endpoints/.+/badge\.svg$`)
+      priority: 20
+      services:
+        - kind: Service
+          name: gatus
+          port: 80
+    # Main UI behind Authentik MFA
+    - kind: Rule
+      match: Host(`PLACEHOLDER`)
+      priority: 10
+      middlewares:
+        - name: chain-mfa-auth
+          namespace: ingress-controller
+      services:
+        - kind: Service
+          name: gatus
+          port: 80
+  tls:
+    secretName: gatus-tls

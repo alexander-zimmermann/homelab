@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: gatus-tls
+  namespace: gatus
+
+spec:
+  secretName: gatus-tls
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - PLACEHOLDER

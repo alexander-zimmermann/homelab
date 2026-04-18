@@ -38,3 +38,14 @@ spec:
           annotations:
             summary: "Traefik high HTTP 5xx error rate ({{ $labels.service }})"
             description: "Traefik service 5xx error rate is above 5%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - name: gatus-alerts
+      rules:
+        - alert: GatusDown
+          expr: absent(up{job="gatus"}) == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Gatus is not being scraped"
+            description: "Gatus has not been scraped by Prometheus for more than 5 minutes — external reachability monitoring is offline."

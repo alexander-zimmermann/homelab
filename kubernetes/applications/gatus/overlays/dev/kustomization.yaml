@@ -1,0 +1,60 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+replacements:
+  # Inject domain name into Certificate, IngressRoute (both routes) and Homepage href annotation
+  - sourceValue: status.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: gatus-tls
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: gatus
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: gatus
+        fieldPaths:
+          - spec.routes.1.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: gatus
+        fieldPaths:
+          - metadata.annotations.[gethomepage.dev/href]
+        options:
+          delimiter: "//"
+          index: 1
+
+  # Inject CNPG storage sizes
+  - sourceValue: 256Mi
+    targets:
+      - select:
+          kind: Cluster
+          name: gatus-db
+        fieldPaths:
+          - spec.storage.size
+      - select:
+          kind: Cluster
+          name: gatus-db
+        fieldPaths:
+          - spec.walStorage.size
+  - sourceValue: 256MB
+    targets:
+      - select:
+          kind: Cluster
+          name: gatus-db
+        fieldPaths:
+          - spec.postgresql.parameters.max_wal_size
