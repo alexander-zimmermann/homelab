@@ -97,6 +97,36 @@ def _build_query(table, tags, fields, start, end):
     )
 
 
+def _to_ns(ts):
+    """Convert the `time` value from a query result into nanoseconds since epoch.
+
+    The influxdb3 plugin runtime surfaces Timestamp columns in different forms
+    depending on the DataFusion/pyarrow version in play, so handle the common
+    shapes explicitly.
+    """
+    if isinstance(ts, bool):
+        raise TypeError(f"unexpected bool timestamp: {ts!r}")
+    if isinstance(ts, int):
+        # Nanoseconds since epoch (the arrow/pyarrow representation).
+        return ts
+    if isinstance(ts, float):
+        # Seconds since epoch (defensive — less common).
+        return int(ts * 1_000_000_000)
+    if isinstance(ts, datetime.datetime):
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=datetime.timezone.utc)
+        return int(ts.timestamp() * 1_000_000_000)
+    # Fallback: ISO8601 string. Accept the `...Z` and naive-UTC forms the
+    # influxdb3 JSON output is known to use.
+    s = str(ts)
+    if s.endswith("Z"):
+        s = s[:-1] + "+00:00"
+    dt = datetime.datetime.fromisoformat(s)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=datetime.timezone.utc)
+    return int(dt.timestamp() * 1_000_000_000)
+
+
 def _row_to_line(measurement, row, tags, fields):
     tag_parts = []
     for t in tags:
@@ -114,12 +144,7 @@ def _row_to_line(measurement, row, tags, fields):
     if not field_parts:
         return None
 
-    ts = row["time"]
-    if isinstance(ts, datetime.datetime):
-        ns = int(ts.replace(tzinfo=datetime.timezone.utc).timestamp() * 1_000_000_000)
-    else:
-        # Fallback: string ISO8601
-        ns = int(datetime.datetime.fromisoformat(str(ts).replace("Z", "+00:00")).timestamp() * 1_000_000_000)
+    ns = _to_ns(row["time"])
 
     head = _escape_lp_measurement(measurement)
     if tag_parts:
@@ -160,14 +185,23 @@ def process_scheduled_call(influxdb3_local, call_time, args=None):
 
     total_lines = 0
     failed_tables = 0
+    logged_shape = False
 
     for table in tables:
+        rows = None
         try:
             tags, fields, has_time = _columns(influxdb3_local, table)
             if not has_time or not fields:
                 continue
             query = _build_query(table, tags, fields, start, end)
             rows = influxdb3_local.query(query)
+            if rows and not logged_shape:
+                t = rows[0].get("time")
+                influxdb3_local.info(
+                    f"downsample_1h: first-row shape table={table} "
+                    f"time_type={type(t).__name__} time_repr={t!r}"
+                )
+                logged_shape = True
             lines = [
                 ln for ln in
                 (_row_to_line(table, r, tags, fields) for r in rows)
@@ -177,7 +211,11 @@ def process_scheduled_call(influxdb3_local, call_time, args=None):
             total_lines += written
         except Exception as e:
             failed_tables += 1
-            influxdb3_local.error(f"downsample_1h: table '{table}' failed: {e}")
+            sample = rows[0].get("time") if rows else None
+            influxdb3_local.error(
+                f"downsample_1h: table '{table}' failed "
+                f"(time_type={type(sample).__name__} time_repr={sample!r}): {e}"
+            )
 
     if failed_tables:
         influxdb3_local.warn(
