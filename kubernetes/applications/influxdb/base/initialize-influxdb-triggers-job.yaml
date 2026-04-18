@@ -53,10 +53,13 @@ spec:
               value: "homelab"
             # Hourly at :05 — the 5-minute offset mirrors the legacy Flux task
             # and gives late writes from the previous hour time to flush.
+            # 6-field cron (second minute hour day month weekday).
             - name: TRIGGER_SPEC
-              value: "cron:5 * * * *"
-            - name: PLUGIN_PATH
-              value: "/plugins/downsample_1h.py"
+              value: "cron:0 5 * * * *"
+            # Relative to the server's --plugin-dir (mounted at /plugins on
+            # the ingester via values.yaml), not an absolute path.
+            - name: PLUGIN_FILENAME
+              value: "downsample_1h.py"
           resources:
             requests:
               cpu: 10m
@@ -67,14 +70,8 @@ spec:
           volumeMounts:
             - name: scripts
               mountPath: /scripts
-            - name: plugins
-              mountPath: /plugins
       volumes:
         - name: scripts
           configMap:
             name: influxdb-triggers-init-script
             defaultMode: 0555
-        - name: plugins
-          configMap:
-            name: influxdb-plugins
-            defaultMode: 0444

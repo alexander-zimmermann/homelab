@@ -27,7 +27,7 @@ for entry in $DATABASES; do
   if db_exists "$name"; then
     echo "Database '$name' already exists — updating retention to '$retention'"
     # shellcheck disable=SC2086
-    influxdb3 update database --host "$INFLUXDB_URL" --token "$INFLUXDB3_AUTH_TOKEN" $retention_args "$name"
+    influxdb3 update database --host "$INFLUXDB_URL" --token "$INFLUXDB3_AUTH_TOKEN" --database "$name" $retention_args
   else
     # shellcheck disable=SC2086
     influxdb3 create database --host "$INFLUXDB_URL" --token "$INFLUXDB3_AUTH_TOKEN" $retention_args "$name"
