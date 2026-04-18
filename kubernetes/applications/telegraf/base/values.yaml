@@ -30,13 +30,15 @@ config:
         token: "$INFLUXDB_TOKEN"
         organization: "zimmermann.eu.com"
         bucket: "telegraf/autogen"
-        namedrop: ["solaredge.*", "ems-esp", "warp"]
+        namedrop: ["solaredge.*", "ems-esp", "warp",
+                   "Versorgungstechnik.*", "Sensorik.*", "Strom.*", "Heizung.*"]
     # In-cluster InfluxDB 3 Enterprise — receives metrics as they are migrated over.
     - influxdb_v3:
         urls: ["http://influxdb3.influxdb.svc.cluster.local:8181"]
         token: "$INFLUXDB_V3_TOKEN"
         database: "homelab"
-        namepass: ["solaredge.*", "ems-esp", "warp"]
+        namepass: ["solaredge.*", "ems-esp", "warp",
+                   "Versorgungstechnik.*", "Sensorik.*", "Strom.*", "Heizung.*"]
     - prometheus_client:
         listen: ":9273"
   inputs: []

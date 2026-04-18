@@ -21,6 +21,7 @@
 - [ ] **InfluxDB**: Configure data retention policies.
 - [ ] **Cilium**: Implement network policies.
 - [ ] **Telegraf NATS native**: Migrate Telegraf from MQTT protocol (`inputs.mqtt_consumer`) to native NATS protocol (`inputs.nats_consumer`) for solaredge topics. Enables direct JetStream access (replay, persistence).
+- [ ] **KNX → NATS via Telegraf**: Expose KNX events on NATS for future AI/home-automation consumers. Add `outputs.nats` to Telegraf so the existing `inputs.knx_listener` data is published on subjects like `knx.<a>.<b>.<c>` alongside the current InfluxDB write. No separate KNX→MQTT bridge, no MQTT gateway involved. Today only InfluxDB 3 gets the data — nothing else on NATS does.
 
 ## GitOps
 
