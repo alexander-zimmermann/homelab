@@ -27,12 +27,12 @@ layout:
 
   Observability:
     icon: mdi-chart-bar-stacked-#FFFFFF
-  Management:
-    icon: mdi-list-status-#FFFFFF
   GitOps:
     icon: mdi-all-inclusive-#FFFFFF
   Security & Identity:
     icon: mdi-shield-lock-#FFFFFF
+  Productivity:
+    icon: mdi-list-status-#FFFFFF
 
 providers:
   longhorn:
