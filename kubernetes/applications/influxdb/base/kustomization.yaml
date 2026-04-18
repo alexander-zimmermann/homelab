@@ -6,6 +6,7 @@ namespace: influxdb
 resources:
   - ./namespace.yaml
   - ./initialize-influxdb-databases-job.yaml
+  - ./initialize-influxdb-triggers-job.yaml
   - ./sealed-secret.yaml
 
 helmCharts:
@@ -48,7 +49,7 @@ patches:
         path: /spec/template/spec/containers/0/env/1
 
   # Strip --mode=ingest so the single node starts in combined mode
-  # (ingest + query + compact). Home license allows only one node.
+  # (ingest + query + compact + plugins). Home license allows only one node.
   - target:
       kind: StatefulSet
       name: influxdb3-ingester
@@ -58,7 +59,7 @@ patches:
         value: "exec influxdb3 \\\n  serve \\\n  --mode=ingest \\\n  --node-id=$(hostname)\n"
       - op: replace
         path: /spec/template/spec/containers/0/command/2
-        value: "exec influxdb3 \\\n  serve \\\n  --node-id=$(hostname)\n"
+        value: "exec influxdb3 \\\n  serve \\\n  --node-id=$(hostname) \\\n  --plugin-dir=/plugins \\\n  --package-manager=disabled\n"
 
   # Rename influxdb3-ingester → influxdb3 since the single node runs all roles.
   - target:
@@ -92,6 +93,16 @@ configMapGenerator:
       disableNameSuffixHash: true
     files:
       - scripts/initialize-influxdb-databases.sh
+  - name: influxdb-triggers-init-script
+    options:
+      disableNameSuffixHash: true
+    files:
+      - scripts/initialize-influxdb-triggers.sh
+  - name: influxdb-plugins
+    options:
+      disableNameSuffixHash: true
+    files:
+      - plugins/downsample_1h.py
 
 labels:
   - includeSelectors: false

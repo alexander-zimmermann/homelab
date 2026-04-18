@@ -1,13 +1,15 @@
-# Post-sync Job that creates the homelab database in InfluxDB 3 Enterprise.
+# Post-sync Job that registers the hourly downsampling trigger.
 # Runs after every ArgoCD sync; the script is idempotent.
+# Depends on the homelab database existing (created by initialize-influxdb-databases).
 apiVersion: batch/v1
 kind: Job
 
 metadata:
-  name: initialize-influxdb-databases
+  name: initialize-influxdb-triggers
   namespace: influxdb
   annotations:
     argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/sync-wave: "11"
 
 spec:
   backoffLimit: 2
@@ -34,18 +36,27 @@ spec:
         - name: influxdb3
           image: influxdb:3-enterprise
           imagePullPolicy: IfNotPresent
-          command: ["/bin/sh", "/scripts/initialize-influxdb-databases.sh"]
+          command: ["/bin/sh", "/scripts/initialize-influxdb-triggers.sh"]
           env:
             - name: INFLUXDB_URL
               value: "http://influxdb3.influxdb.svc.cluster.local:8181"
-            # Space-separated "name:retention" pairs. "0" = infinite retention.
-            - name: DATABASES
-              value: "homelab:365d homelab_1h:0"
             - name: INFLUXDB3_AUTH_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: influxdb-credentials
                   key: admin-token
+            - name: TRIGGER_NAME
+              value: "downsample_1h"
+            # Source database the plugin queries from (aggregates are written
+            # cross-database to `homelab_1h` by the plugin itself).
+            - name: TRIGGER_DATABASE
+              value: "homelab"
+            # Hourly at :05 — the 5-minute offset mirrors the legacy Flux task
+            # and gives late writes from the previous hour time to flush.
+            - name: TRIGGER_SPEC
+              value: "cron:5 * * * *"
+            - name: PLUGIN_PATH
+              value: "/plugins/downsample_1h.py"
           resources:
             requests:
               cpu: 10m
@@ -56,8 +67,14 @@ spec:
           volumeMounts:
             - name: scripts
               mountPath: /scripts
+            - name: plugins
+              mountPath: /plugins
       volumes:
         - name: scripts
           configMap:
-            name: influxdb-database-init-script
+            name: influxdb-triggers-init-script
             defaultMode: 0555
+        - name: plugins
+          configMap:
+            name: influxdb-plugins
+            defaultMode: 0444
