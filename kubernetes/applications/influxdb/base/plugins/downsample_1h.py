@@ -185,23 +185,14 @@ def process_scheduled_call(influxdb3_local, call_time, args=None):
 
     total_lines = 0
     failed_tables = 0
-    logged_shape = False
 
     for table in tables:
-        rows = None
         try:
             tags, fields, has_time = _columns(influxdb3_local, table)
             if not has_time or not fields:
                 continue
             query = _build_query(table, tags, fields, start, end)
             rows = influxdb3_local.query(query)
-            if rows and not logged_shape:
-                t = rows[0].get("time")
-                influxdb3_local.info(
-                    f"downsample_1h: first-row shape table={table} "
-                    f"time_type={type(t).__name__} time_repr={t!r}"
-                )
-                logged_shape = True
             lines = [
                 ln for ln in
                 (_row_to_line(table, r, tags, fields) for r in rows)
@@ -211,11 +202,7 @@ def process_scheduled_call(influxdb3_local, call_time, args=None):
             total_lines += written
         except Exception as e:
             failed_tables += 1
-            sample = rows[0].get("time") if rows else None
-            influxdb3_local.error(
-                f"downsample_1h: table '{table}' failed "
-                f"(time_type={type(sample).__name__} time_repr={sample!r}): {e}"
-            )
+            influxdb3_local.error(f"downsample_1h: table '{table}' failed: {e}")
 
     if failed_tables:
         influxdb3_local.warn(
