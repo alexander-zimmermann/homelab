@@ -19,10 +19,12 @@ configMapGenerator:
     options:
       disableNameSuffixHash: true
     files:
-      - inputs/knx.conf
-      - inputs/mqtt.ems.conf
-      - inputs/mqtt.warp.conf
-      - inputs/mqtt.solaredge.conf
+      - inputs/input.knx.conf
+      - inputs/input.mqtt.ems.conf
+      - inputs/input.mqtt.warp.conf
+      - inputs/input.mqtt.solaredge.conf
+      - processors/processor.knx.conf
+      - processors/processor.mqtt.warp.conf
 
 labels:
   - includeSelectors: false
