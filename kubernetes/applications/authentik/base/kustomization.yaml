@@ -24,15 +24,18 @@ configMapGenerator:
   - name: authentik-blueprint-sources
     files:
       - blueprints/sources.yaml
+  - name: authentik-blueprint-groups
+    files:
+      - blueprints/groups.yaml
+  - name: authentik-blueprint-forward-auth
+    files:
+      - blueprints/forward-auth.yaml
   - name: authentik-blueprint-argocd
     files:
       - blueprints/argocd.yaml
   - name: authentik-blueprint-homepage
     files:
       - blueprints/homepage.yaml
-  - name: authentik-blueprint-forward-auth
-    files:
-      - blueprints/forward-auth.yaml
   - name: authentik-blueprint-grafana
     files:
       - blueprints/grafana.yaml
