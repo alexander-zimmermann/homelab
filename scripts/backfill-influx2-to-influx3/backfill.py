@@ -18,7 +18,7 @@ Usage example:
 
   ./backfill.py \\
     --from 2022-07 --to 2026-04 \\
-    --chunk-days 7 --sleep-between-chunks 30 \\
+    --chunk-days 1 --sleep-between-chunks 10 \\
     --influx2-url http://localhost:8086 \\
     --influx2-org zimmermann.eu.com \\
     --influx2-bucket telegraf/autogen \\
@@ -230,14 +230,14 @@ def main() -> int:
     p.add_argument(
         "--chunk-days",
         type=int,
-        default=7,
-        help="Days per backfill chunk (default: 7). Smaller = more pending persists bounded, safer for the pod.",
+        default=1,
+        help="Days per backfill chunk (default: 1). One day keeps pending (table, hour) partitions per burst small enough to fit the ingester's exec memory pool.",
     )
     p.add_argument(
         "--sleep-between-chunks",
         type=int,
-        default=30,
-        help="Seconds to pause between chunks so InfluxDB 3 can snapshot/compact (default: 30).",
+        default=10,
+        help="Seconds to pause between chunks so InfluxDB 3 can snapshot (default: 10). Assumes the server runs with forceSnapshotMemThreshold tuned down for bulk backfill.",
     )
     p.add_argument("--dry-run", action="store_true", help="Query source but skip writes")
     args = p.parse_args()
