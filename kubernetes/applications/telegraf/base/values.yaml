@@ -19,9 +19,6 @@ args:
 
 # Main telegraf.conf (chart converts YAML -> TOML)
 config:
-  # Temporarily enabled to capture InfluxDB 400 partial-write response body
-  agent:
-    debug: true
   processors: []
   outputs:
     - influxdb_v3:
@@ -30,14 +27,6 @@ config:
         database: "homelab"
     - prometheus_client:
         listen: ":9273"
-    # Temporary mirror of every outgoing batch to disk so we can inspect
-    # the exact line protocol that InfluxDB 3 rejects with HTTP 400.
-    # Path is inside the pod; rotation keeps disk use bounded.
-    - file:
-        files: ["/tmp/telegraf-batch.lp"]
-        data_format: "influx"
-        rotation_max_size: "10MB"
-        rotation_max_archives: 2
   inputs: []
 
 # Health endpoint for probes (port 8888)
