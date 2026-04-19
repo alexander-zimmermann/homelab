@@ -27,6 +27,7 @@ replacements:
           name: grafana
         fieldPaths:
           - spec.routes.0.match
+          - spec.routes.1.match
         options:
           delimiter: "`"
           index: 1
@@ -46,6 +47,14 @@ replacements:
         options:
           delimiter: "//"
           index: 1
+      - select:
+          kind: IngressRoute
+          name: grafana
+        fieldPaths:
+          - metadata.annotations.[gatus.home-operations.com/endpoint]
+        options:
+          delimiter: "/"
+          index: 2
 
   # Inject Authentik host into all three OAuth URL env vars
   - sourceValue: auth.zimmermann.phd
