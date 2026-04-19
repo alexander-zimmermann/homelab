@@ -4,20 +4,31 @@ One-shot manual migration of the hourly-downsampled history.
 
 ## What it does
 
-For each N-day chunk (default 7d) in the requested month range:
+For each N-day chunk (default 1d) in the requested month range:
 
 1. Runs the same Flux query the legacy `downsample_telegraf_1h` task used
    (filter numeric fields only, `aggregateWindow(every: 1h, fn: mean)`).
 2. Streams the annotated CSV response row-by-row (no big in-memory buffer).
 3. Writes line protocol to InfluxDB 3 in 5 000-line batches via `/api/v3/write_lp`.
-4. Sleeps `--sleep-between-chunks` seconds (default 30s) before the next chunk
-   so the pod's compactor can flush pending per-(table, hour) Parquet persists.
+4. Sleeps `--sleep-between-chunks` seconds (default 10s) before the next chunk
+   so the pod can drive a snapshot before the next burst hits the WAL.
 
-Expected wall-clock for the full 2022-07 … 2026-04 range: ~2.5h (dominated by
-the inter-chunk sleeps, which keep the pod safe). Smaller `--chunk-days` →
-more, safer bursts; default of 7 is the tested safe setting against a 4Gi
-pod. A whole-month chunk tips the pod over because ~200 tables × 720 hours
-produces ~144k pending per-(table, hour) chunks that can't flush in time.
+Expected wall-clock for the full 2022-07 … 2026-04 range: ~30 min **provided the
+server is tuned for bulk backfill**:
+
+- `ingester.memory.forceSnapshotMemThreshold: "30%"` (otherwise snapshot
+  sort/dedupe OOMs the pod at default 70% — see upstream issue #25991)
+- `ingester.wal.snapshotSize: 100` (tighter WAL rotation)
+- `ingester.wal.replayFailOnError: false`
+- `dataLifecycle.gen1LookbackDuration: "1460d"` (so backfilled partitions
+  older than 24 h still get compacted — see upstream issue #27301)
+
+These live in `kubernetes/applications/influxdb/base/values.yaml`. Without
+them the pod crashloops after a handful of chunks regardless of chunk size.
+
+Skips bool and string fields automatically — the `types.isType(float|int)` Flux
+filter is the whole reason the legacy task didn't crash on heterogeneous
+measurements, and we preserve it here verbatim.
 
 Skips bool and string fields automatically — the `types.isType(float|int)` Flux
 filter is the whole reason the legacy task didn't crash on heterogeneous
@@ -45,7 +56,6 @@ instead of localhost.
 # 1. Sanity check — single month, no writes
 ./backfill.py \
   --from 2024-06 --to 2024-06 \
-  --chunk-days 7 --sleep-between-chunks 30 \
   --influx2-url http://localhost:8086 \
   --influx2-org zimmermann.eu.com \
   --influx2-bucket telegraf/autogen \
@@ -58,13 +68,14 @@ instead of localhost.
 # 2. Same month, for real — verify points show up in Grafana (InfluxDB 1h SQL datasource)
 ./backfill.py --from 2024-06 --to 2024-06 [... same args, no --dry-run]
 
-# 3. Full history. Break into 1–2 year chunks if you want to resume safely.
+# 3. Full history.
 ./backfill.py --from 2022-07 --to 2026-04 [... same args]
 ```
 
-Monitor `kubectl top pod -n influxdb influxdb3-0` during the run. Values
-under ~3 GiB on a 4 GiB pod are fine. If memory climbs past ~3.5 GiB,
-drop `--chunk-days` to 3 and bump `--sleep-between-chunks` to 60.
+Monitor `kubectl top pod -n influxdb influxdb3-0` during the run. Expected
+sawtooth pattern: ~1.5 GiB steady with ~3–4 GiB spikes during snapshots.
+If memory climbs past ~5 GiB without snapshotting, drop `--chunk-days` to
+`1` (already the default) and bump `--sleep-between-chunks` to `30`.
 
 ## Tokens
 
