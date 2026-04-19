@@ -13,7 +13,7 @@ helmCharts:
   - name: rustfs
     repo: https://rustfs.github.io/helm
     releaseName: rustfs
-    version: 0.0.94
+    version: 0.0.95
     valuesFile: values.yaml
     namespace: rustfs
 
