@@ -7,6 +7,7 @@
 
 ## Infrastructure
 
+- [ ] **external-services dev domain**: Certificates in [kubernetes/applications/external-services/base/certificate.yaml](kubernetes/applications/external-services/base/certificate.yaml) only cover `*.zimmermann.sh` — add counterparts for the dev domain `*.zimmermann.phd`.
 - [ ] **Restore Task**: Add `task k8s:restore` that replays Velero backups into DBs and PVCs after a bootstrap (e.g. Homepage images PVC).
 - [ ] **Split Ingress Architecture**: Dual Traefik strategy with UDM VLAN/DMZ separation.
   - `traefik-external` (DMZ VLAN) → `*.zimmermann.sh` via Cloudflare, all services publicly accessible
@@ -18,9 +19,8 @@
 
 ## Optimizations
 
-- [ ] **InfluxDB**: Configure data retention policies.
+- [ ] **stakater/application Chart**: Migrate apps with raw Deployment manifests to [stakater/application](https://github.com/stakater/application) (same pattern as Gatus). Start with `smtprelay` and `fritz-exporter` (simplest cases), then evaluate `solaredge2mqtt` (two releases), `homepage` (RBAC/PVC needs check), and `node-red` (initContainer + PVC support needed).
 - [ ] **Cilium**: Implement network policies.
-- [ ] **Telegraf NATS native**: Migrate Telegraf from MQTT protocol (`inputs.mqtt_consumer`) to native NATS protocol (`inputs.nats_consumer`) for solaredge topics. Enables direct JetStream access (replay, persistence).
 - [ ] **KNX → NATS via Telegraf**: Expose KNX events on NATS for future AI/home-automation consumers. Add `outputs.nats` to Telegraf so the existing `inputs.knx_listener` data is published on subjects like `knx.<a>.<b>.<c>` alongside the current InfluxDB write. No separate KNX→MQTT bridge, no MQTT gateway involved. Today only InfluxDB 3 gets the data — nothing else on NATS does.
 
 ## GitOps
