@@ -18,6 +18,7 @@ replacements:
           name: wiki-js
         fieldPaths:
           - spec.routes.0.match
+          - spec.routes.1.match
         options:
           delimiter: "`"
           index: 1
@@ -29,6 +30,14 @@ replacements:
         options:
           delimiter: "//"
           index: 1
+      - select:
+          kind: IngressRoute
+          name: wiki-js
+        fieldPaths:
+          - metadata.annotations.[gatus.home-operations.com/endpoint]
+        options:
+          delimiter: "/"
+          index: 2
 
   # Inject database storage size
   - sourceValue: 256Mi

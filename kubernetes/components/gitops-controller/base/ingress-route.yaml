@@ -19,6 +19,21 @@ metadata:
     gethomepage.dev/widget.type: "argocd"
     gethomepage.dev/widget.url: "http://argocd-server.gitops-controller.svc.cluster.local"
     gethomepage.dev/widget.key: "{{HOMEPAGE_VAR_ARGOCD_TOKEN}}"
+    # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      group: GitOps
+      url: https://PLACEHOLDER/_gatus
+      interval: 60s
+      client:
+        headers:
+          CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
+          CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
+      conditions:
+        - "[STATUS] < 500"
+        - "[RESPONSE_TIME] < 1500"
+      alerts:
+        - type: pushover
 
 spec:
   entryPoints:
@@ -45,5 +60,13 @@ spec:
           name: argocd-server
           port: 80
           scheme: h2c
+    # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
+    - kind: Rule
+      match: Host(`PLACEHOLDER`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      priority: 20
+      services:
+        - kind: Service
+          name: argocd-server
+          port: 80
   tls:
     secretName: argocd-tls-cert
