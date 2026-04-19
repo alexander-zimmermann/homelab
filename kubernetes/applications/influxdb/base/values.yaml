@@ -33,10 +33,6 @@ security:
 extraEnv:
   - name: INFLUXDB3_ADMIN_TOKEN_FILE
     value: /etc/influxdb3/tokens/admin-token.json
-  # Temporarily raised to surface details about HTTP 400 partial-write
-  # responses to Telegraf — remove once schema conflict is identified.
-  - name: INFLUXDB3_LOG_FILTER
-    value: "influxdb3=debug,influxdb3_write=debug,influxdb3_server=debug,info"
 
 # At-Home license allows only ONE node. Run the ingester as the sole component —
 # Kustomize patches strip --mode=ingest so it starts in combined mode
