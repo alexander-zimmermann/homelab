@@ -19,6 +19,9 @@ args:
 
 # Main telegraf.conf (chart converts YAML -> TOML)
 config:
+  # Temporarily enabled to capture InfluxDB 400 partial-write response body
+  agent:
+    debug: true
   processors: []
   outputs:
     - influxdb_v3:
