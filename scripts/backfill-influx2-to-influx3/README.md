@@ -4,14 +4,20 @@ One-shot manual migration of the hourly-downsampled history.
 
 ## What it does
 
-For each calendar month in the requested range:
+For each N-day chunk (default 7d) in the requested month range:
 
 1. Runs the same Flux query the legacy `downsample_telegraf_1h` task used
    (filter numeric fields only, `aggregateWindow(every: 1h, fn: mean)`).
 2. Streams the annotated CSV response row-by-row (no big in-memory buffer).
 3. Writes line protocol to InfluxDB 3 in 5 000-line batches via `/api/v3/write_lp`.
+4. Sleeps `--sleep-between-chunks` seconds (default 30s) before the next chunk
+   so the pod's compactor can flush pending per-(table, hour) Parquet persists.
 
-Expected wall-clock: ~53 min for 2022-07 through 2026-04. Memory stays flat.
+Expected wall-clock for the full 2022-07 … 2026-04 range: ~2.5h (dominated by
+the inter-chunk sleeps, which keep the pod safe). Smaller `--chunk-days` →
+more, safer bursts; default of 7 is the tested safe setting against a 4Gi
+pod. A whole-month chunk tips the pod over because ~200 tables × 720 hours
+produces ~144k pending per-(table, hour) chunks that can't flush in time.
 
 Skips bool and string fields automatically — the `types.isType(float|int)` Flux
 filter is the whole reason the legacy task didn't crash on heterogeneous
@@ -39,6 +45,7 @@ instead of localhost.
 # 1. Sanity check — single month, no writes
 ./backfill.py \
   --from 2024-06 --to 2024-06 \
+  --chunk-days 7 --sleep-between-chunks 30 \
   --influx2-url http://localhost:8086 \
   --influx2-org zimmermann.eu.com \
   --influx2-bucket telegraf/autogen \
@@ -54,6 +61,10 @@ instead of localhost.
 # 3. Full history. Break into 1–2 year chunks if you want to resume safely.
 ./backfill.py --from 2022-07 --to 2026-04 [... same args]
 ```
+
+Monitor `kubectl top pod -n influxdb influxdb3-0` during the run. Values
+under ~3 GiB on a 4 GiB pod are fine. If memory climbs past ~3.5 GiB,
+drop `--chunk-days` to 3 and bump `--sleep-between-chunks` to 60.
 
 ## Tokens
 

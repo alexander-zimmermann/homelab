@@ -4,8 +4,11 @@ Backfill hourly downsampled data from the legacy InfluxDB 2 Docker instance
 into the in-cluster InfluxDB 3 database `homelab_1h`.
 
 Runs the same Flux aggregation that the legacy task used (mean over 1h,
-numeric-only filter via types.isType), chunked by calendar month to keep
-memory usage bounded. Writes results as line-protocol to InfluxDB 3.
+numeric-only filter via types.isType). Chunks by N days (default 7) so
+InfluxDB 3 doesn't end up with thousands of pending per-(table, hour)
+Parquet persists in memory at once — a full month in one go crashloops the
+pod. Writes results as line-protocol to InfluxDB 3 and sleeps between
+chunks so the compactor can flush.
 
 Meant to be run ONCE, manually, from the Linux host that owns the Docker
 InfluxDB 2 (so localhost:8086 works for the source) with a kubectl
@@ -15,6 +18,7 @@ Usage example:
 
   ./backfill.py \\
     --from 2022-07 --to 2026-04 \\
+    --chunk-days 7 --sleep-between-chunks 30 \\
     --influx2-url http://localhost:8086 \\
     --influx2-org zimmermann.eu.com \\
     --influx2-bucket telegraf/autogen \\
@@ -47,13 +51,17 @@ def parse_month(value: str) -> datetime.date:
     return datetime.datetime.strptime(value, "%Y-%m").date().replace(day=1)
 
 
-def month_chunks(start: datetime.date, end: datetime.date) -> Iterator[Tuple[datetime.date, datetime.date]]:
+def month_after(d: datetime.date) -> datetime.date:
+    return d.replace(year=d.year + 1, month=1) if d.month == 12 else d.replace(month=d.month + 1)
+
+
+def day_chunks(
+    start: datetime.date, end_exclusive: datetime.date, days: int
+) -> Iterator[Tuple[datetime.date, datetime.date]]:
     cur = start
-    while cur <= end:
-        if cur.month == 12:
-            nxt = cur.replace(year=cur.year + 1, month=1)
-        else:
-            nxt = cur.replace(month=cur.month + 1)
+    step = datetime.timedelta(days=days)
+    while cur < end_exclusive:
+        nxt = min(cur + step, end_exclusive)
         yield cur, nxt
         cur = nxt
 
@@ -175,11 +183,12 @@ def write_batch(url: str, db: str, token: str, lines: List[str]) -> None:
             raise RuntimeError(f"InfluxDB 3 write failed: HTTP {resp.status}")
 
 
-def backfill_month(args, start: datetime.date, stop: datetime.date) -> int:
+def backfill_chunk(args, start: datetime.date, stop: datetime.date) -> int:
+    label = f"{start} .. {stop}"
     flux = FLUX_QUERY_TEMPLATE.format(
         bucket=args.influx2_bucket, start=iso(start), stop=iso(stop)
     )
-    print(f"[{start:%Y-%m}] querying InfluxDB 2 ({iso(start)} .. {iso(stop)})", flush=True)
+    print(f"[{label}] querying InfluxDB 2", flush=True)
     t0 = time.monotonic()
     resp = query_influx2(args.influx2_url, args.influx2_org, args.influx2_token, flux)
 
@@ -202,7 +211,7 @@ def backfill_month(args, start: datetime.date, stop: datetime.date) -> int:
 
     dt = time.monotonic() - t0
     tag = " (dry-run)" if args.dry_run else ""
-    print(f"[{start:%Y-%m}] wrote {total} points in {dt:.1f}s{tag}", flush=True)
+    print(f"[{label}] wrote {total} points in {dt:.1f}s{tag}", flush=True)
     return total
 
 
@@ -218,18 +227,37 @@ def main() -> int:
     p.add_argument("--influx3-db", required=True)
     p.add_argument("--influx3-token", required=True)
     p.add_argument("--batch-size", type=int, default=5000)
+    p.add_argument(
+        "--chunk-days",
+        type=int,
+        default=7,
+        help="Days per backfill chunk (default: 7). Smaller = more pending persists bounded, safer for the pod.",
+    )
+    p.add_argument(
+        "--sleep-between-chunks",
+        type=int,
+        default=30,
+        help="Seconds to pause between chunks so InfluxDB 3 can snapshot/compact (default: 30).",
+    )
     p.add_argument("--dry-run", action="store_true", help="Query source but skip writes")
     args = p.parse_args()
 
     start = parse_month(args.from_month)
-    end = parse_month(args.to_month)
-    if start > end:
+    end_month_first = parse_month(args.to_month)
+    end_exclusive = month_after(end_month_first)
+    if start >= end_exclusive:
         print("error: --from must be <= --to", file=sys.stderr)
         return 2
 
+    chunks = list(day_chunks(start, end_exclusive, args.chunk_days))
+    print(f"backfilling {len(chunks)} chunks of ~{args.chunk_days}d from {start} to {end_exclusive}", flush=True)
+
     grand_total = 0
-    for mstart, mstop in month_chunks(start, end):
-        grand_total += backfill_month(args, mstart, mstop)
+    for idx, (cstart, cstop) in enumerate(chunks):
+        grand_total += backfill_chunk(args, cstart, cstop)
+        if args.sleep_between_chunks > 0 and idx < len(chunks) - 1:
+            print(f"--- sleeping {args.sleep_between_chunks}s ({idx + 1}/{len(chunks)} done) ---", flush=True)
+            time.sleep(args.sleep_between_chunks)
     print(f"done. total points: {grand_total}", flush=True)
     return 0
 
