@@ -9,6 +9,8 @@ metrics: true
 ui:
   title: "Home Lab Status"
   header: "Home Lab Status"
+  # Group endpoints into collapsible sections (Observability, Infrastructure, etc.) instead of a flat list
+  default-sort-by: group
 
 alerting:
   pushover:
