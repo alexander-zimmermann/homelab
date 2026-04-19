@@ -15,10 +15,11 @@ replacements:
           - spec.volumeClaimTemplates.0.spec.resources.requests.storage
 
 patches:
-  # Combined node: handles ingest + query + compact in a single process.
-  # Memory sized to cover bursty workloads (hourly downsample + one-off
-  # legacy-v2 backfills) on top of steady-state ingest — too little memory
-  # caused WAL backlog and startup-probe-triggered crashloops.
+  # Combined node: ingest + query + compact in one process. Sized from 11h
+  # of steady-state observation (~300 MiB idle, ~513 MiB peak), so 1 GiB
+  # limit gives ~2× headroom. Do NOT bulk-backfill into this pod — the
+  # Influx 3 partitioning (per table, per hour) OOMs on large historical
+  # writes regardless of memory.
   - target:
       kind: StatefulSet
       name: influxdb3
@@ -31,10 +32,10 @@ patches:
         value:
           requests:
             cpu: 50m
-            memory: 4Gi
+            memory: 512Mi
           limits:
             cpu: 500m
-            memory: 8Gi
+            memory: 1Gi
 
   # Extend startup grace so WAL replay can complete on first boot after
   # a backlog built up; extend liveness timeout to absorb persist/GC spikes.

@@ -42,24 +42,6 @@ ingester:
   persistence:
     storageClass: longhorn
     size: PLACEHOLDER
-  # Backfill tuning — sized for the one-off 2022..2026 history import into
-  # `homelab_1h`. Default (70% snapshot threshold, 600 WAL files/snapshot) let
-  # the snapshot sort/dedupe step OOM the pod under bulk-write load. Revert to
-  # chart defaults once the backfill is complete; steady-state ingest should
-  # not run with 30% threshold.
-  memory:
-    forceSnapshotMemThreshold: "30%"
-    execMemPoolBytes: "40%"
-  wal:
-    snapshotSize: 100
-    replayFailOnError: false
-
-# Gen1 compactor only looks 24h into the past by default — historical backfill
-# falls outside that window, leaving thousands of tiny Parquet files
-# uncompacted and blowing up memory. Cover the full 4-year range so backfilled
-# partitions compact normally.
-dataLifecycle:
-  gen1LookbackDuration: "1460d"
 
 # Disable separate querier/compactor — the single combined node handles all roles.
 querier:
