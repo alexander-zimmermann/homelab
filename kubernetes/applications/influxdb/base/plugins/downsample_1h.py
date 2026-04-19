@@ -58,9 +58,13 @@ def _escape_lp_field_key(name):
 
 
 def _list_tables(influxdb3_local):
+    # Skip Telegraf's self-monitoring tables (`internal_*`). Their fields are
+    # cumulative counters (metrics_written, errors, buffer_size, ...) for
+    # which an hourly mean is meaningless, and steady-state raw data in
+    # `homelab` with 365d retention already covers any debugging need.
     rows = influxdb3_local.query(
         "SELECT table_name FROM information_schema.tables "
-        "WHERE table_schema = 'iox'"
+        "WHERE table_schema = 'iox' AND table_name NOT LIKE 'internal\\_%' ESCAPE '\\'"
     )
     return [r["table_name"] for r in rows]
 
