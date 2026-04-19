@@ -31,10 +31,10 @@ patches:
         value:
           requests:
             cpu: 50m
-            memory: 2Gi
+            memory: 4Gi
           limits:
             cpu: 500m
-            memory: 4Gi
+            memory: 8Gi
 
   # Extend startup grace so WAL replay can complete on first boot after
   # a backlog built up; extend liveness timeout to absorb persist/GC spikes.
