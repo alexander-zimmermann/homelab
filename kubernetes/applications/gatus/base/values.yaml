@@ -50,6 +50,17 @@ deployment:
         secretKeyRef:
           name: gatus-secrets
           key: PUSHOVER_USER_KEY
+    # Cloudflare Access Service Token — used to bypass Authentik on the /_gatus probe path
+    CF_ACCESS_CLIENT_ID:
+      valueFrom:
+        secretKeyRef:
+          name: gatus-secrets
+          key: CF_ACCESS_CLIENT_ID
+    CF_ACCESS_CLIENT_SECRET:
+      valueFrom:
+        secretKeyRef:
+          name: gatus-secrets
+          key: CF_ACCESS_CLIENT_SECRET
 
   # Shared config dir: emptyDir as base, ConfigMap file overlayed via subPath
   volumes:

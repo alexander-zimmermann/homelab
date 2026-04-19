@@ -17,6 +17,21 @@ metadata:
     gethomepage.dev/weight: "2"
     gethomepage.dev/href: "https://PLACEHOLDER"
     gethomepage.dev/pod-selector: "app.kubernetes.io/name=wiki"
+    # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      group: Productivity
+      url: https://PLACEHOLDER/_gatus
+      interval: 60s
+      client:
+        headers:
+          CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
+          CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
+      conditions:
+        - "[STATUS] < 500"
+        - "[RESPONSE_TIME] < 1500"
+      alerts:
+        - type: pushover
 
 spec:
   entryPoints:
@@ -28,6 +43,14 @@ spec:
       middlewares:
         - name: chain-standard
           namespace: ingress-controller
+      services:
+        - kind: Service
+          name: wiki-js
+          port: 80
+    # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
+    - kind: Rule
+      match: Host(`PLACEHOLDER`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      priority: 20
       services:
         - kind: Service
           name: wiki-js

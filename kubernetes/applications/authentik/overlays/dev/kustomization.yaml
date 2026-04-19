@@ -19,6 +19,7 @@ replacements:
           name: authentik
         fieldPaths:
           - spec.routes.0.match
+          - spec.routes.1.match
         options:
           delimiter: "`"
           index: 1
@@ -30,6 +31,14 @@ replacements:
         options:
           delimiter: "//"
           index: 1
+      - select:
+          kind: IngressRoute
+          name: authentik
+        fieldPaths:
+          - metadata.annotations.[gatus.home-operations.com/endpoint]
+        options:
+          delimiter: "/"
+          index: 2
 
   # Blueprint env var injections — resolved at runtime via !Env tags in blueprints
   - sourceValue: https://argocd.zimmermann.phd/auth/callback

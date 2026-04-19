@@ -22,6 +22,21 @@ metadata:
     gethomepage.dev/widget.username: "{{HOMEPAGE_VAR_GRAFANA_USERNAME}}"
     gethomepage.dev/widget.password: "{{HOMEPAGE_VAR_GRAFANA_PASSWORD}}"
     gethomepage.dev/widget.fields: '["dashboards", "datasources"]'
+    # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      group: Observability
+      url: https://PLACEHOLDER/_gatus
+      interval: 60s
+      client:
+        headers:
+          CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
+          CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
+      conditions:
+        - "[STATUS] < 500"
+        - "[RESPONSE_TIME] < 1500"
+      alerts:
+        - type: pushover
 
 spec:
   entryPoints:
@@ -33,6 +48,14 @@ spec:
       middlewares:
         - name: chain-mfa-auth
           namespace: ingress-controller
+      services:
+        - kind: Service
+          name: grafana
+          port: 80
+    # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
+    - kind: Rule
+      match: Host(`PLACEHOLDER`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      priority: 20
       services:
         - kind: Service
           name: grafana

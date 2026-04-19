@@ -8,6 +8,21 @@ metadata:
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      group: Infrastructure
+      url: https://proxmox.zimmermann.sh/_gatus
+      interval: 60s
+      client:
+        headers:
+          CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
+          CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
+      conditions:
+        - "[STATUS] < 500"
+        - "[RESPONSE_TIME] < 1500"
+      alerts:
+        - type: pushover
 
 spec:
   entryPoints:
@@ -19,6 +34,15 @@ spec:
       middlewares:
         - name: chain-mfa-auth
           namespace: ingress-controller
+      services:
+        - kind: Service
+          name: proxmox
+          port: 8006
+          scheme: https
+    # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
+    - kind: Rule
+      match: Host(`proxmox.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      priority: 20
       services:
         - kind: Service
           name: proxmox
@@ -38,6 +62,21 @@ metadata:
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      group: Infrastructure
+      url: https://backup.zimmermann.sh/_gatus
+      interval: 60s
+      client:
+        headers:
+          CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
+          CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
+      conditions:
+        - "[STATUS] < 500"
+        - "[RESPONSE_TIME] < 1500"
+      alerts:
+        - type: pushover
 spec:
   entryPoints:
     - websecure
@@ -47,6 +86,14 @@ spec:
       middlewares:
         - name: chain-mfa-auth
           namespace: ingress-controller
+      services:
+        - name: backup
+          port: 8007
+          scheme: https
+    # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
+    - kind: Rule
+      match: Host(`backup.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      priority: 20
       services:
         - name: backup
           port: 8007
@@ -65,6 +112,21 @@ metadata:
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      group: Infrastructure
+      url: https://omni.zimmermann.sh/_gatus
+      interval: 60s
+      client:
+        headers:
+          CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
+          CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
+      conditions:
+        - "[STATUS] < 500"
+        - "[RESPONSE_TIME] < 1500"
+      alerts:
+        - type: pushover
 spec:
   entryPoints:
     - websecure
@@ -74,6 +136,15 @@ spec:
       middlewares:
         - name: chain-mfa-auth
           namespace: ingress-controller
+      services:
+        - name: omni
+          port: 443
+          scheme: https
+          serversTransport: insecure-transport
+    # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
+    - kind: Rule
+      match: Host(`omni.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      priority: 20
       services:
         - name: omni
           port: 443
@@ -266,6 +337,22 @@ metadata:
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token;
+    # higher failure tolerance for flaky ESP32 devices)
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      group: Smart Home Integration
+      url: https://ems-esp.zimmermann.sh/_gatus
+      interval: 60s
+      client:
+        headers:
+          CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
+          CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
+      conditions:
+        - "[STATUS] < 500"
+      alerts:
+        - type: pushover
+          failure-threshold: 5
 spec:
   entryPoints:
     - websecure
@@ -275,6 +362,14 @@ spec:
       middlewares:
         - name: chain-mfa-auth
           namespace: ingress-controller
+      services:
+        - name: ems-esp
+          port: 80
+          passHostHeader: false
+    # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
+    - kind: Rule
+      match: Host(`ems-esp.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      priority: 20
       services:
         - name: ems-esp
           port: 80
@@ -293,6 +388,22 @@ metadata:
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token;
+    # higher failure tolerance for flaky ESP32 devices)
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      group: Networking
+      url: https://fritzbox.zimmermann.sh/_gatus
+      interval: 60s
+      client:
+        headers:
+          CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
+          CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
+      conditions:
+        - "[STATUS] < 500"
+      alerts:
+        - type: pushover
+          failure-threshold: 5
 
 spec:
   entryPoints:
@@ -303,6 +414,13 @@ spec:
       middlewares:
         - name: chain-mfa-auth
           namespace: ingress-controller
+      services:
+        - name: fritzbox
+          port: 80
+    # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
+    - kind: Rule
+      match: Host(`fritzbox.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      priority: 20
       services:
         - name: fritzbox
           port: 80
@@ -320,6 +438,22 @@ metadata:
     external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
     kubernetes.io/ingress.class: traefik
+    # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token;
+    # higher failure tolerance for flaky ESP32 devices)
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      group: Smart Home Integration
+      url: https://knx-ip.zimmermann.sh/_gatus
+      interval: 60s
+      client:
+        headers:
+          CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
+          CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
+      conditions:
+        - "[STATUS] < 500"
+      alerts:
+        - type: pushover
+          failure-threshold: 5
 
 spec:
   entryPoints:
@@ -330,6 +464,14 @@ spec:
       middlewares:
         - name: chain-mfa-auth
           namespace: ingress-controller
+      services:
+        - name: knx-ip
+          port: 8080
+          passHostHeader: false
+    # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
+    - kind: Rule
+      match: Host(`knx-ip.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      priority: 20
       services:
         - name: knx-ip
           port: 8080

@@ -21,6 +21,21 @@ metadata:
     gethomepage.dev/widget.version: "2"
     gethomepage.dev/widget.url: "http://authentik-server.authentik.svc.cluster.local"
     gethomepage.dev/widget.key: "{{HOMEPAGE_VAR_AUTHENTIK_KEY}}"
+    # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      group: Security & Identity
+      url: https://PLACEHOLDER/_gatus
+      interval: 60s
+      client:
+        headers:
+          CF-Access-Client-Id: "${CF_ACCESS_CLIENT_ID}"
+          CF-Access-Client-Secret: "${CF_ACCESS_CLIENT_SECRET}"
+      conditions:
+        - "[STATUS] < 500"
+        - "[RESPONSE_TIME] < 1500"
+      alerts:
+        - type: pushover
 
 spec:
   entryPoints:
@@ -29,6 +44,14 @@ spec:
     - kind: Rule
       match: Host(`PLACEHOLDER`)
       priority: 10
+      services:
+        - kind: Service
+          name: authentik-server
+          port: 80
+    # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
+    - kind: Rule
+      match: Host(`PLACEHOLDER`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      priority: 20
       services:
         - kind: Service
           name: authentik-server
