@@ -4,26 +4,6 @@ metadata:
   labels:
     blueprints.goauthentik.io/instantiate: "true"
 entries:
-  # Group for homelab administrators
-  - model: authentik_core.group
-    state: present
-    identifiers:
-      name: platform-admins
-    attrs:
-      name: platform-admins
-
-  # Custom scope mapping to include groups claim in OIDC tokens
-  - model: authentik_providers_oauth2.scopemapping
-    state: present
-    identifiers:
-      managed: custom.homelab/scope-groups
-    attrs:
-      name: "OAuth Mapping: groups"
-      scope_name: groups
-      description: "Exposes user groups as a groups claim in OIDC tokens"
-      expression: |
-        return {"groups": [group.name for group in request.user.ak_groups.all()]}
-
   # OAuth2/OIDC Provider for ArgoCD
   - model: authentik_providers_oauth2.oauth2provider
     state: present
