@@ -30,7 +30,7 @@ spec:
       containers:
         - name: fritz-exporter
           # FritzBox metrics exporter container.
-          image: docker.io/pdreker/fritz_exporter:2.6.1
+          image: docker.io/pdreker/fritz_exporter:2.6.2
           args:
             - --config=/etc/fritz-exporter.yml
           ports:
