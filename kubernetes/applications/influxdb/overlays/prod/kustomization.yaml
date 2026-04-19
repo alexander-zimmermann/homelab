@@ -30,10 +30,10 @@ patches:
         value:
           requests:
             cpu: 50m
-            memory: 1Gi
+            memory: 512Mi
           limits:
             cpu: 500m
-            memory: 2Gi
+            memory: 1Gi
 
   # Extend startup grace so WAL replay can complete on first boot after
   # a backlog built up; extend liveness timeout to absorb persist/GC spikes.
@@ -43,7 +43,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/startupProbe/failureThreshold
-        value: 60
+        value: 30
       - op: replace
         path: /spec/template/spec/containers/0/livenessProbe/timeoutSeconds
         value: 10
