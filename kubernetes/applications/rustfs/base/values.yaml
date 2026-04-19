@@ -18,6 +18,11 @@ config:
     # Set log level to error to suppress verbose tracing warnings
     log_level: "error"
 
+# Skip recursive chown on PVC when root perms already match (avoids ~3 min
+# fsGroup walk over 100k+ files on NFS-backed PVC at every pod start)
+podSecurityContext:
+  fsGroupChangePolicy: OnRootMismatch
+
 # Ingress is managed outside of the chart (Traefik IngressRoute manifests)
 ingress:
   enabled: false
