@@ -34,7 +34,7 @@ spec:
               value: "http://grafana.grafana.svc.cluster.local"
       containers:
         - name: provision
-          image: alpine/k8s:1.35.3
+          image: alpine/k8s:1.35.4
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
