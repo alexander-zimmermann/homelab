@@ -30,13 +30,13 @@ configMapGenerator:
     options:
       disableNameSuffixHash: true
     files:
-      - 2n.svg=icons/2n.svg
-      - basalte.png=icons/basalte.png
-      - hubble.svg=icons/hubble.svg
-      - mdt.svg=icons/mdt.svg
-      - telenot.svg=icons/telenot.svg
-      - thinkstation.png=icons/thinkstation.png
-      - warp.png=icons/warp.png
+      - icons/2n.svg
+      - icons/basalte.png
+      - icons/hubble.svg
+      - icons/mdt.svg
+      - icons/telenot.svg
+      - icons/thinkstation.png
+      - icons/warp.png
 
 labels:
   - includeSelectors: false

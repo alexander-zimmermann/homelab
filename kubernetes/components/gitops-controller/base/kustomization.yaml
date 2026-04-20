@@ -19,7 +19,7 @@ configMapGenerator:
     options:
       disableNameSuffixHash: true
     files:
-      - service-accounts.yaml=scripts/service-accounts.yaml
+      - scripts/service-accounts.yaml
 
 labels:
   - includeSelectors: false
