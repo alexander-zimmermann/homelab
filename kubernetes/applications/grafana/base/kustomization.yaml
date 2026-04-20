@@ -19,7 +19,6 @@ helmCharts:
     version: 10.5.15
     valuesFile: values.yaml
     namespace: grafana
-    includeCRDs: true
 
 patches:
   # Service Patch - Fix Selector Collision
