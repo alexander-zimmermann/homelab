@@ -84,7 +84,7 @@ secretGenerator:
     options:
       disableNameSuffixHash: true
     files:
-      - tls.ca=cloudflare-origin-pull-ca.pem
+      - tls.ca=certs/cloudflare-origin-pull-ca.pem
 
 labels:
   - includeSelectors: false
