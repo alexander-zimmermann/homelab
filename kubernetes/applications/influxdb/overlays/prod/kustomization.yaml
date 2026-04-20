@@ -15,11 +15,9 @@ replacements:
           - spec.volumeClaimTemplates.0.spec.resources.requests.storage
 
 patches:
-  # Combined node: ingest + query + compact in one process. Sized from 11h
-  # of steady-state observation (~300 MiB idle, ~513 MiB peak), so 1 GiB
-  # limit gives ~2× headroom. Do NOT bulk-backfill into this pod — the
-  # Influx 3 partitioning (per table, per hour) OOMs on large historical
-  # writes regardless of memory.
+  # TEMP: bumped to 2Gi for backfill recovery / RAM investigation
+  # (2026-04-20). Steady state sits at ~513 MiB peak, 1 GiB is plenty —
+  # revert to 1Gi once the recovery work is done.
   - target:
       kind: StatefulSet
       name: influxdb3
@@ -35,7 +33,7 @@ patches:
             memory: 512Mi
           limits:
             cpu: 500m
-            memory: 1Gi
+            memory: 2Gi
 
   # Extend startup grace so WAL replay can complete on first boot after
   # a backlog built up; extend liveness timeout to absorb persist/GC spikes.
