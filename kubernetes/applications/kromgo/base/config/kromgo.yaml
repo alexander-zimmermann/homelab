@@ -1,14 +1,14 @@
 # kromgo metric catalog — each entry becomes a `GET /<name>` endpoint.
-# Queries are executed read-only against PROMETHEUS_URL; colors map the scalar result to a badge color.
 metrics:
   # Versions
   - name: talos_version
-    query: label_replace(node_os_info{name="Talos"}, "version_id", "$1", "version_id", "v(.+)")
+    # Parse `os_image` ("Talos (vX.Y.Z)"); node_exporter's node_os_info is not deployed on Talos.
+    query: label_replace(max(kube_node_info) by (os_image), "version_id", "$1", "os_image", "Talos \\(v(.+)\\)")
     label: version_id
     title: Talos
 
   - name: kubernetes_version
-    query: label_replace(kubernetes_build_info{service="kubernetes"}, "git_version", "$1", "git_version", "v(.+)")
+    query: label_replace(min(kubernetes_build_info) by (git_version), "git_version", "$1", "git_version", "v(.+)")
     label: git_version
     title: Kubernetes
 
@@ -27,7 +27,9 @@ metrics:
 
   # Resource usage
   - name: cluster_cpu_usage
-    query: round(avg(instance:node_cpu_utilisation:rate5m{pod!=""}) * 100, 0.1)
+    # cAdvisor rate over kube-state-metrics capacity; `instance:node_cpu_utilisation:rate5m`
+    # recording rule is absent because node_exporter is not deployed on Talos.
+    query: round(sum(rate(node_cpu_usage_seconds_total[5m])) / sum(kube_node_status_capacity{resource="cpu"}) * 100, 0.1)
     suffix: "%"
     colors:
       - { color: green, min: 0, max: 35 }
@@ -36,7 +38,8 @@ metrics:
     title: CPU
 
   - name: cluster_memory_usage
-    query: round(sum(node_memory_MemTotal_bytes{pod!=""} - node_memory_MemAvailable_bytes{pod!=""}) / sum(node_memory_MemTotal_bytes{pod!=""}) * 100, 0.1)
+    # working_set_bytes over capacity; node_memory_MemTotal_bytes is unavailable without node_exporter.
+    query: round(sum(node_memory_working_set_bytes) / sum(kube_node_status_capacity{resource="memory"}) * 100, 0.1)
     suffix: "%"
     colors:
       - { color: green, min: 0, max: 35 }
@@ -55,7 +58,8 @@ metrics:
     title: Age
 
   - name: cluster_uptime_days
-    query: round(avg(node_time_seconds{pod!=""} - node_boot_time_seconds{pod!=""}) / 86400)
+    # Kubelet start time as a proxy; on Talos a kubelet restart effectively means a node reboot.
+    query: round((time() - min(process_start_time_seconds{job=~".*kubelet.*"})) / 86400)
     suffix: d
     colors:
       - { color: green, min: 0, max: 180 }
