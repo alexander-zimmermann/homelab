@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+
+metadata:
+  name: kromgo-tls
+  namespace: kromgo
+
+spec:
+  secretName: kromgo-tls
+  issuerRef:
+    name: letsencrypt-dns01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - PLACEHOLDER
