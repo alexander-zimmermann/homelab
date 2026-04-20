@@ -4,11 +4,14 @@ Backfill hourly downsampled data from the legacy InfluxDB 2 Docker instance
 into the in-cluster InfluxDB 3 database `homelab_1h`.
 
 Runs the same Flux aggregation that the legacy task used (mean over 1h,
-numeric-only filter via types.isType). Chunks by N days (default 7) so
-InfluxDB 3 doesn't end up with thousands of pending per-(table, hour)
-Parquet persists in memory at once — a full month in one go crashloops the
-pod. Writes results as line-protocol to InfluxDB 3 and sleeps between
-chunks so the compactor can flush.
+numeric-only filter via types.isType). Chunks by N days with inter-chunk
+sleeps so the ingester can snapshot WAL → Parquet between bursts.
+
+Matches the in-cluster schema: KNX measurements (`Heizung.*`, `Sensorik.*`,
+`Strom.*`, `Versorgungstechnik.*`) are consolidated into a single `knx`
+measurement with the original name preserved as the `knx_name` tag and
+the group address split into `knx_main/middle/sub`. This mirrors the
+telegraf starlark processor so historical + live data share one schema.
 
 Meant to be run ONCE, manually, from the Linux host that owns the Docker
 InfluxDB 2 (so localhost:8086 works for the source) with a kubectl
@@ -143,6 +146,12 @@ def iter_flux_records(resp) -> Iterator[dict]:
 
 RESERVED = {"", "result", "table", "_start", "_stop", "_time", "_value", "_field", "_measurement"}
 
+# KNX-Input top-level prefixes. Measurements starting with these are
+# consolidated into the `knx` measurement on write — the historic backfill
+# has to produce the same shape the in-cluster telegraf produces today
+# (see kubernetes/applications/telegraf/base/processors/processor.knx.conf).
+KNX_PREFIXES = ("Heizung.", "Sensorik.", "Strom.", "Versorgungstechnik.")
+
 
 def record_to_line(rec: dict) -> Optional[str]:
     measurement = rec.get("_measurement")
@@ -155,11 +164,27 @@ def record_to_line(rec: dict) -> Optional[str]:
         fval = float(value)
     except ValueError:
         return None
+
+    extra_tags: dict = {}
+    if measurement.startswith(KNX_PREFIXES):
+        extra_tags["knx_name"] = measurement
+        ga = rec.get("groupaddress")
+        if ga:
+            parts = ga.split("/")
+            if len(parts) == 3:
+                extra_tags["knx_main"] = parts[0]
+                extra_tags["knx_middle"] = parts[1]
+                extra_tags["knx_sub"] = parts[2]
+        measurement = "knx"
+
     tag_parts = []
     for k, v in rec.items():
         if k in RESERVED or v in (None, ""):
             continue
         tag_parts.append(f"{escape_lp_tag(k)}={escape_lp_tag(v)}")
+    for k, v in extra_tags.items():
+        tag_parts.append(f"{escape_lp_tag(k)}={escape_lp_tag(v)}")
+
     head = escape_lp_measurement(measurement)
     if tag_parts:
         head += "," + ",".join(sorted(tag_parts))
