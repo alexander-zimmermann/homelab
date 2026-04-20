@@ -1,9 +1,8 @@
 # kromgo metric catalog — each entry becomes a `GET /<name>` endpoint.
-# Queries are executed read-only against PROMETHEUS_URL; colors map the scalar result to a badge color.
 metrics:
-  # Versions — sourced from kube-state-metrics (node_exporter is not deployed on Talos,
-  # so node_os_info is unavailable; kube_node_info.os_image carries "Talos (vX.Y.Z)" instead).
+  # Versions
   - name: talos_version
+    # Parse `os_image` ("Talos (vX.Y.Z)"); node_exporter's node_os_info is not deployed on Talos.
     query: label_replace(max(kube_node_info) by (os_image), "version_id", "$1", "os_image", "Talos \\(v(.+)\\)")
     label: version_id
     title: Talos
@@ -26,9 +25,10 @@ metrics:
       - { color: green, min: 0, max: 9999 }
     title: Pods
 
-  # Resource usage — from kubelet cAdvisor (node_cpu_usage_seconds_total,
-  # node_memory_working_set_bytes) normalized by kube-state-metrics capacity.
+  # Resource usage
   - name: cluster_cpu_usage
+    # cAdvisor rate over kube-state-metrics capacity; `instance:node_cpu_utilisation:rate5m`
+    # recording rule is absent because node_exporter is not deployed on Talos.
     query: round(sum(rate(node_cpu_usage_seconds_total[5m])) / sum(kube_node_status_capacity{resource="cpu"}) * 100, 0.1)
     suffix: "%"
     colors:
@@ -38,6 +38,7 @@ metrics:
     title: CPU
 
   - name: cluster_memory_usage
+    # working_set_bytes over capacity; node_memory_MemTotal_bytes is unavailable without node_exporter.
     query: round(sum(node_memory_working_set_bytes) / sum(kube_node_status_capacity{resource="memory"}) * 100, 0.1)
     suffix: "%"
     colors:
@@ -56,9 +57,8 @@ metrics:
       - { color: red, min: 361, max: 9999 }
     title: Age
 
-  # Proxy for node uptime: kubelet process start time. On Talos, kubelet restarts
-  # effectively correspond to node reboots, so this tracks physical uptime closely enough.
   - name: cluster_uptime_days
+    # Kubelet start time as a proxy; on Talos a kubelet restart effectively means a node reboot.
     query: round((time() - min(process_start_time_seconds{job=~".*kubelet.*"})) / 86400)
     suffix: d
     colors:
