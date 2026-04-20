@@ -34,3 +34,7 @@
 
 - [ ] **Omni**: Use secrets for sensitive data.
 - [ ] **Readme**: Update project readme — see [buroa/k8s-gitops](https://github.com/buroa/k8s-gitops/tree/main) as reference.
+
+## Productivity
+
+- [ ] **Migrate TODO.md to GitHub**: Move this list to GitHub Issues + a Project (v2) board with labels/milestones instead of a flat markdown file.
