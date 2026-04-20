@@ -75,6 +75,17 @@ replacements:
         fieldPaths:
           - spec.plugin.bouncer.clientTrustedIPs
 
+secretGenerator:
+  # Cloudflare Origin Pull CA — public cert published by CF, used by Traefik's TLSOption
+  # clientAuth to validate that incoming TLS connections really come from Cloudflare:
+  # https://developers.cloudflare.com/ssl/static/authenticated_origin_pull_ca.pem
+  - name: cloudflare-origin-pull-ca
+    namespace: ingress-controller
+    options:
+      disableNameSuffixHash: true
+    files:
+      - tls.ca=cloudflare-origin-pull-ca.pem
+
 labels:
   - includeSelectors: false
     pairs:

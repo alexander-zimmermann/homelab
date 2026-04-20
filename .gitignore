@@ -28,6 +28,8 @@ kubeconfig
 *.kubeconfig
 certs/
 *.pem
+# Cloudflare Origin Pull CA — public cert published by CF, safe to commit
+!cloudflare-origin-pull-ca.pem
 *.crt
 *.key
 secret.yaml
