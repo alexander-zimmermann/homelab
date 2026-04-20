@@ -1,0 +1,27 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+
+metadata:
+  name: kromgo
+  namespace: kromgo
+  annotations:
+    # ExternalDNS configuration for Cloudflare
+    external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
+    kubernetes.io/ingress.class: traefik
+
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`PLACEHOLDER`)
+      middlewares:
+        - name: chain-standard
+          namespace: ingress-controller
+      services:
+        - kind: Service
+          name: kromgo
+          port: 80
+  tls:
+    secretName: kromgo-tls

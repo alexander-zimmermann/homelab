@@ -1,0 +1,102 @@
+# Override chart's default resource naming (`application`) — everything gets prefixed `kromgo`
+applicationName: kromgo
+
+deployment:
+  enabled: true
+  # Single instance is sufficient; kromgo is stateless and only proxies read-only Prometheus queries
+  replicas: 1
+  image:
+    repository: ghcr.io/kashalls/kromgo
+    tag: v0.9.1
+    pullPolicy: IfNotPresent
+
+  env:
+    # Health/metrics probe endpoint — separate port keeps /metrics off the public listener
+    HEALTH_PORT:
+      value: "8080"
+    # Public listener port (matches Service and IngressRoute target)
+    SERVER_PORT:
+      value: "80"
+    # In-cluster Prometheus Operator headless service — resolved from the `prometheus` namespace
+    PROMETHEUS_URL:
+      value: http://prometheus-operated.prometheus.svc.cluster.local:9090
+
+  # Single ConfigMap holds all metric definitions; generated via kustomize configMapGenerator
+  volumes:
+    kromgo-config:
+      configMap:
+        name: kromgo-config
+
+  volumeMounts:
+    # Mount the exporter config at the expected path
+    kromgo-config:
+      mountPath: /kromgo/config.yaml
+      subPath: config.yaml
+
+  ports:
+    - containerPort: 80
+      name: http
+      protocol: TCP
+    - containerPort: 8080
+      name: health
+      protocol: TCP
+
+  # kromgo exposes /-/ready on HEALTH_PORT (8080) — used for both liveness and readiness
+  livenessProbe:
+    enabled: true
+    httpGet:
+      path: /-/ready
+      port: health
+  readinessProbe:
+    enabled: true
+    httpGet:
+      path: /-/ready
+      port: health
+
+  resources:
+    # Ensure Burstable QoS (no BestEffort) and prevent runaway usage
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+
+  # Upstream image ships without a non-root USER — pin UID/GID explicitly so runAsNonRoot is satisfied
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+
+  # Pod-level fsGroup so the mounted ConfigMap subPath is group-readable by the non-root user
+  securityContext:
+    fsGroup: 1000
+
+# LoadBalancer with BGP advertisement via Cilium — static IP injected per environment via overlay
+service:
+  enabled: true
+  type: LoadBalancer
+  additionalLabels:
+    bgp.cilium.io/ip-pool: default
+    bgp.cilium.io/advertise-service: default
+  ports:
+    - port: 80
+      name: http
+      protocol: TCP
+      targetPort: http
+    - port: 8080
+      name: health
+      protocol: TCP
+      targetPort: health
+
+# Prometheus scrapes kromgo's own /metrics for operational visibility (request counts, latency)
+serviceMonitor:
+  enabled: true
+  additionalLabels:
+    # Prometheus Operator label (Opt-In)
+    release: prometheus
+  endpoints:
+    - port: health
+      interval: 60s
+      path: /metrics
