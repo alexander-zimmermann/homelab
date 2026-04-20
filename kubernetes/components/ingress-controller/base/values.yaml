@@ -201,6 +201,13 @@ tlsOptions:
       - CurveP521
       - CurveP384
     sniStrict: true
+    # Cloudflare Authenticated Origin Pulls — require every inbound TLS connection
+    # to present Cloudflare's origin-pull client certificate. Rejects direct-to-origin
+    # traffic at the TLS handshake layer, before any middleware runs.
+    clientAuth:
+      secretNames:
+        - cloudflare-origin-pull-ca
+      clientAuthType: RequireAndVerifyClientCert
 
 service:
   # Expose Traefik via Cilium/BGP-announced LoadBalancer with source IP preservation
