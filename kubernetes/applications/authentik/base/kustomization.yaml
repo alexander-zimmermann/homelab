@@ -16,7 +16,6 @@ helmCharts:
     version: 2026.2.2
     valuesFile: values.yaml
     namespace: authentik
-    includeCRDs: true
     apiVersions:
       - monitoring.coreos.com/v1
 

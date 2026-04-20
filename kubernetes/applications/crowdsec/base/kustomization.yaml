@@ -14,7 +14,6 @@ helmCharts:
     version: 0.23.0
     valuesFile: values.yaml
     namespace: crowdsec
-    includeCRDs: true
     apiVersions:
       - monitoring.coreos.com/v1
 
