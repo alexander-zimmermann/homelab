@@ -12,11 +12,11 @@ spec:
   selector:
     # Must match `.spec.template.metadata.labels`.
     matchLabels:
-      app: smtprelay
+      app.kubernetes.io/name: smtprelay
   template:
     metadata:
       labels:
-        app: smtprelay
+        app.kubernetes.io/name: smtprelay
     spec:
       containers:
         - name: smtprelay
