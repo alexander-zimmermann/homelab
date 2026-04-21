@@ -34,5 +34,3 @@
 ## Productivity
 
 - [ ] **Migrate TODO.md to GitHub**: Move this list to GitHub Issues + a Project (v2) board with labels/milestones instead of a flat markdown file.
-- [ ] **Readme**: Update project readme — see [buroa/k8s-gitops](https://github.com/buroa/k8s-gitops/tree/main) as reference.
-- [ ] **Kromgo README badges**: Add a scheduled GitHub Actions workflow that fetches the [kromgo](kubernetes/applications/kromgo/base/config/kromgo.yaml) endpoints at `kromgo.zimmermann.sh` using the Cloudflare Access Service Token (stored as GH repo secrets `CF_ACCESS_CLIENT_ID` / `CF_ACCESS_CLIENT_SECRET`) and rewrites the static shields.io badges in `README.md`. Needed because GitHub's image proxy (Camo) can't forward custom headers, so a direct shields.io → kromgo request would be blocked by CF Access.

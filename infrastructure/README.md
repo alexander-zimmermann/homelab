@@ -1,208 +1,123 @@
-# Homelab Infrastructure - Proxmox Orchestration with OpenTofu
+# Infrastructure — Proxmox IaC
 
-A comprehensive infrastructure-as-code solution for managing Proxmox VE environments using OpenTofu, featuring automated VM provisioning, Talos Kubernetes clusters, and streamlined cloud-init management.
+[![OpenTofu](https://img.shields.io/badge/OpenTofu-1.11+-844FBA?style=flat-square&logo=opentofu&logoColor=white)](https://opentofu.org/)
+[![Proxmox](https://img.shields.io/badge/Proxmox%20VE-9.0-E57000?style=flat-square&logo=proxmox&logoColor=white)](https://www.proxmox.com/)
+[![Provider](https://img.shields.io/badge/Provider-bpg%2Fproxmox-blue?style=flat-square)](https://github.com/bpg/terraform-provider-proxmox)
 
-## Overview
+> **Layer 1 of [the homelab stack](../README.md).** Pure Proxmox IaC — manages cluster-wide settings, nodes, images, templates, and the VM/LXC fleet. It has zero dependency on Kubernetes. I could rip out everything above this layer and still have a perfectly usable "IaC for Proxmox" setup.
 
-This project orchestrates a complete homelab infrastructure on Proxmox VE using OpenTofu (Terraform fork). It provides:
+## What this does
 
-- **Declarative Infrastructure**: YAML-based manifest for defining all infrastructure components
-- **Automated VM/Container Provisioning**: Streamlined creation of VMs and LXC containers
-- **Talos Kubernetes Integration**: Automated Talos cluster deployment via Sidero Omni
-- **Cloud-Init Management**: Modular cloud-init configuration system
-- **Image Management**: Automated download and checksum verification of OS images
-- **Windows VM Support**: UEFI, TPM 2.0, and Secure Boot configuration for Windows 11
+I describe my Proxmox setup in YAML manifests, `locals.tf` stitches them together, and [OpenTofu](https://opentofu.org/) plus the [`bpg/proxmox`](https://github.com/bpg/terraform-provider-proxmox) provider make it happen. That covers:
 
-## Architecture
+- **Cluster-wide config** — ACME for PVE UI certs, backup jobs to PBS, hardware mappings (USB), users.
+- **Per-node config** — repositories, network, optional subscription keys.
+- **OS images** — declarative download + SHA-512 verification (Debian Trixie, Ubuntu Noble/Plucky, Windows 11 25H2 + virtio).
+- **Cloud-init modules** — reusable blocks for users, vendor bootstrap, network.
+- **Templates** — VM and LXC templates (hardware shapes, OS type).
+- **Fleet** — actual VMs and containers instantiated from templates.
 
-### Core Components
+Specials worth calling out:
 
-- **OpenTofu 1.11.1**: Infrastructure orchestration engine
-- **Proxmox VE 9.0**: Virtualization platform
-- **Talos Linux**: Kubernetes-focused OS for container workloads
-- **Sidero Omni**: Management platform for Talos clusters
-- **Ubuntu 24.04 Noble**: General-purpose VM workloads
-- **Windows 11 25H2**: Windows workloads with modern security features
+- **Deterministic MAC addresses** — `02:01:00:XX:XX:XX` for VMs, `02:02:00:XX:XX:XX` for LXCs (derived from their IDs). Stable DHCP leases across rebuilds.
+- **Windows 11 support** — UEFI, TPM 2.0, Secure Boot with pre-enrolled keys, Q35, VirtIO driver ISO.
+- **Omni host VM** — one of the VMs (`management-01`) runs [Omni](https://omni.siderolabs.com/) in Docker Compose via cloud-init. Talos VMs themselves are **not** provisioned here — Omni creates and manages them through its own Proxmox infra provider ([Layer 2](../cluster/README.md)).
 
-### Project Structure
+## Directory layout
 
-```bash
+```
 infrastructure/
-├── main.tf                     # Primary configuration
-├── locals.tf                   # Logic & Manifest loading
-├── variables.tf                # Input variables definitions
-├── outputs.tf                  # Output values definitions
-├── versions.tf                 # Provider & Terraform versions
-├── terraform.tfvars.example    # Example variable values
-├── manifest/                   # YAML definitions (The "Source of Truth")
-│   ├── 00-cluster/             # Cluster-wide settings (PVE connection)
-│   ├── 10-pve-node/            # Node configurations (Core, Network)
-│   ├── 20-image/               # OS Image definitions
-│   ├── 30-cloud-init/          # Cloud-Init config (users, vendor, net)
-│   ├── 40-template/            # VM/LXC Templates
-│   └── 50-fleet/               # Virtual Machines & Containers
-├── modules/                    # Reusable OpenTofu modules
-│   ├── 10-pve-node-core/       # Proxmox Node Core Config
-│   ├── 30-cloud-init/          # Cloud-Init Generation
-│   └── ... (others)
-└── templates/                  # Templates for Cloud-Init & Provisioning
-    └── 30-cloud-init/          # Secret injection templates (.tftpl)
+├── main.tf                 # Module wiring
+├── locals.tf               # Manifest merging + computed defaults
+├── variables.tf            # Input variables (credentials, secrets)
+├── outputs.tf
+├── versions.tf             # OpenTofu + provider versions
+├── terraform.tfvars.example
+├── manifest/               # YAML — the source of truth
+│   ├── 00-cluster/         #   PVE connection, ACME, backup jobs, PBS storage, users
+│   ├── 10-pve-node/        #   Node core settings, repos, network
+│   ├── 20-image/           #   OS images with checksums
+│   ├── 30-cloud-init/      #   Reusable cloud-init modules
+│   ├── 40-template/        #   VM / LXC templates
+│   └── 50-fleet/           #   Actual VM / container instances
+├── modules/                # Reusable OpenTofu modules
+│   ├── 00-pve-cluster-*    #   cluster-scope
+│   ├── 10-pve-node-*       #   node-scope
+│   ├── 20-image
+│   ├── 30-cloud-init
+│   ├── 40-template-{vm,lxc}
+│   └── 50-fleet-{vm,lxc}
+└── templates/              # .tftpl files rendered into cloud-init (env files, scripts)
 ```
 
-## Infrastructure Workflow
+The numeric prefixes (`00-` through `50-`) match between `manifest/` and `modules/` so the data flow is obvious — a `50-fleet` YAML references a `40-template` which references a `20-image`, etc.
 
-### 1. Task-Based Automation
-
-The project uses `go-task` with organized sub-taskfiles.
-
-#### Infrastructure (`infra:*`)
-
-These tasks manage the Proxmox infrastructure via OpenTofu.
-
-- `task infra:init`: Initialize OpenTofu (`tofu init`), download plugins.
-- `task infra:status`: Generate an execution plan (`tofu plan`). Checks for drift.
-- `task infra:create`: Apply changes to Proxmox (`tofu apply`). **Zero-to-Hero infra command.**
-- `task infra:delete`: Tear down all managed infrastructure.
-- `task infra:show`: Show Terraform outputs.
-
-### 2. Infrastructure Definition
-
-Infrastructure is defined in a **split manifest structure** located in `infrastructure/manifest/*.yaml`. This allows for better organization and maintainability.
-
-The configuration is loaded and merged by `locals.tf`.
-
-#### Manifest Directories
-
-- **`00-cluster/`**: Cluster-wide configurations (PVE connection, ACME, Users).
-- **`10-pve-node/`**: Node-specific configurations (Core settings, Repositories, Network).
-- **`20-image/`**: Operating System images (Debian, Talos, Windows) with checksums.
-- **`30-cloud-init/`**: Reusable Cloud-Init modules (Users, Vendor, Network).
-- **`40-template/`**: VM and LXC Templates (Hardware specs, OS type).
-- **`50-fleet/`**: Actual Virtual Machine and Container instances.
-
-#### Example: Image Specifications (`20-image/`)
+## Example: declaring an OS image
 
 ```yaml
+# manifest/20-image/image.yaml
 image:
-  # Debian Cloud Image
   vm_debian_trixie:
     image_type: import
+    image_url: https://cloud.debian.org/images/cloud/trixie/20260327-2429/debian-13-genericcloud-amd64-20260327-2429.qcow2
     image_filename: debian-13-genericcloud-amd64.qcow2
-    image_url: https://cloud.debian.org/images/cloud/trixie/latest/debian-13-genericcloud-amd64.qcow2
-    image_checksum: "e5563c7bb388eebf7df385e99ee36c83cd16ba8fad4bd07f4c3fd725a6f1cf1cb9f54c6673d4274a856974327a5007a69ff24d44f9b21f7f920e1938a19edf7e"
-    image_checksum_algorithm: "sha512"
-
-  # Talos Linux (Factory build)
-  vm_talos_1_12_0:
-    image_type: import
-    image_filename: talos-1.12.0-nocloud-amd64.raw
-    image_url: https://factory.talos.dev/image/.../nocloud-amd64.raw
-    image_checksum: "b106e0b4a6644045e895552877c68c5094d1eb77633a37d900ddfaeefdb8e29b"
+    image_checksum: 09559ec27d263997827dd8cddf76e97ea8e0f1803380aa501ea7eaa4b4968cd76ffef4ec7eb07ef1a9ccbeb0925a5020492ea9ed53eb167d62f3a2285039912c
+    image_checksum_algorithm: sha512
 ```
 
-#### Templates Directory (`templates/`)
+`locals.tf` pulls every `manifest/20-image/*.yaml` in, merges them, and passes the map to the `20-image` module which handles the actual download + verification. Renovate keeps the `image_url` and `image_checksum` fresh via PRs — see [`image.yaml`](manifest/20-image/image.yaml) for the live catalog.
 
-Contains text-based templates (`.tftpl`) used by OpenTofu's `templatefile()` function:
+## Usage
 
-- **`30-cloud-init/`**: Environment files and scripts injected into VMs via Cloud-Init. Supports secret injection.
+From the repo root (uses [go-task](https://taskfile.dev)):
 
-### 3. Cloud-Init Configuration System
-
-Modular cloud-init configuration supporting:
-
-- **User Configuration**: SSH keys, passwords, user creation
-- **Vendor Configuration**: Package installation, system commands
-- **Network Configuration**: Static/DHCP networking, DNS settings
-- **Meta Configuration**: Hostname and metadata
-- **Snap Configuration**: Native support for Snap packages (used for `lego` and `task`)
-
-### 4. Management VM & Omni Setup
-
-A dedicated management VM (`management-01` / `cluster-mgmt`) hosts the **Omni** platform.
-
-- **Storage**: Persistent data on `/mnt/omni`.
-- **Config**: Ephemeral managed config in `/opt/omni` (Docker Compose, Envs).
-- **Bootstrap**: Cloud-Init Native:
-  - Cloud-Init injects `omni-compose.yaml` and `.env` files directly.
-  - `omni-bootstrap.sh` handles Init (Certificates, GPG) and Startup.
-  - No external git clone required during boot.
-
-### 5. Talos Kubernetes Cluster
-
-The project includes automated Talos Kubernetes cluster deployment via **Sidero Omni**.
-
-1.  **Infrastructure Provisioning**: OpenTofu creates the VMs (`infra:create`).
-2.  **Omni Registration**: VMs boot custom images (generated via `cluster:init`) and register with Omni.
-3.  **Machine Classes**: Defined in Omni (via `cluster:create`) to automatically assign roles (Control Plane / Worker) based on generic hardware or labels.
-
-### 5. Advanced Features
-
-#### Deterministic MAC Address Generation
-
-All VMs and containers receive deterministic MAC addresses based on their ID:
-
-- **VMs**: `02:01:00:XX:XX:XX` format (based on VM ID)
-- **Containers**: `02:02:00:XX:XX:XX` format (based on Container ID)
-- **Benefits**: Stable DHCP IP assignments across reboots and redeployments
-
-#### Windows 11 Support
-
-Full support for modern Windows VMs:
-
-- **UEFI Boot**: `bios: ovmf` for modern boot process
-- **TPM 2.0**: Hardware security module for BitLocker and Windows 11 requirements
-- **Secure Boot**: Pre-enrolled keys for secure boot validation
-- **Q35 Machine Type**: Modern chipset emulation
-- **VirtIO Drivers**: Automated ISO attachment for optimal performance
-
-## Provider Configuration
-
-### Proxmox Provider (bpg/proxmox)
-
-- **Primary Management**: VM/container lifecycle management
-- **API Communication**: RESTful API integration with Proxmox VE
+| Task | What it does |
+| --- | --- |
+| `task infra:init` | `tofu init` — download providers. Run once or after provider updates. |
+| `task infra:status` | `tofu plan` — dry-run, drift check. |
+| `task infra:create` | `tofu apply` — zero-to-hero. Builds everything declared in the manifests. |
+| `task infra:delete` | `tofu destroy` — tears everything down. |
+| `task infra:show` | Print OpenTofu outputs. |
 
 ## Prerequisites
 
-### Infrastructure Requirements
+- **Proxmox VE 9.0+**, API reachable on port 8006.
+- **DHCP** on the VM network (MAC addresses are deterministic, IPs come from your router).
+- **OpenTofu** ≥ 1.11, **omnictl**, **talosctl** on your workstation.
+- **`terraform.tfvars`** with:
 
-- **Proxmox VE 9.0+**: Accessible via API (port 8006)
-- **Network**: DHCP server for VM/container IP assignment
+  ```hcl
+  pve_cluster_token_id     = "…"
+  pve_cluster_token_secret = "…"
+  pve_cluster_password     = "…"  # optional, for console access
+  pve_node_core_subscription_keys = {
+    pve-1 = "…"
+  }
+  ```
 
-### Development Environment
+  See [`terraform.tfvars.example`](terraform.tfvars.example) for the full shape.
 
-- **OpenTofu 1.11.1+**: Infrastructure orchestration
-- **Talosctl**: Talos cluster management CLI
-- **Omnictl**: Sidero Omni CLI
+## Swapping the hypervisor
 
-### Authentication and Access
+The Proxmox-specific bits are confined to the `bpg/proxmox` provider and the `pve_*` module namespaces. Everything else (cloud-init generation, image catalog, manifest merging) is generic Terraform/OpenTofu. Swapping to another hypervisor means:
 
-Configure Proxmox credentials and subscription keys in `terraform.tfvars`:
+1. Replace `bpg/proxmox` in [`versions.tf`](versions.tf) with your provider of choice (libvirt, vsphere, …).
+2. Rewrite the `10-pve-node-*`, `40-template-{vm,lxc}`, `50-fleet-{vm,lxc}` modules against the new provider's resources.
+3. Keep `20-image`, `30-cloud-init`, `locals.tf`, and the manifest structure — they're portable.
 
-```hcl
-# Proxmox API Authentication
-pve_cluster_token_id     = "YOUR_PVE_TOKEN_ID"
-pve_cluster_token_secret = "YOUR_PVE_TOKEN_SECRET"
-pve_cluster_password     = "YOUR_PVE_PASSWORD" # Optional (Console Access)
-
-# Proxmox Subscription Keys (Optional)
-pve_node_core_subscription_keys = {
-  pve-1 = "YOUR_SUBSCRIPTION_KEY"
-}
-```
+Is it a weekend project? Yes. Is it doable? Also yes.
 
 ## Troubleshooting
 
-### Common Issues
+**Talos nodes show up as `NotReady`.**
+Check the [Omni dashboard](https://omni.siderolabs.com/). Probably machine classes aren't registered yet — run `task cluster:init`.
 
-**Issue**: Talos nodes are `NotReady`.
+**`tofu taint` doesn't trigger a rebuild.**
+`task infra:status` generates a plan file (`tfplan`). `task infra:create` applies that file. If you ran `taint` after generating the plan, rerun `task infra:status` first.
 
-- **Solution**: Check Sidero Omni dashboard. Ensure Machine Classes are registered (`task cluster:create`).
-
-**Issue**: `tofu taint` doesn't trigger rebuild.
-
-- **Solution**: `task infra:status` (Plan) checks for state changes. Ensure `task infra:create` applies the plan (`tofu apply tfplan`).
+**A secret in cloud-init needs to change without rebuilding the VM.**
+Cloud-init values are embedded at VM creation time. For post-boot secret rotation, use a real config-management path (Ansible, SSM, etc.) — this layer isn't the right tool.
 
 ## License
 
-See LICENSE file for details.
+See [../LICENSE](../LICENSE).
