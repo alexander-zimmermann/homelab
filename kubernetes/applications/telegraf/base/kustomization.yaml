@@ -10,7 +10,7 @@ helmCharts:
   - name: telegraf
     repo: https://helm.influxdata.com
     releaseName: telegraf
-    version: 1.8.69
+    version: 1.8.70
     valuesFile: values.yaml
     namespace: telegraf
 
