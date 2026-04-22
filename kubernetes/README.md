@@ -103,11 +103,11 @@ All components grouped by what they do. Icons via [homarr-labs/dashboard-icons](
 
 |                                                                                                        | Component                                                        | Purpose                                                           |
 | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- | ----------------------------------------------------------------- |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/talos.svg" height="18" />        | [Talos Linux](https://www.talos.dev/)                            | Immutable, API-managed Kubernetes OS                              |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/talos.png" height="18" />        | [Talos Linux](https://www.talos.dev/)                            | Immutable, API-managed Kubernetes OS                              |
 |                                                                                                        | [Omni](https://omni.siderolabs.com/)                             | SaaS control plane for Talos (auto-provisioning, machine classes) |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/cilium.svg" height="18" />       | [Cilium](https://cilium.io/)                                     | eBPF CNI (kube-proxy replacement, L2 announcements)               |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/traefik.svg" height="18" />      | [Traefik](https://traefik.io/)                                   | Ingress with pre/post-auth middleware chains                      |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/cert-manager.svg" height="18" /> | [cert-manager](https://cert-manager.io/)                         | Automated TLS via Cloudflare DNS-01                               |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/cilium.png" height="18" />       | [Cilium](https://cilium.io/)                                     | eBPF CNI (kube-proxy replacement, L2 announcements)               |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/traefik.png" height="18" />      | [Traefik](https://traefik.io/)                                   | Ingress with pre/post-auth middleware chains                      |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/cert-manager.png" height="18" /> | [cert-manager](https://cert-manager.io/)                         | Automated TLS via Cloudflare DNS-01                               |
 |                                                                                                        | [external-dns](https://github.com/kubernetes-sigs/external-dns)  | Syncs ingress hostnames to Cloudflare                             |
 |                                                                                                        | [Kyverno](https://kyverno.io/)                                   | Policy engine (secret replication, admission)                     |
 |                                                                                                        | [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) | Git-safe, cluster-decryptable secrets                             |
@@ -116,37 +116,37 @@ All components grouped by what they do. Icons via [homarr-labs/dashboard-icons](
 
 |                                                                                                    | Component                                  | Purpose                                       |
 | -------------------------------------------------------------------------------------------------- | ------------------------------------------ | --------------------------------------------- |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/argo-cd.svg" height="18" />  | [Argo CD](https://argo-cd.readthedocs.io/) | Declarative sync of `kubernetes/applications` |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/renovate.svg" height="18" /> | [Renovate](https://docs.renovatebot.com/)  | Automated dependency PRs                      |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/argo-cd.png" height="18" />  | [Argo CD](https://argo-cd.readthedocs.io/) | Declarative sync of `kubernetes/applications` |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/renovate.png" height="18" /> | [Renovate](https://docs.renovatebot.com/)  | Automated dependency PRs                      |
 
 ### Security & Identity
 
 |                                                                                                      | Component                                 | Purpose                                 |
 | ---------------------------------------------------------------------------------------------------- | ----------------------------------------- | --------------------------------------- |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/authentik.svg" height="18" />  | [Authentik](https://goauthentik.io/)      | SSO / OIDC / forward-auth               |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/crowdsec.svg" height="18" />   | [CrowdSec](https://www.crowdsec.net/)     | Behavior-based IPS on ingress           |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/cloudflare.svg" height="18" /> | [Cloudflare](https://www.cloudflare.com/) | WAF, rate-limiting, edge TLS, tunneling |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/authentik.png" height="18" />  | [Authentik](https://goauthentik.io/)      | SSO / OIDC / forward-auth               |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/crowdsec.png" height="18" />   | [CrowdSec](https://www.crowdsec.net/)     | Behavior-based IPS on ingress           |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/cloudflare.png" height="18" /> | [Cloudflare](https://www.cloudflare.com/) | WAF, rate-limiting, edge TLS, tunneling |
 
 ### Storage & Data
 
 |                                                                                                      | Component                                                                     | Purpose                                |
 | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------- |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/kubernetes.svg" height="18" /> | CSI Block + NFS                                                               | Persistent volumes for workloads       |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/rustfs.svg" height="18" />     | [RustFS](https://github.com/rustfs/rustfs)                                    | S3-compatible object storage           |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/postgresql.svg" height="18" /> | [CloudNativePG](https://cloudnative-pg.io/) + [Barman](https://pgbarman.org/) | Postgres operator with S3 PITR backups |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/redis.svg" height="18" />      | [Redis](https://redis.io/)                                                    | In-memory cache                        |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/kubernetes.png" height="18" /> | CSI Block + NFS                                                               | Persistent volumes for workloads       |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/rustfs.png" height="18" />     | [RustFS](https://github.com/rustfs/rustfs)                                    | S3-compatible object storage           |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/postgresql.png" height="18" /> | [CloudNativePG](https://cloudnative-pg.io/) + [Barman](https://pgbarman.org/) | Postgres operator with S3 PITR backups |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/redis.png" height="18" />      | [Redis](https://redis.io/)                                                    | In-memory cache                        |
 |                                                                                                      | [NATS](https://nats.io/)                                                      | Lightweight messaging                  |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/influxdb.svg" height="18" />   | [InfluxDB](https://www.influxdata.com/)                                       | Time-series DB for IoT telemetry       |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/influxdb.png" height="18" />   | [InfluxDB](https://www.influxdata.com/)                                       | Time-series DB for IoT telemetry       |
 
 ### Observability
 
 |                                                                                                      | Component                                    | Purpose                                     |
 | ---------------------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------- |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/prometheus.svg" height="18" /> | [Prometheus](https://prometheus.io/)         | Metrics & alerting                          |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/grafana.svg" height="18" />    | [Grafana](https://grafana.com/) + Operator   | Dashboards, dashboards-as-code              |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/loki.svg" height="18" />       | [Loki](https://grafana.com/oss/loki/)        | Log aggregation                             |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/alloy.svg" height="18" />      | [Alloy](https://grafana.com/docs/alloy/)     | Unified telemetry collector                 |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/gatus.svg" height="18" />      | [Gatus](https://gatus.io/)                   | Status page / synthetic probes              |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/prometheus.png" height="18" /> | [Prometheus](https://prometheus.io/)         | Metrics & alerting                          |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/grafana.png" height="18" />    | [Grafana](https://grafana.com/) + Operator   | Dashboards, dashboards-as-code              |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/loki.png" height="18" />       | [Loki](https://grafana.com/oss/loki/)        | Log aggregation                             |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/alloy.png" height="18" />      | [Alloy](https://grafana.com/docs/alloy/)     | Unified telemetry collector                 |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/gatus.png" height="18" />      | [Gatus](https://gatus.io/)                   | Status page / synthetic probes              |
 |                                                                                                      | [kromgo](https://github.com/kashalls/kromgo) | PromQL → shields.io bridge (cluster badges) |
 
 ### Applications
@@ -154,8 +154,8 @@ All components grouped by what they do. Icons via [homarr-labs/dashboard-icons](
 |                                                                                                    | Component                            | Purpose                                   |
 | -------------------------------------------------------------------------------------------------- | ------------------------------------ | ----------------------------------------- |
 |                                                                                                    | [Homepage](https://gethomepage.dev/) | Service start page                        |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/wikijs.svg" height="18" />   | [Wiki.js](https://js.wiki/)          | Knowledge base                            |
-| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/node-red.svg" height="18" /> | [Node-RED](https://nodered.org/)     | Flow-based automation                     |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/wikijs.png" height="18" />   | [Wiki.js](https://js.wiki/)          | Knowledge base                            |
+| <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/node-red.png" height="18" /> | [Node-RED](https://nodered.org/)     | Flow-based automation                     |
 |                                                                                                    | SolarEdge2MQTT                       | PV inverter → MQTT / InfluxDB             |
 |                                                                                                    | SMTPRelay                            | Outbound mail relay for cluster workloads |
 
