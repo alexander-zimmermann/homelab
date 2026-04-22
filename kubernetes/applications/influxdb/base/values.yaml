@@ -1,6 +1,13 @@
 # Stable resource name for all rendered objects
 fullnameOverride: influxdb3
 
+# Override the chart's pinned appVersion (3.8.4-enterprise) to test whether
+# 3.9.1-enterprise fixes the gen2 compactor "empty plans" issue (#27301).
+# The chart only bumps appVersion on chart releases (currently 0.2.0);
+# the image tag can be overridden without a chart version bump.
+image:
+  tag: 3.9.1-enterprise
+
 cluster:
   id: homelab-cluster
 
