@@ -1,14 +1,14 @@
 <div align="center">
 
-<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/kubernetes.svg" height="40" alt="Kubernetes" />
+<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/kubernetes.png" height="40" alt="Kubernetes" />
 &nbsp;
-<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/talos.svg" height="40" alt="Talos" />
+<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/talos.png" height="40" alt="Talos" />
 &nbsp;
-<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/argo-cd.svg" height="40" alt="Argo CD" />
+<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/argo-cd.png" height="40" alt="Argo CD" />
 &nbsp;
-<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/proxmox.svg" height="40" alt="Proxmox" />
+<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png" height="40" alt="Proxmox" />
 &nbsp;
-<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/opentofu.svg" height="40" alt="OpenTofu" />
+<img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/opentofu.png" height="40" alt="OpenTofu" />
 
 # homelab
 
