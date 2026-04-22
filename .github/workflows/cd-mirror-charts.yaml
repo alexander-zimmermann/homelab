@@ -112,5 +112,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          SRC_REF="${{ matrix.src }}:${{ matrix.tag }}"
+          DST_REF="${{ matrix.dst }}:${{ matrix.tag }}"
           # '-r': also copy referrers (e.g., signatures/SBOM attestations) if present
-          oras cp -r "${{ matrix.src }}:${{ matrix.tag }}" "${{ matrix.dst }}:${{ matrix.tag }}"
+          if ! ERR="$(oras cp -r "$SRC_REF" "$DST_REF" 2>&1)"; then
+            printf '%s\n' "$ERR"
+            # Tolerate upstream tags listed but not resolvable (manifest withdrawn).
+            if grep -qiE 'failed to resolve|not found|manifest unknown' <<< "$ERR"; then
+              echo "::warning::Skipping unresolvable upstream tag $SRC_REF"
+              exit 0
+            fi
+            exit 1
+          fi
