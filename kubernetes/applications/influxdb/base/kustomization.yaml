@@ -59,7 +59,7 @@ patches:
         value: "exec influxdb3 \\\n  serve \\\n  --mode=ingest \\\n  --node-id=$(hostname)\n"
       - op: replace
         path: /spec/template/spec/containers/0/command/2
-        value: "exec influxdb3 \\\n  serve \\\n  --node-id=$(hostname) \\\n  --plugin-dir=/plugins\n"
+        value: "exec influxdb3 \\\n  serve \\\n  --node-id=$(hostname) \\\n  --plugin-dir=/plugins \\\n  --package-manager=disabled\n"
 
   # Rename influxdb3-ingester → influxdb3 since the single node runs all roles.
   - target:
