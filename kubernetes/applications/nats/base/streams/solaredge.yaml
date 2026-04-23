@@ -1,0 +1,17 @@
+# SolarEdge inverters published by solaredge2mqtt via MQTT (port 1883). The NATS
+# MQTT adapter maps `solaredge-1/*` and `solaredge-2/*` MQTT topics to
+# `solaredge-1.>` / `solaredge-2.>` NATS subjects. One stream covers both.
+apiVersion: jetstream.nats.io/v1beta2
+kind: Stream
+metadata:
+  name: solaredge
+  namespace: nats
+spec:
+  name: SOLAREDGE
+  subjects:
+    - solaredge-1.>
+    - solaredge-2.>
+  storage: file
+  retention: limits
+  maxAge: 168h
+  replicas: 1
