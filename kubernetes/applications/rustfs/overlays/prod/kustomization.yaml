@@ -48,9 +48,6 @@ replacements:
 
 patches:
   # RustFS server manages distributed storage and API access.
-  # TEMP: memory limit bumped 512Mi → 2Gi during the InfluxDB 3 backfill /
-  # recovery phase (2026-04-23). 512Mi got the pod OOMKilled under the
-  # Telegraf-retry-buffer write spike; revisit once backfill is complete.
   - target:
       kind: Deployment
       name: rustfs
@@ -66,7 +63,7 @@ patches:
             memory: 128Mi
           limits:
             cpu: 200m
-            memory: 2Gi
+            memory: 512Mi
 
   # RustFS API service with static IP and BGP advertisement
   - target:
