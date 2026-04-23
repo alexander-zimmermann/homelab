@@ -15,9 +15,8 @@ replacements:
           - spec.volumeClaimTemplates.0.spec.resources.requests.storage
 
 patches:
-  # TEMP: bumped to 2Gi for backfill recovery / RAM investigation
-  # (2026-04-20). Steady state sits at ~513 MiB peak, 1 GiB is plenty —
-  # revert to 1Gi once the recovery work is done.
+  # Combined node: ingest + query + compact in one process. Sized from
+  # observation: ~300 MiB idle, ~513 MiB peak, 1 GiB gives ~2× headroom.
   - target:
       kind: StatefulSet
       name: influxdb3
@@ -33,7 +32,7 @@ patches:
             memory: 512Mi
           limits:
             cpu: 500m
-            memory: 2Gi
+            memory: 1Gi
 
   # Extend startup grace so WAL replay can complete on first boot after
   # a backlog built up; extend liveness timeout to absorb persist/GC spikes.
