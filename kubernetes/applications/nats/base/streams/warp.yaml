@@ -1,0 +1,15 @@
+# Tinkerforge Warp wallbox data published via MQTT (topic prefix `warp/…`).
+# The NATS MQTT adapter maps to `warp.>` NATS subjects.
+apiVersion: jetstream.nats.io/v1beta2
+kind: Stream
+metadata:
+  name: warp
+  namespace: nats
+spec:
+  name: WARP
+  subjects:
+    - warp.>
+  storage: file
+  retention: limits
+  maxAge: 168h
+  replicas: 1

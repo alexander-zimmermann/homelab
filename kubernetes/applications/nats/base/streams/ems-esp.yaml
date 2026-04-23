@@ -1,0 +1,15 @@
+# EMS-ESP heating system data published via MQTT (topic prefix `ems-esp/…`).
+# The NATS MQTT adapter maps to `ems-esp.>` NATS subjects.
+apiVersion: jetstream.nats.io/v1beta2
+kind: Stream
+metadata:
+  name: ems-esp
+  namespace: nats
+spec:
+  name: EMS_ESP
+  subjects:
+    - ems-esp.>
+  storage: file
+  retention: limits
+  maxAge: 168h
+  replicas: 1
