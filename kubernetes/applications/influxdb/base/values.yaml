@@ -40,13 +40,6 @@ security:
 extraEnv:
   - name: INFLUXDB3_ADMIN_TOKEN_FILE
     value: /etc/influxdb3/tokens/admin-token.json
-  # TEMP: extend the gen1 index lookback window (default 24h) so the Gen1
-  # compactor sees historical writes (Influx 2 → 3 backfill covering
-  # 2022-07 onwards) while they are being written, rather than leaving
-  # them as tiny uncompacted 10-min buckets forever. Revisit after the
-  # backfill is complete.
-  - name: INFLUXDB3_GEN1_LOOKBACK_DURATION
-    value: 1460d
 
 # At-Home license allows only ONE node. Run the ingester as the sole component —
 # Kustomize patches strip --mode=ingest so it starts in combined mode
