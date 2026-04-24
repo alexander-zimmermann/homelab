@@ -42,7 +42,10 @@ jobs:
         uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3
         id: app-token
         with:
-          client-id: ${{ secrets.RENOVATE_APP_CLIENT_ID }}
+          # NOTE: 'app-id' is marked deprecated by the action, but GitHub's
+          # installation-token endpoint still rejects string client-id values
+          # with 'iss must be an Integer' (HTTP 401). Staying on numeric App ID.
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
           private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
 
       - name: Run Renovate
