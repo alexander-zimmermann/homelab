@@ -9,6 +9,8 @@ repos:
       - id: check-symlinks
       - id: check-yaml
         args: [--allow-multiple-documents, --unsafe]
+      - id: check-json
+        exclude: '^\.vscode/'
       - id: check-added-large-files
       - id: detect-private-key
       - id: end-of-file-fixer
