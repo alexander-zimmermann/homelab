@@ -26,6 +26,9 @@
   "flux": {
     "managerFilePatterns": ["/\\.yaml$/"]
   },
+  "pre-commit": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "matchFileNames": ["infrastructure/manifest/20-image/image.yaml"],

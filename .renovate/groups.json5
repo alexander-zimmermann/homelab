@@ -2,6 +2,11 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "packageRules": [
     {
+      "description": "pre-commit hooks grouping",
+      "matchManagers": ["pre-commit"],
+      "groupName": "pre-commit"
+    },
+    {
       "description": "Kubernetes components grouping",
       "groupName": "kubernetes",
       "matchDatasources": ["docker"],
