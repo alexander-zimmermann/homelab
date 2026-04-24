@@ -1,14 +1,6 @@
 {
-  // --- Editor Appearance & Behavior ---
-  "editor.bracketPairColorization.enabled": true,
-  "editor.fontFamily": "FiraCode Nerd Font",
-  "editor.fontLigatures": true,
-  "editor.hover.delay": 1500,
+  // --- Editor Behavior ---
   "editor.rulers": [100],
-  "editor.stickyScroll.enabled": false,
-
-  // --- Explorer & File Handling ---
-  "explorer.autoReveal": false,
   "files.trimTrailingWhitespace": true,
 
   // --- File Associations ---
@@ -17,7 +9,8 @@
     "**/*.yaml.j2": "yaml",
     "*.yaml.tftpl": "yaml",
     "*.conf.tftpl": "dotenv",
-    "**/*.tfvars.example": "opentofu-vars"
+    "**/*.tfvars.example": "opentofu-vars",
+    "*.tf": "opentofu"
   },
 
   // --- Material Icon Theme - Color Saturation ---
