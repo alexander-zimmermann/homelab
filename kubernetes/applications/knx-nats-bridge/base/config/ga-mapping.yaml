@@ -1,0 +1,4 @@
+# Placeholder mapping — generated content lands here in Group B (knxproj-to-yaml).
+# Empty mapping means every incoming telegram falls under KNX_NATS_UNMAPPED_POLICY=skip
+# until the real file is committed.
+{}
