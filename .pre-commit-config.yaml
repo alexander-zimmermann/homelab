@@ -21,16 +21,16 @@ repos:
         args: [--markdown-linebreak-ext=md]
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.18.0
+    rev: v8.30.1
     hooks:
       - id: gitleaks
 
   - repo: https://github.com/tofuutils/pre-commit-opentofu
-    rev: v2.2.2
+    rev: v2.3.0
     hooks:
       - id: tofu_fmt
 
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.7
+    rev: v1.7.12
     hooks:
       - id: actionlint
