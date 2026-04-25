@@ -12,6 +12,7 @@
 - [ ] **Omni**: Use secrets for sensitive data.
 - [ ] **external-services dev domain**: Certificates in [kubernetes/applications/external-services/base/certificate.yaml](kubernetes/applications/external-services/base/certificate.yaml) only cover `*.zimmermann.sh` — add counterparts for the dev domain `*.zimmermann.phd`.
 - [ ] **Restore Task**: Add `task k8s:restore` that replays Velero backups into DBs and PVCs after a bootstrap (e.g. Homepage images PVC).
+- [ ] **CNPG cluster PG16 → PG18 migration**: `authentik-db`, `wiki-js-db`, `crowdsec-db`, `gatus-db` are currently on PG 16.1. CNPG operator 1.28.x already supports PG 18 (in-place major upgrade via `imageName` bump + `pg_upgrade` orchestrated by the operator). New `timescaledb-db` runs on PG 18.3 / TimescaleDB 2.23 — keeping the others on 16.1 means two Postgres major versions in parallel. Plan a coordinated bump (one cluster at a time, verify backup + app reconnect after each) to land them all on PG 18.x.
 - [ ] **Split Ingress Architecture**: Dual Traefik strategy with UDM VLAN/DMZ separation.
   - `traefik-external` (DMZ VLAN) → `*.zimmermann.sh` via Cloudflare, all services publicly accessible
   - `traefik-internal` (internal VLAN) → `*.zimmermann.eu.com` via internal DNS resolver
