@@ -1,0 +1,11 @@
+# Extend gitleaks' default ruleset; only add an allowlist for files that
+# legitimately contain high-entropy strings.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Bitnami SealedSecret encrypted blobs are not plaintext leaks"
+paths = [
+    '''.*sealed-secret\.yaml$''',
+    '''.*sealed-secret-.*\.yaml$''',
+]
