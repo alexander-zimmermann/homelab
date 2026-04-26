@@ -5855,13 +5855,13 @@
   dpt: '1.024'
   name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Tag/Nacht
 9/0/180:
-  dpt: '9.000'
+  dpt: '9.004'
   name: Sensorik.Zentral.A.Helligkeit-SO
 9/0/181:
-  dpt: '9.000'
+  dpt: '9.004'
   name: Sensorik.Zentral.A.Helligkeit-NW
 9/0/182:
-  dpt: '9.000'
+  dpt: '9.004'
   name: Sensorik.Zentral.A.Helligkeit-Alle
 9/0/183:
   dpt: '9.001'
@@ -5915,7 +5915,7 @@
   dpt: '1.005'
   name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Taupunkt-Alarm-1
 9/1/129:
-  dpt: '9.000'
+  dpt: '9.008'
   name: Sensorik.KG.Hauswirtschaftsraum.Sensor.VOC
 9/1/130:
   dpt: '1.005'
@@ -5972,7 +5972,7 @@
   dpt: '1.005'
   name: Sensorik.KG.Garage.Sensor.Taupunkt-Alarm-1
 9/1/39:
-  dpt: '9.000'
+  dpt: '9.008'
   name: Sensorik.KG.Garage.Sensor.VOC
 9/1/40:
   dpt: '1.005'
@@ -6023,7 +6023,7 @@
   dpt: '1.005'
   name: Sensorik.KG.Technikraum.Sensor.Taupunkt-Alarm-1
 9/1/69:
-  dpt: '9.000'
+  dpt: '9.008'
   name: Sensorik.KG.Technikraum.Sensor.VOC
 9/1/70:
   dpt: '1.005'
@@ -6074,7 +6074,7 @@
   dpt: '1.005'
   name: Sensorik.KG.Vorratsraum.Sensor.Taupunkt-Alarm-1
 9/1/99:
-  dpt: '9.000'
+  dpt: '9.008'
   name: Sensorik.KG.Vorratsraum.Sensor.VOC
 9/2/101:
   dpt: '9.008'
@@ -6602,7 +6602,7 @@
   dpt: '1.005'
   name: Sensorik.DG.Speicher.Sensor.Taupunkt-Alarm-1
 9/4/9:
-  dpt: '9.000'
+  dpt: '9.008'
   name: Sensorik.DG.Speicher.Sensor.VOC
 9/5/1:
   dpt: '9.001'
