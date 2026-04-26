@@ -91,7 +91,7 @@ notifications:
     service.email.smtp: |
       host: smtprelay.smtprelay.svc.cluster.local
       port: 25
-      from: argocd@zimmermann.eu.com
+      from: argocd@zimmermann.sh
 
   # Notification content per event type
   templates:
