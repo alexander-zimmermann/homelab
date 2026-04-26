@@ -32,6 +32,10 @@ spec:
             key: bootstrap.sql
 
   postgresql:
+    # Load TimescaleDB extension at server start
+    shared_preload_libraries:
+      - timescaledb
+
     parameters:
       # Memory settings — sized for write-heavy time-series workload
       shared_buffers: "256MB"
@@ -47,8 +51,7 @@ spec:
       wal_keep_size: "128MB"
       wal_compression: "on"
 
-      # TimescaleDB
-      shared_preload_libraries: "timescaledb"
+      # TimescaleDB worker settings
       max_worker_processes: "16"
       timescaledb.max_background_workers: "8"
 
