@@ -1,4 +1,6762 @@
-# Placeholder mapping — generated content lands here in Group B (knxproj-to-yaml).
-# Empty mapping means every incoming telegram falls under KNX_NATS_UNMAPPED_POLICY=skip
-# until the real file is committed.
-{}
+0/0/100:
+  dpt: '17.001'
+  name: Allgemein.Zentral.KG.Szenen
+0/0/101:
+  dpt: '1.003'
+  name: Allgemein.Zentral.KG.Alles-Aus
+0/0/120:
+  dpt: '17.001'
+  name: Allgemein.Zentral.EG.Szenen
+0/0/121:
+  dpt: '1.001'
+  name: Allgemein.Zentral.EG.Alles-Aus
+0/0/140:
+  dpt: '17.001'
+  name: Allgemein.Zentral.OG.Szenen
+0/0/141:
+  dpt: '1.001'
+  name: Allgemein.Zentral.OG.Alles-Aus
+0/0/160:
+  dpt: '17.001'
+  name: Allgemein.Zentral.DG.Szenen
+0/0/161:
+  dpt: '1.001'
+  name: Allgemein.Zentral.DG.Alles-Aus
+0/0/180:
+  dpt: '17.001'
+  name: Allgemein.Zentral.A.Szenen
+0/0/181:
+  dpt: '1.001'
+  name: Allgemein.Zentral.A.Alles-Aus
+0/0/200:
+  dpt: '17.001'
+  name: Allgemein.Zentral.Szenen
+0/0/201:
+  dpt: '1.001'
+  name: Allgemein.Zentral.Alles-Aus
+0/0/211:
+  dpt: '1.011'
+  name: Allgemein.Zentral.Anwesend.Alexander
+0/0/212:
+  dpt: '1.011'
+  name: Allgemein.Zentral.Anwesend.Vanessa
+0/0/213:
+  dpt: '1.011'
+  name: Allgemein.Zentral.Anwesend.Luis
+0/0/214:
+  dpt: '1.011'
+  name: Allgemein.Zentral.Anwesend.Gregory
+0/0/220:
+  dpt: '10.001'
+  name: Allgemein.Zentral.Uhrzeit
+0/0/221:
+  dpt: '11.001'
+  name: Allgemein.Zentral.Datum
+0/0/222:
+  dpt: '19.001'
+  name: Allgemein.Zentral.Datum-Uhrzeit
+0/0/230:
+  dpt: '1.001'
+  name: Allgemein.Zentral.Tag/Nacht
+0/0/231:
+  dpt: '1.024'
+  name: Allgemein.Zentral.Nacht/Tag
+0/0/232:
+  dpt: '1.002'
+  name: Allgemein.Zentral.Sommer/Winter
+0/1/0:
+  dpt: '17.001'
+  name: Allgemein.KG.Flur.Szenen
+0/1/1:
+  dpt: '1.001'
+  name: Allgemein.KG.Flur.Alles-Aus
+0/1/20:
+  dpt: '17.001'
+  name: Allgemein.KG.Garage.Szenen
+0/1/21:
+  dpt: '1.001'
+  name: Allgemein.KG.Garage.Alles-Aus
+0/1/40:
+  dpt: '17.001'
+  name: Allgemein.KG.Technikraum.Szenen
+0/1/41:
+  dpt: '1.001'
+  name: Allgemein.KG.Technikraum.Alles-Aus
+0/1/60:
+  dpt: '17.001'
+  name: Allgemein.KG.Vorratsraum.Szenen
+0/1/61:
+  dpt: '1.001'
+  name: Allgemein.KG.Vorratsraum.Alles-Aus
+0/1/80:
+  dpt: '17.001'
+  name: Allgemein.KG.Hauswirtschaftsraum.Szenen
+0/1/81:
+  dpt: '1.001'
+  name: Allgemein.KG.Hauswirtschaftsraum.Alles-Aus
+0/2/0:
+  dpt: '17.001'
+  name: Allgemein.EG.Flur.Szenen
+0/2/1:
+  dpt: '1.001'
+  name: Allgemein.EG.Flur.Alles-Aus
+0/2/100:
+  dpt: '17.001'
+  name: Allgemein.EG.Küche.Szenen
+0/2/101:
+  dpt: '1.001'
+  name: Allgemein.EG.Küche.Alles-Aus
+0/2/20:
+  dpt: '17.001'
+  name: Allgemein.EG.Gäste-WC.Szenen
+0/2/21:
+  dpt: '1.001'
+  name: Allgemein.EG.Gäste-WC.Alles-Aus
+0/2/40:
+  dpt: '17.001'
+  name: Allgemein.EG.Büro.Szenen
+0/2/41:
+  dpt: '1.001'
+  name: Allgemein.EG.Büro.Alles-Aus
+0/2/42:
+  dpt: '1.001'
+  name: Allgemein.EG.Büro.Alles-Aus-Trigger
+0/2/60:
+  dpt: '17.001'
+  name: Allgemein.EG.Wohnzimmer.Szenen
+0/2/61:
+  dpt: '1.001'
+  name: Allgemein.EG.Wohnzimmer.Alles-Aus
+0/2/62:
+  dpt: '1.001'
+  name: Allgemein.EG.Wohnzimmer.Alles-Aus-Trigger
+0/2/80:
+  dpt: '17.001'
+  name: Allgemein.EG.Esszimmer.Szenen
+0/2/81:
+  dpt: '1.001'
+  name: Allgemein.EG.Esszimmer.Alles-Aus
+0/3/0:
+  dpt: '17.001'
+  name: Allgemein.OG.Flur.Szenen
+0/3/1:
+  dpt: '1.001'
+  name: Allgemein.OG.Flur.Alles-Aus
+0/3/100:
+  dpt: '17.001'
+  name: Allgemein.OG.Schlafzimmer-Eltern.Szenen
+0/3/101:
+  dpt: '1.001'
+  name: Allgemein.OG.Schlafzimmer-Eltern.Alles-Aus
+0/3/102:
+  dpt: '1.001'
+  name: Allgemein.OG.Schlafzimmer-Eltern.Alles-Aus-Trigger
+0/3/120:
+  dpt: '17.001'
+  name: Allgemein.OG.Begehbarer-Schrank.Szenen
+0/3/121:
+  dpt: '1.001'
+  name: Allgemein.OG.Begehbarer-Schrank.Alles-Aus
+0/3/140:
+  dpt: '17.001'
+  name: Allgemein.OG.Badezimmer-Eltern.Szenen
+0/3/141:
+  dpt: '1.001'
+  name: Allgemein.OG.Badezimmer-Eltern.Alles-Aus
+0/3/142:
+  dpt: '1.001'
+  name: Allgemein.OG.Badezimmer-Eltern.Alles-Aus-Trigger
+0/3/20:
+  dpt: '17.001'
+  name: Allgemein.OG.Abstellraum.Szenen
+0/3/21:
+  dpt: '1.001'
+  name: Allgemein.OG.Abstellraum.Alles-Aus
+0/3/22:
+  dpt: '1.001'
+  name: Allgemein.OG.Abstellraum.Alles-Aus-Trigger
+0/3/40:
+  dpt: '17.001'
+  name: Allgemein.OG.Badezimmer-Kinder.Szenen
+0/3/41:
+  dpt: '1.001'
+  name: Allgemein.OG.Badezimmer-Kinder.Alles-Aus
+0/3/42:
+  dpt: '1.001'
+  name: Allgemein.OG.Badezimmer-Kinder.Alles-Aus-Trigger
+0/3/60:
+  dpt: '17.001'
+  name: Allgemein.OG.Schlafzimmer-Gregory.Szenen
+0/3/61:
+  dpt: '1.001'
+  name: Allgemein.OG.Schlafzimmer-Gregory.Alles-Aus
+0/3/62:
+  dpt: '1.001'
+  name: Allgemein.OG.Schlafzimmer-Gregory.Alles-Aus-Trigger
+0/3/80:
+  dpt: '17.001'
+  name: Allgemein.OG.Schlafzimmer-Luis.Szenen
+0/3/81:
+  dpt: '1.001'
+  name: Allgemein.OG.Schlafzimmer-Luis.Alles-Aus
+0/3/82:
+  dpt: '1.001'
+  name: Allgemein.OG.Schlafzimmer-Luis.Alles-Aus-Trigger
+0/4/0:
+  dpt: '17.001'
+  name: Allgemein.DG.Speicher.Szenen
+0/4/1:
+  dpt: '1.001'
+  name: Allgemein.DG.Speicher.Alles-Aus
+0/5/0:
+  dpt: '17.001'
+  name: Allgemein.A.Fassade.Szenen
+0/5/1:
+  dpt: '1.001'
+  name: Allgemein.A.Fassade.Alles-Aus
+0/5/100:
+  dpt: '17.001'
+  name: Allgemein.A.Dach.Szenen
+0/5/101:
+  dpt: '1.001'
+  name: Allgemein.A.Dach.Alles-Aus
+0/5/20:
+  dpt: '17.001'
+  name: Allgemein.A.Eingang.Szenen
+0/5/21:
+  dpt: '1.001'
+  name: Allgemein.A.Eingang.Alles-Aus
+0/5/40:
+  dpt: '17.001'
+  name: Allgemein.A.Terrasse.Szenen
+0/5/41:
+  dpt: '1.001'
+  name: Allgemein.A.Terrasse.Alles-Aus
+0/5/60:
+  dpt: '17.001'
+  name: Allgemein.A.Balkon.Szenen
+0/5/61:
+  dpt: '1.001'
+  name: Allgemein.A.Balkon.Alles-Aus
+0/5/80:
+  dpt: '17.001'
+  name: Allgemein.A.Garten.Szenen
+0/5/81:
+  dpt: '1.001'
+  name: Allgemein.A.Garten.Alles-Aus
+10/1/0:
+  dpt: '1.003'
+  name: Bewegungsmelder.KG.Flur.KNX.Decke.Sperren
+10/1/1:
+  dpt: '1.011'
+  name: Bewegungsmelder.KG.Flur.KNX.Decke.Sperren-Status
+10/1/10:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.KNX.Decke.Slave
+10/1/100:
+  dpt: '1.003'
+  name: Bewegungsmelder.KG.Garage.EMA.Sperren
+10/1/101:
+  dpt: '1.011'
+  name: Bewegungsmelder.KG.Garage.EMA.Sperren-Staus
+10/1/102:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.EMA.Ein/Aus
+10/1/106:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.EMA.HLK
+10/1/107:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.EMA.Präsenz
+10/1/109:
+  dpt: '1.024'
+  name: Bewegungsmelder.KG.Garage.EMA.Tag/Nacht
+10/1/120:
+  dpt: '1.003'
+  name: Bewegungsmelder.KG.Technikraum.KNX.Sperren
+10/1/121:
+  dpt: '1.011'
+  name: Bewegungsmelder.KG.Technikraum.KNX.Sperren-Status
+10/1/122:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Technikraum.KNX.Ein/Aus
+10/1/123:
+  dpt: '5.001'
+  name: Bewegungsmelder.KG.Technikraum.KNX.Dimmen
+10/1/124:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Technikraum.KNX.Schaltschwelle
+10/1/126:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Technikraum.KNX.HLK
+10/1/127:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Technikraum.KNX.Präsenz
+10/1/128:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Technikraum.KNX.Helligkeit
+10/1/129:
+  dpt: '1.024'
+  name: Bewegungsmelder.KG.Technikraum.KNX.Tag/Nacht
+10/1/130:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Technikraum.KNX.Slave
+10/1/140:
+  dpt: '1.003'
+  name: Bewegungsmelder.KG.Vorratsraum.KNX.Sperren
+10/1/141:
+  dpt: '1.011'
+  name: Bewegungsmelder.KG.Vorratsraum.KNX.Sperren-Status
+10/1/142:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Vorratsraum.KNX.Ein/Aus
+10/1/143:
+  dpt: '5.001'
+  name: Bewegungsmelder.KG.Vorratsraum.KNX.Dimmen
+10/1/144:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Vorratsraum.KNX.Schaltschwelle
+10/1/146:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Vorratsraum.KNX.HLK
+10/1/147:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Vorratsraum.KNX.Präsenz
+10/1/148:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Vorratsraum.KNX.Helligkeit
+10/1/149:
+  dpt: '1.024'
+  name: Bewegungsmelder.KG.Vorratsraum.KNX.Tag/Nacht
+10/1/150:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Vorratsraum.KNX.Slave
+10/1/160:
+  dpt: '1.003'
+  name: Bewegungsmelder.KG.Hauswirtschaftsraum.KNX.Sperren
+10/1/161:
+  dpt: '1.011'
+  name: Bewegungsmelder.KG.Hauswirtschaftsraum.KNX.Sperren-Status
+10/1/162:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Hauswirtschaftsraum.KNX.Ein/Aus
+10/1/163:
+  dpt: '5.001'
+  name: Bewegungsmelder.KG.Hauswirtschaftsraum.KNX.Dimmen
+10/1/164:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Hauswirtschaftsraum.KNX.Schaltschwelle
+10/1/166:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Hauswirtschaftsraum.KNX.HLK
+10/1/167:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Hauswirtschaftsraum.KNX.Präsenz
+10/1/168:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Hauswirtschaftsraum.KNX.Helligkeit
+10/1/169:
+  dpt: '1.024'
+  name: Bewegungsmelder.KG.Hauswirtschaftsraum.KNX.Tag/Nacht
+10/1/170:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Hauswirtschaftsraum.KNX.Slave
+10/1/2:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.KNX.Decke.Ein/Aus
+10/1/20:
+  dpt: '1.003'
+  name: Bewegungsmelder.KG.Flur.KNX.Wand.Sperren
+10/1/21:
+  dpt: '1.011'
+  name: Bewegungsmelder.KG.Flur.KNX.Wand.Sperren-Status
+10/1/22:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.KNX.Wand.Ein/Aus
+10/1/23:
+  dpt: '5.001'
+  name: Bewegungsmelder.KG.Flur.KNX.Wand.Dimmen
+10/1/25:
+  dpt: '1.011'
+  name: Bewegungsmelder.KG.Flur.KNX.Wand.Schaltschwelle-Status
+10/1/26:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.KNX.Wand.HLK
+10/1/27:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.KNX.Wand.Präsenz
+10/1/28:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Flur.KNX.Wand.Helligkeit
+10/1/29:
+  dpt: '1.024'
+  name: Bewegungsmelder.KG.Flur.KNX.Wand.Tag/Nacht
+10/1/3:
+  dpt: '5.001'
+  name: Bewegungsmelder.KG.Flur.KNX.Decke.Dimmen
+10/1/30:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.KNX.Wand.Slave
+10/1/40:
+  dpt: '1.003'
+  name: Bewegungsmelder.KG.Flur.EMA.Sperren
+10/1/41:
+  dpt: '1.011'
+  name: Bewegungsmelder.KG.Flur.EMA.Sperren-Status
+10/1/42:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.EMA.Ein/Aus
+10/1/46:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.EMA.HLK
+10/1/47:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.EMA.Präsenz
+10/1/49:
+  dpt: '1.024'
+  name: Bewegungsmelder.KG.Flur.EMA.Tag/Nacht
+10/1/5:
+  dpt: '1.011'
+  name: Bewegungsmelder.KG.Flur.KNX.Decke.Schaltschwelle-Status
+10/1/6:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.KNX.Decke.HLK
+10/1/60:
+  dpt: '1.003'
+  name: Bewegungsmelder.KG.Garage.KNX.Decke.Sperren
+10/1/61:
+  dpt: '1.011'
+  name: Bewegungsmelder.KG.Garage.KNX.Decke.Sperren-Status
+10/1/62:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.KNX.Decke.Ein/Aus
+10/1/63:
+  dpt: '5.001'
+  name: Bewegungsmelder.KG.Garage.KNX.Decke.Dimmen
+10/1/64:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Garage.KNX.Decke.Schaltschwelle
+10/1/66:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.KNX.Decke.HLK
+10/1/67:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.KNX.Decke.Präsenz
+10/1/68:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Garage.KNX.Decke.Helligkeit
+10/1/69:
+  dpt: '1.024'
+  name: Bewegungsmelder.KG.Garage.KNX.Decke.Tag/Nacht
+10/1/7:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Flur.KNX.Decke.Präsenz
+10/1/70:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.KNX.Decke.Slave
+10/1/8:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Flur.KNX.Decke.Helligkeit
+10/1/82:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.KNX.Wand.Ein/Aus
+10/1/83:
+  dpt: '5.001'
+  name: Bewegungsmelder.KG.Garage.KNX.Wand.Dimmen
+10/1/86:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.KNX.Wand.HLK
+10/1/87:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.KNX.Wand.Präsenz
+10/1/88:
+  dpt: '9.004'
+  name: Bewegungsmelder.KG.Garage.KNX.Wand.Helligkeit
+10/1/89:
+  dpt: '1.024'
+  name: Bewegungsmelder.KG.Garage.KNX.Wand.Tag/Nacht
+10/1/9:
+  dpt: '1.024'
+  name: Bewegungsmelder.KG.Flur.KNX.Decke.Tag/Nacht
+10/1/90:
+  dpt: '1.001'
+  name: Bewegungsmelder.KG.Garage.KNX.Wand.Slave
+10/2/0:
+  dpt: '1.003'
+  name: Bewegungsmelder.EG.Flur.KNX.Eingang.Sperren
+10/2/1:
+  dpt: '1.011'
+  name: Bewegungsmelder.EG.Flur.KNX.Eingang.Sperren-Status
+10/2/10:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Eingang.Slave
+10/2/100:
+  dpt: '1.003'
+  name: Bewegungsmelder.EG.Büro.EMA.Sperren
+10/2/101:
+  dpt: '1.011'
+  name: Bewegungsmelder.EG.Büro.EMA.Sperren-Status
+10/2/102:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Büro.EMA.Ein/Aus
+10/2/106:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Büro.EMA.HLK
+10/2/107:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Büro.EMA.Präsenz
+10/2/109:
+  dpt: '1.024'
+  name: Bewegungsmelder.EG.Büro.EMA.Tag/Nacht
+10/2/120:
+  dpt: '1.003'
+  name: Bewegungsmelder.EG.Wohnzimmer.EMA.Sperren
+10/2/121:
+  dpt: '1.011'
+  name: Bewegungsmelder.EG.Wohnzimmer.EMA.Sperren-Status
+10/2/122:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Wohnzimmer.EMA.Ein/Aus
+10/2/126:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Wohnzimmer.EMA.HLK
+10/2/127:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Wohnzimmer.EMA.Präsenz
+10/2/129:
+  dpt: '1.024'
+  name: Bewegungsmelder.EG.Wohnzimmer.EMA.Tag/Nacht
+10/2/140:
+  dpt: '1.003'
+  name: Bewegungsmelder.EG.Esszimmer.EMA.Sperren
+10/2/141:
+  dpt: '1.011'
+  name: Bewegungsmelder.EG.Esszimmer.EMA.Sperren-Status
+10/2/142:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Esszimmer.EMA.Ein/Aus
+10/2/146:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Esszimmer.EMA.HLK
+10/2/147:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Esszimmer.EMA.Präsenz
+10/2/149:
+  dpt: '1.024'
+  name: Bewegungsmelder.EG.Esszimmer.EMA.Tag/Nacht
+10/2/2:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Eingang.Ein/Aus
+10/2/20:
+  dpt: '1.003'
+  name: Bewegungsmelder.EG.Flur.KNX.Diele.Sperren
+10/2/21:
+  dpt: '1.011'
+  name: Bewegungsmelder.EG.Flur.KNX.Diele.Sperren-Status
+10/2/22:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Diele.Ein/Aus
+10/2/23:
+  dpt: '5.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Diele.Dimmen
+10/2/25:
+  dpt: '1.011'
+  name: Bewegungsmelder.EG.Flur.KNX.Diele.Schaltschwelle-Status
+10/2/26:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Diele.HLK
+10/2/27:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Diele.Präsenz
+10/2/28:
+  dpt: '9.004'
+  name: Bewegungsmelder.EG.Flur.KNX.Diele.Helligkeit
+10/2/29:
+  dpt: '1.024'
+  name: Bewegungsmelder.EG.Flur.KNX.Diele.Tag/Nacht
+10/2/3:
+  dpt: '5.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Eingang.Dimmen
+10/2/30:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Diele.Slave
+10/2/42:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Garderobe.Ein/Aus
+10/2/46:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Garderobe.HLK
+10/2/47:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Garderobe.Präsenz
+10/2/48:
+  dpt: '9.004'
+  name: Bewegungsmelder.EG.Flur.KNX.Garderobe.Helligkeit
+10/2/49:
+  dpt: '1.024'
+  name: Bewegungsmelder.EG.Flur.KNX.Garderobe.Tag/Nacht
+10/2/5:
+  dpt: '1.011'
+  name: Bewegungsmelder.EG.Flur.KNX.Eingang.Schaltschwelle-Status
+10/2/50:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Garderobe.Slave
+10/2/6:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Eingang.HLK
+10/2/60:
+  dpt: '1.003'
+  name: Bewegungsmelder.EG.Flur.EMA.Sperren
+10/2/61:
+  dpt: '1.011'
+  name: Bewegungsmelder.EG.Flur.EMA.Sperren-Status
+10/2/62:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.EMA.Ein/Aus
+10/2/66:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.EMA.HLK
+10/2/67:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.EMA.Präsenz
+10/2/69:
+  dpt: '1.024'
+  name: Bewegungsmelder.EG.Flur.EMA.Tag/Nacht
+10/2/7:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Flur.KNX.Eingang.Präsenz
+10/2/8:
+  dpt: '9.004'
+  name: Bewegungsmelder.EG.Flur.KNX.Eingang.Helligkeit
+10/2/80:
+  dpt: '1.003'
+  name: Bewegungsmelder.EG.Gäste-WC.KNX.Sperren
+10/2/81:
+  dpt: '1.011'
+  name: Bewegungsmelder.EG.Gäste-WC.KNX.Sperren-Status
+10/2/82:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Gäste-WC.KNX.Ein/Aus
+10/2/83:
+  dpt: '5.001'
+  name: Bewegungsmelder.EG.Gäste-WC.KNX.Dimmen
+10/2/85:
+  dpt: '1.011'
+  name: Bewegungsmelder.EG.Gäste-WC.KNX.Schaltschwelle-Status
+10/2/86:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Gäste-WC.KNX.HLK
+10/2/87:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Gäste-WC.KNX.Präsenz
+10/2/88:
+  dpt: '9.004'
+  name: Bewegungsmelder.EG.Gäste-WC.KNX.Helligkeit
+10/2/89:
+  dpt: '1.024'
+  name: Bewegungsmelder.EG.Gäste-WC.KNX.Tag/Nacht
+10/2/9:
+  dpt: '1.024'
+  name: Bewegungsmelder.EG.Flur.KNX.Eingang.Tag/Nacht
+10/2/90:
+  dpt: '1.001'
+  name: Bewegungsmelder.EG.Gäste-WC.KNX.Slave
+10/3/10:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.KNX.Treppe.Slave
+10/3/100:
+  dpt: '1.003'
+  name: Bewegungsmelder.OG.Badezimmer-Kinder.KNX.Sperren
+10/3/101:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Badezimmer-Kinder.KNX.Sperren-Status
+10/3/102:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Badezimmer-Kinder.KNX.Ein/Aus
+10/3/103:
+  dpt: '5.001'
+  name: Bewegungsmelder.OG.Badezimmer-Kinder.KNX.Dimmen
+10/3/105:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Badezimmer-Kinder.KNX.Schaltschwelle-Status
+10/3/106:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Badezimmer-Kinder.KNX.HLK
+10/3/107:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Badezimmer-Kinder.KNX.Präsenz
+10/3/108:
+  dpt: '9.004'
+  name: Bewegungsmelder.OG.Badezimmer-Kinder.KNX.Helligkeit
+10/3/109:
+  dpt: '1.024'
+  name: Bewegungsmelder.OG.Badezimmer-Kinder.KNX.Tag/Nacht
+10/3/110:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Badezimmer-Kinder.KNX.Slave
+10/3/160:
+  dpt: '1.003'
+  name: Bewegungsmelder.OG.Schlafzimmer-Eltern.KNX.Sperren
+10/3/161:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Schlafzimmer-Eltern.KNX..Sperren-Status
+10/3/162:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Schlafzimmer-Eltern.KNX.Ein/Aus
+10/3/163:
+  dpt: '5.001'
+  name: Bewegungsmelder.OG.Schlafzimmer-Eltern.KNX.Dimmen
+10/3/165:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Schlafzimmer-Eltern.KNX.Schaltschwelle-Status
+10/3/166:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Schlafzimmer-Eltern.KNX.HLK
+10/3/167:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Schlafzimmer-Eltern.KNX.Präsenz
+10/3/168:
+  dpt: '9.004'
+  name: Bewegungsmelder.OG.Schlafzimmer-Eltern.KNX.Helligkeit
+10/3/169:
+  dpt: '1.024'
+  name: Bewegungsmelder.OG.Schlafzimmer-Eltern.KNX.Tag/Nacht
+10/3/170:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Schlafzimmer-Eltern.KNX.Slave
+10/3/180:
+  dpt: '1.003'
+  name: Bewegungsmelder.OG.Begehbarer-Schrank.KNX.Sperren
+10/3/181:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Begehbarer-Schrank.KNX.Sperren-Status
+10/3/182:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Begehbarer-Schrank.KNX.Ein/Aus
+10/3/183:
+  dpt: '5.001'
+  name: Bewegungsmelder.OG.Begehbarer-Schrank.KNX.Dimmen
+10/3/185:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Begehbarer-Schrank.KNX.Schaltschwelle-Status
+10/3/186:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Begehbarer-Schrank.KNX.HLK
+10/3/187:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Begehbarer-Schrank.KNX.Präsenz
+10/3/188:
+  dpt: '9.004'
+  name: Bewegungsmelder.OG.Begehbarer-Schrank.KNX.Helligkeit
+10/3/189:
+  dpt: '1.024'
+  name: Bewegungsmelder.OG.Begehbarer-Schrank.KNX.Tag/Nacht
+10/3/190:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Begehbarer-Schrank.KNX.Slave
+10/3/2:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.KNX.Treppe.Ein/Aus
+10/3/20:
+  dpt: '1.003'
+  name: Bewegungsmelder.OG.Flur.KNX.Gang.Sperren
+10/3/200:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Badezimmer-Eltern.KNX.Sperren
+10/3/201:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Badezimmer-Eltern.KNX.Sperren-Status
+10/3/202:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Badezimmer-Eltern.KNX.Ein/Aus
+10/3/203:
+  dpt: '5.001'
+  name: Bewegungsmelder.OG.Badezimmer-Eltern.KNX.Dimmen
+10/3/205:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Badezimmer-Eltern.KNX.Schaltschwelle-Status
+10/3/206:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Badezimmer-Eltern.KNX.HLK
+10/3/207:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Badezimmer-Eltern.KNX.Präsenz
+10/3/208:
+  dpt: '9.004'
+  name: Bewegungsmelder.OG.Badezimmer-Eltern.KNX.Helligkeit
+10/3/209:
+  dpt: '1.024'
+  name: Bewegungsmelder.OG.Badezimmer-Eltern.KNX.Tag/Nacht
+10/3/21:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Flur.KNX.Gang.Sperren-Status
+10/3/210:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Badezimmer-Eltern.KNX.Slave
+10/3/22:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.KNX.Gang.Ein/Aus
+10/3/23:
+  dpt: '5.001'
+  name: Bewegungsmelder.OG.Flur.KNX.Gang.Dimmen
+10/3/25:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.KNX.Gang.Schaltschwelle-Status
+10/3/26:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.KNX.Gang.HLK
+10/3/27:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.KNX.Gang.Präsenz
+10/3/28:
+  dpt: '9.004'
+  name: Bewegungsmelder.OG.Flur.KNX.Gang.Helligkeit
+10/3/29:
+  dpt: '1.024'
+  name: Bewegungsmelder.OG.Flur.KNX.Gang.Tag/Nacht
+10/3/30:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.KNX.Gang.Slave
+10/3/40:
+  dpt: '1.003'
+  name: Bewegungsmelder.OG.Flur.EMA.Treppe.Sperren
+10/3/41:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Flur.EMA.Treppe.Sperren-Status
+10/3/42:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.EMA.Treppe.Ein/Aus
+10/3/46:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.EMA.Treppe.HLK
+10/3/47:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.EMA.Treppe.Präsenz
+10/3/49:
+  dpt: '1.024'
+  name: Bewegungsmelder.OG.Flur.EMA.Treppe.Tag/Nacht
+10/3/6:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.KNX.Treppe.HLK
+10/3/60:
+  dpt: '1.003'
+  name: Bewegungsmelder.OG.Flur.EMA.Gang.Sperren
+10/3/61:
+  dpt: '1.011'
+  name: Bewegungsmelder.OG.Flur.EMA.Gang.Sperren-Status
+10/3/62:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.EMA.Gang.Ein/Aus
+10/3/66:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.EMA.Gang.HLK
+10/3/67:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.EMA.Gang.Präsenz
+10/3/69:
+  dpt: '1.024'
+  name: Bewegungsmelder.OG.Flur.EMA.Gang.Tag/Nacht
+10/3/7:
+  dpt: '1.001'
+  name: Bewegungsmelder.OG.Flur.KNX.Treppe.Präsenz
+10/3/8:
+  dpt: '9.004'
+  name: Bewegungsmelder.OG.Flur.KNX.Treppe.Helligkeit
+10/3/9:
+  dpt: '1.024'
+  name: Bewegungsmelder.OG.Flur.KNX.Treppe.Tag/Nacht
+10/4/0:
+  dpt: '1.003'
+  name: Bewegungsmelder.DG.KNX.Sperren
+10/4/1:
+  dpt: '1.011'
+  name: Bewegungsmelder.DG.KNX.Sperren-Status
+10/4/10:
+  dpt: '1.001'
+  name: Bewegungsmelder.DG.KNX.Slave
+10/4/2:
+  dpt: '1.001'
+  name: Bewegungsmelder.DG.KNX.Ein/Aus
+10/4/3:
+  dpt: '5.001'
+  name: Bewegungsmelder.DG.KNX.Dimmen
+10/4/4:
+  dpt: '9.004'
+  name: Bewegungsmelder.DG.KNX.Schaltschwelle
+10/4/6:
+  dpt: '1.001'
+  name: Bewegungsmelder.DG.KNX.HLK
+10/4/7:
+  dpt: '1.001'
+  name: Bewegungsmelder.DG.KNX.Präsenz
+10/4/8:
+  dpt: '9.004'
+  name: Bewegungsmelder.DG.KNX.Helligkeit
+10/4/9:
+  dpt: '1.024'
+  name: Bewegungsmelder.DG.KNX.Tag/Nacht
+11/0/100:
+  dpt: '1.011'
+  name: Sicherheit.Zentral.KG.Fenster/Tür.Offen-Status
+11/0/120:
+  dpt: '1.011'
+  name: Sicherheit.Zentral.EG.Fenster/Tür.Offen-Status
+11/0/140:
+  dpt: '1.011'
+  name: Sicherheit.Zentral.OG.Fenster/Tür.Offen-Status
+11/1/1:
+  dpt: '1.019'
+  name: Sicherheit.KG.Garage.Fenster.Geöffnet-Status
+11/1/11:
+  dpt: '1.019'
+  name: Sicherheit.KG.Garage.Garagentor.Geöffnet-Status
+11/1/21:
+  dpt: '1.019'
+  name: Sicherheit.KG.Technikraum.Fenster.Geöffnet-Status
+11/1/31:
+  dpt: '1.005'
+  name: Sicherheit.KG.Technikraum.Gasmelder.Alarm
+11/1/41:
+  dpt: '1.005'
+  name: Sicherheit.KG.Technikraum.CO-Melder.Alarm
+11/1/51:
+  dpt: '1.005'
+  name: Sicherheit.KG.Technikraum.Wassermelder.Alarm
+11/1/61:
+  dpt: '1.019'
+  name: Sicherheit.KG.Vorratsraum.Fenster.Geöffnet-Status
+11/1/71:
+  dpt: '1.005'
+  name: Sicherheit.KG.Vorratsraum.Gasmelder.Alarm
+11/1/81:
+  dpt: '1.019'
+  name: Sicherheit.KG.Hauswirtschaftsraum.Fenster.Geöffnet-Status
+11/1/91:
+  dpt: '1.005'
+  name: Sicherheit.KG.Hauswirtschaftsraum.Wassermelder.Alarm
+11/2/1:
+  dpt: '1.019'
+  name: Sicherheit.EG.Flur.Fenster.Geöffnet-Status
+11/2/101:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Links.Geöffnet-Status
+11/2/102:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Links.Stellung-Kipp-Status
+11/2/103:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Links.Stellung-Geöffnet-Status
+11/2/11:
+  dpt: '1.019'
+  name: Sicherheit.EG.Flur.Tür.Geöffnet-Status
+11/2/111:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Mitte-Links.Geöffnet-Status
+11/2/112:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Mitte-Links.Stellung-Kipp-Status
+11/2/113:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Mitte-Links.Stellung-Geöffnet-Status
+11/2/121:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Mitte-Rechts.Geöffnet-Status
+11/2/122:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Mitte-Rechts.Stellung-Kipp-Status
+11/2/123:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Mitte-Rechts.Stellung-Geöffnet-Status
+11/2/131:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Rechts.Geöffnet-Status
+11/2/132:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Rechts.Stellung-Kipp-Status
+11/2/133:
+  dpt: '1.019'
+  name: Sicherheit.EG.Küche.Fenster.Rechts.Stellung-Geöffnet-Status
+11/2/141:
+  dpt: '1.005'
+  name: Sicherheit.EG.Küche.Wassermelder.Küchenzeile.Links.Alarm
+11/2/151:
+  dpt: '1.005'
+  name: Sicherheit.EG.Küche.Wassermelder.Küchenzeile.Rechts.Alarm
+11/2/161:
+  dpt: '1.005'
+  name: Sicherheit.EG.Küche.Wassermelder.Kücheninsel.Alarm
+11/2/2:
+  dpt: '1.019'
+  name: Sicherheit.EG.Flur.Fenster.Stellung-Kipp-Status
+11/2/21:
+  dpt: '1.005'
+  name: Sicherheit.EG.Flur.Wassermelder-Alarm
+11/2/3:
+  dpt: '1.019'
+  name: Sicherheit.EG.Flur.Fenster.Stellung-Geöffnet-Status
+11/2/31:
+  dpt: '1.019'
+  name: Sicherheit.EG.Gäste-WC.Fenster.Geöffnet-Status
+11/2/32:
+  dpt: '1.019'
+  name: Sicherheit.EG.Gäste-WC.Fenster.Stellung-Kipp-Status
+11/2/33:
+  dpt: '1.019'
+  name: Sicherheit.EG.Gäste-WC.Fenster.Stellung-Geöffnet-Status
+11/2/41:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Links.Geöffnet-Status
+11/2/42:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Links.Stellung-Kipp-Status
+11/2/43:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Links.Stellung-Geöffnet-Status
+11/2/51:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Mitte.Geöffnet-Status
+11/2/52:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Mitte.Stellung-Kipp-Status
+11/2/53:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Mitte.Stellung-Geöffnet-Status
+11/2/61:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Rechts.Geöffnet-Status
+11/2/62:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Rechts.Stellung-Kipp-Status
+11/2/63:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Rechts.Stellung-Geöffnet-Status
+11/2/71:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Seite.Geöffnet-Status
+11/2/72:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Seite.Stellung-Kipp-Status
+11/2/73:
+  dpt: '1.019'
+  name: Sicherheit.EG.Büro.Fenster.Seite.Stellung-Geöffnet-Status
+11/2/81:
+  dpt: '1.019'
+  name: Sicherheit.EG.Wohnzimmer.Fenster.Geöffnet-Status
+11/2/91:
+  dpt: '1.019'
+  name: Sicherheit.EG.Esszimmer.Fenster.Geöffnet-Status
+11/3/1:
+  dpt: '1.019'
+  name: Sicherheit.OG.Flur.Fenster.Treppe.Geöffnet-Status
+11/3/11:
+  dpt: '1.019'
+  name: Sicherheit.OG.Flur.Fenster.Galerie.Geöffnet-Status
+11/3/12:
+  dpt: '1.019'
+  name: Sicherheit.OG.Flur.Fenster.Galerie.Stellung-Kipp-Status
+11/3/13:
+  dpt: '1.019'
+  name: Sicherheit.OG.Flur.Fenster.Galerie.Stellung-Geöffnet-Status
+11/3/2:
+  dpt: '1.019'
+  name: Sicherheit.OG.Flur.Fenster.Treppe.Stellung-Kipp-Status
+11/3/21:
+  dpt: '1.019'
+  name: Sicherheit.OG.Abstellraum.Fenster.Geöffnet-Status
+11/3/22:
+  dpt: '1.019'
+  name: Sicherheit.OG.Abstellraum.Fenster.Stellung-Kipp-Status
+11/3/23:
+  dpt: '1.019'
+  name: Sicherheit.OG.Abstellraum.Fenster.Stellung-Geöffnet-Status
+11/3/3:
+  dpt: '1.019'
+  name: Sicherheit.OG.Flur.Fenster.Treppe.Stellung-Geöffnet-Status
+11/3/31:
+  dpt: '1.019'
+  name: Sicherheit.OG.Badezimmer-Kinder.Fenster.Geöffnet-Status
+11/3/32:
+  dpt: '1.019'
+  name: Sicherheit.OG.Badezimmer-Kinder.Fenster.Stellung-Kipp-Status
+11/3/33:
+  dpt: '1.019'
+  name: Sicherheit.OG.Badezimmer-Kinder.Fenster.Stellung-Geöffnet-Status
+11/3/41:
+  dpt: '1.019'
+  name: Sicherheit.OG.Schlafzimmer-Gregory.Fenster.Geöffnet-Status
+11/3/51:
+  dpt: '1.019'
+  name: Sicherheit.OG.Schlafzimmer-Luis.Fenster.Geöffnet-Status
+11/3/61:
+  dpt: '1.019'
+  name: Sicherheit.OG.Schlafzimmer-Eltern.Fenster.Geöffnet-Status
+11/3/71:
+  dpt: '1.005'
+  name: Sicherheit.OG.Schlafzimmer-Eltern.Wassermelder.Alarm
+11/3/81:
+  dpt: '1.019'
+  name: Sicherheit.OG.Badezimmer-Eltern.Fenster.Geöffnet-Status
+11/3/82:
+  dpt: '1.019'
+  name: Sicherheit.OG.Badezimmer-Eltern.Fenster.Stellung-Kipp-Status
+11/3/83:
+  dpt: '1.019'
+  name: Sicherheit.OG.Badezimmer-Eltern.Fenster.Stellung-Geöffnet-Status
+13/0/200:
+  dpt: '5.010'
+  name: Multimedia.Zentral.Stream.Alexander.Voreinstellung
+13/0/201:
+  dpt: '5.010'
+  name: Multimedia.Zentral.Stream.Alexander.Aktion
+13/0/202:
+  dpt: '1.001'
+  name: Multimedia.Zentral.Stream.Alexander.Wiederholung
+13/0/203:
+  dpt: '1.011'
+  name: Multimedia.Zentral.Stream.Alexander.Wiederholung-Status
+13/0/204:
+  dpt: '1.001'
+  name: Multimedia.Zentral.Stream.Alexander.Shuffle
+13/0/205:
+  dpt: '1.011'
+  name: Multimedia.Zentral.Stream.Alexander.Shuffle-Status
+13/0/210:
+  dpt: '5.010'
+  name: Multimedia.Zentral.Stream.Vanessa.Voreinstellung
+13/0/211:
+  dpt: '5.010'
+  name: Multimedia.Zentral.Stream.Vanessa.Aktion
+13/0/212:
+  dpt: '1.001'
+  name: Multimedia.Zentral.Stream.Vanessa.Wiederholung
+13/0/213:
+  dpt: '1.011'
+  name: Multimedia.Zentral.Stream.Vanessa.Wiederholung-Status
+13/0/214:
+  dpt: '1.001'
+  name: Multimedia.Zentral.Stream.Vanessa.Shuffle
+13/0/215:
+  dpt: '1.011'
+  name: Multimedia.Zentral.Stream.Vanessa.Shuffle-Status
+13/0/220:
+  dpt: '5.010'
+  name: Multimedia.Zentral.Stream.Luis.Voreinstellung
+13/0/221:
+  dpt: '5.010'
+  name: Multimedia.Zentral.Stream.Luis.Aktion
+13/0/222:
+  dpt: '1.001'
+  name: Multimedia.Zentral.Stream.Luis.Wiederholung
+13/0/223:
+  dpt: '1.011'
+  name: Multimedia.Zentral.Stream.Luis.Wiederholung-Status
+13/0/224:
+  dpt: '1.001'
+  name: Multimedia.Zentral.Stream.Luis.Shuffle
+13/0/225:
+  dpt: '1.011'
+  name: Multimedia.Zentral.Stream.Luis.Shuffle-Status
+13/0/230:
+  dpt: '5.010'
+  name: Multimedia.Zentral.Stream.Gregory.Voreinstellung
+13/0/231:
+  dpt: '5.010'
+  name: Multimedia.Zentral.Stream.Gregory.Aktion
+13/0/232:
+  dpt: '1.001'
+  name: Multimedia.Zentral.Stream.Gregory.Wiederholung
+13/0/233:
+  dpt: '1.011'
+  name: Multimedia.Zentral.Stream.Gregory.Wiederholung-Status
+13/0/234:
+  dpt: '1.001'
+  name: Multimedia.Zentral.Stream.Gregory.Shuffle
+13/0/235:
+  dpt: '1.011'
+  name: Multimedia.Zentral.Stream.Gregory.Shuffle-Status
+13/2/101:
+  dpt: '1.001'
+  name: Multimedia.EG.Wohnzimmer.Sony-TV.Ein/Aus
+13/2/102:
+  dpt: '1.011'
+  name: Multimedia.EG.Wohnzimmer.Sony-TV.Ein/Aus-Status
+13/2/103:
+  dpt: '1.001'
+  name: Multimedia.EG.Wohnzimmer.Sony-TV.Stummschalten
+13/2/104:
+  dpt: '1.011'
+  name: Multimedia.EG.Wohnzimmer.Sony-TV.Stummschalten-Status
+13/2/105:
+  dpt: '5.001'
+  name: Multimedia.EG.Wohnzimmer.Sony-TV.Lautstärke
+13/2/106:
+  dpt: '5.001'
+  name: Multimedia.EG.Wohnzimmer.Sony-TV.Lautstärke-Status
+13/2/121:
+  dpt: '1.001'
+  name: Multimedia.EG.Esszimmer.Shape.Ein/Aus
+13/2/122:
+  dpt: '1.011'
+  name: Multimedia.EG.Esszimmer.Shape.Ein/Aus-Status
+13/2/123:
+  dpt: '1.001'
+  name: Multimedia.EG.Esszimmer.Shape.Stummschalten
+13/2/124:
+  dpt: '1.011'
+  name: Multimedia.EG.Esszimmer.Shape.Stummschalten-Status
+13/2/125:
+  dpt: '5.001'
+  name: Multimedia.EG.Esszimmer.Shape.Lautstärke
+13/2/126:
+  dpt: '5.001'
+  name: Multimedia.EG.Esszimmer.Shape.Lautstärke-Status
+13/2/127:
+  dpt: '5.010'
+  name: Multimedia.EG.Esszimmer.Shape.Quelle
+13/2/128:
+  dpt: '5.010'
+  name: Multimedia.EG.Esszimmer.Shape.Quelle-Status
+13/2/141:
+  dpt: '1.001'
+  name: Multimedia.EG.Küche.Sonos.Ein/Aus
+13/2/142:
+  dpt: '1.011'
+  name: Multimedia.EG.Küche.Sonos.Ein/Aus-Status
+13/2/143:
+  dpt: '1.001'
+  name: Multimedia.EG.Küche.Sonos.Stummschalten
+13/2/144:
+  dpt: '1.011'
+  name: Multimedia.EG.Küche.Sonos.Stummschalten-Status
+13/2/145:
+  dpt: '5.001'
+  name: Multimedia.EG.Küche.Sonos.Lautstärke
+13/2/146:
+  dpt: '5.001'
+  name: Multimedia.EG.Küche.Sonos.Lautstärke-Status
+13/2/41:
+  dpt: '1.001'
+  name: Multimedia.EG.Büro.Sonos.Ein/Aus
+13/2/42:
+  dpt: '1.011'
+  name: Multimedia.EG.Büro.Sonos.Ein/Aus-Status
+13/2/43:
+  dpt: '1.001'
+  name: Multimedia.EG.Büro.Sonos.Stummschalten
+13/2/44:
+  dpt: '1.011'
+  name: Multimedia.EG.Büro.Sonos.Stummschalten-Status
+13/2/45:
+  dpt: '5.001'
+  name: Multimedia.EG.Büro.Sonos.Lautstärke
+13/2/46:
+  dpt: '5.001'
+  name: Multimedia.EG.Büro.Sonos.Lautstärke-Status
+13/2/61:
+  dpt: '1.001'
+  name: Multimedia.EG.Wohnzimmer.Aalto.Ein/Aus
+13/2/62:
+  dpt: '1.011'
+  name: Multimedia.EG.Wohnzimmer.Aalto.Ein/Aus-Status
+13/2/63:
+  dpt: '1.001'
+  name: Multimedia.EG.Wohnzimmer.Aalto.Stummschalten
+13/2/64:
+  dpt: '1.011'
+  name: Multimedia.EG.Wohnzimmer.Aalto.Stummschalten-Status
+13/2/65:
+  dpt: '5.001'
+  name: Multimedia.EG.Wohnzimmer.Aalto.Lautstärke
+13/2/66:
+  dpt: '5.001'
+  name: Multimedia.EG.Wohnzimmer.Aalto.Lautstärke-Status
+13/2/67:
+  dpt: '5.010'
+  name: Multimedia.EG.Wohnzimmer.Aalto.Quelle
+13/2/68:
+  dpt: '5.010'
+  name: Multimedia.EG.Wohnzimmer.Aalto.Quelle-Status
+13/2/81:
+  dpt: '1.001'
+  name: Multimedia.EG.Wohnzimmer.Asano.Ein/Aus
+13/2/82:
+  dpt: '1.011'
+  name: Multimedia.EG.Wohnzimmer.Asano.Ein/Aus-Status
+13/2/83:
+  dpt: '1.001'
+  name: Multimedia.EG.Wohnzimmer.Asano.Stummschalten
+13/2/84:
+  dpt: '1.011'
+  name: Multimedia.EG.Wohnzimmer.Asano.Stummschalten-Status
+13/2/85:
+  dpt: '5.001'
+  name: Multimedia.EG.Wohnzimmer.Asano.Lautstärke
+13/2/86:
+  dpt: '5.001'
+  name: Multimedia.EG.Wohnzimmer.Asano.Lautstärke-Status
+13/2/87:
+  dpt: '5.010'
+  name: Multimedia.EG.Wohnzimmer.Asano.Quelle
+13/2/88:
+  dpt: '5.010'
+  name: Multimedia.EG.Wohnzimmer.Asano.Quelle-Status
+13/3/101:
+  dpt: '1.001'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Asano.Ein/Aus
+13/3/102:
+  dpt: '1.011'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Asano.Ein/Aus-Status
+13/3/103:
+  dpt: '1.001'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Asano.Stummschalten
+13/3/104:
+  dpt: '1.011'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Asano.Stummschalten-Status
+13/3/105:
+  dpt: '5.001'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Asano.Lautstärke
+13/3/106:
+  dpt: '5.001'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Asano.Lautstärke-Status
+13/3/107:
+  dpt: '5.010'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Asano.Quelle
+13/3/108:
+  dpt: '5.010'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Asano.Quelle-Status
+13/3/121:
+  dpt: '1.001'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Sony-TV.Ein/Aus
+13/3/122:
+  dpt: '1.011'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Sony-TV.Ein/Aus-Status
+13/3/123:
+  dpt: '1.001'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Sony-TV.Stummschalten
+13/3/124:
+  dpt: '1.011'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Sony-TV.Stummschalten-Status
+13/3/125:
+  dpt: '5.001'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Sony-TV.Lautstärke
+13/3/126:
+  dpt: '5.001'
+  name: Multimedia.OG.Schlafzimmer-Eltern.Sony-TV.Lautstärke-Status
+13/3/141:
+  dpt: '1.001'
+  name: Multimedia.OG.Badezimmer-Eltern.Asano.Ein/Aus
+13/3/142:
+  dpt: '1.011'
+  name: Multimedia.OG.Badezimmer-Eltern.Asano.Ein/Aus-Status
+13/3/143:
+  dpt: '1.001'
+  name: Multimedia.OG.Badezimmer-Eltern.Asano.Stummschalten
+13/3/144:
+  dpt: '1.011'
+  name: Multimedia.OG.Badezimmer-Eltern.Asano.Stummschalten-Status
+13/3/145:
+  dpt: '5.001'
+  name: Multimedia.OG.Badezimmer-Eltern.Asano.Lautstärke
+13/3/146:
+  dpt: '5.001'
+  name: Multimedia.OG.Badezimmer-Eltern.Asano.Lautstärke-Status
+13/3/147:
+  dpt: '5.010'
+  name: Multimedia.OG.Badezimmer-Eltern.Asano.Quelle
+13/3/148:
+  dpt: '5.010'
+  name: Multimedia.OG.Badezimmer-Eltern.Asano.Quelle-Status
+13/3/61:
+  dpt: '1.001'
+  name: Multimedia.OG.Schlafzimmer-Gregory.Sonos.Ein/Aus
+13/3/62:
+  dpt: '1.011'
+  name: Multimedia.OG.Schlafzimmer-Gregory.Sonos.Ein/Aus-Status
+13/3/63:
+  dpt: '1.001'
+  name: Multimedia.OG.Schlafzimmer-Gregory.Sonos.Stummschalten
+13/3/81:
+  dpt: '1.001'
+  name: Multimedia.OG.Schlafzimmer-Luis.Sonos.Ein/Aus
+13/3/82:
+  dpt: '1.011'
+  name: Multimedia.OG.Schlafzimmer-Luis.Sonos.Ein/Aus-Status
+13/5/1:
+  dpt: '1.001'
+  name: Multimedia.A.Terrasse.Asano.Ein/Aus
+13/5/2:
+  dpt: '1.011'
+  name: Multimedia.A.Terrasse.Asano.Ein/Aus-Status
+13/5/3:
+  dpt: '1.001'
+  name: Multimedia.A.Terrasse.Asano.Stummschalten
+13/5/4:
+  dpt: '1.011'
+  name: Multimedia.A.Terrasse.Asano.Stummschalten-Status
+13/5/5:
+  dpt: '5.001'
+  name: Multimedia.A.Terrasse.Asano.Lautstärke
+13/5/6:
+  dpt: '5.001'
+  name: Multimedia.A.Terrasse.Asano.Lautstärke-Status
+13/5/7:
+  dpt: '5.010'
+  name: Multimedia.A.Terrasse.Asano.Quelle
+13/5/8:
+  dpt: '5.010'
+  name: Multimedia.A.Terrasse.Asano.Quelle-Status
+15/1/1:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Status
+15/1/10:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Störung.Akku
+15/1/11:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Störung.Übertragungseinrichtung
+15/1/2:
+  dpt: '1.015'
+  name: Sicherheitstechnik.EMA.Neustart
+15/1/20:
+  dpt: '1.001'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Unscharf
+15/1/21:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Unscharf-Status
+15/1/22:
+  dpt: '1.001'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Intern-Scharf
+15/1/23:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Intern-Scharf-Status
+15/1/24:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Intern-Scharf-Bereit
+15/1/25:
+  dpt: '1.001'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Extern-Scharf
+15/1/26:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Extern-Scharf-Status
+15/1/27:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Extern-Scharf-Bereit
+15/1/28:
+  dpt: '1.005'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Alarm
+15/1/29:
+  dpt: '1.015'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Alarm-Zurücksetzen
+15/1/3:
+  dpt: '1.007'
+  name: Sicherheitstechnik.EMA.Zustände-Lesen
+15/1/30:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Sicherungsbereich.Haus.Störung
+15/1/4:
+  dpt: '1.007'
+  name: Sicherheitstechnik.EMA.Zustände-Aktualisieren
+15/1/40:
+  dpt: '1.003'
+  name: Sicherheitstechnik.EMA.Meldebereich.Sabotage.Sperren
+15/1/41:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Meldebereich.Sabotage.Sperren-Status
+15/1/42:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Meldebereich.Sabotage.Status
+15/1/43:
+  dpt: '1.003'
+  name: Sicherheitstechnik.EMA.Meldebereich.IR-Melder.Sperren
+15/1/44:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Meldebereich.IR-Melder.Sperren-Status
+15/1/45:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Meldebereich.IR-Melder.Status
+15/1/46:
+  dpt: '1.003'
+  name: Sicherheitstechnik.EMA.Meldebereich.Fensterkontakt.Sperren
+15/1/47:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Meldebereich.Fensterkontakt.Sperren-Status
+15/1/48:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Meldebereich.Fensterkontakt.Status
+15/1/49:
+  dpt: '1.003'
+  name: Sicherheitstechnik.EMA.Meldebereich.Türkontakt.Sperren
+15/1/5:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Sabotage.Deckelkontakt
+15/1/50:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Meldebereich.Türkontakt.Sperren-Status
+15/1/51:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Meldebereich.Türkontakt.Status
+15/1/6:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Sabotage.Signalgeber.Leitungsüberwachung.ASG
+15/1/7:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Sabotage.Signalgeber.Leitungsüberwachung.OSG
+15/1/8:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Sabotage.Signalgeber.Wandabreißkontakt
+15/1/9:
+  dpt: '1.011'
+  name: Sicherheitstechnik.EMA.Störung.Strom
+15/3/1:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Fassade.Objekterkennung.Person
+15/3/10:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Fassade.Aktivität.Linienüberschreitung
+15/3/11:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Fassade.Geräusch.Gespräch
+15/3/12:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Fassade.Geräusch.Sirene
+15/3/121:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Objekterkennung.Person
+15/3/122:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Objekterkennung.Fahrzeug
+15/3/123:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Gesichtserkennung.Gesicht-Bekannt
+15/3/124:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Gesichtserkennung.Gesicht-Unbekannt
+15/3/125:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Gesichtserkennung.Gesicht-Markiert
+15/3/126:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Nummerschilderkennnung.Fahrzeug-Bekannt
+15/3/127:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Nummerschilderkennnung.Fahrzeug-Unbekannt
+15/3/128:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Nummerschilderkennnung.Fahrzeug-Markiert
+15/3/129:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Aktivität.Bewegung
+15/3/13:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Fassade.Geräusch.Glasbruch
+15/3/130:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Aktivität.Linienüberschreitung
+15/3/131:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Geräusch.Gespräch
+15/3/132:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Geräusch.Sirene
+15/3/133:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Geräusch.Glasbruch
+15/3/134:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Esszimmer.Geräusch.Einbruch
+15/3/14:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Fassade.Geräusch.Einbruch
+15/3/2:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Fassade.Objekterkennung.Fahrzeug
+15/3/3:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Fassade.Gesichtserkennung.Gesicht-Bekannt
+15/3/4:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Fassade.Gesichtserkennung.Gesicht-Unbekannt
+15/3/41:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Eingang.Objekterkennung.Person
+15/3/42:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Eingang.Objekterkennung.Fahrzeug
+15/3/43:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Eingang.Gesichtserkennung.Gesicht-Bekannt
+15/3/44:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Eingang.Gesichtserkennung.Gesicht-Unbekannt
+15/3/45:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Eingang.Gesichtserkennung.Gesicht-Markiert
+15/3/46:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Eingang.Nummerschilderkennnung.Fahrzeug-Bekannt
+15/3/47:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Eingang.Nummerschilderkennnung.Fahrzeug-Unbekannt
+15/3/48:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Eingang.Nummerschilderkennnung.Fahrzeug-Markiert
+15/3/49:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Eingang.Aktivität.Bewegung
+15/3/5:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Fassade.Gesichtserkennung.Gesicht-Markiert
+15/3/50:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Eingang.Aktivität.Linienüberschreitung
+15/3/51:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Eingang.Geräusch.Gespräch
+15/3/52:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Eingang.Geräusch.Sirene
+15/3/53:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Eingang.Geräusch.Glasbruch
+15/3/54:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Eingang.Geräusch.Einbruch
+15/3/6:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Fassade.Nummerschilderkennnung.Fahrzeug-Bekannt
+15/3/7:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Fassade.Nummerschilderkennnung.Fahrzeug-Unbekannt
+15/3/8:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Fassade.Nummerschilderkennnung.Fahrzeug-Markiert
+15/3/81:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Objekterkennung.Person
+15/3/82:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Objekterkennung.Fahrzeug
+15/3/83:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Gesichtserkennung.Gesicht-Bekannt
+15/3/84:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Gesichtserkennung.Gesicht-Unbekannt
+15/3/85:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Gesichtserkennung.Gesicht-Markiert
+15/3/86:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Nummerschilderkennnung.Fahrzeug-Bekannt
+15/3/87:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Nummerschilderkennnung.Fahrzeug-Unbekannt
+15/3/88:
+  dpt: '5.010'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Nummerschilderkennnung.Fahrzeug-Markiert
+15/3/89:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Aktivität.Bewegung
+15/3/9:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Fassade.Aktivität.Bewegung
+15/3/90:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Aktivität.Linienüberschreitung
+15/3/91:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Geräusch.Gespräch
+15/3/92:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Geräusch.Sirene
+15/3/93:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Geräusch.Glasbruch
+15/3/94:
+  dpt: '1.005'
+  name: Sicherheitstechnik.VÜA.Terrasse.Wohnzimmer.Geräusch.Einbruch
+16/1/0:
+  dpt: '13.013'
+  name: Versorgungstechnik.Energiezähler.Strom.Netzbezug.Zählerstand-Gesamt
+16/1/1:
+  dpt: '13.013'
+  name: Versorgungstechnik.Energiezähler.Strom.Netzbezug.Zählerstand-Tagtarif
+16/1/10:
+  dpt: '13.013'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Zählerstand-Tagtarif-2
+16/1/11:
+  dpt: '13.013'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Zählerstand-Nachttarif-1
+16/1/12:
+  dpt: '13.013'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Zählerstand-Nachttarif-2
+16/1/13:
+  dpt: '14.056'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Wirkleistung-Gesamt-1
+16/1/14:
+  dpt: '14.056'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Wirkleistung-Gesamt-2
+16/1/15:
+  dpt: '14.056'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Wirkleistung-L1
+16/1/16:
+  dpt: '14.056'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Wirkleistung-L2
+16/1/17:
+  dpt: '14.056'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Wirkleistung-L3
+16/1/18:
+  dpt: '14.019'
+  name: Versorgungstechnik.Energiezähler.Strom.Stromstärke-L1
+16/1/19:
+  dpt: '14.019'
+  name: Versorgungstechnik.Energiezähler.Strom.Stromstärke-L2
+16/1/2:
+  dpt: '13.013'
+  name: Versorgungstechnik.Energiezähler.Strom.Netzbezug.Zählerstand-Nachttarif
+16/1/20:
+  dpt: '14.019'
+  name: Versorgungstechnik.Energiezähler.Strom.Stromstärke-L3
+16/1/21:
+  dpt: '14.027'
+  name: Versorgungstechnik.Energiezähler.Strom.Spannung-L1
+16/1/22:
+  dpt: '14.027'
+  name: Versorgungstechnik.Energiezähler.Strom.Spannung-L2
+16/1/23:
+  dpt: '14.027'
+  name: Versorgungstechnik.Energiezähler.Strom.Spannung-L3
+16/1/24:
+  dpt: '14.000'
+  name: Versorgungstechnik.Energiezähler.Strom.Wirkleistung-Gesamt
+16/1/3:
+  dpt: '14.056'
+  name: Versorgungstechnik.Energiezähler.Strom.Netzbezug.Wirkleistung-Gesamt
+16/1/4:
+  dpt: '14.056'
+  name: Versorgungstechnik.Energiezähler.Strom.Netzbezug.Wirkleistung-L1
+16/1/40:
+  dpt: '14.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Zählerstand-Skala-1
+16/1/41:
+  dpt: '14.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Zählerstand-Skala-2
+16/1/42:
+  dpt: '14.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Stichwert-Skala-1
+16/1/43:
+  dpt: '14.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Stichwert-Skala-2
+16/1/44:
+  dpt: '14.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Verbrauchswert-Skala-1
+16/1/45:
+  dpt: '14.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Verbrauchswert-Skala-2
+16/1/46:
+  dpt: '14.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Durchfluss-Gesamt
+16/1/47:
+  dpt: '14.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Durchfluss-Skala-1
+16/1/48:
+  dpt: '14.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Durchfluss-Skala-2
+16/1/49:
+  dpt: '1.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Durchfluss-Skala-1-Alarm
+16/1/5:
+  dpt: '14.056'
+  name: Versorgungstechnik.Energiezähler.Strom.Netzbezug.Wirkleistung-L2
+16/1/50:
+  dpt: '1.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Durchfluss-Skala-2-Alarm
+16/1/51:
+  dpt: '1.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Durchfluss-Skala-1-Alarm-Erweitert
+16/1/52:
+  dpt: '1.005'
+  name: Versorgungstechnik.Energiezähler.Wasser.Durchfluss-Skala-2-Alarm-Erweitert
+16/1/53:
+  dpt: '1.001'
+  name: Versorgungstechnik.Energiezähler.Wasser.Skalenumschaltung
+16/1/54:
+  dpt: '11.001'
+  name: Versorgungstechnik.Energiezähler.Wasser.Letztes-Stichdatum
+16/1/55:
+  dpt: '11.001'
+  name: Versorgungstechnik.Energiezähler.Wasser.Nächstes-Stichdatum
+16/1/56:
+  dpt: '7.001'
+  name: Versorgungstechnik.Energiezähler.Wasser.Reset
+16/1/57:
+  dpt: '10.001'
+  name: Versorgungstechnik.Energiezähler.Wasser.Reset-Uhrzeit
+16/1/58:
+  dpt: '11.001'
+  name: Versorgungstechnik.Energiezähler.Wasser.Reset-Datum
+16/1/59:
+  dpt: '16.000'
+  name: Versorgungstechnik.Energiezähler.Wasser.Seriennummer
+16/1/6:
+  dpt: '14.056'
+  name: Versorgungstechnik.Energiezähler.Strom.Netzbezug.Wirkleistung-L3
+16/1/7:
+  dpt: '13.013'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Zählerstand-Gesamt-1
+16/1/8:
+  dpt: '13.013'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Zählerstand-Gesamt-2
+16/1/9:
+  dpt: '13.013'
+  name: Versorgungstechnik.Energiezähler.Strom.Einspeisung.Zählerstand-Tagtarif-1
+16/3/1:
+  dpt: '5.010'
+  name: Versorgungstechnik.KWL.Lüftermodi
+16/3/10:
+  dpt: '1.011'
+  name: Versorgungstechnik.KWL.Lüftermodus-Mittel-Status
+16/3/11:
+  dpt: '1.001'
+  name: Versorgungstechnik.KWL.Lüftermodus-Hoch
+16/3/12:
+  dpt: '1.011'
+  name: Versorgungstechnik.KWL.Lüftermodus-Hoch-Status
+16/3/2:
+  dpt: '5.010'
+  name: Versorgungstechnik.KWL.Lüftermodi-Status
+16/3/20:
+  dpt: '1.002'
+  name: Versorgungstechnik.KWL.Status
+16/3/21:
+  dpt: '5.001'
+  name: Versorgungstechnik.KWL.ComfoConnect-Status
+16/3/22:
+  dpt: '1.002'
+  name: Versorgungstechnik.KWL.Wartungsmodus-Status
+16/3/23:
+  dpt: '1.002'
+  name: Versorgungstechnik.KWL.Filterwechsel-Status
+16/3/24:
+  dpt: '7.007'
+  name: Versorgungstechnik.KWL.Filter-Betriebsstunden
+16/3/25:
+  dpt: '13.002'
+  name: Versorgungstechnik.KWL.Luftstrom
+16/3/26:
+  dpt: '9.001'
+  name: Versorgungstechnik.KWL.Temperatur-Abluft
+16/3/27:
+  dpt: '9.001'
+  name: Versorgungstechnik.KWL.Temperatur-Fortluft
+16/3/28:
+  dpt: '9.001'
+  name: Versorgungstechnik.KWL.Temperatur-Außenluft
+16/3/29:
+  dpt: '9.001'
+  name: Versorgungstechnik.KWL.Temperatur-Zuluft
+16/3/3:
+  dpt: '1.001'
+  name: Versorgungstechnik.KWL.Lüftermodus-Auto
+16/3/30:
+  dpt: '9.007'
+  name: Versorgungstechnik.KWL.Luftfeuchtigkeit-Abluft
+16/3/31:
+  dpt: '9.007'
+  name: Versorgungstechnik.KWL.Luftfeuchtigkeit-Fortluft
+16/3/32:
+  dpt: '9.007'
+  name: Versorgungstechnik.KWL.Luftfeuchtigkeit-Außenluft
+16/3/33:
+  dpt: '9.007'
+  name: Versorgungstechnik.KWL.Luftfeuchtigkeit-Zuluft
+16/3/4:
+  dpt: '1.011'
+  name: Versorgungstechnik.KWL.Lüftermodus-Auto-Status
+16/3/5:
+  dpt: '1.001'
+  name: Versorgungstechnik.KWL.Lüftermodus-Away
+16/3/6:
+  dpt: '1.011'
+  name: Versorgungstechnik.KWL.Lüftermodus-Away-Status
+16/3/7:
+  dpt: '1.001'
+  name: Versorgungstechnik.KWL.Lüftermodus-Niedrig
+16/3/8:
+  dpt: '1.011'
+  name: Versorgungstechnik.KWL.Lüftermodus-Niedrig-Status
+16/3/9:
+  dpt: '1.001'
+  name: Versorgungstechnik.KWL.Lüftermodus-Mittel
+16/5/102:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-10.Ein/Aus-Status
+16/5/112:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-11.Ein/Aus-Status
+16/5/12:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-1.Ein/Aus-Status
+16/5/122:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-12.Ein/Aus-Status
+16/5/132:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-13.Ein/Aus-Status
+16/5/142:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-14.Ein/Aus-Status
+16/5/2:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-Master.Ein/Aus-Status
+16/5/22:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-2..Ein/Aus-Status
+16/5/32:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-3.Ein/Aus-Status
+16/5/42:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-4.Ein/Aus-Status
+16/5/52:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-5.Ein/Aus-Status
+16/5/62:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-6.Ein/Aus-Status
+16/5/72:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-7.Ein/Aus-Staus
+16/5/82:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-8.Ein/Aus-Status
+16/5/92:
+  dpt: '1.011'
+  name: Versorgungstechnik.Bewässerung.Kreislauf-9.Ein/Aus-Status
+17/0/20:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Monitor-Status
+17/2/104:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Postgres.Monitor-Status
+17/2/109:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Prometheus.Monitor-Status
+17/2/114:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Redis.Monitor-Status
+17/2/119:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Telegraf.Monitor-Status
+17/2/124:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Traefik.Monitor-Status
+17/2/129:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Unifi-poller.Monitor-Status
+17/2/134:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Watchtower.Monitor-Status
+17/2/139:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Whoami.Monitor-Status
+17/2/14:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Authelia.Monitor-Status
+17/2/19:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Bivac.Monitor-Status
+17/2/24:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Blackbox-exporter.Monitor-Status
+17/2/29:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Cadvisor.Monitor-Status
+17/2/34:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Crowdsec.Monitor-Status
+17/2/39:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Fritz-exporter.Monitor-Status
+17/2/4:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Alertmanager.Monitor-Status
+17/2/44:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Gollum.Monitor-Status
+17/2/49:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Grafana.Monitor-Status
+17/2/54:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Guacamole.Monitor-Status
+17/2/59:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Guacd.Monitor-Status
+17/2/64:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Heimdall.Monitor-Status
+17/2/69:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Influx.Monitor-Status
+17/2/74:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Loki.Monitor-Status
+17/2/79:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Minio.Monitor-Status
+17/2/84:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Mosquitto.Monitor-Status
+17/2/89:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Node-exporter.Monitor-Status
+17/2/9:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Alloy.Monitor-Status
+17/2/94:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Node-red.Monitor-Status
+17/2/99:
+  dpt: '1.011'
+  name: Informationstechnik.Container.Portainer.Monitor-Status
+2/0/200:
+  dpt: '1.003'
+  name: Schalten.Zentral.Kilowattstunde-Löschen
+2/1/0:
+  dpt: '1.001'
+  name: Schalten.KG.Flur.K1-L1.Steckdose.Sperren
+2/1/1:
+  dpt: '1.001'
+  name: Schalten.KG.Flur.K1-L1.Steckdose.Ein/Aus
+2/1/10:
+  dpt: '1.001'
+  name: Schalten.KG.Flur.K1-L2.Heizkörper.Sperren
+2/1/100:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K1-L1.Heizung.Sperren
+2/1/101:
+  dpt: '1.001'
+  name: Schalten.KG.Technikraum.K1-L1.Heizung.Ein/Aus
+2/1/102:
+  dpt: '1.011'
+  name: Schalten.KG.Technikraum.K1-L1.Heizung.Ein/Aus-Status
+2/1/103:
+  dpt: '13.100'
+  name: Schalten.KG.Technikraum.K1-L1.Heizung.Betriebsstunden
+2/1/104:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K1-L1.Heizung.Betriebsstunden-Löschen
+2/1/105:
+  dpt: '13.013'
+  name: Schalten.KG.Technikraum.K1-L1.Heizung.Kilowattstunde
+2/1/106:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K1-L1.Heizung.Löschen-Kilowattstunde
+2/1/107:
+  dpt: '7.012'
+  name: Schalten.KG.Technikraum.K1-L1.Heizung.Stromwert
+2/1/11:
+  dpt: '1.001'
+  name: Schalten.KG.Flur.K1-L2.Heizkörper.Ein/Aus
+2/1/110:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K1-L2.Heizung.Sperren
+2/1/111:
+  dpt: '1.001'
+  name: Schalten.KG.Technikraum.K1-L2.Heizung.Ein/Aus
+2/1/112:
+  dpt: '1.011'
+  name: Schalten.KG.Technikraum.K1-L2.Heizung.Ein/Aus-Status
+2/1/113:
+  dpt: '13.100'
+  name: Schalten.KG.Technikraum.K1-L2.Heizung.Betriebsstunden
+2/1/114:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K1-L2.Heizung.Betriebsstunden-Löschen
+2/1/115:
+  dpt: '13.013'
+  name: Schalten.KG.Technikraum.K1-L2.Heizung.Kilowattstunde
+2/1/116:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K1-L2.Heizung.Kilowattstunde-Löschen
+2/1/117:
+  dpt: '7.012'
+  name: Schalten.KG.Technikraum.K1-L2.Heizung.Stromwert
+2/1/12:
+  dpt: '1.011'
+  name: Schalten.KG.Flur.K1-L2.Heizkörper.Ein/Aus-Status
+2/1/120:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K2-L1.Netzwerkschrank.Sperren
+2/1/121:
+  dpt: '1.001'
+  name: Schalten.KG.Technikraum.K2-L1.Netzwerkschrank.Ein/Aus
+2/1/122:
+  dpt: '1.011'
+  name: Schalten.KG.Technikraum.K2-L1.Netzwerkschrank.Ein/Aus-Status
+2/1/123:
+  dpt: '13.100'
+  name: Schalten.KG.Technikraum.K2-L1.Netzwerkschrank.Betriebsstunden
+2/1/124:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K2-L1.Netzwerkschrank.Betriebsstunden-Löschen
+2/1/125:
+  dpt: '13.013'
+  name: Schalten.KG.Technikraum.K2-L1.Netzwerkschrank.Kilowattstunde
+2/1/126:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K2-L1.Netzwerkschrank.Kilowattstunde-Löschen
+2/1/127:
+  dpt: '7.012'
+  name: Schalten.KG.Technikraum.K2-L1.Netzwerkschrank.Stromwert
+2/1/130:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K2-L2.Netzwerkschrank.Sperren
+2/1/131:
+  dpt: '1.001'
+  name: Schalten.KG.Technikraum.K2-L2.Netzwerkschrank.Ein/Aus
+2/1/132:
+  dpt: '1.011'
+  name: Schalten.KG.Technikraum.K2-L2.Netzwerkschrank.Ein/Aus-Status
+2/1/133:
+  dpt: '13.100'
+  name: Schalten.KG.Technikraum.K2-L2.Netzwerkschrank.Betriebsstunden
+2/1/134:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K2-L2.Netzwerkschrank.Betriebsstunden-Löschen
+2/1/135:
+  dpt: '13.013'
+  name: Schalten.KG.Technikraum.K2-L2.Netzwerkschrank.Kilowattstunde
+2/1/136:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K2-L2.Netzwerkschrank.Kilowattstunde-Löschen
+2/1/137:
+  dpt: '7.012'
+  name: Schalten.KG.Technikraum.K2-L2.Netzwerkschrank.Stromwert
+2/1/140:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K3-L3.Entfeuchter.Sperren
+2/1/141:
+  dpt: '1.001'
+  name: Schalten.KG.Technikraum.K3-L3.Entfeuchter.Ein/Aus
+2/1/142:
+  dpt: '1.011'
+  name: Schalten.KG.Technikraum.K3-L3.Entfeuchter.Ein/Aus-Status
+2/1/143:
+  dpt: '13.100'
+  name: Schalten.KG.Technikraum.K3-L3.Entfeuchter.Betriebsstunden
+2/1/144:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K3-L3.Entfeuchter.Betriebsstunden-Löschen
+2/1/145:
+  dpt: '13.013'
+  name: Schalten.KG.Technikraum.K3-L3.Entfeuchter.Kilowattstunde
+2/1/146:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.K3-L3.Entfeuchter.Kilowattstunde-Löschen
+2/1/147:
+  dpt: '7.012'
+  name: Schalten.KG.Technikraum.K3-L3.Entfeuchter.Stromwert
+2/1/150:
+  dpt: '1.003'
+  name: Schalten.KG.Technikraum.Bewässerung.Regen.Sperren
+2/1/151:
+  dpt: '1.001'
+  name: Schalten.KG.Technikraum.Bewässerung.Regen.Ein/Aus
+2/1/152:
+  dpt: '1.011'
+  name: Schalten.KG.Technikraum.Bewässerung.Regen.Ein/Aus-Status
+2/1/2:
+  dpt: '1.011'
+  name: Schalten.KG.Flur.K1-L1.Steckdose.Ein/Aus-Status
+2/1/200:
+  dpt: '1.003'
+  name: Schalten.KG.Vorratsraum.K1-L3.Entfeuchter.Sperren
+2/1/201:
+  dpt: '1.001'
+  name: Schalten.KG.Vorratsraum.K1-L3.Entfeuchter.Ein/Aus
+2/1/202:
+  dpt: '1.011'
+  name: Schalten.KG.Vorratsraum.K1-L3.Entfeuchter.Ein/Aus-Status
+2/1/203:
+  dpt: '13.100'
+  name: Schalten.KG.Vorratsraum.K1-L3.Entfeuchter.Betriebsstunden
+2/1/204:
+  dpt: '1.003'
+  name: Schalten.KG.Vorratsraum.K1-L3.Entfeuchter.Betriebsstunden-Löschen
+2/1/205:
+  dpt: '13.013'
+  name: Schalten.KG.Vorratsraum.K1-L3.Entfeuchter.Kilowattstunde
+2/1/206:
+  dpt: '1.003'
+  name: Schalten.KG.Vorratsraum.K1-L3.Entfeuchter.Kilowattstunde-Löschen
+2/1/207:
+  dpt: '7.012'
+  name: Schalten.KG.Vorratsraum.K1-L3.Entfeuchter.Stromwert
+2/1/210:
+  dpt: '1.001'
+  name: Schalten.KG.Vorratsraum.K1-L2.Steckdose.Sperren
+2/1/211:
+  dpt: '1.001'
+  name: Schalten.KG.Vorratsraum.K1-L2.Steckdose.Ein/Aus
+2/1/212:
+  dpt: '1.011'
+  name: Schalten.KG.Vorratsraum.K1-L2.Steckdose.Ein/Aus-Status
+2/1/220:
+  dpt: '1.001'
+  name: Schalten.KG.Vorratsraum.K2-L1.Wasserstop.Sperren
+2/1/221:
+  dpt: '1.001'
+  name: Schalten.KG.Vorratsraum.K2-L1.Wasserstop.Ein/Aus
+2/1/222:
+  dpt: '1.011'
+  name: Schalten.KG.Vorratsraum.K2-L1.Wasserstop.Ein/Aus-Status
+2/1/230:
+  dpt: '1.003'
+  name: Schalten.KG.Vorratsraum.K3-L1.Lüftung.Sperren
+2/1/231:
+  dpt: '1.001'
+  name: Schalten.KG.Vorratsraum.K3-L1.Lüftung.Ein/Aus
+2/1/232:
+  dpt: '1.011'
+  name: Schalten.KG.Vorratsraum.K3-L1.Lüftung.Ein/Aus-Status
+2/1/233:
+  dpt: '13.100'
+  name: Schalten.KG.Vorratsraum.K3-L1.Lüftung.Betriebsstunden
+2/1/234:
+  dpt: '1.003'
+  name: Schalten.KG.Vorratsraum.K3-L1.Lüftung.Betriebsstunden-Löschen
+2/1/235:
+  dpt: '13.013'
+  name: Schalten.KG.Vorratsraum.K3-L1.Lüftung.Kilowattstunde
+2/1/236:
+  dpt: '1.003'
+  name: Schalten.KG.Vorratsraum.K3-L1.Lüftung.Kilowattstunde-Löschen
+2/1/237:
+  dpt: '7.012'
+  name: Schalten.KG.Vorratsraum.K3-L1.Lüftung.Stromwert
+2/1/50:
+  dpt: '1.003'
+  name: Schalten.KG.Garage.K1-L3.Entfeuchter.Sperren
+2/1/51:
+  dpt: '1.001'
+  name: Schalten.KG.Garage.K1-L3.Entfeuchter.Ein/Aus
+2/1/52:
+  dpt: '1.011'
+  name: Schalten.KG.Garage.K1-L3.Entfeuchter.Ein/Aus-Status
+2/1/53:
+  dpt: '13.100'
+  name: Schalten.KG.Garage.K1-L3.Entfeuchter.Betriebsstunden
+2/1/54:
+  dpt: '1.003'
+  name: Schalten.KG.Garage.K1-L3.Entfeuchter.Betriebsstunden-Löschen
+2/1/55:
+  dpt: '13.013'
+  name: Schalten.KG.Garage.K1-L3.Entfeuchter.Kilowattstunde
+2/1/56:
+  dpt: '1.003'
+  name: Schalten.KG.Garage.K1-L3.Entfeuchter.Kilowattstunde-Löschen
+2/1/57:
+  dpt: '7.012'
+  name: Schalten.KG.Garage.K1-L3.Entfeuchter.Stromwert
+2/1/60:
+  dpt: '1.001'
+  name: Schalten.KG.Garage.K2-L2.Steckdose.Sperren
+2/1/61:
+  dpt: '1.001'
+  name: Schalten.KG.Garage.K2-L2.Steckdose.Ein/Aus
+2/1/62:
+  dpt: '1.011'
+  name: Schalten.KG.Garage.K2-L2.Steckdose.Ein/Aus-Status
+2/1/70:
+  dpt: '1.001'
+  name: Schalten.KG.Garage.K3-L1.Garagentor.Sperren
+2/1/71:
+  dpt: '1.001'
+  name: Schalten.KG.Garage.K3-L1.Garagentor.Ein/Aus
+2/1/72:
+  dpt: '1.011'
+  name: Schalten.KG.Garage.K3-L1.Garagentor.Ein/Aus-Status
+2/2/100:
+  dpt: '1.001'
+  name: Schalten.EG.Büro.K1-L2.Steckdose.Sperren
+2/2/101:
+  dpt: '1.001'
+  name: Schalten.EG.Büro.K1-L2.Steckdose.Ein/Aus
+2/2/102:
+  dpt: '1.011'
+  name: Schalten.EG.Büro.K1-L2.Steckdose.Ein/Aus-Status
+2/2/110:
+  dpt: '1.001'
+  name: Schalten.EG.Büro.K2-L2.Schreibtisch.Sperren
+2/2/111:
+  dpt: '1.001'
+  name: Schalten.EG.Büro.K2-L2.Schreibtisch.Ein/Aus
+2/2/112:
+  dpt: '1.011'
+  name: Schalten.EG.Büro.K2-L2.Schreibtisch.Ein/Aus-Status
+2/2/120:
+  dpt: '1.001'
+  name: Schalten.EG.Büro.K2-L3.Schreibtisch.Sperren
+2/2/121:
+  dpt: '1.001'
+  name: Schalten.EG.Büro.K2-L3.Schreibtisch.Ein/Aus
+2/2/122:
+  dpt: '1.011'
+  name: Schalten.EG.Büro.K2-L3.Schreibtisch.Ein/Aus-Status
+2/2/150:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K1-L2.Steckdose.Sperren
+2/2/151:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K1-L2.Steckdose.Ein/Aus
+2/2/152:
+  dpt: '1.011'
+  name: Schalten.EG.Wohnzimmer.K1-L2.Steckdose.Ein/Aus-Status
+2/2/160:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K2-L2.Steckdose.Sperren
+2/2/161:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K2-L2.Steckdose.Ein/Aus
+2/2/162:
+  dpt: '1.011'
+  name: Schalten.EG.Wohnzimmer.K2-L2.Steckdose.Ein/Aus-Status
+2/2/170:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K3-L1.Fernseh.Sperren
+2/2/171:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K3-L1.Fernseh.Ein/Aus
+2/2/172:
+  dpt: '1.011'
+  name: Schalten.EG.Wohnzimmer.K3-L1.Fernseh.Ein/Aus-Status
+2/2/180:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K3-L2.Fernseh.Sperren
+2/2/181:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K3-L2.Fernseh.Ein/Aus
+2/2/182:
+  dpt: '1.011'
+  name: Schalten.EG.Wohnzimmer.K3-L2.Fernseh.Ein/Aus-Status
+2/2/190:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K3-L3.Fernseh.Sperren
+2/2/191:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K3-L3.Fernseh.Ein/Aus
+2/2/192:
+  dpt: '1.011'
+  name: Schalten.EG.Wohnzimmer.K3-L3.Fernseh.Ein/Aus-Status
+2/2/200:
+  dpt: '1.003'
+  name: Schalten.EG.Wohnzimmer.K4-L1.Ofen.Sperren
+2/2/201:
+  dpt: '1.001'
+  name: Schalten.EG.Wohnzimmer.K4-L1.Ofen.Ein/Aus
+2/2/202:
+  dpt: '1.011'
+  name: Schalten.EG.Wohnzimmer.K4-L1.Ofen.Ein/Aus-Status
+2/2/203:
+  dpt: '13.100'
+  name: Schalten.EG.Wohnzimmer.K4-L1.Ofen.Betriebsstunden
+2/2/204:
+  dpt: '1.003'
+  name: Schalten.EG.Wohnzimmer.K4-L1.Ofen.Betriebsstunden-Löschen
+2/2/205:
+  dpt: '13.013'
+  name: Schalten.EG.Wohnzimmer.K4-L1.Ofen.Kilowattstunde
+2/2/206:
+  dpt: '1.003'
+  name: Schalten.EG.Wohnzimmer.K4-L1.Ofen.Kilowattstunde-Löschen
+2/2/207:
+  dpt: '7.012'
+  name: Schalten.EG.Wohnzimmer.K4-L1.Ofen.Stromwert
+2/3/100:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Kinder.K1-L2.Schrank.Sperren
+2/3/101:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Kinder.K1-L2.Schrank.Ein/Aus
+2/3/102:
+  dpt: '1.011'
+  name: Schalten.OG.Badezimmer-Kinder.K1-L2.Schrank.Ein/Aus-Status
+2/3/110:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Kinder.K1-L3.Schrank.Sperren
+2/3/111:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Kinder.K1-L3.Schrank.Ein/Aus
+2/3/112:
+  dpt: '1.011'
+  name: Schalten.OG.Badezimmer-Kinder.K1-L3.Schrank.Ein/Aus-Status
+2/3/120:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Kinder.K2-L3.Heizkörper.Sperren
+2/3/121:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Kinder.K2-L3.Heizkörper.Ein/Aus
+2/3/122:
+  dpt: '1.011'
+  name: Schalten.OG.Badezimmer-Kinder.K2-L3.Heizkörper.Ein/Aus-Status
+2/3/150:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Gregory.K1-L1.Steckdose.Sperren
+2/3/151:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Gregory.K1-L1.Steckdose.Ein/Aus
+2/3/152:
+  dpt: '1.011'
+  name: Schalten.OG.Schlafzimmer-Gregory.K1-L1.Steckdose.Ein/Aus-Status
+2/3/160:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Gregory.K2-L2.Steckdose.Sperren
+2/3/161:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Gregory.K2-L2.Steckdose.Ein/Aus
+2/3/162:
+  dpt: '1.011'
+  name: Schalten.OG.Schlafzimmer-Gregory.K2-L2.Steckdose.Ein/Aus-Status
+2/3/50:
+  dpt: '1.001'
+  name: Schalten.OG.Abstellraum.K1-L1.Steckdose.Sperren
+2/3/51:
+  dpt: '1.001'
+  name: Schalten.OG.Abstellraum.K1-L1.Steckdose.Ein/Aus
+2/3/52:
+  dpt: '1.011'
+  name: Schalten.OG.Abstellraum.K1-L1.Steckdose.Ein/Aus-Status
+2/3/60:
+  dpt: '1.001'
+  name: Schalten.OG.Abstellraum.K2-L1.Steckdose.Sperren
+2/3/61:
+  dpt: '1.001'
+  name: Schalten.OG.Abstellraum.K2-L1.Steckdose.Ein/Aus
+2/3/62:
+  dpt: '1.011'
+  name: Schalten.OG.Abstellraum.K2-L1.Steckdose.Ein/Aus-Status
+2/4/0:
+  dpt: '1.001'
+  name: Schalten.DG.Speicher.K1-L1.Steckdose.Sperren
+2/4/1:
+  dpt: '1.001'
+  name: Schalten.DG.Speicher.K1-L1.Steckdose.Ein/Aus
+2/4/10:
+  dpt: '1.001'
+  name: Schalten.DG.Speicher.K1-L2.Steckdose.Sperren
+2/4/11:
+  dpt: '1.001'
+  name: Schalten.DG.Speicher.K1-L2.Steckdose.Ein/Aus
+2/4/12:
+  dpt: '1.011'
+  name: Schalten.DG.Speicher.K1-L2.Steckdose.Ein/Aus-Status
+2/4/2:
+  dpt: '1.011'
+  name: Schalten.DG.Speicher.K1-L1.Steckdose.Ein/Aus-Status
+2/5/0:
+  dpt: '1.001'
+  name: Schalten.A.Fassade.K1-L1.Steckdose.Sperren
+2/5/1:
+  dpt: '1.001'
+  name: Schalten.A.Fassade.K1-L1.Steckdose.Ein/Aus
+2/5/100:
+  dpt: '1.001'
+  name: Schalten.A.Terrasse.K1-L1.Steckdose.Sperren
+2/5/101:
+  dpt: '1.001'
+  name: Schalten.A.Terrasse.K1-L1.Steckdose.Ein/Aus
+2/5/102:
+  dpt: '1.011'
+  name: Schalten.A.Terrasse.K1-L1.Steckdose.Ein/Aus-Status
+2/5/110:
+  dpt: '1.001'
+  name: Schalten.A.Terrasse.K1-L2.Steckdose.Sperren
+2/5/111:
+  dpt: '1.001'
+  name: Schalten.A.Terrasse.K1-L2.Steckdose.Ein/Aus
+2/5/112:
+  dpt: '1.011'
+  name: Schalten.A.Terrasse.K1-L2.Steckdose.Ein/Aus-Status
+2/5/150:
+  dpt: '1.001'
+  name: Schalten.A.Balkon.K1-L1.Steckdose.Sperren
+2/5/151:
+  dpt: '1.001'
+  name: Schalten.A.Balkon.K1-L1.Steckdose.Ein/Aus
+2/5/152:
+  dpt: '1.011'
+  name: Schalten.A.Balkon.K1-L1.Steckdose.Ein/Aus-Status
+2/5/160:
+  dpt: '1.001'
+  name: Schalten.A.Balkon.K1-L2.Steckdose.Sperren
+2/5/161:
+  dpt: '1.001'
+  name: Schalten.A.Balkon.K1-L2.Steckdose.Ein/Aus
+2/5/162:
+  dpt: '1.011'
+  name: Schalten.A.Balkon.K1-L2.Steckdose.Ein/Aus-Status
+2/5/2:
+  dpt: '1.011'
+  name: Schalten.A.Fassade.K1-L1.Steckdose.Ein/Aus-Status
+3/1/0:
+  dpt: '1.003'
+  name: Schalten.KG.Hauswirtschaftsraum.K1-L3.Entfeuchter.Sperren
+3/1/1:
+  dpt: '1.001'
+  name: Schalten.KG.Hauswirtschaftsraum.K1-L3.Entfeuchter.Ein/Aus
+3/1/10:
+  dpt: '1.001'
+  name: Schalten.KG.Hauswirtschaftsraum.K1-L3.Heizkörper.Sperren
+3/1/11:
+  dpt: '1.001'
+  name: Schalten.KG.Hauswirtschaftsraum.K1-L3.Heizkörper.Ein/Aus
+3/1/12:
+  dpt: '1.011'
+  name: Schalten.KG.Hauswirtschaftsraum.K1-L3.Heizkörper.Ein/Aus-Status
+3/1/13:
+  dpt: '1.001'
+  name: Schalten.KG.Hauswirtschaftsraum.K2-L2.Fehrnseh.Sperren
+3/1/14:
+  dpt: '1.001'
+  name: Schalten.KG.Hauswirtschaftsraum.K2-L2.Fehrnseh.Ein/Aus
+3/1/15:
+  dpt: '1.011'
+  name: Schalten.KG.Hauswirtschaftsraum.K2-L2.Fehrnseh.Ein/Aus-Status
+3/1/2:
+  dpt: '1.011'
+  name: Schalten.KG.Hauswirtschaftsraum.K1-L3.Entfeuchter.Ein/Aus-Status
+3/1/20:
+  dpt: '1.003'
+  name: Schalten.KG.Hauswirtschaftsraum.K3-L1.Trockner.Sperren
+3/1/21:
+  dpt: '1.001'
+  name: Schalten.KG.Hauswirtschaftsraum.K3-L1.Trockner.Ein/Aus
+3/1/22:
+  dpt: '1.011'
+  name: Schalten.KG.Hauswirtschaftsraum.K3-L1.Trockner.Ein/Aus-Status
+3/1/23:
+  dpt: '13.100'
+  name: Schalten.KG.Hauswirtschaftsraum.K3-L1.Trockner.Betriebsstunden
+3/1/24:
+  dpt: '1.003'
+  name: Schalten.KG.Hauswirtschaftsraum.K3-L1.Trockner.Betriebsstunden-Löschen
+3/1/25:
+  dpt: '13.013'
+  name: Schalten.KG.Hauswirtschaftsraum.K3-L1.Trockner.Kilowattstunde
+3/1/26:
+  dpt: '1.003'
+  name: Schalten.KG.Hauswirtschaftsraum.K3-L1.Trockner.Kilowattstunde-Löschen
+3/1/27:
+  dpt: '7.012'
+  name: Schalten.KG.Hauswirtschaftsraum.K3-L1.Trockner.Stromwert
+3/1/28:
+  dpt: '1.011'
+  name: Schalten.KG.Hauswirtschaftsraum.K3-L1.Trockner.Status
+3/1/3:
+  dpt: '13.100'
+  name: Schalten.KG.Hauswirtschaftsraum.K1-L3.Entfeuchter.Betriebsstunden
+3/1/30:
+  dpt: '1.003'
+  name: Schalten.KG.Hauswirtschaftsraum.K4-L1.Waschmaschine.Sperren
+3/1/31:
+  dpt: '1.001'
+  name: Schalten.KG.Hauswirtschaftsraum.K4-L1.Waschmaschine.Ein/Aus
+3/1/32:
+  dpt: '1.011'
+  name: Schalten.KG.Hauswirtschaftsraum.K4-L1.Waschmaschine.Ein/Aus-Status
+3/1/33:
+  dpt: '13.100'
+  name: Schalten.KG.Hauswirtschaftsraum.K4-L1.Waschmaschine.Betriebsstunden
+3/1/34:
+  dpt: '1.003'
+  name: Schalten.KG.Hauswirtschaftsraum.K4-L1.Waschmaschine.Betriebsstunden-Löschen
+3/1/35:
+  dpt: '13.013'
+  name: Schalten.KG.Hauswirtschaftsraum.K4-L1.Waschmaschine.Kilowattstunde
+3/1/36:
+  dpt: '1.003'
+  name: Schalten.KG.Hauswirtschaftsraum.K4-L1.Waschmaschine.Kilowattstunde-Löschen
+3/1/37:
+  dpt: '7.012'
+  name: Schalten.KG.Hauswirtschaftsraum.K4-L1.Waschmaschine.Stromwert
+3/1/38:
+  dpt: '1.000'
+  name: Schalten.KG.Hauswirtschaftsraum.K4-L1.Waschmaschine.Status
+3/1/4:
+  dpt: '1.001'
+  name: Schalten.KG.Hauswirtschaftsraum.K1-L3.Entfeuchter.Betriebsstunden-Löschen
+3/1/5:
+  dpt: '13.013'
+  name: Schalten.KG.Hauswirtschaftsraum.K1-L3.Entfeuchter.Kilowattstunde
+3/1/6:
+  dpt: '1.010'
+  name: Schalten.KG.hauswirtschaftsraum.K1-L3.Entfeuchter.Kilowattstunde-Löschen
+3/1/7:
+  dpt: '7.012'
+  name: Schalten.KG.Hauswirtschaftsraum.K1-L3.Entfeuchter.Stromwert
+3/2/0:
+  dpt: '1.001'
+  name: Schalten.EG.Esszimmer.K2-L3.Steckdose.Sperren
+3/2/1:
+  dpt: '1.001'
+  name: Schalten.EG.Esszimmer.K2-L3.Steckdose.Ein/Aus
+3/2/100:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K5-L1.Haubenlüfter.Sperren
+3/2/101:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K5-L1.Haubenlüfter.Ein/Aus
+3/2/102:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K5-L1.Haubenlüfter.Ein/Aus-Status
+3/2/103:
+  dpt: '13.100'
+  name: Schalten.EG.Küche.K5-L1.Haubenlüfter.Betriebsstunden
+3/2/104:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K5-L1.Haubenlüfter.Betriebsstunden-Löschen
+3/2/105:
+  dpt: '13.013'
+  name: Schalten.EG.Küche.K5-L1.Haubenlüfter.Kilowattstunde
+3/2/106:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K5-L1.Haubenlüfter.Kilowattstunde-Löschen
+3/2/107:
+  dpt: '7.012'
+  name: Schalten.EG.Küche.K5-L1.Haubenlüfter.Stromwert
+3/2/110:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K7-L1.Kühlschrank.Sperren
+3/2/111:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K7-L1.Kühlschrank.Ein/Aus
+3/2/112:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K7-L1.Kühlschrank.Ein/Aus-Status
+3/2/113:
+  dpt: '13.100'
+  name: Schalten.EG.Küche.K7-L1.Kühlschrank.Betriebsstunden
+3/2/114:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K7-L1.Kühlschrank.Betriebsstunden-Löschen
+3/2/115:
+  dpt: '13.013'
+  name: Schalten.EG.Küche.K7-L1.Kühlschrank.Kilowattstunde
+3/2/116:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K7-L1.Kühlschrank.Kilowattstunde-Löschen
+3/2/117:
+  dpt: '7.012'
+  name: Schalten.EG.Küche.K7-L1.Kühlschrank.Stromwert
+3/2/120:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K9-L1.Backofen.Sperren
+3/2/121:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K9-L1.Backofen.Ein/Aus
+3/2/122:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K9-L1.Backofen.Ein/Aus-Status
+3/2/123:
+  dpt: '13.100'
+  name: Schalten.EG.Küche.K9-L1.Backofen.Betriebsstunden
+3/2/124:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K9-L1.Backofen.Betriebsstunden-Löschen
+3/2/125:
+  dpt: '13.013'
+  name: Schalten.EG.Küche.K9-L1.Backofen.Kilowattstunde
+3/2/126:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K9-L1.Backofen.Kilowattstunde-Löschen
+3/2/127:
+  dpt: '7.012'
+  name: Schalten.EG.Küche.K9-L1.Backofen.Stromwert
+3/2/130:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K10-L1.Tellerwärmer.Sperren
+3/2/131:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K10-L1.Tellerwärmer.Ein/Aus
+3/2/132:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K10-L1.Tellerwärmer.Ein/Aus-Status
+3/2/133:
+  dpt: '13.100'
+  name: Schalten.EG.Küche.K10-L1.Tellerwärmer.Betriebsstunden
+3/2/134:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K10-L1.Tellerwärmer.Betriebsstunden-Löschen
+3/2/135:
+  dpt: '13.013'
+  name: Schalten.EG.Küche.K10-L1.Tellerwärmer.Kilowattstunde
+3/2/136:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K10-L1.Tellerwärmer.Kilowattstunde-Löschen
+3/2/137:
+  dpt: '7.012'
+  name: Schalten.EG.Küche.K10-L1.Tellerwärmer.Stromwert
+3/2/140:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K12-L1.Mikrowelle.Sperren
+3/2/141:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K12-L1.Mikrowelle.Ein/Aus
+3/2/142:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K12-L1.Mikrowelle.Ein/Aus-Status
+3/2/143:
+  dpt: '13.100'
+  name: Schalten.EG.Küche.K12-L1.Mikrowelle.Betriebsstunden
+3/2/144:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K12-L1.Mikrowelle.Betriebsstunden-Löschen
+3/2/145:
+  dpt: '13.013'
+  name: Schalten.EG.Küche.K12-L1.Mikrowelle.Kilowattstunde
+3/2/146:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K12-L1.Mikrowelle.Kilowattstunde-Löschen
+3/2/147:
+  dpt: '7.012'
+  name: Schalten.EG.Küche.K12-L1.Mikrowelle.Stromwert
+3/2/150:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K13-L1.Kaffeemaschine.Sperren
+3/2/151:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K13-L1.Kaffeemaschine.Ein/Aus
+3/2/152:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K13-L1.Kaffeemaschine.Ein/Aus-Status
+3/2/153:
+  dpt: '13.100'
+  name: Schalten.EG.Küche.K13-L1.Kaffeemaschine.Betriebsstunden
+3/2/154:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K13-L1.Kaffeemaschine.Betriebsstunden-Löschen
+3/2/155:
+  dpt: '13.013'
+  name: Schalten.EG.Küche.K13-L1.Kaffeemaschine.Kilowattstunde
+3/2/156:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K13-L1.Kaffeemaschine.Kilowattstunde-Löschen
+3/2/157:
+  dpt: '7.012'
+  name: Schalten.EG.Küche.K13-L1.Kaffeemaschine.Stromwert
+3/2/160:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K14-L1.Dampfgarer.Sperren
+3/2/161:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K14-L1.Dampfgarer.Ein/Aus
+3/2/162:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K14-L1.Dampfgarer.Ein/Aus-Status
+3/2/163:
+  dpt: '13.100'
+  name: Schalten.EG.Küche.K14-L1.Dampfgarer.Betriebsstunden
+3/2/164:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K14-L1.Dampfgarer.Betriebsstunden-Löschen
+3/2/165:
+  dpt: '13.013'
+  name: Schalten.EG.Küche.K14-L1.Dampfgarer.Kilowattstunde
+3/2/166:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K14-L1.Dampfgarer.Kilowattstunde-Löschen
+3/2/167:
+  dpt: '7.012'
+  name: Schalten.EG.Küche.K14-L1.Dampfgarer.Stromwert
+3/2/170:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K15-L1.Gefrierschrank.Sperren
+3/2/171:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K15-L1.Gefrierschrank.Ein/Aus
+3/2/172:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K15-L1.Gefrierschrank.Ein/Aus-Status
+3/2/173:
+  dpt: '13.100'
+  name: Schalten.EG.Küche.K15-L1.Gefrierschrank.Betriebsstunden
+3/2/174:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K15-L1.Gefrierschrank.Betriebsstunden-Löschen
+3/2/175:
+  dpt: '13.013'
+  name: Schalten.EG.Küche.K15-L1.Gefrierschrank.Kilowattstunde
+3/2/176:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K15-L1.Gefrierschrank.Kilowattstunde-Löschen
+3/2/177:
+  dpt: '7.012'
+  name: Schalten.EG.Küche.K15-L1.Gefrierschrank.Stromwert
+3/2/2:
+  dpt: '1.011'
+  name: Schalten.EG.Esszimmer.K2-L3.Steckdose.Ein/Aus-Status
+3/2/50:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K1-L3.Steckdose.Sperren
+3/2/51:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K1-L3.Steckdose.Ein/Aus
+3/2/52:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K1-L3.Steckdose.Ein/Aus-Status
+3/2/60:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K2-L1.Steckdose.Sperren
+3/2/61:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K2-L1.Steckdose.Ein/Aus
+3/2/62:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K2-L1.Steckdose.Ein/Aus-Status
+3/2/70:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K2-L2.Steckdose.Sperren
+3/2/71:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K2-L2.Steckdose.Ein/Aus
+3/2/72:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K2-L2.Steckdose.Ein/Aus-Status
+3/2/80:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K3-L3.Kücheninsel.Sperren
+3/2/81:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K3-L3.Kücheninsel.Ein/Aus
+3/2/82:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K3-L3.Kücheninsel.Ein/Aus-Status
+3/2/90:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K4-L1.Geschirrspüler.Sperren
+3/2/91:
+  dpt: '1.001'
+  name: Schalten.EG.Küche.K4-L1.Geschirrspüler.Ein/Aus
+3/2/92:
+  dpt: '1.011'
+  name: Schalten.EG.Küche.K4-L1.Geschirrspüler.Ein/Aus-Status
+3/2/93:
+  dpt: '13.100'
+  name: Schalten.EG.Küche.K4-L1.Geschirrspüler.Betriebsstunden
+3/2/94:
+  dpt: '1.003'
+  name: 'Schalten.EG.Küche.K4-L1.Geschirrspüler.Betriebsstunden-Löschen '
+3/2/95:
+  dpt: '13.013'
+  name: Schalten.EG.Küche.K4-L1.Geschirrspüler.Kilowattstunde
+3/2/96:
+  dpt: '1.003'
+  name: Schalten.EG.Küche.K4-L1.Geschirrspüler.Kilowattstunde-Löschen
+3/2/97:
+  dpt: '7.012'
+  name: Schalten.EG.Küche.K4-L1.Geschirrspüler.Stromwert
+3/3/0:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Luis.K1-L1.Steckdose.Sperren
+3/3/1:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Luis.K1-L1.Steckdose.Ein/Aus
+3/3/10:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Luis.K2-L1.Steckdose.Sperren
+3/3/11:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Luis.K2-L1.Steckdose.Ein/Aus
+3/3/12:
+  dpt: '1.011'
+  name: Schalten.OG.Schlafzimmer-Luis.K2-L1.Steckdose.Ein/Aus-Status
+3/3/150:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Eltern.K1-L2.Schrank.Sperren
+3/3/151:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Eltern.K1-L2.Schrank.Ein/Aus
+3/3/152:
+  dpt: '1.011'
+  name: Schalten.OG.Badezimmer-Eltern.K1-L2.Schrank.Ein/Aus-Status
+3/3/160:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Eltern.K1-L3.Schrank.Sperren
+3/3/161:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Eltern.K1-L3.Schrank.Ein/Aus
+3/3/162:
+  dpt: '1.011'
+  name: Schalten.OG.Badezimmer-Eltern.K1-L3.Schrank.Ein/Aus-Status
+3/3/170:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Eltern.K2-L3.Heizkörper.Sperren
+3/3/171:
+  dpt: '1.001'
+  name: Schalten.OG.Badezimmer-Eltern.K2-L3.Heizkörper.Ein/Aus
+3/3/172:
+  dpt: '1.011'
+  name: Schalten.OG.Badezimmer-Eltern.K2-L3.Heizkörper.Ein/Aus-Status
+3/3/2:
+  dpt: '1.011'
+  name: Schalten.OG.Schlafzimmer-Luis.K1-L1.Steckdose.Ein/Aus-Status
+3/3/50:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Eltern.K1-L1.Steckdose.Sperren
+3/3/51:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Eltern.K1-L1.Steckdose.Ein/Aus
+3/3/52:
+  dpt: '1.011'
+  name: Schalten.OG.Schlafzimmer-Eltern.K1-L1.Steckdose.Ein/Aus-Status
+3/3/60:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Eltern.K2-L1.Bett.Sperren
+3/3/61:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Eltern.K2-L1.Bett.Ein/Aus
+3/3/62:
+  dpt: '1.011'
+  name: Schalten.OG.Schlafzimmer-Eltern.K2-L1.Bett.Ein/Aus-Status
+3/3/70:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Eltern.K2-L2.Bett.Sperren
+3/3/71:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Eltern.K2-L2.Bett.Ein/Aus
+3/3/72:
+  dpt: '1.011'
+  name: Schalten.OG.Schlafzimmer-Eltern.K2-L2.Bett.Ein/Aus-Status
+3/3/80:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Eltern.K2-L3.Bett.Sperren
+3/3/81:
+  dpt: '1.001'
+  name: Schalten.OG.Schlafzimmer-Eltern.K2-L3.Bett.Ein/Aus
+3/3/82:
+  dpt: '1.011'
+  name: Schalten.OG.Schlafzimmer-Eltern.K2-L3.Bett.Ein/Aus-Status
+3/5/0:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K1-L1.Steckdose.Sperren
+3/5/1:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K1-L1.Steckdose.Ein/Aus
+3/5/10:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K1-L2.Steckdose.Sperren
+3/5/100:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K3-L5.Steckdose.Sperren
+3/5/101:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K3-L5.Steckdose.Ein/Aus
+3/5/102:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K3-L5.Steckdose.Ein/Aus-Status
+3/5/11:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K1-L2.Steckdose.Ein/Aus
+3/5/12:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K1-L2.Steckdose.Ein/Aus-Status
+3/5/2:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K1-L1.Steckdose.Ein/Aus-Status
+3/5/20:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K1-L2.Steckdose.Sperren
+3/5/21:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K1-L3.Steckdose.Ein/Aus
+3/5/22:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K1-L3.Steckdose.Ein/Aus-Status
+3/5/30:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K2-L1.Steckdose.Sperren
+3/5/31:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K2-L1.Steckdose.Ein/Aus
+3/5/32:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K2-L1.Steckdose.Ein/Aus-Status
+3/5/40:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K2-L2.Steckdose.Sperren
+3/5/41:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K2-L2.Steckdose.Ein/Aus
+3/5/42:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K2-L2.Steckdose.Ein/Aus-Status
+3/5/50:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K2-L3.Steckdose.Sperren
+3/5/51:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K2-L3.Steckdose.Ein/Aus
+3/5/52:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K2-L3.Steckdose.Ein/Aus-Status
+3/5/60:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K3-L1.Steckdose.Sperren
+3/5/61:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K3-L1.Steckdose.Ein/Aus
+3/5/62:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K3-L1.Steckdose.Ein/Aus-Status
+3/5/70:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K3-L2.Steckdose.Sperren
+3/5/71:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K3-L2.Steckdose.Ein/Aus
+3/5/72:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K3-L2.Steckdose.Ein/Aus-Status
+3/5/80:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K3-L3.Steckdose.Sperren
+3/5/81:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K3-L3.Steckdose.Ein/Aus
+3/5/82:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K3-L3.Steckdose.Ein/Aus-Status
+3/5/90:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K3-L4.Steckdose.Sperren
+3/5/91:
+  dpt: '1.001'
+  name: Schalten.A.Garten.K3-L4.Steckdose.Ein/Aus
+3/5/92:
+  dpt: '1.011'
+  name: Schalten.A.Garten.K3-L4.Steckdose.Ein/Aus-Status
+4/0/0:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.KG.Flur.Ein/Aus
+4/0/1:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.KG.Flur.Ein/Aus-Status
+4/0/10:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.EG.Flur.Ein/Aus
+4/0/100:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.KG.Ein/Aus
+4/0/101:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.KG.Ein/Aus-Status
+4/0/11:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.EG.Flur.Ein/Aus-Status
+4/0/12:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.EG.Gäste-WC.Ein/Aus
+4/0/120:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.EG.Ein/Aus
+4/0/121:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.EG.Ein/Aus-Status
+4/0/13:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.EG.Gäste-WC.Ein/Aus-Status
+4/0/14:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.EG.Büro.Ein/Aus
+4/0/140:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.OG.Ein/Aus
+4/0/141:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.OG.Ein/Aus-Status
+4/0/15:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.EG.Büro.Ein/Aus-Status
+4/0/16:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.EG.Wohnzimmer.Ein/Aus
+4/0/160:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.DG.Ein/Aus
+4/0/161:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.DG.Ein/Aus-Status
+4/0/17:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.EG.Wohnzimmer.Ein/Aus-Status
+4/0/18:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.EG.Esszimmer.Ein/Aus
+4/0/180:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.A.Ein/Aus
+4/0/181:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.A.Ein/Aus-Status
+4/0/19:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.EG.Esszimmer.Ein/Aus-Status
+4/0/2:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.KG.Garage.Ein/Aus
+4/0/20:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.EG.Küche.Ein/Aus
+4/0/200:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.Ein/Aus
+4/0/201:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.Ein/Aus-Status
+4/0/21:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.EG.Küche.Ein/Aus-Status
+4/0/22:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.OG.Flur.Ein/Aus
+4/0/23:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.OG.Flur.Ein/Aus-Status
+4/0/24:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.OG.Abstellraum.Ein/Aus
+4/0/25:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.OG.Abstellraum.Ein/Aus-Status
+4/0/26:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.OG.Badezimmer-Kinder.Ein/Aus
+4/0/27:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.OG.Badezimmer-Kinder.Ein/Aus-Status
+4/0/28:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.OG.Schlafzimmer-Gregory.Ein/Aus
+4/0/29:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.OG.Schlafzimmer-Gregory.Ein/Aus-Status
+4/0/3:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.KG.Garage.Ein/Aus-Status
+4/0/30:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.OG.Schlafzimmer-Luis.Ein/Aus
+4/0/31:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.OG.Schlafzimmer-Luis.Ein/Aus-Status
+4/0/32:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.OG.Schlafzimmer-Eltern.Ein/Aus
+4/0/33:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.OG.Schlafzimmer-Eltern.Ein/Aus-Status
+4/0/34:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.OG.Begehbarer-Schrank.Ein/Aus
+4/0/35:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.OG.Begehbarer-Schrank.Ein/Aus-Status
+4/0/36:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.OG.Badezimmer-Eltern.Ein/Aus
+4/0/37:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.OG.Badezimmer-Eltern.Ein/Aus-Status
+4/0/38:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.DG.Speicher.Ein/Aus
+4/0/39:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.DG.Speicher.Ein/Aus-Status
+4/0/4:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.KG.Technikraum.Ein/Aus
+4/0/40:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.A.Eingang.Ein/Aus
+4/0/41:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.A.Eingang.Ein/Aus-Status
+4/0/42:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.A.Fassade.Ein/Aus
+4/0/43:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.A.Fassade.Ein/Aus-Status
+4/0/44:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.A.Terrasse.Ein/Aus
+4/0/45:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.A.Terrasse.Ein/Aus-Status
+4/0/46:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.A.Balkon.Ein/Aus
+4/0/47:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.A.Balkon.Ein/Aus-Status
+4/0/48:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.A.Garten.Ein/Aus
+4/0/49:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.A.Garten.Ein/Aus-Status
+4/0/5:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.KG.Technikraum.Ein/Aus-Status
+4/0/50:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.A.Dach.Ein/Aus
+4/0/51:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.A.Dach.Ein/Aus-Status
+4/0/6:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.KG.Vorratsraum.Ein/Aus
+4/0/7:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.KG.Vorratsraum.Ein/Aus-Status
+4/0/8:
+  dpt: '1.001'
+  name: Beleuchtung.Zentral.KG.Hauswirtschaftsraum.Ein/Aus
+4/0/9:
+  dpt: '1.011'
+  name: Beleuchtung.Zentral.KG.Hauswirtschaftsraum.Ein/Aus-Status
+4/1/0:
+  dpt: '1.003'
+  name: Beleuchtung.KG.Flur.Track.Sperren
+4/1/1:
+  dpt: '1.001'
+  name: Beleuchtung.KG.Flur.Track.Ein/Aus
+4/1/10:
+  dpt: '1.003'
+  name: Beleuchtung.KG.Flur.Indirekt.Sperren
+4/1/100:
+  dpt: '1.003'
+  name: Beleuchtung.KG.Technikraum.Deckenleuchte.Sperren
+4/1/101:
+  dpt: '1.001'
+  name: Beleuchtung.KG.Technikraum.Deckenleuchte.Ein/Aus
+4/1/102:
+  dpt: '1.011'
+  name: Beleuchtung.KG.Technikraum.Deckenleuchte.Ein/Aus-Status
+4/1/103:
+  dpt: '3.007'
+  name: Beleuchtung.KG.Technikraum.Deckenleuchte.Dimmen-Relativ
+4/1/104:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Technikraum.Deckenleuchte.Dimmen-Absolut
+4/1/105:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Technikraum.Deckenleuchte.Dimmen-Status
+4/1/11:
+  dpt: '1.001'
+  name: Beleuchtung.KG.Flur.Indirekt.Ein/Aus
+4/1/12:
+  dpt: '1.011'
+  name: Beleuchtung.KG.Flur.Indirekt.Ein/Aus-Status
+4/1/13:
+  dpt: '3.007'
+  name: Beleuchtung.KG.Flur.Indirekt.Dimmen-Relativ
+4/1/14:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Flur.Indirekt.Dimmen-Absolut
+4/1/15:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Flur.Indirekt.Dimmen-Status
+4/1/150:
+  dpt: '1.003'
+  name: Beleuchtung.KG.Vorratsraum.Deckenleuchte.Sperren
+4/1/151:
+  dpt: '1.001'
+  name: Beleuchtung.KG.Vorratsraum.Deckenleuchte.Ein/Aus
+4/1/152:
+  dpt: '1.011'
+  name: Beleuchtung.KG.Vorratsraum.Deckenleuchte.Ein/Aus-Status
+4/1/153:
+  dpt: '3.007'
+  name: Beleuchtung.KG.Vorratsraum.Deckenleuchte.Dimmen-Relativ
+4/1/154:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Vorratsraum.Deckenleuchte.Dimmen-Absolut
+4/1/155:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Vorratsraum.Deckenleuchte.Dimmen-Status
+4/1/2:
+  dpt: '1.011'
+  name: Beleuchtung.KG.Flur.Track.Ein/Aus-Status
+4/1/20:
+  dpt: '1.003'
+  name: Beleuchtung.KG.Flur.Bodenleuchte.Sperren
+4/1/21:
+  dpt: '1.001'
+  name: Beleuchtung.KG.Flur.Bodenleuchte.Ein/Aus
+4/1/22:
+  dpt: '1.011'
+  name: Beleuchtung.KG.Flur.Bodenleuchte.Ein/Aus-Status
+4/1/23:
+  dpt: '3.007'
+  name: Beleuchtung.KG.Flur.Bodenleuchte.Dimmen-Relativ
+4/1/24:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Flur.Bodenleuchte.Dimmen-Absolut
+4/1/25:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Flur.Bodenleuchte.Dimmen-Status
+4/1/3:
+  dpt: '3.007'
+  name: Beleuchtung.KG.Flur.Track.Dimmen-Relativ
+4/1/4:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Flur.Track.Dimmen-Absolut
+4/1/5:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Flur.Track.Dimmen-Status
+4/1/50:
+  dpt: '1.003'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Links.Sperren
+4/1/51:
+  dpt: '1.001'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Links.Ein/Aus
+4/1/52:
+  dpt: '1.011'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Links.Ein/Aus-Status
+4/1/53:
+  dpt: '3.007'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Links.Dimmen-Relativ
+4/1/54:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Links.Dimmen-Absolut
+4/1/55:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Links.Dimmen-Status
+4/1/60:
+  dpt: '1.003'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Rechts.Sperren
+4/1/61:
+  dpt: '1.001'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Rechts.Ein/Aus
+4/1/62:
+  dpt: '1.011'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Rechts.Ein/Aus-Status
+4/1/63:
+  dpt: '3.007'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Rechts.Dimmen-Relativ
+4/1/64:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Rechts.Dimmen-Absolut
+4/1/65:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Garage.Deckenleuchte.Rechts.Dimmen-Status
+4/2/0:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Flur.Downlight.Diele.Sperren
+4/2/1:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Flur.Downlight.Diele.Ein/Aus
+4/2/10:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Flur.Downlight.Garderobe.Sperren
+4/2/100:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Büro.Spots.Sperren
+4/2/101:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Büro.Spots.Ein/Aus
+4/2/102:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Büro.Spots.Ein/Aus-Status
+4/2/103:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Büro.Spots.Dimmen-Relativ
+4/2/104:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Büro.Spots.Dimmen-Absolut
+4/2/105:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Büro.Spots.Dimmen-Status
+4/2/11:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Flur.Downlight.Garderobe.Ein/Aus
+4/2/110:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Büro.Stripe.Sperren
+4/2/111:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Büro.Stripe.Ein/Aus
+4/2/112:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Büro.Stripe.Ein/Aus-Status
+4/2/113:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Büro.Stripe.Dimmen-Relativ
+4/2/114:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Büro.Stripe.Dimmen-Absolut
+4/2/115:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Büro.Stripe.Dimmen-Status
+4/2/12:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Flur.Downlight.Garderobe.Ein/Aus-Status
+4/2/13:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Flur.Downlight.Garderobe.Dimmen-Relativ
+4/2/14:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Flur.Downlight.Garderobe.Dimmen-Absolut
+4/2/15:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Flur.Downlight.Garderobe.Dimmen-Status
+4/2/150:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Wohnzimmer.Downlight.Sperren
+4/2/151:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Wohnzimmer.Downlight.Ein/Aus
+4/2/152:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Wohnzimmer.Downlight.Ein/Aus-Status
+4/2/153:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Wohnzimmer.Downlight.Dimmen-Relativ
+4/2/154:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Downlight.Dimmen-Absolut
+4/2/155:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Downlight.Dimmen-Status
+4/2/160:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Links.Sperren
+4/2/161:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Links.Ein/Aus
+4/2/162:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Links.Ein/Aus-Status
+4/2/163:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Links.Dimmen-Relativ
+4/2/164:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Links.Dimmen-Absolut
+4/2/165:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Links.Dimmen-Status
+4/2/170:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Links.Sperren
+4/2/171:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Links.Ein/Aus
+4/2/172:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Links.Ein/Aus-Status
+4/2/173:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Links.Dimmen-Relativ
+4/2/174:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Links.Dimmen-Absolut
+4/2/175:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Links.Dimmen-Status
+4/2/180:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Rechts.Sperren
+4/2/181:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Rechts.Ein/Aus
+4/2/182:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Rechts.Ein/Aus-Status
+4/2/183:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Rechts.Dimmen-Relativ
+4/2/184:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Rechts.Dimmen-Absolut
+4/2/185:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Spots.Rechts.Dimmen-Status
+4/2/190:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Rechts.Sperren
+4/2/191:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Rechts.Ein/Aus
+4/2/192:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Rechts.Ein/Aus-Status
+4/2/193:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Rechts.Dimmen-Relativ
+4/2/194:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Rechts.Dimmen-Absolut
+4/2/195:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Stripe.Rechts.Dimmen-Status
+4/2/2:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Flur.Downlight.Diele.Ein/Aus-Status
+4/2/20:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Flur.Bodenleuchte.Sperren
+4/2/200:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Links.Sperren
+4/2/201:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Links.Ein/Aus
+4/2/202:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Links.Ein/Aus-Status
+4/2/203:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Links.Dimmen-Relativ
+4/2/204:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Links.Dimmen-Absolut
+4/2/205:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Links.Dimmen-Status
+4/2/21:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Flur.Bodenleuchte.Ein/Aus
+4/2/210:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Rechts.Sperren
+4/2/211:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Rechts.Ein/Aus
+4/2/212:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Rechts.Ein/Aus-Status
+4/2/213:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Rechts.Dimmen-Relativ
+4/2/214:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Rechts.Dimmen-Absolut
+4/2/215:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Wohnzimmer.Indirekt.Rechts.Dimmen-Status
+4/2/22:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Flur.Bodenleuchte.Ein/Aus-Status
+4/2/23:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Flur.Bodenleuchte.Dimmen-Relativ
+4/2/24:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Flur.Bodenleuchte.Dimmen-Absolut
+4/2/25:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Flur.Bodenleuchte.Dimmen-Status
+4/2/3:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Flur.Downlight.Diele.Dimmen-Relativ
+4/2/30:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Flur.Indirekt.Sperren
+4/2/31:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Flur.Indirekt.Ein/Aus
+4/2/32:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Flur.Indirekt.Ein/Aus-Status
+4/2/33:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Flur.Indirekt.Dimmen-Relativ
+4/2/34:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Flur.Indirekt.Dimmen-Absolut
+4/2/35:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Flur.Indirekt.Dimmen-Status
+4/2/4:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Flur.Downlight.Diele.Dimmen-Absolut
+4/2/5:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Flur.Downlight.Diele.Dimmen-Status
+4/2/50:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Gäste-WC.Pendelleuchte.Sperren
+4/2/51:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Gäste-WC.Pendelleuchte.Ein/Aus
+4/2/52:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Gäste-WC.Pendelleuchte.Ein/Aus-Status
+4/2/53:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Gäste-WC.Pendelleuchte.Dimmen-Relativ
+4/2/54:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Gäste-WC.Pendelleuchte.Dimmen-Absolut
+4/2/55:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Gäste-WC.Pendelleuchte.Dimmen-Status
+4/2/60:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Gäste-WC.Indirekt.Sperren
+4/2/61:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Gäste-WC.Indirekt.Ein/Aus
+4/2/62:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Gäste-WC.Indirekt.Ein/Aus-Status
+4/2/63:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Gäste-WC.Indirekt.Dimmen-Relativ
+4/2/64:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Gäste-WC.Indirekt.Dimmen-Absolut
+4/2/65:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Gäste-WC.Indirekt.Dimmen-Status
+4/3/0:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Flur.Pendelleuchte.Sperren
+4/3/1:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Flur.Pendelleuchte.Ein/Aus
+4/3/10:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Flur.Downlight.Treppe.Sperren
+4/3/100:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.WC.Sperren
+4/3/101:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.WC.Ein/Aus
+4/3/102:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.WC.Ein/Aus-Status
+4/3/103:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.WC.Dimmen-Relativ
+4/3/104:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.WC.Dimmen-Absolut
+4/3/105:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.WC.Dimmen-Status
+4/3/11:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Flur.Downlight.Treppe.Ein/Aus
+4/3/110:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.Becken.Sperren
+4/3/111:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.Becken.Ein/Aus
+4/3/112:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.Becken.Ein/Aus-Status
+4/3/113:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.Becken.Dimmen-Relativ
+4/3/114:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.Becken.Dimmen-Absolut
+4/3/115:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Downlight.Becken.Dimmen-Status
+4/3/12:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Flur.Downlight.Treppe.Ein/Aus-Status
+4/3/120:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Indirekt.Sperren
+4/3/121:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Indirekt.Ein/Aus
+4/3/122:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Indirekt.Ein/Aus-Status
+4/3/123:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Indirekt.Dimmen-Relativ
+4/3/124:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Indirekt.Dimmen-Absolut
+4/3/125:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Indirekt.Dimmen-Status
+4/3/13:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Flur.Downlight.Treppe.Dimmen-Relativ
+4/3/130:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Spiegel.Sperren
+4/3/131:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Spiegel.Ein/Aus
+4/3/132:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Spiegel.Ein/Aus-Status
+4/3/133:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Spiegel.Dimmen-Relativ
+4/3/134:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Spiegel.Dimmen-Absolut
+4/3/135:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Spiegel.Dimmen-Status
+4/3/136:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Spiegel.Farbwert
+4/3/137:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Spiegel.Farbwert-Status
+4/3/138:
+  dpt: '7.600'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Spiegel.Farbtemperatur
+4/3/139:
+  dpt: '7.600'
+  name: Beleuchtung.OG.Badezimmer-Kinder.Spiegel.Farbtemperatur-Status
+4/3/14:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Flur.Downlight.Treppe.Dimmen-Absolut
+4/3/15:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Flur.Downlight.Treppe.Dimmen-Status
+4/3/150:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Downlight.Sperren
+4/3/151:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Downlight.Ein/Aus
+4/3/152:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Downlight.Ein/Aus-Status
+4/3/153:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Downlight.Dimmen-Relativ
+4/3/154:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Downlight.Dimmen-Absolut
+4/3/155:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Downlight.Dimmen-Status
+4/3/160:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Sperren
+4/3/161:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Ein/Aus
+4/3/162:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Ein/Aus-Status
+4/3/163:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Dimmen-Relativ
+4/3/164:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Dimmen-Absolut
+4/3/165:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Dimmen-Status
+4/3/166:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Farbwert
+4/3/167:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Farbwert-Status
+4/3/168:
+  dpt: '7.600'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Farbtemparatur
+4/3/169:
+  dpt: '7.600'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Farbtemparatur-Status
+4/3/170:
+  dpt: '232.600'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Farbsteuerung
+4/3/171:
+  dpt: '232.600'
+  name: Beleuchtung.OG.Schlafzimmer-Gregory.Stripe.Farbsteuerung-Status
+4/3/2:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Flur.Pendelleuchte.Ein/Aus-Status
+4/3/20:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Flur.Downlight.Galerie.Sperren
+4/3/21:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Flur.Downlight.Galerie.Ein/Aus
+4/3/22:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Flur.Downlight.Galerie.Ein/Aus-Status
+4/3/23:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Flur.Downlight.Galerie.Dimmen-Relativ
+4/3/24:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Flur.Downlight.Galerie.Dimmen-Absolut
+4/3/25:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Flur.Downlight.Galerie.Dimmen-Status
+4/3/3:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Flur.Pendelleuchte.Dimmen-Relativ
+4/3/30:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Flur.Downlight.Gang.Sperren
+4/3/31:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Flur.Downlight.Gang.Ein/Aus
+4/3/32:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Flur.Downlight.Gang.Ein/Aus-Status
+4/3/33:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Flur.Downlight.Gang.Dimmen-Relativ
+4/3/34:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Flur.Downlight.Gang.Dimmen-Absolut
+4/3/35:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Flur.Downlight.Gang.Dimmen-Status
+4/3/4:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Flur.Pendelleuchte.Dimmen-Absolut
+4/3/40:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Flur.Bodenleuchte.Sperren
+4/3/41:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Flur.Bodenleuchte.Ein/Aus
+4/3/42:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Flur.Bodenleuchte.Ein/Aus-Status
+4/3/43:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Flur.Bodenleuchte.Dimmen-Relativ
+4/3/44:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Flur.Bodenleuchte.Dimmen-Absolut
+4/3/45:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Flur.Bodenleuchte.Dimmen-Status
+4/3/5:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Flur.Pendelleuchte.Dimmen-Status
+4/3/50:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Abstellraum.Downlight.Sperren
+4/3/51:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Abstellraum.Downlight.Ein/Aus
+4/3/52:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Abstellraum.Downlight.Ein/Aus-Status
+4/3/53:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Abstellraum.Downlight.Dimmen-Relativ
+4/3/54:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Abstellraum.Downlight.Dimmen-Absolut
+4/3/55:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Abstellraum.Downlight.Dimmen-Status
+4/4/0:
+  dpt: '1.003'
+  name: Beleuchtung.DG.Speicher.Deckenleuchte.Sperren
+4/4/1:
+  dpt: '1.001'
+  name: Beleuchtung.DG.Speicher.Deckenleuchte.Ein/Aus
+4/4/2:
+  dpt: '1.011'
+  name: Beleuchtung.DG.Speicher.Deckenleuchte.Ein/Aus-Status
+4/4/3:
+  dpt: '3.007'
+  name: Beleuchtung.DG.Speicher.Deckenleuchte.Dimmen-Relativ
+4/4/4:
+  dpt: '5.001'
+  name: Beleuchtung.DG.Speicher.Deckenleuchte.Dimmen-Absolut
+4/4/5:
+  dpt: '5.001'
+  name: Beleuchtung.DG.Speicher.Deckenleuchte.Dimmen-Status
+4/5/0:
+  dpt: '1.003'
+  name: Beleuchtung.A.Fassade.Front.Sperren
+4/5/1:
+  dpt: '1.001'
+  name: Beleuchtung.A.Fassade.Front.Ein/Aus
+4/5/100:
+  dpt: '1.003'
+  name: Beleuchtung.A.Terrasse.Spots.Sperren
+4/5/101:
+  dpt: '1.001'
+  name: Beleuchtung.A.Terrasse.Spots.Ein/Aus
+4/5/102:
+  dpt: '1.011'
+  name: Beleuchtung.A.Terrasse.Spots.Ein/Aus-Status
+4/5/103:
+  dpt: '3.007'
+  name: Beleuchtung.A.Terrasse.Spots.Dimmen-Relativ
+4/5/104:
+  dpt: '5.001'
+  name: Beleuchtung.A.Terrasse.Spots.Dimmen-Absolut
+4/5/105:
+  dpt: '5.001'
+  name: Beleuchtung.A.Terrasse.Spots.Dimmen-Status
+4/5/110:
+  dpt: '1.003'
+  name: Beleuchtung.A.Terrasse.Stripe.Sperren
+4/5/111:
+  dpt: '1.001'
+  name: Beleuchtung.A.Terrasse.Stripe.Ein/Aus
+4/5/112:
+  dpt: '1.011'
+  name: Beleuchtung.A.Terrasse.Stripe.Ein/Aus-Status
+4/5/113:
+  dpt: '3.007'
+  name: Beleuchtung.A.Terrasse.Stripe.Dimmen-Relativ
+4/5/114:
+  dpt: '5.001'
+  name: Beleuchtung.A.Terrasse.Stripe.Dimmen-Absolut
+4/5/115:
+  dpt: '5.001'
+  name: Beleuchtung.A.Terrasse.Stripe.Dimmen-Status
+4/5/150:
+  dpt: '1.003'
+  name: Beleuchtung.A.Balkon.Spots.Sperren
+4/5/151:
+  dpt: '1.001'
+  name: Beleuchtung.A.Balkon.Spots.Ein/Aus
+4/5/152:
+  dpt: '1.011'
+  name: Beleuchtung.A.Balkon.Spots.Ein/Aus-Status
+4/5/153:
+  dpt: '3.007'
+  name: Beleuchtung.A.Balkon.Spots.Dimmen-Relativ
+4/5/154:
+  dpt: '5.001'
+  name: Beleuchtung.A.Balkon.Spots.Dimmen-Absolut
+4/5/155:
+  dpt: '5.001'
+  name: Beleuchtung.A.Balkon.Spots.Dimmen-Status
+4/5/2:
+  dpt: '1.011'
+  name: Beleuchtung.A.Fassade.Front.Ein/Aus-Status
+4/5/3:
+  dpt: '3.007'
+  name: Beleuchtung.A.Fassade.Front.Dimmen-Relativ
+4/5/4:
+  dpt: '5.001'
+  name: Beleuchtung.A.Fassade.Front.Dimmen-Absolut
+4/5/5:
+  dpt: '5.001'
+  name: Beleuchtung.A.Fassade.Front.Dimmen-Status
+4/5/50:
+  dpt: '1.003'
+  name: Beleuchtung.A.Eingang.Briefkasten.Sperren
+4/5/51:
+  dpt: '1.001'
+  name: Beleuchtung.A.Eingang.Briefkasten.Ein/Aus
+4/5/52:
+  dpt: '1.011'
+  name: Beleuchtung.A.Eingang.Briefkasten.Ein/Aus-Status
+4/5/53:
+  dpt: '3.007'
+  name: Beleuchtung.A.Eingang.Briefkasten.Dimmen-Relativ
+4/5/54:
+  dpt: '5.001'
+  name: Beleuchtung.A.Eingang.Briefkasten.Dimmen-Absolut
+4/5/55:
+  dpt: '5.001'
+  name: Beleuchtung.A.Eingang.Briefkasten.Dimmen-Status
+5/1/0:
+  dpt: '1.003'
+  name: Beleuchtung.KG.Hauswirtschaftsraum.Deckenleuchte.Sperren
+5/1/1:
+  dpt: '1.001'
+  name: Beleuchtung.KG.Hauswirtschaftsraum.Deckenleuchte.Ein/Aus
+5/1/2:
+  dpt: '1.011'
+  name: Beleuchtung.KG.Hauswirtschaftsraum.Deckenleuchte.Ein/Aus-Status
+5/1/3:
+  dpt: '3.007'
+  name: Beleuchtung.KG.Hauswirtschaftsraum.Deckenleuchte.Dimmen-Relativ
+5/1/4:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Hauswirtschaftsraum.Deckenleuchte.Dimmen-Absolut
+5/1/5:
+  dpt: '5.001'
+  name: Beleuchtung.KG.Hauswirtschaftsraum.Deckenleuchte.Dimmen-Status
+5/2/0:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Esszimmer.Pendelleuchte.Sperren
+5/2/1:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Esszimmer.Pendelleuchte.Ein/Aus
+5/2/10:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Esszimmer.Indirekt.Sperren
+5/2/100:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Küche.Küchenzeile.Sperren
+5/2/101:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Küche.Küchenzeile.Ein/Aus
+5/2/102:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Küche.Küchenzeile.Ein/Aus-Status
+5/2/103:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Küche.Küchenzeile.Dimmen-Relativ
+5/2/104:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Küchenzeile.Dimmen-Absolut
+5/2/105:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Küchenzeile.Dimmen-Status
+5/2/106:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Küchenzeile.Farbwert
+5/2/107:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Küchenzeile.Farbwert-Status
+5/2/108:
+  dpt: '7.600'
+  name: Beleuchtung.EG.Küche.Küchenzeile.Farbtemparatur
+5/2/109:
+  dpt: '7.600'
+  name: Beleuchtung.EG.Küche.Küchenzeile.Farbtemparatur-Status
+5/2/11:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Esszimmer.Indirekt.Ein/Aus
+5/2/12:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Esszimmer.Indirekt.Ein/Aus-Status
+5/2/13:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Esszimmer.Indirekt.Dimmen-Relativ
+5/2/14:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Esszimmer.Indirekt.Dimmen-Absolut
+5/2/15:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Esszimmer.Indirekt.Dimmen-Status
+5/2/2:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Esszimmer.Pendelleuchte.Ein/Aus-Status
+5/2/3:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Esszimmer.Pendelleuchte.Dimmen-Relativ
+5/2/4:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Esszimmer.Pendelleuchte.Dimmen-Absolut
+5/2/5:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Esszimmer.Pendelleuchte.Dimmen-Status
+5/2/50:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Küche.Track.Sperren
+5/2/51:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Küche.Track.Ein/Aus
+5/2/52:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Küche.Track.Ein/Aus-Status
+5/2/53:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Küche.Track.Dimmen-Relativ
+5/2/54:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Track.Dimmen-Absolut
+5/2/55:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Track.Dimmen-Status
+5/2/60:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Groß.Sperren
+5/2/61:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Groß.Ein/Aus
+5/2/62:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Groß.Ein/Aus-Status
+5/2/63:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Groß.Dimmen-Relativ
+5/2/64:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Groß.Dimmen-Absolut
+5/2/65:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Groß.Dimmen-Status
+5/2/70:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Klein.Sperren
+5/2/71:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Klein.Ein/Aus
+5/2/72:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Klein.Ein/Aus-Status
+5/2/73:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Klein.Dimmen-Relativ
+5/2/74:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Klein.Dimmen-Absolut
+5/2/75:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Pendelleuchte.Klein.Dimmen-Status
+5/2/80:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Küche.Indirekt.Sperren
+5/2/81:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Küche.Indirekt.Ein/Aus
+5/2/82:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Küche.Indirekt.Ein/Aus-Status
+5/2/83:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Küche.Indirekt.Dimmen-Relativ
+5/2/84:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Indirekt.Dimmen-Absolut
+5/2/85:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Indirekt.Dimmen-Status
+5/2/90:
+  dpt: '1.003'
+  name: Beleuchtung.EG.Küche.Kücheninsel.Sperren
+5/2/91:
+  dpt: '1.001'
+  name: Beleuchtung.EG.Küche.Kücheninsel.Ein/Aus
+5/2/92:
+  dpt: '1.011'
+  name: Beleuchtung.EG.Küche.Kücheninsel.Ein/Aus-Status
+5/2/93:
+  dpt: '3.007'
+  name: Beleuchtung.EG.Küche.Kücheninsel.Dimmen-Relativ
+5/2/94:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Kücheninsel.Dimmen-Absolut
+5/2/95:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Kücheninsel.Dimmen-Status
+5/2/96:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Kücheninsel.Farbwert
+5/2/97:
+  dpt: '5.001'
+  name: Beleuchtung.EG.Küche.Kücheninsel.Farbwert-Status
+5/2/98:
+  dpt: '7.600'
+  name: Beleuchtung.EG.Küche.Kücheninsel.Farbtemparatur
+5/2/99:
+  dpt: '7.600'
+  name: Beleuchtung.EG.Küche.Kücheninsel.Farbtemparatur-Status
+5/3/0:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Downlight.Sperren
+5/3/1:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Downlight.Ein/Aus
+5/3/10:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Sperren
+5/3/100:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Begehbarer-Schrank.Deckenleuchte.Sperren
+5/3/101:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Begehbarer-Schrank.Deckenleuchte.Ein/Aus
+5/3/102:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Begehbarer-Schrank.Deckenleuchte.Ein/Aus-Status
+5/3/103:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Begehbarer-Schrank.Deckenleuchte.Dimmen-Relativ
+5/3/104:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Begehbarer-Schrank.Deckenleuchte.Dimmen-Absolut
+5/3/105:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Begehbarer-Schrank.Deckenleuchte.Dimmen-Status
+5/3/11:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Ein/Aus
+5/3/12:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Ein/Aus-Status
+5/3/13:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Dimmen-Relativ
+5/3/14:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Dimmen-Absolut
+5/3/15:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Dimmen-Status
+5/3/150:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.WC.Sperren
+5/3/151:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.WC.Ein/Aus
+5/3/152:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.WC.Ein/Aus-Status
+5/3/153:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.WC.Dimmen-Relativ
+5/3/154:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.WC.Dimmen-Absolut
+5/3/155:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.WC.Dimmen-Status
+5/3/16:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Farbwert
+5/3/160:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.Becken.Sperren
+5/3/161:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.Becken.Ein/Aus
+5/3/162:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.Becken.Ein/Aus-Status
+5/3/163:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.Becken.Dimmen-Relativ
+5/3/164:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.Becken.Dimmen-Absolut
+5/3/165:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Downlight.Becken.Dimmen-Status
+5/3/17:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Farbwert-Status
+5/3/170:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.WC.Sperren
+5/3/171:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.WC.Ein/Aus
+5/3/172:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.WC.Ein/Aus-Status
+5/3/173:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.WC.Dimmen-Relativ
+5/3/174:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.WC.Dimmen-Absolut
+5/3/175:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.WC.Dimmen-Status
+5/3/18:
+  dpt: '7.600'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Farbtemparatur
+5/3/180:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.Schrank.Sperren
+5/3/181:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.Schrank.Ein/Aus
+5/3/182:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.Schrank.Ein/Aus-Status
+5/3/183:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.Schrank.Dimmen-Relativ
+5/3/184:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.Schrank.Dimmen-Absolut
+5/3/185:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Indirekt.Schrank.Dimmen-Status
+5/3/19:
+  dpt: '7.600'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Farbtemparatur-Status
+5/3/190:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Eltern.RGB.Sperren
+5/3/191:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.RGB.Ein/Aus
+5/3/192:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Badezimmer-Eltern.RGB.Ein/Aus-Status
+5/3/193:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Eltern.RGB.Dimmen-Relativ
+5/3/194:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.RGB.Dimmen-Absolut
+5/3/195:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.RGB.Dimmen-Status
+5/3/196:
+  dpt: '232.600'
+  name: Beleuchtung.OG.Badezimmer-Eltern.RGB.Farbsteuerung
+5/3/197:
+  dpt: '232.600'
+  name: Beleuchtung.OG.Badezimmer-Eltern.RGB.Farbsteuerung-Status
+5/3/2:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Downlight.Ein/Aus-Status
+5/3/20:
+  dpt: '232.600'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Farbsteuerung
+5/3/200:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Spiegel.Sperren
+5/3/201:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Spiegel.Ein/Aus
+5/3/202:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Spiegel.Ein/Aus-Status
+5/3/203:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Spiegel.Dimmen-Relativ
+5/3/204:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Spiegel.Dimmen-Absolut
+5/3/205:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Spiegel.Dimmen-Status
+5/3/206:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Spiegel.Farbwert
+5/3/207:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Spiegel.Farbwert-Status
+5/3/208:
+  dpt: '7.600'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Spiegel.Farbtemparatur
+5/3/209:
+  dpt: '7.600'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Spiegel.Farbtemparatur-Status
+5/3/21:
+  dpt: '232.600'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Stripe.Farbsteuerung-Status
+5/3/210:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Schminkspiegel.Sperren
+5/3/211:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Schminkspiegel.Ein/Aus
+5/3/212:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Schminkspiegel.Ein/Aus-Status
+5/3/213:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Schminkspiegel.Dimmen-Relativ
+5/3/214:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Schminkspiegel.Dimmen-Absolut
+5/3/215:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Schminkspiegel.Dimmen-Status
+5/3/216:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Schminkspiegel.Farbwert
+5/3/217:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Schminkspiegel.Farbwert-Status
+5/3/218:
+  dpt: '7.600'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Schminkspiegel.Farbtemperatur
+5/3/219:
+  dpt: '7.600'
+  name: Beleuchtung.OG.Badezimmer-Eltern.Schminkspiegel.Farbtemperatur-Status
+5/3/3:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Downlight.Dimmen-Relativ
+5/3/4:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Downlight.Dimmen-Absolut
+5/3/5:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Luis.Downlight.Dimmen-Status
+5/3/50:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Downlight.Sperren
+5/3/51:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Downlight.Ein/Aus
+5/3/52:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Downlight.Ein/Aus-Status
+5/3/53:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Downlight.Dimmen-Relativ
+5/3/54:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Downlight.Dimmen-Absolut
+5/3/55:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Downlight.Dimmen-Status
+5/3/60:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Links.Sperren
+5/3/61:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Links.Ein/Aus
+5/3/62:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Links.Ein/Aus-Status
+5/3/63:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Links.Dimmen-Relativ
+5/3/64:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Links.Dimmen-Absolut
+5/3/65:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Links.Dimmen-Status
+5/3/70:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Rechts.Sperren
+5/3/71:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Rechts.Ein/Aus
+5/3/72:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Rechts.Ein/Aus-Status
+5/3/73:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Rechts.Dimmen-Relativ
+5/3/74:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Rechts.Dimmen-Absolut
+5/3/75:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Leselicht.Rechts.Dimmen-Status
+5/3/80:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.TV.Sperren
+5/3/81:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.TV.Ein/Aus
+5/3/82:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.TV.Ein/Aus-Status
+5/3/83:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.TV.Indirekt.Dimmen-Relativ
+5/3/84:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.TV.Dimmen-Absolut
+5/3/85:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.TV.Dimmen-Status
+5/3/90:
+  dpt: '1.003'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.Bett.Sperren
+5/3/91:
+  dpt: '1.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.Bett.Ein/Aus
+5/3/92:
+  dpt: '1.011'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.Bett.Ein/Aus-Status
+5/3/93:
+  dpt: '3.007'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.Bett.Dimmen-Relativ
+5/3/94:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.Bett.Dimmen-Absolut
+5/3/95:
+  dpt: '5.001'
+  name: Beleuchtung.OG.Schlafzimmer-Eltern.Indirekt.Bett.Dimmen-Status
+5/5/0:
+  dpt: '1.003'
+  name: Beleuchtung.A.Garten.Hochbeet.Poller.Sperren
+5/5/1:
+  dpt: '1.001'
+  name: Beleuchtung.A.Garten.Hochbeet.Poller.Ein/Aus
+5/5/2:
+  dpt: '1.011'
+  name: Beleuchtung.A.Garten.Hochbeet.Poller.Ein/Aus-Status
+5/5/3:
+  dpt: '3.007'
+  name: Beleuchtung.A.Garten.Hochbeet.Poller.Dimmen-Relativ
+5/5/4:
+  dpt: '5.001'
+  name: Beleuchtung.A.Garten.Hochbeet.Poller.Dimmen-Absolut
+5/5/5:
+  dpt: '5.001'
+  name: Beleuchtung.A.Garten.Hochbeet.Poller.Dimmen-Status
+6/0/120:
+  dpt: '1.008'
+  name: Beschattung.Zentral.EG.Raffstore.Innen.Fahren
+6/0/121:
+  dpt: '1.007'
+  name: Beschattung.Zentral.EG.Raffstore.Innen.Stoppen
+6/0/122:
+  dpt: '1.008'
+  name: Beschattung.Zentral.EG.Raffstore.Außen.Fahren
+6/0/123:
+  dpt: '1.007'
+  name: Beschattung.Zentral.EG.Raffstore.Außen.Stoppen
+6/0/140:
+  dpt: '1.008'
+  name: Beschattung.Zentral.OG.Raffstore.Innen.Fahren
+6/0/141:
+  dpt: '1.007'
+  name: Beschattung.Zentral.OG.Raffstore.Innen.Stoppen
+6/0/142:
+  dpt: '1.008'
+  name: Beschattung.Zentral.OG.Raffstore.Außen.Fahren
+6/0/143:
+  dpt: '1.007'
+  name: Beschattung.Zentral.OG.Raffstore.Außen.Stoppen
+6/0/144:
+  dpt: '1.008'
+  name: Beschattung.Zentral.OG.Vorhang.Fahren
+6/0/145:
+  dpt: '1.017'
+  name: Beschattung.Zentral.OG.Vorhang.Stoppen
+6/0/200:
+  dpt: '1.001'
+  name: Beschattung.Zentral.Raffstore.Außen-1.Automatik.Sperren
+6/0/201:
+  dpt: '1.008'
+  name: Beschattung.Zentral.Raffstore.Außen-1.Automatik.Fahren
+6/0/202:
+  dpt: '5.001'
+  name: Beschattung.Zentral.Raffstore.Außen-1.Automatik.Position
+6/0/203:
+  dpt: '5.001'
+  name: Beschattung.Zentral.Raffstore.Außen-1.Automatik.Rotation
+6/0/204:
+  dpt: '9.004'
+  name: Beschattung.Zentral.Raffstore.Außen-1.Automatik.Helligkeitsschwelle
+6/0/205:
+  dpt: '9.004'
+  name: Beschattung.Zentral.Raffstore.Außen-1.Automatik.Dämmerungsschwelle
+6/0/210:
+  dpt: '1.001'
+  name: Beschattung.Zentral.Raffstore.Außen-2.Automatik.Sperren
+6/0/211:
+  dpt: '1.008'
+  name: Beschattung.Zentral.Raffstore.Außen-2.Automatik.Fahren
+6/0/212:
+  dpt: '5.001'
+  name: Beschattung.Zentral.Raffstore.Außen-2.Automatik.Position
+6/0/213:
+  dpt: '5.001'
+  name: Beschattung.Zentral.Raffstore.Außen-2.Automatik.Rotation
+6/0/214:
+  dpt: '9.004'
+  name: Beschattung.Zentral.Raffstore.Außen-2.Automatik.Helligkeitsschwelle
+6/0/215:
+  dpt: '9.004'
+  name: Beschattung.Zentral.Raffstore.Außen-2.Automatik.Dämmerungsschwelle
+6/0/220:
+  dpt: '1.001'
+  name: Beschattung.Zentral.Raffstore.Innen.Automatik.Sperren
+6/0/221:
+  dpt: '1.008'
+  name: Beschattung.Zentral.Raffstore.Innen.Automatik.Fahren
+6/0/222:
+  dpt: '5.001'
+  name: Beschattung.Zentral.Raffstore.Innen.Automatik.Position
+6/0/223:
+  dpt: '5.001'
+  name: Beschattung.Zentral.Raffstore.Innen.Automatik.Rotation
+6/0/224:
+  dpt: '9.004'
+  name: Beschattung.Zentral.Raffstore.Innen.Automatik.Helligkeitsschwelle
+6/0/225:
+  dpt: '9.004'
+  name: Beschattung.Zentral.Raffstore.Innen.Automatik.Dämmerungsschwelle
+6/2/0:
+  dpt: '1.003'
+  name: Beschattung.EG.Büro.Raffstore.Sperren
+6/2/1:
+  dpt: '1.011'
+  name: Beschattung.EG.Büro.Raffstore.Sperren-Status
+6/2/10:
+  dpt: '1.011'
+  name: Beschattung.EG.Büro.Raffstore.Geschlossen-Status
+6/2/100:
+  dpt: '1.003'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Sperren
+6/2/101:
+  dpt: '1.011'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Sperren-Status
+6/2/102:
+  dpt: '1.008'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Fahren
+6/2/103:
+  dpt: '1.011'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Fahren-Status
+6/2/104:
+  dpt: '1.007'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Stoppen
+6/2/105:
+  dpt: '5.001'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Position
+6/2/106:
+  dpt: '5.001'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Position-Status
+6/2/107:
+  dpt: '5.001'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Rotation
+6/2/108:
+  dpt: '5.001'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Rotation-Status
+6/2/109:
+  dpt: '1.011'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Geöffnet-Status
+6/2/11:
+  dpt: '1.010'
+  name: Beschattung.EG.Büro.Raffstore.Fahrzeit
+6/2/110:
+  dpt: '1.011'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Geschlossen-Status
+6/2/111:
+  dpt: '1.010'
+  name: Beschattung.EG.Küche.Raffstore.Rechts.Fahrzeit
+6/2/2:
+  dpt: '1.008'
+  name: Beschattung.EG.Büro.Raffstore.Fahren
+6/2/20:
+  dpt: '1.003'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Sperren
+6/2/21:
+  dpt: '1.011'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Sperren-Status
+6/2/22:
+  dpt: '1.008'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Fahren
+6/2/23:
+  dpt: '1.011'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Fahren-Status
+6/2/24:
+  dpt: '1.007'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Stoppen
+6/2/25:
+  dpt: '5.001'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Position
+6/2/26:
+  dpt: '5.001'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Position-Status
+6/2/27:
+  dpt: '5.001'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Rotation
+6/2/28:
+  dpt: '5.001'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Rotation-Status
+6/2/29:
+  dpt: '1.011'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Geöffnet-Status
+6/2/3:
+  dpt: '1.011'
+  name: Beschattung.EG.Büro.Raffstore.Fahren-Status
+6/2/30:
+  dpt: '1.011'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Geschlossen-Status
+6/2/31:
+  dpt: '1.010'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Links.Fahrzeit
+6/2/4:
+  dpt: '1.007'
+  name: Beschattung.EG.Büro.Raffstore.Stoppen
+6/2/40:
+  dpt: '1.003'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Sperren
+6/2/41:
+  dpt: '1.011'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Sperren-Status
+6/2/42:
+  dpt: '1.008'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Fahren
+6/2/43:
+  dpt: '1.011'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Fahren-Status
+6/2/44:
+  dpt: '1.007'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Stoppen
+6/2/45:
+  dpt: '5.001'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Position
+6/2/46:
+  dpt: '5.001'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Position-Status
+6/2/47:
+  dpt: '5.001'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Rotation
+6/2/48:
+  dpt: '5.001'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Rotation-Status
+6/2/49:
+  dpt: '1.011'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Geöffnet-Status
+6/2/5:
+  dpt: '5.001'
+  name: Beschattung.EG.Büro.Raffstore.Position
+6/2/50:
+  dpt: '1.011'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Geschlossen-Status
+6/2/51:
+  dpt: '1.010'
+  name: Beschattung.EG.Wohnzimmer.Raffstore.Rechts.Fahrzeit
+6/2/6:
+  dpt: '5.001'
+  name: Beschattung.EG.Büro.Raffstore.Position-Status
+6/2/60:
+  dpt: '1.003'
+  name: Beschattung.EG.Esszimmer.Raffstore.Sperren
+6/2/61:
+  dpt: '1.011'
+  name: Beschattung.EG.Esszimmer.Raffstore.Sperren-Status
+6/2/62:
+  dpt: '1.008'
+  name: Beschattung.EG.Esszimmer.Raffstore.Fahren
+6/2/63:
+  dpt: '1.011'
+  name: Beschattung.EG.Esszimmer.Raffstore.Fahren-Status
+6/2/64:
+  dpt: '1.007'
+  name: Beschattung.EG.Esszimmer.Raffstore.Stoppen
+6/2/65:
+  dpt: '5.001'
+  name: Beschattung.EG.Esszimmer.Raffstore.Position
+6/2/66:
+  dpt: '5.001'
+  name: Beschattung.EG.Esszimmer.Raffstore.Position-Status
+6/2/67:
+  dpt: '5.001'
+  name: Beschattung.EG.Esszimmer.Raffstore.Rotation
+6/2/68:
+  dpt: '5.001'
+  name: Beschattung.EG.Esszimmer.Raffstore.Rotation-Status
+6/2/69:
+  dpt: '1.011'
+  name: Beschattung.EG.Esszimmer.Raffstore.Geöffnet-Status
+6/2/7:
+  dpt: '5.001'
+  name: Beschattung.EG.Büro.Raffstore.Rotation
+6/2/70:
+  dpt: '1.011'
+  name: Beschattung.EG.Esszimmer.Raffstore.Geschlossen-Status
+6/2/71:
+  dpt: '1.010'
+  name: Beschattung.EG.Esszimmer.Raffstore.Fahrzeit
+6/2/8:
+  dpt: '5.001'
+  name: Beschattung.EG.Büro.Raffstore.Rotation-Status
+6/2/80:
+  dpt: '1.003'
+  name: Beschattung.EG.Küche.Raffstore.Links.Sperren
+6/2/81:
+  dpt: '1.011'
+  name: Beschattung.EG.Küche.Raffstore.Links.Sperren-Status
+6/2/82:
+  dpt: '1.008'
+  name: Beschattung.EG.Küche.Raffstore.Links.Fahren
+6/2/83:
+  dpt: '1.011'
+  name: Beschattung.EG.Küche.Raffstore.Links.Fahren-Status
+6/2/84:
+  dpt: '1.007'
+  name: Beschattung.EG.Küche.Raffstore.Links.Stoppen
+6/2/85:
+  dpt: '5.001'
+  name: Beschattung.EG.Küche.Raffstore.Links.Position
+6/2/86:
+  dpt: '5.001'
+  name: Beschattung.EG.Küche.Raffstore.Links.Position-Status
+6/2/87:
+  dpt: '5.001'
+  name: Beschattung.EG.Küche.Raffstore.Links.Rotation
+6/2/88:
+  dpt: '5.001'
+  name: Beschattung.EG.Küche.Raffstore.Links.Rotation-Status
+6/2/89:
+  dpt: '1.011'
+  name: Beschattung.EG.Küche.Raffstore.Links.Geöffnet-Status
+6/2/9:
+  dpt: '1.011'
+  name: Beschattung.EG.Büro.Raffstore.Geöffnet-Status
+6/2/90:
+  dpt: '1.011'
+  name: Beschattung.EG.Küche.Raffstore.Links.Geschlossen-Status
+6/2/91:
+  dpt: '1.010'
+  name: Beschattung.EG.Küche.Raffstore.Links.Fahrzeit
+6/3/0:
+  dpt: '1.003'
+  name: Beschattung.OG.Flur.Raffstore.Sperren
+6/3/1:
+  dpt: '1.011'
+  name: Beschattung.OG.Flur.Raffstore.Sperren-Status
+6/3/10:
+  dpt: '1.011'
+  name: Beschattung.OG.Flur.Raffstore.Geschlossen-Status
+6/3/100:
+  dpt: '1.003'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Sperren
+6/3/101:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Sperren-Status
+6/3/102:
+  dpt: '1.008'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Fahren
+6/3/103:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Fahren-Status
+6/3/104:
+  dpt: '1.007'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Stoppen
+6/3/105:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Postion
+6/3/106:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Position-Status
+6/3/107:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Rotation
+6/3/108:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Rotation-Status
+6/3/109:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Geöffnet-Status
+6/3/11:
+  dpt: '1.010'
+  name: Beschattung.OG.Flur.Raffstore.Fahrzeit
+6/3/110:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Geschlossen-Status
+6/3/111:
+  dpt: '1.010'
+  name: Beschattung.OG.Schlafzimmer-Luis.Raffstore.Fahrzeit
+6/3/120:
+  dpt: '1.003'
+  name: Beschattung.OG.Schlafzimmer-Luis.Vorhang.Sperren
+6/3/121:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Luis.Vorhang.Sperren-Status
+6/3/122:
+  dpt: '1.008'
+  name: Beschattung.OG.Schlafzimmer-Luis.Vorhang.Fahren
+6/3/123:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Luis.Vorhang.Fahren-Status
+6/3/124:
+  dpt: '1.017'
+  name: Beschattung.OG.Schlafzimmer-Luis.Vorhang.Stoppen
+6/3/125:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Luis.Vorhang.Position
+6/3/126:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Luis.Vorhang.Position-Status
+6/3/129:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Luis.Vorhang.Geöffnet-Status
+6/3/130:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Luis.Vorhang.Geschlossen-Status
+6/3/131:
+  dpt: '1.010'
+  name: Beschattung.OG.Schlafzimmer-Luis.Vorhang.Fahrzeit
+6/3/140:
+  dpt: '1.003'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Sperren
+6/3/141:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Sperren-Status
+6/3/142:
+  dpt: '1.008'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Fahren
+6/3/143:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Fahren-Status
+6/3/144:
+  dpt: '1.007'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Stoppen
+6/3/145:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Position
+6/3/146:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Position-Status
+6/3/147:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Rotation
+6/3/148:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Rotation-Status
+6/3/149:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Geöffnet-Status
+6/3/150:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Geschlossen-Status
+6/3/151:
+  dpt: '1.010'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Raffstore.Fahrzeit
+6/3/160:
+  dpt: '1.003'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Vorhang.Sperren
+6/3/161:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Vorhang.Sperren-Status
+6/3/162:
+  dpt: '1.008'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Vorhang.Fahren
+6/3/163:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Vorhang.Fahren-Status
+6/3/164:
+  dpt: '1.017'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Vorhang.Stoppen
+6/3/165:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Vorhang.Position
+6/3/166:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Vorhang.Position-Status
+6/3/169:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Vorhang.Geöffnet-Status
+6/3/170:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Vorhang.Geschlossen-Status
+6/3/171:
+  dpt: '1.010'
+  name: Beschattung.OG.Schlafzimmer-Eltern.Vorhang.Fahrzeit
+6/3/180:
+  dpt: '1.003'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Sperren
+6/3/181:
+  dpt: '1.011'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Sperren-Status
+6/3/182:
+  dpt: '1.008'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Fahren
+6/3/183:
+  dpt: '1.011'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Fahren-Status
+6/3/184:
+  dpt: '1.007'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Stoppen
+6/3/185:
+  dpt: '5.001'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Position
+6/3/186:
+  dpt: '5.001'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Position-Status
+6/3/187:
+  dpt: '5.001'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Rotation
+6/3/188:
+  dpt: '5.001'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Rotation-Status
+6/3/189:
+  dpt: '1.011'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Geöffnet-Status
+6/3/190:
+  dpt: '1.011'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Geschlossen-Status
+6/3/191:
+  dpt: '1.010'
+  name: Beschattung.OG.Badezimmer-Eltern.Raffstore.Fahrzeit
+6/3/2:
+  dpt: '1.008'
+  name: Beschattung.OG.Flur.Raffstore.Fahren
+6/3/20:
+  dpt: '1.003'
+  name: Beschattung.OG.Abstellraum.Raffstore.Sperren
+6/3/21:
+  dpt: '1.011'
+  name: Beschattung.OG.Abstellraum.Raffstore.Sperren-Status
+6/3/22:
+  dpt: '1.008'
+  name: Beschattung.OG.Abstellraum.Raffstore.Fahren
+6/3/23:
+  dpt: '1.011'
+  name: Beschattung.OG.Abstellraum.Raffstore.Fahren-Status
+6/3/24:
+  dpt: '1.007'
+  name: Beschattung.OG.Abstellraum.Raffstore.Stoppen
+6/3/25:
+  dpt: '5.001'
+  name: Beschattung.OG.Abstellraum.Raffstore.Position
+6/3/26:
+  dpt: '5.001'
+  name: Beschattung.OG.Abstellraum.Raffstore.Position-Status
+6/3/27:
+  dpt: '5.001'
+  name: Beschattung.OG.Abstellraum.Raffstore.Rotation
+6/3/28:
+  dpt: '5.001'
+  name: Beschattung.OG.Abstellraum.Raffstore.Rotation-Status
+6/3/29:
+  dpt: '1.011'
+  name: Beschattung.OG.Abstellraum.Raffstore.Geöffnet-Status
+6/3/3:
+  dpt: '1.011'
+  name: Beschattung.OG.Flur.Raffstore.Fahren-Status
+6/3/30:
+  dpt: '1.011'
+  name: Beschattung.OG.Abstellraum.Raffstore.Geschlossen-Status
+6/3/31:
+  dpt: '1.010'
+  name: Beschattung.OG.Abstellraum.Raffstore.Fahrzeit
+6/3/4:
+  dpt: '1.007'
+  name: Beschattung.OG.Flur.Raffstore.Stoppen
+6/3/40:
+  dpt: '1.003'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Sperren
+6/3/41:
+  dpt: '1.011'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Sperren-Status
+6/3/42:
+  dpt: '1.008'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Fahren
+6/3/43:
+  dpt: '1.011'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Fahren-Status
+6/3/44:
+  dpt: '1.007'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Stoppen
+6/3/45:
+  dpt: '5.001'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Postion
+6/3/46:
+  dpt: '5.001'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Position-Status
+6/3/47:
+  dpt: '5.001'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Rotation
+6/3/48:
+  dpt: '5.001'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Rotation-Status
+6/3/49:
+  dpt: '1.011'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Geöffnet-Status
+6/3/5:
+  dpt: '5.001'
+  name: Beschattung.OG.Flur.Raffstore.Position
+6/3/50:
+  dpt: '1.011'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Geschlossen-Status
+6/3/51:
+  dpt: '1.010'
+  name: Beschattung.OG.Badezimmer-Kinder.Raffstore.Fahrzeit
+6/3/6:
+  dpt: '5.001'
+  name: Beschattung.OG.Flur.Raffstore.Position-Status
+6/3/60:
+  dpt: '1.003'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Sperren
+6/3/61:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Sperren-Status
+6/3/62:
+  dpt: '1.008'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Fahren
+6/3/63:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Fahren-Status
+6/3/64:
+  dpt: '1.007'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Stoppen
+6/3/65:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Position
+6/3/66:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Position-Status
+6/3/67:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Rotation
+6/3/68:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Rotation-Status
+6/3/69:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Geöffnet-Status
+6/3/7:
+  dpt: '5.001'
+  name: Beschattung.OG.Flur.Raffstore.Rotation
+6/3/70:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Geschlossen-Status
+6/3/71:
+  dpt: '1.010'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Raffstore.Fahrzeit
+6/3/8:
+  dpt: '5.001'
+  name: Beschattung.OG.Flur.Raffstore.Rotation-Status
+6/3/80:
+  dpt: '1.003'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Vorhang.Sperren
+6/3/81:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Vorhang.Sperren-Status
+6/3/82:
+  dpt: '1.008'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Vorhang.Fahren
+6/3/83:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Vorhang.Fahren-Status
+6/3/84:
+  dpt: '1.017'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Vorhang.Stoppen
+6/3/85:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Vorhang.Position
+6/3/86:
+  dpt: '5.001'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Vorhang.Position-Status
+6/3/89:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Vorhang.Geöffnet-Status
+6/3/9:
+  dpt: '1.011'
+  name: Beschattung.OG.Flur.Raffstore.Geöffnet-Status
+6/3/90:
+  dpt: '1.011'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Vorhang.Geschlossen-Status
+6/3/91:
+  dpt: '1.010'
+  name: Beschattung.OG.Schlafzimmer-Gregory.Vorhang.Fahrzeit
+7/0/200:
+  dpt: '5.010'
+  name: Raumklima.Zentral.KWL.Lüftermodi
+7/0/201:
+  dpt: '5.010'
+  name: Raumklima.Zentral.KWL.Lüftermodi-Status
+7/2/0:
+  dpt: '1.003'
+  name: Raumklima.EG.Flur.FBH.Sperren
+7/2/1:
+  dpt: '5.001'
+  name: Raumklima.EG.Flur.FBH.Stellwert-Status
+7/2/100:
+  dpt: '1.003'
+  name: Raumklima.EG.Küche.FBH.Sperren
+7/2/101:
+  dpt: '5.001'
+  name: Raumklima.EG.Küche.FBH.Stellwert-Status
+7/2/102:
+  dpt: '9.001'
+  name: Raumklima.EG.Küche.FBH.Soll-Temperatur
+7/2/103:
+  dpt: '9.001'
+  name: Raumklima.EG.Küche.FBH.Soll-Temperatur-Status
+7/2/104:
+  dpt: '9.002'
+  name: Raumklima.EG.Küche.FBH.Sollwertverschiebung
+7/2/105:
+  dpt: '20.102'
+  name: Raumklima.EG.Küche.FBH.HVAC
+7/2/106:
+  dpt: '20.102'
+  name: Raumklima.EG.Küche.FBH.HVAC-Status
+7/2/107:
+  dpt: '1.011'
+  name: Raumklima.EG.Küche.FBH.Aktiv
+7/2/108:
+  dpt: '16.000'
+  name: Raumklima.EG.Küche.FBH.Diagnose
+7/2/2:
+  dpt: '9.001'
+  name: Raumklima.EG.Flur.FBH.Soll-Temperatur
+7/2/20:
+  dpt: '1.003'
+  name: Raumklima.EG.Gäste-WC.FBH.Sperren
+7/2/21:
+  dpt: '5.001'
+  name: Raumklima.EG.Gäste-WC.FBH.Stellwert-Status
+7/2/22:
+  dpt: '9.001'
+  name: Raumklima.EG.Gäste-WC.FBH.Soll-Temperatur
+7/2/23:
+  dpt: '9.001'
+  name: Raumklima.EG.Gäste-WC.FBH.Soll-Temperatur-Status
+7/2/24:
+  dpt: '9.002'
+  name: Raumklima.EG.Gäste-WC.FBH.Sollwertverschiebung
+7/2/25:
+  dpt: '20.102'
+  name: Raumklima.EG.Gäste-WC.HVAC
+7/2/26:
+  dpt: '20.102'
+  name: Raumklima.EG.Gäste-WC.HVAC-Status
+7/2/27:
+  dpt: '1.011'
+  name: Raumklima.EG.Gäste-WC.FBH.Aktiv
+7/2/28:
+  dpt: '16.000'
+  name: Raumklima.EG.Gäste-WC.FBH.Diagnose
+7/2/3:
+  dpt: '9.001'
+  name: Raumklima.EG.Flur.FBH.Soll-Temperatur-Status
+7/2/4:
+  dpt: '9.002'
+  name: Raumklima.EG.Flur.FBH.Sollwertverschiebung
+7/2/40:
+  dpt: '1.003'
+  name: Raumklima.EG.Büro.FBH.Sperren
+7/2/41:
+  dpt: '5.001'
+  name: Raumklima.EG.Büro.FBH.Stellwert-Status
+7/2/42:
+  dpt: '9.001'
+  name: Raumklima.EG.Büro.FBH.Soll-Temperatur
+7/2/43:
+  dpt: '9.001'
+  name: Raumklima.EG.Büro.FBH.Soll-Temperatur-Status
+7/2/44:
+  dpt: '9.002'
+  name: Raumklima.EG.Büro.FBH.Sollwertverschiebung
+7/2/45:
+  dpt: '20.102'
+  name: Raumklima.EG.Büro.FBH.HVAC
+7/2/46:
+  dpt: '20.102'
+  name: Raumklima.EG.Büro.FBH.HVAC-Status
+7/2/47:
+  dpt: '1.011'
+  name: Raumklima.EG.Büro.FBH.Aktiv
+7/2/48:
+  dpt: '16.000'
+  name: Raumklima.EG.Büro.FBH.Diagnose
+7/2/5:
+  dpt: '20.102'
+  name: Raumklima.EG.Flur.FBH.HVAC
+7/2/6:
+  dpt: '20.102'
+  name: Raumklima.EG.Flur.FBH.HVAC-Status
+7/2/60:
+  dpt: '1.003'
+  name: Raumklima.EG.Wohnzimmer.FBH.Sperren
+7/2/61:
+  dpt: '5.001'
+  name: Raumklima.EG.Wohnzimmer.FBH.Stellwert-Status
+7/2/62:
+  dpt: '9.001'
+  name: Raumklima.EG.Wohnzimmer.FBH.Soll-Temperatur
+7/2/63:
+  dpt: '9.001'
+  name: Raumklima.EG.Wohnzimmer.FBH.Soll-Temperatur-Status
+7/2/64:
+  dpt: '9.002'
+  name: Raumklima.EG.Wohnzimmer.FBH.Sollwertverschiebung
+7/2/65:
+  dpt: '20.102'
+  name: Raumklima.EG.Wohnzimmer.FBH.HVAC
+7/2/66:
+  dpt: '20.102'
+  name: Raumklima.EG.Wohnzimmer.FBH.HVAC-Status
+7/2/67:
+  dpt: '1.011'
+  name: Raumklima.EG.Wohnzimmer.FBH.Aktiv
+7/2/68:
+  dpt: '16.000'
+  name: Raumklima.EG.Wohnzimmer.FBH.Diagnose
+7/2/7:
+  dpt: '1.011'
+  name: Raumklima.EG.Flur.FBH.Aktiv
+7/2/8:
+  dpt: '16.000'
+  name: Raumklima.EG.Flur.FBH.Diagnose
+7/2/80:
+  dpt: '1.003'
+  name: Raumklima.EG.Esszimer.FBH.Sperren
+7/2/81:
+  dpt: '5.001'
+  name: Raumklima.EG.Esszimer.FBH.Stellwert-Status
+7/2/82:
+  dpt: '9.001'
+  name: Raumklima.EG.Esszimer.FBH.Soll-Temperatur
+7/2/83:
+  dpt: '9.001'
+  name: Raumklima.EG.Esszimer.FBH.Soll-Temperatur-Status
+7/2/84:
+  dpt: '9.002'
+  name: Raumklima.EG.Esszimer.FBH.Sollwertverschiebung
+7/2/85:
+  dpt: '20.102'
+  name: Raumklima.EG.Esszimer.FBH.HVAC
+7/2/86:
+  dpt: '20.102'
+  name: Raumklima.EG.Esszimer.FBH.HVAC-Status
+7/2/87:
+  dpt: '1.011'
+  name: Raumklima.EG.Esszimer.FBH.Aktiv
+7/2/88:
+  dpt: '16.000'
+  name: Raumklima.EG.Esszimer.FBH.Diagnose
+7/3/0:
+  dpt: '1.003'
+  name: Raumklima.OG.Flur.FBH.Sperren
+7/3/1:
+  dpt: '5.001'
+  name: Raumklima.OG.Flur.FBH.Stellwert-Status
+7/3/100:
+  dpt: '1.003'
+  name: Raumklima.OG.Schlafzimmer-Eltern.FBH.Sperren
+7/3/101:
+  dpt: '5.001'
+  name: Raumklima.OG.Schlafzimmer-Eltern.FBH.Stellwert-Status
+7/3/102:
+  dpt: '9.001'
+  name: Raumklima.OG.Schlafzimmer-Eltern.FBH.Soll-Temperatur
+7/3/103:
+  dpt: '9.001'
+  name: Raumklima.OG.Schlafzimmer-Eltern.FBH.Soll-Temperatur-Status
+7/3/104:
+  dpt: '9.002'
+  name: Raumklima.OG.Schlafzimmer-Eltern.FBH.Sollwertverschiebung
+7/3/105:
+  dpt: '20.102'
+  name: Raumklima.OG.Schlafzimmer-Eltern.HVAC
+7/3/106:
+  dpt: '20.102'
+  name: Raumklima.OG.Schlafzimmer-Eltern.HVAC-Status
+7/3/107:
+  dpt: '1.011'
+  name: Raumklima.OG.Schlafzimmer-Eltern.Aktiv
+7/3/108:
+  dpt: '16.000'
+  name: Raumklima.OG.Schlafzimmer-Eltern.Diagnose
+7/3/120:
+  dpt: '1.003'
+  name: Raumklima.OG.Begehbarer-Schrank.FBH.Sperren
+7/3/121:
+  dpt: '5.001'
+  name: Raumklima.OG.Begehbarer-Schrank.FBH.Stellwert-Status
+7/3/122:
+  dpt: '9.001'
+  name: Raumklima.OG.Begehbarer-Schrank.FBH.Soll-Temperatur
+7/3/123:
+  dpt: '9.001'
+  name: Raumklima.OG.Begehbarer-Schrank.FBH.Soll-Temperatur-Status
+7/3/124:
+  dpt: '9.002'
+  name: Raumklima.OG.Begehbarer-Schrank.FBH.Sollwertverschiebung
+7/3/125:
+  dpt: '20.102'
+  name: Raumklima.OG.Begehbarer-Schrank.FBH.HVAC
+7/3/126:
+  dpt: '20.102'
+  name: Raumklima.OG.Begehbarer-Schrank.FBH.HVAC-Status
+7/3/127:
+  dpt: '1.011'
+  name: Raumklima.OG.Begehbarer-Schrank.FBH.Aktiv
+7/3/128:
+  dpt: '16.000'
+  name: Raumklima.OG.Begehbarer-Schrank.FBH.Diagnose
+7/3/140:
+  dpt: '1.003'
+  name: Raumklima.OG.Badezimmer-Eltern.FBH.Sperren
+7/3/141:
+  dpt: '5.001'
+  name: Raumklima.OG.Badezimmer-Eltern.FBH.Stellwert-Status
+7/3/142:
+  dpt: '9.001'
+  name: Raumklima.OG.Badezimmer-Eltern.FBH.Soll-Temperatur
+7/3/143:
+  dpt: '9.001'
+  name: Raumklima.OG.Badezimmer-Eltern.FBH.Soll-Temperatur-Status
+7/3/144:
+  dpt: '9.002'
+  name: Raumklima.OG.Badezimmer-Eltern.FBH.Sollwertverschiebung
+7/3/145:
+  dpt: '20.102'
+  name: Raumklima.OG.Badezimmer-Eltern.FBH.HVAC
+7/3/146:
+  dpt: '20.102'
+  name: Raumklima.OG.Badezimmer-Eltern.FBH.HVAC-Status
+7/3/147:
+  dpt: '1.011'
+  name: Raumklima.OG.Badezimmer-Eltern.FBH.Aktiv
+7/3/148:
+  dpt: '16.000'
+  name: Raumklima.OG.Badezimmer-Eltern.FBH.Diagnose
+7/3/2:
+  dpt: '9.001'
+  name: Raumklima.OG.Flur.FBH.Soll-Temperatur
+7/3/20:
+  dpt: '1.003'
+  name: Raumklima.OG.Abstellraum.FBH.Sperren
+7/3/21:
+  dpt: '5.001'
+  name: Raumklima.OG.Abstellraum.FBH.Stellwert-Status
+7/3/22:
+  dpt: '9.001'
+  name: Raumklima.OG.Abstellraum.FBH.Soll-Temperatur
+7/3/23:
+  dpt: '9.001'
+  name: Raumklima.OG.Abstellraum.FBH.Soll-Temperatur-Status
+7/3/24:
+  dpt: '9.002'
+  name: Raumklima.OG.Abstellraum.FBH.Sollwertverschiebung
+7/3/25:
+  dpt: '20.102'
+  name: Raumklima.OG.Abstellraum.FBH.HVAC
+7/3/26:
+  dpt: '20.102'
+  name: Raumklima.OG.Abstellraum.FBH.HVAC-Status
+7/3/27:
+  dpt: '1.011'
+  name: Raumklima.OG.Abstellraum.FBH.Aktiv
+7/3/28:
+  dpt: '16.000'
+  name: Raumklima.OG.Abstellraum.FBH.Diagnose
+7/3/3:
+  dpt: '9.001'
+  name: Raumklima.OG.Flur.FBH.Soll-Temperatur-Status
+7/3/4:
+  dpt: '9.002'
+  name: Raumklima.OG.Flur.FBH.Sollwertverschiebung
+7/3/40:
+  dpt: '1.003'
+  name: Raumklima.OG.Badezimmer-Kinder.FBH.Sperren
+7/3/41:
+  dpt: '5.001'
+  name: Raumklima.OG.Badezimmer-Kinder.FBH.Stellwert-Status
+7/3/42:
+  dpt: '9.001'
+  name: Raumklima.OG.Badezimmer-Kinder.FBH.Soll-Temperatur
+7/3/43:
+  dpt: '9.001'
+  name: Raumklima.OG.Badezimmer-Kinder.FBH.Soll-Temperatur-Status
+7/3/44:
+  dpt: '9.002'
+  name: Raumklima.OG.Badezimmer-Kinder.FBH.Sollwertveränderung
+7/3/45:
+  dpt: '20.102'
+  name: Raumklima.OG.Badezimmer-Kinder.HVAC
+7/3/46:
+  dpt: '20.102'
+  name: Raumklima.OG.Badezimmer-Kinder.HVAC-Status
+7/3/47:
+  dpt: '1.011'
+  name: Raumklima.OG.Badezimmer-Kinder.Aktiv
+7/3/48:
+  dpt: '16.000'
+  name: Raumklima.OG.Badezimmer-Kinder.FBH.Diagnose
+7/3/5:
+  dpt: '20.102'
+  name: Raumklima.OG.Flur.FBH.HVAC
+7/3/6:
+  dpt: '20.102'
+  name: Raumklima.OG.Flur.FBH.HVAC-Status
+7/3/60:
+  dpt: '1.003'
+  name: Raumklima.OG.Schlafzimmer-Gregory.FBH.Sperren
+7/3/61:
+  dpt: '5.001'
+  name: Raumklima.OG.Schlafzimmer-Gregory.FBH.Stellwert-Status
+7/3/62:
+  dpt: '9.001'
+  name: Raumklima.OG.Schlafzimmer-Gregory.FBH.Soll-Temperartur
+7/3/63:
+  dpt: '9.001'
+  name: Raumklima.OG.Schlafzimmer-Gregory.FBH.Soll-Temperatur-Status
+7/3/64:
+  dpt: '9.002'
+  name: Raumklima.OG.Schlafzimmer-Gregory.FBH.Sollwertverschiebung
+7/3/65:
+  dpt: '20.102'
+  name: Raumklima.OG.Schlafzimmer-Gregory.HVAC
+7/3/66:
+  dpt: '20.102'
+  name: Raumklima.OG.Schlafzimmer-Gregory.HVAC-Status
+7/3/67:
+  dpt: '1.011'
+  name: Raumklima.OG.Schlafzimmer-Gregory.Aktiv
+7/3/68:
+  dpt: '16.000'
+  name: Raumklima.OG.Schlafzimmer-Gregory.Diagnose
+7/3/7:
+  dpt: '1.011'
+  name: Raumklima.OG.Flur.FBH.Aktiv
+7/3/8:
+  dpt: '16.000'
+  name: Raumklima.OG.Flur.FBH.Diagnose
+7/3/80:
+  dpt: '1.003'
+  name: Raumklima.OG.Schlafzimmer-Luis.FBH.Sperren
+7/3/81:
+  dpt: '5.001'
+  name: Raumklima.OG.Schlafzimmer-Luis.FBH.Stellwert-Status
+7/3/82:
+  dpt: '9.001'
+  name: Raumklima.OG.Schlafzimmer-Luis.FBH.Soll-Temperatur
+7/3/83:
+  dpt: '9.001'
+  name: Raumklima.OG.Schlafzimmer-Luis.FBH.Soll-Temperatur-Status
+7/3/84:
+  dpt: '9.002'
+  name: Raumklima.OG.Schlafzimmer-Luis.FBH.Sollwertverschiebung
+7/3/85:
+  dpt: '20.102'
+  name: Raumklima.OG.Schlafzimmer-Luis.FBH.HVAC
+7/3/86:
+  dpt: '20.102'
+  name: Raumklima.OG.Schlafzimmer-Luis.FBH.HVAC-Status
+7/3/87:
+  dpt: '1.011'
+  name: Raumklima.OG.Schlafzimmer-Luis.FBH.Aktiv
+7/3/88:
+  dpt: '16.000'
+  name: Raumklima.OG.Schlafzimmer-Luis.FBH.Diagnose
+8/0/200:
+  dpt: '1.001'
+  name: Bedienelemente.Zentral.Schalter.Sperren
+8/0/201:
+  dpt: '5.010'
+  name: Bedienelemente.Zentral.Schalter.Farbe
+8/2/0:
+  dpt: '1.001'
+  name: Bedienelemente.EG.Büro.Schalter.Sperren
+8/2/1:
+  dpt: '5.010'
+  name: Bedienelemente.EG.Büro.Schalter.Farbe
+8/2/10:
+  dpt: '1.001'
+  name: Bedienelemente.EG.Büro.Schalter.Multitouch-Kurz
+8/2/16:
+  dpt: '1.024'
+  name: Bedienelemente.EG.Büro.Schalter.Tag/Nacht
+8/2/2:
+  dpt: '1.001'
+  name: Bedienelemente.EG.Büro.Schalter.Sensor-1-Kurz
+8/2/20:
+  dpt: '1.001'
+  name: Bedienelemente.EG.Wohnzimmer.Schalter.Sperren
+8/2/21:
+  dpt: '5.010'
+  name: Bedienelemente.EG.Wohnzimmer.Schalter.Farbe
+8/2/22:
+  dpt: '1.001'
+  name: Bedienelemente.EG.Wohnzimmer.Schalter.Sensor-1-Kurz
+8/2/23:
+  dpt: '3.007'
+  name: Bedienelemente.EG.Wohnzimmer.Schalter.Sensor-1-Lang
+8/2/24:
+  dpt: '1.001'
+  name: Bedienelemente.EG.Wohnzimmer.Schalter.Sensor-2-Kurz
+8/2/25:
+  dpt: '1.001'
+  name: Bedienelemente.EG.Wohnzimmer.Schalter.Sensor-2-Lang
+8/2/28:
+  dpt: '1.009'
+  name: Bedienelemente.EG.Wohnzimmer.Schalter.Sensor-4-Kurz
+8/2/29:
+  dpt: '1.009'
+  name: Bedienelemente.EG.Wohnzimmer.Schalter.Sensor-4-Lang
+8/2/3:
+  dpt: '3.007'
+  name: Bedienelemente.EG.Büro.Schalter.Sensor-1-Lang
+8/2/30:
+  dpt: '1.001'
+  name: Bedienelemente.EG.Wohnzimmer.Schalter.Multitouch-Kurz
+8/2/36:
+  dpt: '1.024'
+  name: Bedienelemente.EG.Wohnzimmer.Schalter.Tag/Nacht
+8/2/4:
+  dpt: '1.001'
+  name: Bedienelemente.EG.Büro.Schalter.Sensor-2-Kurz
+8/2/5:
+  dpt: '1.001'
+  name: Bedienelemente.EG.Büro.Schalter.Sensor-2-Lang
+8/2/8:
+  dpt: '1.009'
+  name: Bedienelemente.EG.Büro.Schalter.Sensor-4-Kurz
+8/2/9:
+  dpt: '1.009'
+  name: Bedienelemente.EG.Büro.Schalter.Sensor-4-Lang
+8/3/0:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Abstellraum.Schalter.Sperren
+8/3/1:
+  dpt: '5.010'
+  name: Bedienelemente.OG.Abstellraum.Schalter.Farbe
+8/3/10:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Abstellraum.Schalter.Multitouch-Kurz
+8/3/100:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Sperren
+8/3/101:
+  dpt: '5.010'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Farbe
+8/3/102:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Sensor-1-Kurz
+8/3/103:
+  dpt: '3.007'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Sensor-1-Lang
+8/3/104:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Sensor-2-Kurz
+8/3/105:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Sensor-2-Lang
+8/3/110:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Multitouch-Kurz
+8/3/111:
+  dpt: '1.008'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Multitouch-Lang-1
+8/3/112:
+  dpt: '1.017'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Multitouch-Lang-2
+8/3/116:
+  dpt: '1.024'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Tag/Nacht
+8/3/120:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Sperren
+8/3/121:
+  dpt: '5.010'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Farbe
+8/3/122:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Sensor-1-Kurz
+8/3/123:
+  dpt: '3.007'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Sensor-1-Lang
+8/3/124:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Sensor-2-Kurz
+8/3/125:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Sensor-2-Lang
+8/3/130:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Multitouch-Kurz
+8/3/131:
+  dpt: '1.008'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Multitouch-Lang-1
+8/3/132:
+  dpt: '1.017'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Multitouch-Lang-2
+8/3/136:
+  dpt: '1.024'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Tag/Nacht
+8/3/140:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Sperren
+8/3/141:
+  dpt: '5.010'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Farbe
+8/3/142:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Sensor-1-Kurz
+8/3/143:
+  dpt: '3.007'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Sensor-1-Lang
+8/3/144:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Sensor-2-Kurz
+8/3/145:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Sensor-2-Lang
+8/3/148:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Sensor-4-Kurz
+8/3/149:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Sensor-4-Lang
+8/3/150:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Multitouch-Kurz
+8/3/153:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Multitouch-RGB-Rot
+8/3/156:
+  dpt: '1.024'
+  name: Bedienelemente.OG.Badezimmer-Eltern.Schalter.Tag/Nacht
+8/3/16:
+  dpt: '1.024'
+  name: Bedienelemente.OG.Abstellraum.Schalter.Tag/Nacht
+8/3/2:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Abstellraum.Schalter.Sensor-1-Kurz
+8/3/20:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Badezimmer-Kinder.Schalter.Sperren
+8/3/21:
+  dpt: '5.010'
+  name: Bedienelemente.OG.Badezimmer-Kinder.Schalter.Farbe
+8/3/22:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Badezimmer-Kinder.Schalter.Sensor-1-Kurz
+8/3/23:
+  dpt: '3.007'
+  name: Bedienelemente.OG.Badezimmer-Kinder.Schalter.Sensor-1-Lang
+8/3/24:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Badezimmer-Kinder.Schalter.Sensor-2-Kurz
+8/3/25:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Badezimmer-Kinder.Schalter.Sensor-2-Lang
+8/3/28:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Badezimmer-Kinder.Schalter.Sensor-4-Kurz
+8/3/29:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Badezimmer-Kinder.Schalter.Sensor-4-Lang
+8/3/3:
+  dpt: '3.007'
+  name: Bedienelemente.OG.Abstellraum.Schalter.Sensor-1-Lang
+8/3/30:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Badezimmer-Kinder.Schalter.Multitouch-Kurz
+8/3/36:
+  dpt: '1.024'
+  name: Bedienelemente.OG.Badezimmer-Kinder.Schalter.Tag/Nacht
+8/3/4:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Abstellraum.Schalter.Sensor-2-Kurz
+8/3/40:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Sperren
+8/3/41:
+  dpt: '5.010'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Farbe
+8/3/42:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Sensor-1-Kurz
+8/3/43:
+  dpt: '3.007'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Sensor-1-Lang
+8/3/44:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Sensor-2-Kurz
+8/3/45:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Sensor-2-Lang
+8/3/48:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Sensor-4-Kurz
+8/3/49:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Sensor-4-Lang
+8/3/5:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Abstellraum.Schalter.Sensor-2-Lang
+8/3/50:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Multitouch-Kurz
+8/3/51:
+  dpt: '1.008'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Multitouch-Lang-1
+8/3/52:
+  dpt: '1.017'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Multitouch-Lang-2
+8/3/56:
+  dpt: '1.024'
+  name: Bedienelemente.OG.Schlafzimmer-Gregory.Schalter.Tag/Nacht
+8/3/60:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Sperren
+8/3/61:
+  dpt: '5.005'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Farbe
+8/3/62:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Sensor-1-Kurz
+8/3/63:
+  dpt: '3.007'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Sensor-1-Lang
+8/3/64:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Sensor-2-Kurz
+8/3/65:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Sensor-2-Lang
+8/3/68:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Sensor-4-Kurz
+8/3/69:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Sensor-4-Lang
+8/3/70:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Multitouch-Kurz
+8/3/71:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Multitouch-Lang-1
+8/3/72:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Multitouch-Lang-2
+8/3/76:
+  dpt: '1.024'
+  name: Bedienelemente.OG.Schlafzimmer-Luis.Schalter.Tag/Nacht
+8/3/8:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Abstellraum.Schalter.Sensor-4-Kurz
+8/3/80:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Sperren
+8/3/81:
+  dpt: '5.010'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Farbe
+8/3/82:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Sensor-1-Kurz
+8/3/83:
+  dpt: '3.007'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Sensor-1-Lang
+8/3/84:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Sensor-2-Kurz
+8/3/85:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Sensor-2-Lang
+8/3/88:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Sensor-4-Kurz
+8/3/89:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Sensor-4-Lang
+8/3/9:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Abstellraum.Schalter.Sensor-4-Lang
+8/3/90:
+  dpt: '1.001'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Multitouch-Kurz
+8/3/91:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Multitouch-Lang-1
+8/3/92:
+  dpt: '1.009'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Multitouch-Lang-2
+8/3/96:
+  dpt: '1.024'
+  name: Bedienelemente.OG.Schlafzimmer-Eltern.Schalter.Tag/Nacht
+9/0/180:
+  dpt: '9.000'
+  name: Sensorik.Zentral.A.Helligkeit-SO
+9/0/181:
+  dpt: '9.000'
+  name: Sensorik.Zentral.A.Helligkeit-NW
+9/0/182:
+  dpt: '9.000'
+  name: Sensorik.Zentral.A.Helligkeit-Alle
+9/0/183:
+  dpt: '9.001'
+  name: Sensorik.Zentral.A.Temperatur-Alle
+9/1/100:
+  dpt: '1.005'
+  name: Sensorik.KG.Vorratsraum.Sensor.VOC-Alarm-1
+9/1/101:
+  dpt: '9.008'
+  name: Sensorik.KG.Vorratsraum.Sensor.CO2
+9/1/102:
+  dpt: '1.005'
+  name: Sensorik.KG.Vorratsraum.Sensor.CO2-Alarm-1
+9/1/103:
+  dpt: '1.005'
+  name: Sensorik.KG.Vorratsraum.Sensor.CO2-Alarm-2
+9/1/104:
+  dpt: '1.005'
+  name: Sensorik.KG.Vorratsraum.Sensor.CO2-Alarm-3
+9/1/105:
+  dpt: '14.058'
+  name: Sensorik.KG.Vorratsraum.Sensor.Luftdruck-Relativ
+9/1/106:
+  dpt: '14.058'
+  name: Sensorik.KG.Vorratsraum.Sensor.Luftdruck-Absolut
+9/1/107:
+  dpt: '1.005'
+  name: Sensorik.KG.Vorratsraum.Sensor.Luftdruck-Alarm-1
+9/1/121:
+  dpt: '9.001'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Temperatur
+9/1/122:
+  dpt: '1.005'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Temperatur-Alarm-1
+9/1/123:
+  dpt: '1.005'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Temperatur-Alarm-2
+9/1/124:
+  dpt: '9.007'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Luftfeuchtigkeit
+9/1/125:
+  dpt: '1.005'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Luftfeuchtigkeit-Alarm-1
+9/1/126:
+  dpt: '1.005'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Luftfeuchtigkeit-Alarm-2
+9/1/127:
+  dpt: '9.001'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Taupunkt
+9/1/128:
+  dpt: '1.005'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Taupunkt-Alarm-1
+9/1/129:
+  dpt: '9.000'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.VOC
+9/1/130:
+  dpt: '1.005'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.VOC-Alarm-1
+9/1/131:
+  dpt: '9.008'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.CO2
+9/1/132:
+  dpt: '1.005'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.CO2-Alarm-1
+9/1/133:
+  dpt: '1.005'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.CO2-Alarm-2
+9/1/134:
+  dpt: '1.005'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.CO2-Alarm-3
+9/1/135:
+  dpt: '14.058'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Luftdruck-Relativ
+9/1/136:
+  dpt: '14.058'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Luftdruck-Absolut
+9/1/137:
+  dpt: '1.005'
+  name: Sensorik.KG.Hauswirtschaftsraum.Sensor.Luftdruck-Alarm-1
+9/1/20:
+  dpt: '9.001'
+  name: Sensorik.KG.Flur.BWM.Decke.Temperatur
+9/1/21:
+  dpt: '9.001'
+  name: Sensorik.KG.Flur.BWM.Wand.Temperatur
+9/1/31:
+  dpt: '9.001'
+  name: Sensorik.KG.Garage.Sensor.Temperatur
+9/1/32:
+  dpt: '1.005'
+  name: Sensorik.KG.Garage.Sensor.Temperatur-Alarm-1
+9/1/33:
+  dpt: '1.005'
+  name: Sensorik.KG.Garage.Sensor.Temperatur-Alarm-2
+9/1/34:
+  dpt: '9.007'
+  name: Sensorik.KG.Garage.Sensor.Luftfeuchtigkeit
+9/1/35:
+  dpt: '1.005'
+  name: Sensorik.KG.Garage.Sensor.Luftfeuchtigkeit-Alarm-1
+9/1/36:
+  dpt: '1.005'
+  name: Sensorik.KG.Garage.Sensor.Luftfeuchtigkeit-Alarm-2
+9/1/37:
+  dpt: '9.001'
+  name: Sensorik.KG.Garage.Sensor.Taupunkt
+9/1/38:
+  dpt: '1.005'
+  name: Sensorik.KG.Garage.Sensor.Taupunkt-Alarm-1
+9/1/39:
+  dpt: '9.000'
+  name: Sensorik.KG.Garage.Sensor.VOC
+9/1/40:
+  dpt: '1.005'
+  name: Sensorik.KG.Garage.Sensor.VOC-Alarm-1
+9/1/41:
+  dpt: '9.008'
+  name: Sensorik.KG.Garage.Sensor.CO2
+9/1/42:
+  dpt: '1.005'
+  name: Sensorik.KG.Garage.Sensor.CO2-Alarm-1
+9/1/43:
+  dpt: '1.005'
+  name: Sensorik.KG.Garage.Sensor.CO2-Alarm-2
+9/1/44:
+  dpt: '1.005'
+  name: Sensorik.KG.Garage.Sensor.CO2-Alarm-3
+9/1/45:
+  dpt: '14.058'
+  name: Sensorik.KG.Garage.Sensor.Luftdruck-Relativ
+9/1/46:
+  dpt: '14.058'
+  name: Sensorik.KG.Garage.Sensor.Luftdruck-Absolut
+9/1/47:
+  dpt: '1.005'
+  name: Sensorik.KG.Garage.Sensor.Luftdruck-Alarm-1
+9/1/61:
+  dpt: '9.001'
+  name: Sensorik.KG.Technikraum.Sensor.Temperatur
+9/1/62:
+  dpt: '1.005'
+  name: Sensorik.KG.Technikraum.Sensor.Temperatur-Alarm-1
+9/1/63:
+  dpt: '1.005'
+  name: Sensorik.KG.Technikraum.Sensor.Temperatur-Alarm-2
+9/1/64:
+  dpt: '9.007'
+  name: Sensorik.KG.Technikraum.Sensor.Luftfeuchtigkeit
+9/1/65:
+  dpt: '1.005'
+  name: Sensorik.KG.Technikraum.Sensor.Luftfeuchtigkeit-Alarm-1
+9/1/66:
+  dpt: '1.005'
+  name: Sensorik.KG.Technikraum.Sensor.Luftfeuchtigkeit-Alarm-2
+9/1/67:
+  dpt: '9.001'
+  name: Sensorik.KG.Technikraum.Sensor.Taupunkt
+9/1/68:
+  dpt: '1.005'
+  name: Sensorik.KG.Technikraum.Sensor.Taupunkt-Alarm-1
+9/1/69:
+  dpt: '9.000'
+  name: Sensorik.KG.Technikraum.Sensor.VOC
+9/1/70:
+  dpt: '1.005'
+  name: Sensorik.KG.Technikraum.Sensor.VOC-Alarm-1
+9/1/71:
+  dpt: '9.008'
+  name: Sensorik.KG.Technikraum.Sensor.CO2
+9/1/72:
+  dpt: '1.005'
+  name: Sensorik.KG.Technikraum.Sensor.CO2-Alarm-1
+9/1/73:
+  dpt: '1.005'
+  name: Sensorik.KG.Technikraum.Sensor.CO2-Alarm-2
+9/1/74:
+  dpt: '1.005'
+  name: Sensorik.KG.Technikraum.Sensor.CO2-Alarm-3
+9/1/75:
+  dpt: '14.058'
+  name: Sensorik.KG.Technikraum.Sensor.Luftdruck-Relativ
+9/1/76:
+  dpt: '14.058'
+  name: Sensorik.KG.Technikraum.Sensor.Luftdruck-Absolut
+9/1/77:
+  dpt: '1.005'
+  name: Sensorik.KG.Technikraum.Sensor.Luftdruck-Alarm-1
+9/1/91:
+  dpt: '9.001'
+  name: Sensorik.KG.Vorratsraum.Sensor.Temperatur
+9/1/92:
+  dpt: '1.005'
+  name: Sensorik.KG.Vorratsraum.Sensor.Temperatur-Alarm-1
+9/1/93:
+  dpt: '1.005'
+  name: Sensorik.KG.Vorratsraum.Sensor.Temperatur-Alarm-2
+9/1/94:
+  dpt: '9.007'
+  name: Sensorik.KG.Vorratsraum.Sensor.Luftfeuchtigkeit
+9/1/95:
+  dpt: '1.005'
+  name: Sensorik.KG.Vorratsraum.Sensor.Luftfeuchtigkeit-Alarm-1
+9/1/96:
+  dpt: '1.005'
+  name: Sensorik.KG.Vorratsraum.Sensor.Luftfeuchtigkeit-Alarm-2
+9/1/97:
+  dpt: '9.001'
+  name: Sensorik.KG.Vorratsraum.Sensor.Taupunkt
+9/1/98:
+  dpt: '1.005'
+  name: Sensorik.KG.Vorratsraum.Sensor.Taupunkt-Alarm-1
+9/1/99:
+  dpt: '9.000'
+  name: Sensorik.KG.Vorratsraum.Sensor.VOC
+9/2/101:
+  dpt: '9.008'
+  name: Sensorik.EG.Wohnzimmer.Sensor.CO2
+9/2/102:
+  dpt: '1.005'
+  name: Sensorik.EG.Wohnzimmer.Sensor.CO2-Alarm-1
+9/2/103:
+  dpt: '1.005'
+  name: Sensorik.EG.Wohnzimmer.Sensor.CO2-Alarm-2
+9/2/104:
+  dpt: '1.005'
+  name: Sensorik.EG.Wohnzimmer.Sensor.CO2-Alarm-3
+9/2/110:
+  dpt: '9.001'
+  name: Sensorik.EG.Wohnzimmer.Schalter.Temperatur
+9/2/121:
+  dpt: '9.001'
+  name: Sensorik.EG.Esszimmer.Sensor.Temperatur
+9/2/122:
+  dpt: '1.005'
+  name: Sensorik.EG.Esszimmer.Sensor.Temperatur-Alarm-1
+9/2/123:
+  dpt: '1.005'
+  name: Sensorik.EG.Esszimmer.Sensor.Temperatur-Alarm-2
+9/2/124:
+  dpt: '9.007'
+  name: Sensorik.EG.Esszimmer.Sensor.Luftfeuchtigkeit
+9/2/125:
+  dpt: '1.005'
+  name: Sensorik.EG.Esszimmer.Sensor.Luftfeuchtigkeit-Alarm-1
+9/2/126:
+  dpt: '1.005'
+  name: Sensorik.EG.Esszimmer.Sensor.Luftfeuchtigkeit-Alarm-2
+9/2/127:
+  dpt: '9.001'
+  name: Sensorik.EG.Esszimmer.Sensor.Taupunkt
+9/2/128:
+  dpt: '1.005'
+  name: Sensorik.EG.Esszimmer.Sensor.Taupunkt-Alarm-1
+9/2/131:
+  dpt: '9.008'
+  name: Sensorik.EG.Esszimmer.Sensor.CO2
+9/2/132:
+  dpt: '1.005'
+  name: Sensorik.EG.Esszimmer.Sensor.CO2-Alarm-1
+9/2/133:
+  dpt: '1.005'
+  name: Sensorik.EG.Esszimmer.Sensor.CO2-Alarm-2
+9/2/134:
+  dpt: '1.005'
+  name: Sensorik.EG.Esszimmer.Sensor.CO2-Alarm-3
+9/2/151:
+  dpt: '9.001'
+  name: Sensorik.EG.Küche.Sensor.Temperatur
+9/2/152:
+  dpt: '1.005'
+  name: Sensorik.EG.Küche.Sensor.Temperatur-Alarm-1
+9/2/153:
+  dpt: '1.005'
+  name: Sensorik.EG.Küche.Sensor.Temperatur-Alarm-2
+9/2/154:
+  dpt: '9.007'
+  name: Sensorik.EG.Küche.Sensor.Luftfeuchtigkeit
+9/2/155:
+  dpt: '1.005'
+  name: Sensorik.EG.Küche.Sensor.Luftfeuchtigkeit-Alarm-1
+9/2/156:
+  dpt: '1.005'
+  name: Sensorik.EG.Küche.Sensor.Luftfeuchtigkeit-Alarm-2
+9/2/157:
+  dpt: '9.001'
+  name: Sensorik.EG.Küche.Sensor.Taupunkt
+9/2/158:
+  dpt: '1.005'
+  name: Sensorik.EG.Küche.Sensor.Taupunkt-Alarm-1
+9/2/161:
+  dpt: '9.008'
+  name: Sensorik.EG.Küche.Sensor.CO2
+9/2/162:
+  dpt: '1.005'
+  name: Sensorik.EG.Küche.Sensor.CO2-Alarm-1
+9/2/163:
+  dpt: '1.005'
+  name: Sensorik.EG.Küche.Sensor.CO2-Alarm-2
+9/2/164:
+  dpt: '1.005'
+  name: Sensorik.EG.Küche.Sensor.CO2-Alarm-3
+9/2/20:
+  dpt: '9.001'
+  name: Sensorik.EG.Flur.BWM.Eingang.Temperatur
+9/2/21:
+  dpt: '9.001'
+  name: Sensorik.EG.Flur.BWM.Diele.Temperatur
+9/2/22:
+  dpt: '9.001'
+  name: Sensorik.EG.Flur.BWM.Garderobe.Temperatur
+9/2/31:
+  dpt: '9.001'
+  name: Sensorik.EG.Gäste-WC.Sensor.Temperatur
+9/2/32:
+  dpt: '1.005'
+  name: Sensorik.EG.Gäste-WC.Sensor.Temperatur-Alarm-1
+9/2/33:
+  dpt: '1.005'
+  name: Sensorik.EG.Gäste-WC.Sensor.Temperatur-Alarm-2
+9/2/34:
+  dpt: '9.007'
+  name: Sensorik.EG.Gäste-WC.Sensor.Luftfeuchtigkeit
+9/2/35:
+  dpt: '1.005'
+  name: Sensorik.EG.Gäste-WC.Sensor.Luftfeuchtigkeit-Alarm-1
+9/2/36:
+  dpt: '1.005'
+  name: Sensorik.EG.Gäste-WC.Sensor.Luftfeuchtigkeit-Alarm-2
+9/2/37:
+  dpt: '9.001'
+  name: Sensorik.EG.Gäste-WC.Sensor.Taupunkt
+9/2/38:
+  dpt: '1.005'
+  name: Sensorik.EG.Gäste-WC.Sensor.Taupunkt-Alarm-1
+9/2/41:
+  dpt: '9.008'
+  name: Sensorik.EG.Gäste-WC.Sensor.CO2
+9/2/42:
+  dpt: '1.005'
+  name: Sensorik.EG.Gäste-WC.Sensor.CO2-Alarm-1
+9/2/43:
+  dpt: '1.005'
+  name: Sensorik.EG.Gäste-WC.Sensor.CO2-Alarm-2
+9/2/44:
+  dpt: '1.005'
+  name: Sensorik.EG.Gäste-WC.Sensor.CO2-Alarm-3
+9/2/50:
+  dpt: '9.001'
+  name: Sensorik.EG.Gäste-WC.BWM.Temperatur
+9/2/61:
+  dpt: '9.001'
+  name: Sensorik.EG.Büro.Sensor.Temperatur
+9/2/62:
+  dpt: '1.005'
+  name: Sensorik.EG.Büro.Sensor.Temperatur-Alarm-1
+9/2/63:
+  dpt: '1.005'
+  name: Sensorik.EG.Büro.Sensor.Temperatur-Alarm-2
+9/2/64:
+  dpt: '9.007'
+  name: Sensorik.EG.Büro.Sensor.Luftfeuchtigkeit
+9/2/65:
+  dpt: '1.005'
+  name: Sensorik.EG.Büro.Sensor.Luftfeuchtigkeit-Alarm-1
+9/2/66:
+  dpt: '1.005'
+  name: Sensorik.EG.Büro.Sensor.Luftfeuchtigkeit-Alarm-2
+9/2/67:
+  dpt: '9.001'
+  name: Sensorik.EG.Büro.Sensor.Taupunkt
+9/2/68:
+  dpt: '1.005'
+  name: Sensorik.EG.Büro.Sensor.Taupunkt-Alarm-1
+9/2/71:
+  dpt: '9.008'
+  name: Sensorik.EG.Büro.Sensor.CO2
+9/2/72:
+  dpt: '1.005'
+  name: Sensorik.EG.Büro.Sensor.CO2-Alarm-1
+9/2/73:
+  dpt: '1.005'
+  name: Sensorik.EG.Büro.Sensor.CO2-Alarm-2
+9/2/74:
+  dpt: '1.005'
+  name: Sensorik.EG.Büro.Sensor.CO2-Alarm-3
+9/2/80:
+  dpt: '9.001'
+  name: Sensorik.EG.Büro.Schalter.Temperatur
+9/2/91:
+  dpt: '9.001'
+  name: Sensorik.EG.Wohnzimmer.Sensor.Temperatur
+9/2/92:
+  dpt: '1.005'
+  name: Sensorik.EG.Wohnzimmer.Sensor.Temperatur-Alarm-1
+9/2/93:
+  dpt: '1.005'
+  name: Sensorik.EG.Wohnzimmer.Sensor.Temperatur-Alarm-2
+9/2/94:
+  dpt: '9.007'
+  name: Sensorik.EG.Wohnzimmer.Sensor.Luftfeuchtigkeit
+9/2/95:
+  dpt: '1.005'
+  name: Sensorik.EG.Wohnzimmer.Sensor.Luftfeuchtigkeit-Alarm-1
+9/2/96:
+  dpt: '1.005'
+  name: Sensorik.EG.Wohnzimmer.Sensor.Luftfeuchtigkeit-Alarm-2
+9/2/97:
+  dpt: '9.001'
+  name: Sensorik.EG.Wohnzimmer.Sensor.Taupunkt
+9/2/98:
+  dpt: '1.005'
+  name: Sensorik.EG.Wohnzimmer.Sensor.Taupunkt-Alarm-1
+9/3/100:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.VOC-Alarm-1
+9/3/101:
+  dpt: '9.008'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.CO2
+9/3/102:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.CO2-Alarm-1
+9/3/103:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.CO2-Alarm-2
+9/3/104:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.CO2-Alarm-3
+9/3/110:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Schalter.Temperatur
+9/3/121:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.Temperatur
+9/3/122:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.Temperatur-Alarm-1
+9/3/123:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.Temperatur-Alarm-2
+9/3/124:
+  dpt: '9.007'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.Luftfeuchtigkeit
+9/3/125:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.Luftfeuchtigkeit-Alarm-1
+9/3/126:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.Luftfeuchtigkeit-Alarm-2
+9/3/127:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.Taupunkt
+9/3/128:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.Taupunkt-Alarm-1
+9/3/130:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.VOC-Alarm-1
+9/3/131:
+  dpt: '9.008'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.CO2
+9/3/132:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.CO2-Alarm-1
+9/3/133:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.CO2-Alarm-2
+9/3/134:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Luis.Sensor.CO2-Alarm-3
+9/3/140:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Luis.Schalter.Temperatur
+9/3/151:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.Temperatur
+9/3/152:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.Temperatur-Alarm-1
+9/3/153:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.Temperatur-Alarm-2
+9/3/154:
+  dpt: '9.007'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.Luftfeuchtigkeit
+9/3/155:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.Luftfeuchtigkeit-Alarm-1
+9/3/156:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.Luftfeuchtigkeit-Alarm-2
+9/3/157:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.Taupunkt
+9/3/158:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.Taupunkt-Alarm-1
+9/3/160:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.VOC-Alarm-1
+9/3/161:
+  dpt: '9.008'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.CO2
+9/3/162:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.CO2-Alarm-1
+9/3/163:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.CO2-Alarm-2
+9/3/164:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Sensor.CO2-Alarm-3
+9/3/170:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Schalter.Temperatur
+9/3/171:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Schalter.Bett-Links.Temperatur
+9/3/172:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Eltern.Schalter.Bett-Rechts.Temperatur
+9/3/173:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Eltern.BWM.Temperatur
+9/3/183:
+  dpt: '9.001'
+  name: Sensorik.OG.Begehbarer-Schrank.Sensor.Temperatur-Alarm-2
+9/3/20:
+  dpt: '9.001'
+  name: Sensorik.OG.Flur.BWM.Treppe.Temperatur
+9/3/200:
+  dpt: '9.001'
+  name: Sensorik.OG.Begehbarer-Schrank.BWM.Temperatur
+9/3/21:
+  dpt: '9.001'
+  name: Sensorik.OG.Flur.BWM.Gang.Temperatur
+9/3/211:
+  dpt: '9.001'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.Temperartur
+9/3/212:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.Temperatur-Alarm-1
+9/3/213:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.Temperatur-Alarm-2
+9/3/214:
+  dpt: '9.007'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.Luftfeuchtigkeit
+9/3/215:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.Luftfeuchtigkeit-Alarm-1
+9/3/216:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.Luftfeuchtigkeit-Alarm-2
+9/3/217:
+  dpt: '9.001'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.Taupunkt
+9/3/218:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.Taupunkt-Alarm-1
+9/3/220:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.VOC-Alarm-1
+9/3/221:
+  dpt: '9.008'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.CO2
+9/3/222:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.CO2-Alarm-1
+9/3/223:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.CO2-Alarm-2
+9/3/224:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Eltern.Sensor.CO2-Alarm-3
+9/3/230:
+  dpt: '9.001'
+  name: Sensorik.OG.Badezimmer-Eltern.Schalter.Temperartur
+9/3/231:
+  dpt: '9.001'
+  name: Sensorik.OG.Badezimmer-Eltern.BWM.Temperartur
+9/3/31:
+  dpt: '9.001'
+  name: Sensorik.OG.Abstellraum.Sensor.Temperatur
+9/3/32:
+  dpt: '1.005'
+  name: Sensorik.OG.Abstellraum.Sensor.Temperatur-Alarm-1
+9/3/33:
+  dpt: '1.005'
+  name: Sensorik.OG.Abstellraum.Sensor.Temperatur-Alarm-2
+9/3/34:
+  dpt: '9.007'
+  name: Sensorik.OG.Abstellraum.Sensor.Luftfeuchtigkeit
+9/3/35:
+  dpt: '1.005'
+  name: Sensorik.OG.Abstellraum.Sensor.Luftfeuchtigkeit-Alarm-1
+9/3/36:
+  dpt: '1.005'
+  name: Sensorik.OG.Abstellraum.Sensor.Luftfeuchtigkeit-Alarm-2
+9/3/37:
+  dpt: '9.001'
+  name: Sensorik.OG.Abstellraum.Sensor.Taupunkt
+9/3/38:
+  dpt: '1.005'
+  name: Sensorik.OG.Abstellraum.Sensor.Taupunkt-Alarm-1
+9/3/40:
+  dpt: '1.005'
+  name: Sensorik.OG.Abstellraum.Sensor.VOC-Alarm-1
+9/3/41:
+  dpt: '9.008'
+  name: Sensorik.OG.Abstellraum.Sensor.CO2
+9/3/42:
+  dpt: '1.005'
+  name: Sensorik.OG.Abstellraum.Sensor.CO2-Alarm-1
+9/3/43:
+  dpt: '1.005'
+  name: Sensorik.OG.Abstellraum.Sensor.CO2-Alarm-2
+9/3/44:
+  dpt: '1.005'
+  name: Sensorik.OG.Abstellraum.Sensor.CO2-Alarm-3
+9/3/50:
+  dpt: '9.001'
+  name: Sensorik.OG.Abstellraum.Schalter.Temperatur
+9/3/61:
+  dpt: '9.001'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.Temperatur
+9/3/62:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.Temperatur-Alarm-1
+9/3/63:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.Temperatur-Alarm-2
+9/3/64:
+  dpt: '9.007'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.Luftfeuchtigkeit
+9/3/65:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.Luftfeuchtigkeit-Alarm-1
+9/3/66:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.Luftfeuchtigkeit-Alarm-2
+9/3/67:
+  dpt: '9.001'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.Taupunkt
+9/3/68:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.Taupunkt-Alarm-1
+9/3/70:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.VOC-Alarm-1
+9/3/71:
+  dpt: '9.008'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.CO2
+9/3/72:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.CO2-Alarm-1
+9/3/73:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.CO2-Alarm-2
+9/3/74:
+  dpt: '1.005'
+  name: Sensorik.OG.Badezimmer-Kinder.Sensor.CO2-Alarm-3
+9/3/80:
+  dpt: '9.001'
+  name: Sensorik.OG.Badezimmer-Kinder.Schalter.Temperatur
+9/3/81:
+  dpt: '9.001'
+  name: Sensorik.OG.Badezimmer-Kinder.BWM.Temperatur
+9/3/91:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.Temperatur
+9/3/92:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.Temperatur-Alarm-1
+9/3/93:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.Temperatur-Alarm-2
+9/3/94:
+  dpt: '9.007'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.Luftfeuchtigkeit
+9/3/95:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.Luftfeuchtigkeit-Alarm-1
+9/3/96:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.Luftfeuchtigkeit-Alarm-2
+9/3/97:
+  dpt: '9.001'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.Taupunkt
+9/3/98:
+  dpt: '1.005'
+  name: Sensorik.OG.Schlafzimmer-Gregory.Sensor.Taupunkt-Alarm-1
+9/4/1:
+  dpt: '9.001'
+  name: Sensorik.DG.Speicher.Sensor.Temperatur
+9/4/10:
+  dpt: '1.005'
+  name: Sensorik.DG.Speicher.Sensor.VOC-Alarm-1
+9/4/11:
+  dpt: '9.008'
+  name: Sensorik.DG.Speicher.Sensor.CO2
+9/4/12:
+  dpt: '1.005'
+  name: Sensorik.DG.Speicher.Sensor.CO2-Alarm-1
+9/4/13:
+  dpt: '1.005'
+  name: Sensorik.DG.Speicher.Sensor.CO2-Alarm-2
+9/4/14:
+  dpt: '1.005'
+  name: Sensorik.DG.Speicher.Sensor.CO2-Alarm-3
+9/4/15:
+  dpt: '14.058'
+  name: Sensorik.DG.Speicher.Sensor.Luftdruck-Relativ
+9/4/16:
+  dpt: '14.058'
+  name: Sensorik.DG.Speicher.Sensor.Luftdruck-Absolut
+9/4/17:
+  dpt: '1.005'
+  name: Sensorik.DG.Speicher.Sensor.Luftdruck-Alarm-1
+9/4/2:
+  dpt: '1.005'
+  name: Sensorik.DG.Speicher.Sensor.Temperatur-Alarm-1
+9/4/3:
+  dpt: '1.005'
+  name: Sensorik.DG.Speicher.Sensor.Temperatur-Alarm-2
+9/4/4:
+  dpt: '9.007'
+  name: Sensorik.DG.Speicher.Sensor.Luftfeuchtigkeit
+9/4/5:
+  dpt: '1.005'
+  name: Sensorik.DG.Speicher.Sensor.Luftfeuchtigkeit-Alarm-1
+9/4/6:
+  dpt: '1.005'
+  name: Sensorik.DG.Speicher.Sensor.Luftfeuchtigkeit-Alarm-2
+9/4/7:
+  dpt: '9.001'
+  name: Sensorik.DG.Speicher.Sensor.Taupunkt
+9/4/8:
+  dpt: '1.005'
+  name: Sensorik.DG.Speicher.Sensor.Taupunkt-Alarm-1
+9/4/9:
+  dpt: '9.000'
+  name: Sensorik.DG.Speicher.Sensor.VOC
+9/5/1:
+  dpt: '9.001'
+  name: Sensorik.A.Fassade.Außensensor.Temperatur
+9/5/10:
+  dpt: '9.004'
+  name: Sensorik.A.Fassade.Außensensor.Helligkeit-Mitte
+9/5/101:
+  dpt: '9.007'
+  name: Sensorik.A.DachAußensensor.SO.Luftfeuchtigkeit
+9/5/102:
+  dpt: '9.007'
+  name: Sensorik.A.Dach.Außensensor.SO.Luftfeuchtigkeit-Alle
+9/5/103:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Luftfeuchtigkeit-Alarm-1
+9/5/104:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Luftfeuchtigkeit-Alarm-2
+9/5/105:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Luftfeuchtigkeit-Status
+9/5/106:
+  dpt: '9.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Taupunkt
+9/5/108:
+  dpt: '14.058'
+  name: Sensorik.A.Dach.Außensensor.SO.Luftdruck-Relativ
+9/5/109:
+  dpt: '14.058'
+  name: Sensorik.A.Dach.Außensensor.SO.Luftdruck-Absolut
+9/5/11:
+  dpt: '9.004'
+  name: Sensorik.A.Fassade.Außensensor.Helligkeit-Rechts
+9/5/110:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Luftdruck-Alarm-1
+9/5/111:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Luftdruck-Status
+9/5/12:
+  dpt: '9.004'
+  name: Sensorik.A.Fassade.Außensensor.Helligkeit-Alle
+9/5/121:
+  dpt: '9.001'
+  name: Sensorik.A.Dach.Außensensor.NW.Temperatur
+9/5/122:
+  dpt: '9.001'
+  name: Sensorik.A.Dach.Außensensor.NW.Temperatur-Alle
+9/5/123:
+  dpt: '1.005'
+  name: Sensorik.A.Dach.Außensensor.NW.Temperatur-Alarm-1
+9/5/124:
+  dpt: '1.005'
+  name: Sensorik.A.Dach.Außensensor.NW.Temperatur-Alarm-2
+9/5/125:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Außensensor.NW.Temperatur-Status
+9/5/129:
+  dpt: '9.004'
+  name: Sensorik.A.Dach.Außensensor.NW.Helligkeit-Links
+9/5/130:
+  dpt: '9.004'
+  name: Sensorik.A.Dach.Außensensor.NW.Helligkeit-Mitte
+9/5/131:
+  dpt: '9.004'
+  name: Sensorik.A.Dach.Außensensor.NW.Helligkeit-Rechts
+9/5/132:
+  dpt: '9.004'
+  name: Sensorik.A.Dach.Außensensor.NW.Helligkeit-Alle
+9/5/2:
+  dpt: '9.001'
+  name: Sensorik.A.Fassade.Außensensor.Temperatur-Alle
+9/5/3:
+  dpt: '1.005'
+  name: Sensorik.A.Fassade.Außensensor.Temperatur-Alarm-1
+9/5/4:
+  dpt: '1.005'
+  name: Sensorik.A.Fassade.Außensensor.Temperatur-Alarm-2
+9/5/41:
+  dpt: '9.001'
+  name: Sensorik.A.Dach.Wetterstation.Temperatur
+9/5/43:
+  dpt: '1.005'
+  name: Sensorik.A.Dach.Wetterstation.Temperatur-Alarm-1
+9/5/44:
+  dpt: '1.005'
+  name: Sensorik.A.Dach.Wetterstation.Temperatur-Alarm-2
+9/5/45:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Wetterstation.Temperatur-Status
+9/5/46:
+  dpt: '9.005'
+  name: Sensorik.A.Dach.Wetterstation.Windgeschwindigkeit
+9/5/47:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Wetterstation.Windgeschwindigkeit-Alarm-1
+9/5/48:
+  dpt: '1.005'
+  name: Sensorik.A.Dach.Wetterstation.Windgeschwindigkeit-Alarm-Erweitert-1
+9/5/49:
+  dpt: '9.004'
+  name: Sensorik.A.Dach.Wetterstation.Helligkeit-Links
+9/5/5:
+  dpt: '1.001'
+  name: Sensorik.A.Fassade.Außensensor.Temperatur-Status
+9/5/50:
+  dpt: '9.004'
+  name: Sensorik.A.Dach.Wetterstation.Helligkeit-Mitte
+9/5/51:
+  dpt: '9.004'
+  name: Sensorik.A.Dach.Wetterstation.Helligkeit-Rechts
+9/5/52:
+  dpt: '9.004'
+  name: Sensorik.A.Dach.Wetterstation.Helligkeit-Alle
+9/5/53:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Wetterstation.Regen
+9/5/54:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Wetterstation.Regen-Alarm-1
+9/5/55:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Wetterstation.Frost
+9/5/56:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Wetterstation.Frost-Alarm-1
+9/5/57:
+  dpt: '14.007'
+  name: Sensorik.A.Dach.Wetterstation.Azimut
+9/5/58:
+  dpt: '14.007'
+  name: Sensorik.A.Dach.Wetterstation.Elevation
+9/5/59:
+  dpt: '14.007'
+  name: Sensorik.A.Dach.Wetterstation.GPS-Breitengrad
+9/5/60:
+  dpt: '14.007'
+  name: Sensorik.A.Dach.Wetterstation.GPS-Längengrad
+9/5/81:
+  dpt: '9.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Temperatur
+9/5/82:
+  dpt: '9.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Temperatur-Alle
+9/5/83:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Temperatur-Alarm-1
+9/5/84:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Temperatur-Alarm-2
+9/5/85:
+  dpt: '1.001'
+  name: Sensorik.A.Dach.Außensensor.SO.Temperatur-Status
+9/5/9:
+  dpt: '9.004'
+  name: Sensorik.A.Fassade.Außensensor.Helligkeit-Links
