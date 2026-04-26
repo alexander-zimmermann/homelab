@@ -1,0 +1,113 @@
+# Override chart's default resource naming (`application`)
+applicationName: knx-nats-bridge
+
+deployment:
+  enabled: true
+  image:
+    repository: ghcr.io/alexander-zimmermann/knx-nats-bridge
+    tag: 0.1.1
+    pullPolicy: IfNotPresent
+
+  # KNX tunnel allows only one connection per credential; never run two replicas.
+  replicas: 1
+  strategy:
+    type: Recreate
+
+  env:
+    KNX_CONNECTION_TYPE:
+      value: tunneling_tcp
+    KNX_GATEWAY_HOST:
+      value: knx-ip.zimmermann.eu.com
+    KNX_GATEWAY_PORT:
+      value: "3671"
+    NATS_SERVERS:
+      value: nats://nats.nats.svc.cluster.local:4222
+    NATS_SUBJECT_PREFIX:
+      value: knx
+    # NKey seed mounted as a file from the synced Secret (Kyverno clones from `nats` namespace)
+    NATS_NKEY_SEED_FILE:
+      value: /etc/knx-nats-bridge/nkey-seed
+    KNX_NATS_MAPPING_PATH:
+      value: /etc/knx-nats-bridge/ga-mapping.yaml
+    KNX_NATS_UNMAPPED_POLICY:
+      value: skip
+    LOG_FORMAT:
+      value: json
+    METRICS_PORT:
+      value: "9090"
+    TZ:
+      value: Europe/Berlin
+
+  volumes:
+    mapping:
+      configMap:
+        name: knx-nats-bridge-mapping
+    nats-credentials:
+      secret:
+        secretName: knx-nats-bridge-credentials
+
+  volumeMounts:
+    mapping:
+      mountPath: /etc/knx-nats-bridge/ga-mapping.yaml
+      subPath: ga-mapping.yaml
+    nats-credentials:
+      mountPath: /etc/knx-nats-bridge/nkey-seed
+      subPath: nkey-seed
+
+  ports:
+    - containerPort: 9090
+      name: metrics
+      protocol: TCP
+
+  livenessProbe:
+    enabled: true
+    httpGet:
+      path: /healthz
+      port: metrics
+    initialDelaySeconds: 30
+    periodSeconds: 30
+
+  readinessProbe:
+    enabled: true
+    httpGet:
+      path: /healthz
+      port: metrics
+    initialDelaySeconds: 10
+    periodSeconds: 10
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: [ALL]
+
+  securityContext:
+    fsGroup: 1000
+
+service:
+  enabled: true
+  type: ClusterIP
+  ports:
+    - port: 9090
+      name: metrics
+      protocol: TCP
+      targetPort: metrics
+
+serviceMonitor:
+  enabled: true
+  additionalLabels:
+    release: prometheus
+  endpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics
