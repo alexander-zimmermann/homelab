@@ -1,0 +1,124 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+
+metadata:
+  name: timescaledb-db
+  namespace: timescaledb
+
+spec:
+  instances: 1
+
+  imageName: ghcr.io/alexander-zimmermann/cnpg-postgres-timescaledb:18.3-ts2.26
+
+  primaryUpdateStrategy: unsupervised
+
+  storage:
+    storageClass: longhorn-postgres
+    size: PLACEHOLDER
+  walStorage:
+    storageClass: longhorn-postgres
+    size: PLACEHOLDER
+
+  nodeMaintenanceWindow:
+    reusePVC: false
+
+  bootstrap:
+    initdb:
+      database: homelab
+      owner: homelab
+      postInitApplicationSQLRefs:
+        configMapRefs:
+          - name: timescaledb-bootstrap-sql
+            key: bootstrap.sql
+
+  postgresql:
+    parameters:
+      # Memory settings — sized for write-heavy time-series workload
+      shared_buffers: "256MB"
+      effective_cache_size: "1GB"
+      work_mem: "16MB"
+      maintenance_work_mem: "256MB"
+      autovacuum_work_mem: "256MB"
+
+      # WAL settings
+      wal_buffers: "16MB"
+      max_wal_size: PLACEHOLDER
+      min_wal_size: "80MB"
+      wal_keep_size: "128MB"
+      wal_compression: "on"
+
+      # TimescaleDB
+      shared_preload_libraries: "timescaledb"
+      max_worker_processes: "16"
+      timescaledb.max_background_workers: "8"
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      enabled: true
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: timescaledb-backups
+        serverName: PLACEHOLDER
+        s3-force-path-style: "true"
+
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+
+metadata:
+  name: timescaledb-db-daily
+  namespace: timescaledb
+
+spec:
+  schedule: "0 0 3 * * *"
+  immediate: false
+  backupOwnerReference: cluster
+  cluster:
+    name: timescaledb-db
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+
+metadata:
+  name: timescaledb-backups
+  namespace: timescaledb
+
+spec:
+  configuration:
+    destinationPath: s3://timescaledb-backups
+    endpointURL: http://rustfs-svc.rustfs.svc.cluster.local:9000
+    s3Credentials:
+      accessKeyId:
+        name: rustfs-admin-credentials
+        key: RUSTFS_ACCESS_KEY
+      secretAccessKey:
+        name: rustfs-admin-credentials
+        key: RUSTFS_SECRET_KEY
+    wal:
+      compression: bzip2
+      maxParallel: 2
+    data:
+      compression: bzip2
+  retentionPolicy: "14d"
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+
+metadata:
+  name: timescaledb-db
+  namespace: timescaledb
+  # Prometheus Operator label (Opt-In)
+  labels:
+    release: prometheus
+
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: timescaledb-db
+  podMetricsEndpoints:
+    - port: metrics

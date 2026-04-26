@@ -1,0 +1,60 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+replacements:
+  # Database storage
+  - sourceValue: 10Gi
+    targets:
+      - select:
+          kind: Cluster
+          name: timescaledb-db
+        fieldPaths:
+          - spec.storage.size
+
+  # WAL storage
+  - sourceValue: 2Gi
+    targets:
+      - select:
+          kind: Cluster
+          name: timescaledb-db
+        fieldPaths:
+          - spec.walStorage.size
+
+  # max_wal_size — 80% of WAL PVC
+  - sourceValue: "1600MB"
+    targets:
+      - select:
+          kind: Cluster
+          name: timescaledb-db
+        fieldPaths:
+          - spec.postgresql.parameters.max_wal_size
+
+  # Barman serverName — env-specific so prod and dev never share a WAL archive
+  - sourceValue: timescaledb-db-prod
+    targets:
+      - select:
+          kind: Cluster
+          name: timescaledb-db
+        fieldPaths:
+          - spec.plugins.0.parameters.serverName
+
+patches:
+  - target:
+      kind: Cluster
+      name: timescaledb-db
+    patch: |-
+      - op: test
+        path: /spec/instances
+        value: 1
+      - op: add
+        path: /spec/resources
+        value:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi

@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: timescaledb
+resources:
+  - ./namespace.yaml
+  - ./database.yaml
+
+configMapGenerator:
+  - name: timescaledb-bootstrap-sql
+    options:
+      disableNameSuffixHash: true
+    files:
+      - scripts/bootstrap.sql
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.app: timescaledb
+
+# Wave 3 = apps that consume the CNPG Cluster CR (operator wave 1, plugin wave 2).
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "3"
