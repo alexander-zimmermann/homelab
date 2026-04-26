@@ -13,6 +13,10 @@ alertmanager:
   config:
     global:
       resolve_timeout: 5m
+      # Internal smtprelay (no auth, accepts mail from cluster CIDR)
+      smtp_smarthost: smtprelay.smtprelay.svc.cluster.local:25
+      smtp_from: alertmanager@zimmermann.eu.com
+      smtp_require_tls: false
     route:
       # Group by job to avoid alert storms when multiple alerts fire together
       group_by: ["alertname", "job"]
@@ -21,10 +25,10 @@ alertmanager:
       repeat_interval: 6h
       receiver: "endpoints"
       routes:
-        # Watchdog heartbeat: fires continuously so we know alerting works
+        # Watchdog heartbeat: routine signal, route to email only (no Pushover noise)
         - matchers:
             - alertname = "Watchdog"
-          receiver: "endpoints"
+          receiver: "watchdog-email"
           repeat_interval: 12h
     receivers:
       - name: "endpoints"
@@ -36,6 +40,10 @@ alertmanager:
         # Node-RED endpoint for container status events
         webhook_configs:
           - url: "http://node-red.zimmermann.eu.com:1880/container-status"
+            send_resolved: true
+      - name: "watchdog-email"
+        email_configs:
+          - to: alexander@zimmermann.eu.com
             send_resolved: true
 
   alertmanagerSpec:
