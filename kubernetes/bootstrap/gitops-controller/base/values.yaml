@@ -81,13 +81,17 @@ notifications:
       cpu: 100m
       memory: 128Mi
 
-  # Pushover via generic webhook
+  # Pushover for problems, email (via internal smtprelay) for routine sync events
   notifiers:
     service.webhook.pushover: |
       url: https://api.pushover.net/1/messages.json
       headers:
         - name: Content-Type
           value: application/json
+    service.email.smtp: |
+      host: smtprelay.smtprelay.svc.cluster.local
+      port: 25
+      from: argocd@zimmermann.eu.com
 
   # Notification content per event type
   templates:
@@ -118,18 +122,12 @@ notifications:
               "sound": "falling"
             }
     template.app-deployed: |
-      webhook:
-        pushover:
-          method: POST
-          body: |
-            {
-              "token": "{{printf "%s" (index .secrets "pushover-token")}}",
-              "user": "{{printf "%s" (index .secrets "pushover-user-key")}}",
-              "title": "Deployed: {{.app.metadata.name}}",
-              "message": "Synced and healthy.",
-              "priority": -1,
-              "sound": "magic"
-            }
+      email:
+        subject: "ArgoCD Deployed: {{.app.metadata.name}}"
+      message: |
+        Application {{.app.metadata.name}} synced and healthy.
+        Project: {{.app.spec.project}}
+        Revision: {{.app.status.sync.revision}}
 
   # Trigger conditions: when to fire each notification
   triggers:
@@ -150,13 +148,17 @@ notifications:
           - app-deployed
         when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
 
-  # Global subscriptions apply to all apps without per-app annotation
+  # Global subscriptions apply to all apps without per-app annotation.
+  # Problems → Pushover (mobile alert); routine deploys → email only.
   subscriptions:
     - recipients:
         - pushover
       triggers:
         - on-sync-failed
         - on-health-degraded
+    - recipients:
+        - email:alexander@zimmermann.eu.com
+      triggers:
         - on-deployed
 
 # Internal Redis for ArgoCD (caching/locking)
