@@ -18,6 +18,19 @@ metadata:
     gethomepage.dev/href: "https://PLACEHOLDER"
     gethomepage.dev/widget.type: "prometheus"
     gethomepage.dev/widget.url: "http://prometheus-operated.prometheus.svc.cluster.local:9090"
+    # Gatus dead-man-switch: queries the Prometheus API for the Watchdog alert;
+    # fails (and pages Pushover) if Prometheus is unreachable or the rule stops firing.
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |
+      name: Watchdog
+      group: Observability
+      url: http://prometheus-prometheus.prometheus.svc.cluster.local:9090/api/v1/query?query=ALERTS%7Balertname%3D%22Watchdog%22%2Calertstate%3D%22firing%22%7D
+      interval: 1m
+      conditions:
+        - "[STATUS] == 200"
+        - "[BODY].data.result[0].value[1] == 1"
+      alerts:
+        - type: pushover
 
 spec:
   entryPoints:
