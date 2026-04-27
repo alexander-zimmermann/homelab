@@ -13,11 +13,6 @@ alertmanager:
   config:
     global:
       resolve_timeout: 5m
-      # Internal smtprelay (no auth, accepts mail from cluster CIDR)
-      smtp_smarthost: smtprelay.smtprelay.svc.cluster.local:25
-      # FROM must use zimmermann.sh — iCloud only accepts addresses tied to the relay account's aliases
-      smtp_from: alertmanager@zimmermann.sh
-      smtp_require_tls: false
     route:
       # Group by job to avoid alert storms when multiple alerts fire together
       group_by: ["alertname", "job"]
@@ -26,10 +21,10 @@ alertmanager:
       repeat_interval: 6h
       receiver: "endpoints"
       routes:
-        # Watchdog heartbeat: routine signal, route to email only (no Pushover noise)
+        # Watchdog heartbeat: silent Pushover ping (priority -1, no resolved alarm)
         - matchers:
             - alertname = "Watchdog"
-          receiver: "watchdog-email"
+          receiver: "watchdog-pushover"
           repeat_interval: 12h
     receivers:
       - name: "endpoints"
@@ -42,10 +37,12 @@ alertmanager:
         webhook_configs:
           - url: "http://node-red.zimmermann.eu.com:1880/container-status"
             send_resolved: true
-      - name: "watchdog-email"
-        email_configs:
-          - to: alexander@zimmermann.eu.com
-            send_resolved: true
+      - name: "watchdog-pushover"
+        pushover_configs:
+          - token_file: /etc/alertmanager/secrets/alertmanager-pushover-tokens/token
+            user_key_file: /etc/alertmanager/secrets/alertmanager-pushover-tokens/user_key
+            priority: "-1"
+            send_resolved: false
 
   alertmanagerSpec:
     # Mount the Pushover secret so token_file / user_key_file can reference it
