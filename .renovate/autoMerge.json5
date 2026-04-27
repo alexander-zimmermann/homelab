@@ -44,6 +44,15 @@
       "matchUpdateTypes": ["minor", "patch", "digest"],
       "minimumReleaseAge": "1 minute",
       "ignoreTests": true
+    },
+    {
+      "description": "Auto-merge own first-party bridge images",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/alexander-zimmermann/knx-nats-bridge"],
+      "automerge": true,
+      "automergeType": "pr",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "ignoreTests": false
     }
   ]
 }
