@@ -10,19 +10,30 @@
       "ignoreTests": false
     },
     {
-      "description": "Auto-merge OCI Charts (Core Monitoring)",
+      "description": "Auto-merge trusted minor/patch container updates",
       "matchDatasources": ["docker"],
       "automerge": true,
       "automergeType": "pr",
       "matchUpdateTypes": ["minor", "patch"],
       "matchPackageNames": [
+        // Observability stack — strict semver, frequent CVE patches
         "/kube-prometheus-stack/",
+        "/prometheus-crds/",
         "/grafana/",
         "/alloy/",
         "/loki/",
+        // Networking + DNS — mature CNCF projects
         "/cilium/",
+        "/external-dns/",
+        "/traefik/",
+        // Security/policy/secrets — small, stable, security-relevant
         "/cert-manager/",
-        "/external-dns/"
+        "/kyverno/",
+        "/sealed-secrets/",
+        // Tiny built-in components
+        "/metrics-server/",
+        // First-party images (we own the build + CI)
+        "/knx-nats-bridge/"
       ],
       "ignoreTests": false
     },
