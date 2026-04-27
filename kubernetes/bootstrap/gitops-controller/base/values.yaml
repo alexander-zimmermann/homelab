@@ -81,17 +81,13 @@ notifications:
       cpu: 100m
       memory: 128Mi
 
-  # Pushover for problems, email (via internal smtprelay) for routine sync events
+  # Pushover for sync failures, health degradation, and recovery — no email.
   notifiers:
     service.webhook.pushover: |
       url: https://api.pushover.net/1/messages.json
       headers:
         - name: Content-Type
           value: application/json
-    service.email.smtp: |
-      host: smtprelay.smtprelay.svc.cluster.local
-      port: 25
-      from: admin@PLACEHOLDER
 
   # Notification content per event type
   templates:
@@ -121,15 +117,23 @@ notifications:
               "priority": 1,
               "sound": "falling"
             }
-    template.app-deployed: |
-      email:
-        subject: "ArgoCD Deployed: {{.app.metadata.name}}"
-      message: |
-        Application {{.app.metadata.name}} synced and healthy.
-        Project: {{.app.spec.project}}
-        Revision: {{.app.status.sync.revision}}
+    template.app-health-recovered: |
+      webhook:
+        pushover:
+          method: POST
+          body: |
+            {
+              "token": "{{printf "%s" (index .secrets "pushover-token")}}",
+              "user": "{{printf "%s" (index .secrets "pushover-user-key")}}",
+              "title": "Recovered: {{.app.metadata.name}}",
+              "message": "Application is healthy again.",
+              "priority": 0,
+              "sound": "magic"
+            }
 
-  # Trigger conditions: when to fire each notification
+  # Trigger conditions: when to fire each notification.
+  # Triggers fire only on the false→true transition of `when`, so on-health-recovered
+  # only sends when health flips back to Healthy (typically after a Degraded period).
   triggers:
     trigger.on-sync-failed: |
       - description: Application syncing has failed
@@ -141,25 +145,19 @@ notifications:
         send:
           - app-health-degraded
         when: app.status.health.status == 'Degraded'
-    trigger.on-deployed: |
-      - description: Application is synced and healthy. Triggered once per commit.
-        oncePer: app.status.sync.revision
+    trigger.on-health-recovered: |
+      - description: Application returned to healthy
         send:
-          - app-deployed
-        when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+          - app-health-recovered
+        when: app.status.health.status == 'Healthy'
 
-  # Global subscriptions apply to all apps without per-app annotation.
-  # Problems → Pushover (mobile alert); routine deploys → email only.
   subscriptions:
     - recipients:
         - pushover
       triggers:
         - on-sync-failed
         - on-health-degraded
-    - recipients:
-        - email:alexander@zimmermann.eu.com
-      triggers:
-        - on-deployed
+        - on-health-recovered
 
 # Internal Redis for ArgoCD (caching/locking)
 redis:
