@@ -15,8 +15,8 @@ alertmanager:
       resolve_timeout: 5m
       # Internal smtprelay (no auth, accepts mail from cluster CIDR)
       smtp_smarthost: smtprelay.smtprelay.svc.cluster.local:25
-      # FROM must use zimmermann.sh — iCloud only accepts addresses tied to the relay account's aliases
-      smtp_from: alertmanager@zimmermann.sh
+      # iCloud caps custom-domain aliases at 3, so all in-cluster services share the `admin` alias
+      smtp_from: admin@zimmermann.sh
       smtp_require_tls: false
     route:
       # Group by job to avoid alert storms when multiple alerts fire together
