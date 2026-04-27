@@ -30,6 +30,17 @@ replacements:
           delimiter: "/"
           index: 2
 
+  - sourceValue: "zimmermann.sh"
+    targets:
+      - select:
+          kind: ConfigMap
+          name: argocd-notifications-cm
+        fieldPaths:
+          - data.[service.email.smtp]
+        options:
+          delimiter: "@"
+          index: 1
+
   # Append environment ('prod') into ApplicationSet paths and names
   - sourceValue: "prod"
     targets:
