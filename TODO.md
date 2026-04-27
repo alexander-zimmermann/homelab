@@ -25,7 +25,6 @@
 
 - [ ] **stakater/application Chart**: Migrate apps with raw Deployment manifests to [stakater/application](https://github.com/stakater/application) (same pattern as Gatus). Start with `smtprelay` and `fritz-exporter` (simplest cases), then evaluate `solaredge2mqtt` (two releases), `homepage` (RBAC/PVC needs check), and `node-red` (initContainer + PVC support needed).
 - [ ] **Cilium**: Implement network policies.
-- [ ] **KNX → NATS via Telegraf**: Expose KNX events on NATS for future AI/home-automation consumers. Add `outputs.nats` to Telegraf so the existing `inputs.knx_listener` data is published on subjects like `knx.<a>.<b>.<c>` alongside the current InfluxDB write. No separate KNX→MQTT bridge, no MQTT gateway involved. Today only InfluxDB 3 gets the data — nothing else on NATS does.
 
 ## GitOps
 
