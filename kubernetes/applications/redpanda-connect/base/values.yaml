@@ -1,0 +1,29 @@
+# Pipeline definitions in streams/*.yaml, mounted via configMapGenerator
+streams:
+  enabled: true
+  streamsConfigMap: redpanda-connect-streams
+
+env:
+  # NATS user (cloned from nats namespace by Kyverno)
+  - name: NATS_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: redpanda-connect-credentials
+        key: NATS_PASSWORD
+  # CNPG-managed connect-role credentials (cloned from timescaledb namespace by Kyverno)
+  - name: PGUSER
+    valueFrom:
+      secretKeyRef:
+        name: timescaledb-db-connect-secret
+        key: username
+  - name: PGPASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: timescaledb-db-connect-secret
+        key: password
+
+serviceMonitor:
+  enabled: true
+  interval: 30s
+  labels:
+    release: prometheus

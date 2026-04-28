@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: redpanda-connect
+resources:
+  - ./namespace.yaml
+
+helmCharts:
+  - name: connect
+    repo: https://charts.redpanda.com
+    releaseName: redpanda-connect
+    version: 3.2.4
+    valuesFile: values.yaml
+    namespace: redpanda-connect
+
+configMapGenerator:
+  - name: redpanda-connect-streams
+    options:
+      disableNameSuffixHash: true
+    files:
+      - streams/knx.yaml
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.app: redpanda-connect
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "4"
