@@ -15,22 +15,30 @@ pipeline:
     - mapping: |
         let evt = this
         let parts = $evt.ga.split("/")
-        # bool coercion for DPT-1 (true/false → 1.0/0.0); other DPTs are already numbers
-        let v = if $evt.dpt.has_prefix("DPT-1") {
-          if $evt.value == true { 1.0 } else { 0.0 }
+        # DPT format is "<major>.<minor>" (e.g. "1.001", "9.008", "14.058")
+        let dpt_major = $evt.dpt.split(".").index(0)
+        let value_type = $evt.value.type()
+
+        # DPT-1.x is bool; other DPTs publish numbers. DPT-19 (datetime) and
+        # other non-numeric payloads are skipped — raw is lost too, accept that.
+        root = if $dpt_major != "1" && $value_type != "number" {
+          deleted()
         } else {
-          $evt.value.number()
-        }
-        root = {
-          "time":       $evt.ts,
-          "ga":         $evt.ga,
-          "knx_main":   $parts.index(0).number(),
-          "knx_middle": $parts.index(1).number(),
-          "knx_sub":    $parts.index(2).number(),
-          "knx_name":   $evt.name,
-          "dpt":        $evt.dpt,
-          "value":      $v,
-          "raw":        $evt,
+          {
+            "time":       $evt.ts,
+            "ga":         $evt.ga,
+            "knx_main":   $parts.index(0).number(),
+            "knx_middle": $parts.index(1).number(),
+            "knx_sub":    $parts.index(2).number(),
+            "knx_name":   $evt.name,
+            "dpt":        $evt.dpt,
+            "value":      if $dpt_major == "1" {
+                            if $evt.value == true { 1.0 } else { 0.0 }
+                          } else {
+                            $evt.value
+                          },
+            "raw":        $evt,
+          }
         }
 
 output:
