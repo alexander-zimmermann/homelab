@@ -1,0 +1,57 @@
+input:
+  nats_jetstream:
+    urls: ["nats://nats.nats.svc:4222"]
+    auth:
+      user: redpanda-connect
+      password: ${NATS_PASSWORD}
+    subject: knx.>
+    durable: redpanda-connect-knx
+    deliver: all
+    ack_wait: 30s
+    max_ack_pending: 256
+
+pipeline:
+  processors:
+    - mapping: |
+        let evt = this
+        let parts = $evt.ga.split("/")
+        # bool coercion for DPT-1 (true/false → 1.0/0.0); other DPTs are already numbers
+        let v = if $evt.dpt.has_prefix("DPT-1") {
+          if $evt.value == true { 1.0 } else { 0.0 }
+        } else {
+          $evt.value.number()
+        }
+        root = {
+          "time":       $evt.ts,
+          "ga":         $evt.ga,
+          "knx_main":   $parts.index(0).number(),
+          "knx_middle": $parts.index(1).number(),
+          "knx_sub":    $parts.index(2).number(),
+          "knx_name":   $evt.name,
+          "dpt":        $evt.dpt,
+          "value":      $v,
+          "raw":        $evt,
+        }
+
+output:
+  sql_raw:
+    driver: postgres
+    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-rw.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    init_statement: |
+      SET timezone = 'UTC';
+    query: |
+      INSERT INTO knx (time, ga, knx_main, knx_middle, knx_sub, knx_name, dpt, value, raw)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      ON CONFLICT (time, ga) DO NOTHING
+    args_mapping: |
+      root = [
+        this.time,
+        this.ga,
+        this.knx_main,
+        this.knx_middle,
+        this.knx_sub,
+        this.knx_name,
+        this.dpt,
+        this.value,
+        this.raw.string(),
+      ]
