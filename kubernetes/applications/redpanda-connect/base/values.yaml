@@ -3,6 +3,10 @@ streams:
   enabled: true
   streamsConfigMap: redpanda-connect-streams
 
+# JetStream durable consumer can only bind one subscription — Recreate avoids "already bound" loop
+updateStrategy:
+  type: Recreate
+
 env:
   # NATS user (cloned from nats namespace by Kyverno)
   - name: NATS_PASSWORD
