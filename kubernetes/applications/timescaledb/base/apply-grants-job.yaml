@@ -1,0 +1,50 @@
+# PostSync Job that applies non-owner role GRANTs (scripts/grants.sql).
+# Runs after every ArgoCD sync; the script is idempotent. Roles themselves
+# are managed declaratively via spec.managed.roles[] in database.yaml.
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: timescaledb-apply-grants
+  namespace: timescaledb
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: psql
+          image: ghcr.io/cloudnative-pg/postgresql:18.3
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              psql "host=timescaledb-db-rw user=homelab dbname=homelab sslmode=disable" \
+                   -v ON_ERROR_STOP=1 \
+                   -f /scripts/grants.sql
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: timescaledb-db-app
+                  key: password
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+      volumes:
+        - name: scripts
+          configMap:
+            name: timescaledb-grants-sql
+            defaultMode: 0444

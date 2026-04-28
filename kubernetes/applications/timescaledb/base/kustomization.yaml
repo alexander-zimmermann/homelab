@@ -4,7 +4,9 @@ kind: Kustomization
 namespace: timescaledb
 resources:
   - ./namespace.yaml
+  - ./sealed-secret.yaml
   - ./database.yaml
+  - ./apply-grants-job.yaml
 
 configMapGenerator:
   - name: timescaledb-bootstrap-sql
@@ -12,6 +14,11 @@ configMapGenerator:
       disableNameSuffixHash: true
     files:
       - scripts/bootstrap.sql
+  - name: timescaledb-grants-sql
+    options:
+      disableNameSuffixHash: true
+    files:
+      - scripts/grants.sql
 
 labels:
   - includeSelectors: false
