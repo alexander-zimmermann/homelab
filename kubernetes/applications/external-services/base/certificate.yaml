@@ -11,7 +11,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - proxmox.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -27,7 +27,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - backup.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -43,7 +43,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - omni.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -59,7 +59,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - ai-pro-1.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -75,7 +75,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - ai-pro-2.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -91,7 +91,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - ai-pro-3.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -107,7 +107,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - ai-pro-4.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -123,7 +123,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - dali-1.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -139,7 +139,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - dali-2.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -155,7 +155,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - ems-esp.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -171,7 +171,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - fritzbox.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -187,7 +187,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - knx-ip.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -203,7 +203,7 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - verso.zimmermann.sh
+    - PLACEHOLDER
 
 ---
 apiVersion: cert-manager.io/v1
@@ -219,4 +219,4 @@ spec:
     name: letsencrypt-dns01-issuer
     kind: ClusterIssuer
   dnsNames:
-    - warp.zimmermann.sh
+    - PLACEHOLDER
