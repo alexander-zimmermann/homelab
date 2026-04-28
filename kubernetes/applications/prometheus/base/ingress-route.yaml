@@ -22,7 +22,7 @@ metadata:
     # fails (and pages Pushover) if Prometheus is unreachable or the rule stops firing.
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
-      name: Watchdog
+      name: Prometheus Watchdog
       group: Observability
       url: http://prometheus-prometheus.prometheus.svc.cluster.local:9090/api/v1/query?query=ALERTS%7Balertname%3D%22Watchdog%22%2Calertstate%3D%22firing%22%7D
       interval: 1m
