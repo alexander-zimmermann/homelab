@@ -9,7 +9,7 @@ helmCharts:
   - name: connect
     repo: https://charts.redpanda.com
     releaseName: redpanda-connect
-    version: 3.2.4
+    version: 3.2.5
     valuesFile: values.yaml
     namespace: redpanda-connect
 
