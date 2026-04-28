@@ -15,11 +15,6 @@ jobs:
   label-issue:
     name: Label Issue
     runs-on: ubuntu-latest
-    # Skip for Renovate Dashboard and other Renovate-managed issues
-    if: |
-      github.event.issue.user.login != 'renovate[bot]' &&
-      !contains(github.event.issue.labels.*.name, 'renovate') &&
-      !contains(github.event.issue.title, 'Renovate')
     permissions:
       issues: write
     steps:
