@@ -10,7 +10,7 @@
 ## Infrastructure
 
 - [ ] **Omni**: Use secrets for sensitive data.
-- [ ] **external-services dev domain**: Certificates in [kubernetes/applications/external-services/base/certificate.yaml](kubernetes/applications/external-services/base/certificate.yaml) only cover `*.zimmermann.sh` — add counterparts for the dev domain `*.zimmermann.phd`.
+- [ ] **External-DNS target dev domain**: All apps annotate their IngressRoutes with `external-dns.alpha.kubernetes.io/target: udm-pro.zimmermann.sh` — including in `overlays/dev`. In the dev cluster the `*.zimmermann.phd` CNAMEs should point to `udm-pro.zimmermann.phd` instead. Extend the dev overlays so the target is rewritten via `replacements` (affects homepage, grafana, alloy, authentik, external-services, node-red, nats, rustfs, prometheus, gatus, …).
 - [ ] **Restore Task**: Add `task k8s:restore` that replays Velero backups into DBs and PVCs after a bootstrap (e.g. Homepage images PVC).
 - [ ] **CNPG cluster PG16 → PG18 migration**: `authentik-db`, `wiki-js-db`, `crowdsec-db`, `gatus-db` are currently on PG 16.1. CNPG operator 1.28.x already supports PG 18 (in-place major upgrade via `imageName` bump + `pg_upgrade` orchestrated by the operator). New `timescaledb-db` runs on PG 18.3 / TimescaleDB 2.23 — keeping the others on 16.1 means two Postgres major versions in parallel. Plan a coordinated bump (one cluster at a time, verify backup + app reconnect after each) to land them all on PG 18.x.
 - [ ] **Split Ingress Architecture**: Dual Traefik strategy with UDM VLAN/DMZ separation.

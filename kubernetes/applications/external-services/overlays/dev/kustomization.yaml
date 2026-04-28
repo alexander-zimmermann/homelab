@@ -3,3 +3,296 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+replacements:
+  # Inject domain name into Certificate, IngressRoute, and Gatus annotation
+  - sourceValue: proxmox.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: proxmox-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: proxmox
+        fieldPaths:
+          - spec.routes.0.match
+          - spec.routes.1.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: proxmox
+        fieldPaths:
+          - metadata.annotations.[gatus.home-operations.com/endpoint]
+        options:
+          delimiter: "/"
+          index: 2
+
+  # Inject domain name into Certificate, IngressRoute, and Gatus annotation
+  - sourceValue: backup.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: backup-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: backup
+        fieldPaths:
+          - spec.routes.0.match
+          - spec.routes.1.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: backup
+        fieldPaths:
+          - metadata.annotations.[gatus.home-operations.com/endpoint]
+        options:
+          delimiter: "/"
+          index: 2
+
+  # Inject domain name into Certificate, IngressRoute, and Gatus annotation
+  - sourceValue: omni.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: omni-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: omni
+        fieldPaths:
+          - spec.routes.0.match
+          - spec.routes.1.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: omni
+        fieldPaths:
+          - metadata.annotations.[gatus.home-operations.com/endpoint]
+        options:
+          delimiter: "/"
+          index: 2
+
+  # Inject domain name into Certificate and IngressRoute
+  - sourceValue: ai-pro-1.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: ai-pro-1-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: ai-pro-1
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
+  # Inject domain name into Certificate and IngressRoute
+  - sourceValue: ai-pro-2.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: ai-pro-2-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: ai-pro-2
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
+  # Inject domain name into Certificate and IngressRoute
+  - sourceValue: ai-pro-3.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: ai-pro-3-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: ai-pro-3
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
+  # Inject domain name into Certificate and IngressRoute
+  - sourceValue: ai-pro-4.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: ai-pro-4-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: ai-pro-4
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
+  # Inject domain name into Certificate and IngressRoute
+  - sourceValue: dali-1.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: dali-1-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: dali-1
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
+  # Inject domain name into Certificate and IngressRoute
+  - sourceValue: dali-2.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: dali-2-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: dali-2
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
+  # Inject domain name into Certificate, IngressRoute, and Gatus annotation
+  - sourceValue: ems-esp.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: ems-esp-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: ems-esp
+        fieldPaths:
+          - spec.routes.0.match
+          - spec.routes.1.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: ems-esp
+        fieldPaths:
+          - metadata.annotations.[gatus.home-operations.com/endpoint]
+        options:
+          delimiter: "/"
+          index: 2
+
+  # Inject domain name into Certificate, IngressRoute, and Gatus annotation
+  - sourceValue: fritzbox.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: fritzbox-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: fritzbox
+        fieldPaths:
+          - spec.routes.0.match
+          - spec.routes.1.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: fritzbox
+        fieldPaths:
+          - metadata.annotations.[gatus.home-operations.com/endpoint]
+        options:
+          delimiter: "/"
+          index: 2
+
+  # Inject domain name into Certificate, IngressRoute, and Gatus annotation
+  - sourceValue: knx-ip.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: knx-ip-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: knx-ip
+        fieldPaths:
+          - spec.routes.0.match
+          - spec.routes.1.match
+        options:
+          delimiter: "`"
+          index: 1
+      - select:
+          kind: IngressRoute
+          name: knx-ip
+        fieldPaths:
+          - metadata.annotations.[gatus.home-operations.com/endpoint]
+        options:
+          delimiter: "/"
+          index: 2
+
+  # Inject domain name into Certificate and IngressRoute
+  - sourceValue: verso.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: verso-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: verso
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
+
+  # Inject domain name into Certificate and IngressRoute
+  - sourceValue: warp.zimmermann.phd
+    targets:
+      - select:
+          kind: Certificate
+          name: warp-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: warp
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1

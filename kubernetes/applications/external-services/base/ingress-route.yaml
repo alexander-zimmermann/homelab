@@ -12,7 +12,7 @@ metadata:
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
       group: Infrastructure
-      url: https://proxmox.zimmermann.sh/_gatus
+      url: https://PLACEHOLDER/_gatus
       interval: 60s
       client:
         headers:
@@ -29,7 +29,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`proxmox.zimmermann.sh`)
+      match: Host(`PLACEHOLDER`)
       priority: 10
       middlewares:
         - name: chain-mfa-auth
@@ -41,7 +41,7 @@ spec:
           scheme: https
     # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
     - kind: Rule
-      match: Host(`proxmox.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      match: Host(`PLACEHOLDER`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
       priority: 20
       services:
         - kind: Service
@@ -66,7 +66,7 @@ metadata:
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
       group: Infrastructure
-      url: https://backup.zimmermann.sh/_gatus
+      url: https://PLACEHOLDER/_gatus
       interval: 60s
       client:
         headers:
@@ -82,7 +82,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`backup.zimmermann.sh`)
+      match: Host(`PLACEHOLDER`)
       middlewares:
         - name: chain-mfa-auth
           namespace: ingress-controller
@@ -92,7 +92,7 @@ spec:
           scheme: https
     # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
     - kind: Rule
-      match: Host(`backup.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      match: Host(`PLACEHOLDER`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
       priority: 20
       services:
         - name: backup
@@ -116,7 +116,7 @@ metadata:
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
       group: Infrastructure
-      url: https://omni.zimmermann.sh/_gatus
+      url: https://PLACEHOLDER/_gatus
       interval: 60s
       client:
         headers:
@@ -132,7 +132,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`omni.zimmermann.sh`)
+      match: Host(`PLACEHOLDER`)
       middlewares:
         - name: chain-mfa-auth
           namespace: ingress-controller
@@ -143,7 +143,7 @@ spec:
           serversTransport: insecure-transport
     # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
     - kind: Rule
-      match: Host(`omni.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      match: Host(`PLACEHOLDER`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
       priority: 20
       services:
         - name: omni
@@ -169,7 +169,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`ai-pro-1.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-basic-auth
@@ -198,7 +198,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`ai-pro-2.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-basic-auth
@@ -227,7 +227,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`ai-pro-3.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-basic-auth
@@ -256,7 +256,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`ai-pro-4.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-basic-auth
@@ -285,7 +285,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`dali-1.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-standard
@@ -313,7 +313,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`dali-2.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-mfa-auth
@@ -342,7 +342,7 @@ metadata:
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
       group: Smart Home Integration
-      url: https://ems-esp.zimmermann.sh/_gatus
+      url: https://PLACEHOLDER/_gatus
       interval: 60s
       client:
         headers:
@@ -357,7 +357,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`ems-esp.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-mfa-auth
@@ -368,7 +368,7 @@ spec:
           passHostHeader: false
     # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
     - kind: Rule
-      match: Host(`ems-esp.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      match: Host(`PLACEHOLDER`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
       priority: 20
       services:
         - name: ems-esp
@@ -393,7 +393,7 @@ metadata:
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
       group: Networking
-      url: https://fritzbox.zimmermann.sh/_gatus
+      url: https://PLACEHOLDER/_gatus
       interval: 60s
       client:
         headers:
@@ -409,7 +409,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`fritzbox.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-mfa-auth
@@ -419,7 +419,7 @@ spec:
           port: 80
     # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
     - kind: Rule
-      match: Host(`fritzbox.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      match: Host(`PLACEHOLDER`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
       priority: 20
       services:
         - name: fritzbox
@@ -443,7 +443,7 @@ metadata:
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
       group: Smart Home Integration
-      url: https://knx-ip.zimmermann.sh/_gatus
+      url: https://PLACEHOLDER/_gatus
       interval: 60s
       client:
         headers:
@@ -459,7 +459,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`knx-ip.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-mfa-auth
@@ -470,7 +470,7 @@ spec:
           passHostHeader: false
     # Gatus bypass route — matches only requests that went through Cloudflare Access (JWT header set by CF)
     - kind: Rule
-      match: Host(`knx-ip.zimmermann.sh`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
+      match: Host(`PLACEHOLDER`) && PathPrefix(`/_gatus`) && HeadersRegexp(`Cf-Access-Jwt-Assertion`, `.+`)
       priority: 20
       services:
         - name: knx-ip
@@ -495,7 +495,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`verso.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-mfa-auth
@@ -524,7 +524,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`warp.zimmermann.sh`)
+    - match: Host(`PLACEHOLDER`)
       kind: Rule
       middlewares:
         - name: chain-mfa-auth
