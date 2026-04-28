@@ -277,3 +277,19 @@ SELECT add_continuous_aggregate_policy('ems_esp_dhw_1h',
 SELECT add_continuous_aggregate_policy('warp_meter_1h',
     start_offset => INTERVAL '2 days', end_offset => INTERVAL '1 hour',
     schedule_interval => INTERVAL '1 hour');
+
+-- =========================================================
+-- Transfer ownership from `postgres` (CNPG runs initdb as superuser)
+-- to the application user `homelab`, so it can issue table-level GRANTs.
+-- =========================================================
+DO $$
+DECLARE
+    r record;
+BEGIN
+    FOR r IN SELECT tablename FROM pg_tables WHERE schemaname = 'public' LOOP
+        EXECUTE format('ALTER TABLE public.%I OWNER TO homelab', r.tablename);
+    END LOOP;
+    FOR r IN SELECT view_name FROM timescaledb_information.continuous_aggregates LOOP
+        EXECUTE format('ALTER MATERIALIZED VIEW public.%I OWNER TO homelab', r.view_name);
+    END LOOP;
+END$$;
