@@ -31,6 +31,18 @@ spec:
           - name: timescaledb-bootstrap-sql
             key: bootstrap.sql
 
+  # Declarative role lifecycle. CNPG creates the role, syncs the password
+  # from the referenced Secret (keys: username/password) and reconciles drift.
+  # Table-level GRANTs are applied separately via the grant-connect Job.
+  managed:
+    roles:
+      - name: connect
+        ensure: present
+        login: true
+        comment: "Redpanda Connect ingest user — INSERT/SELECT only"
+        passwordSecret:
+          name: timescaledb-db-connect-secret
+
   postgresql:
     # Load TimescaleDB extension at server start
     shared_preload_libraries:
