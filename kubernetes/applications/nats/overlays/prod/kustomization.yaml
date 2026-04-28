@@ -28,7 +28,7 @@ replacements:
           - metadata.annotations.[coredns.io/hostname]
 
   # Inject JetStream storage size
-  - sourceValue: 1Gi
+  - sourceValue: 5Gi
     targets:
       - select:
           kind: StatefulSet
@@ -63,7 +63,7 @@ patches:
         path: /spec/template/spec/containers/0/env/-
         value:
           name: JETSTREAM_MAX_STORE
-          value: "1Gi"
+          value: "5Gi"
 
   # NATS service with static IP
   - target:
