@@ -13,7 +13,6 @@ helmCharts:
     valuesFile: values.yaml
     namespace: redpanda-connect
 
-# Pipelines: one stream per source.
 configMapGenerator:
   - name: redpanda-connect-streams
     options:
@@ -26,6 +25,5 @@ labels:
     pairs:
       homelab.app: redpanda-connect
 
-# Wave 4: TimescaleDB (wave 3) + NATS (wave 2) + Kyverno-cloned secrets must be ready first.
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "4"
