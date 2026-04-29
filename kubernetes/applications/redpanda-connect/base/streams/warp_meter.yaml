@@ -16,31 +16,31 @@ pipeline:
     - mapping: |
         let evt = this
         let parts = meta("nats_subject").split(".")
-        let root = $parts.index(1)
+        let root_token = $parts.index(1)
         # Forward only meter / meters subjects; everything else handled by
         # other warp_* streams.
-        root = if $root != "meter" && $root != "meters" {
+        let keep = $root_token == "meter" || $root_token == "meters"
+        # Phase columns only meaningful for "warp.meters.<N>.values"
+        # (4 tokens, second is "meters", fourth is "values"). Indices
+        # 0..8 of the array map to V/A/W per phase per Telegraf XPath.
+        let is_indexed_values = $root_token == "meters" && $parts.length() == 4 && $parts.index(3) == "values"
+        let meter_id = if $is_indexed_values { $parts.index(2).number() } else { null }
+        root = if !$keep {
           deleted()
         } else {
-          # Phase columns only meaningful for "warp.meters.<N>.values"
-          # (4 tokens, second is "meters", fourth is "values"). Indices
-          # 0..8 of the array map to V/A/W per phase per Telegraf XPath.
-          let is_indexed_values = $root == "meters" && $parts.length() == 4 && $parts.index(3) == "values"
-          let meter_id = if $is_indexed_values { $parts.index(2).number() } else { null }
-          let v = $evt
           {
             "time":       meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z")),
             "sub_topic":  $parts.slice(1).join("."),
             "meter_id":   $meter_id,
-            "voltage_l1": if $is_indexed_values { $v.index(0) } else { null },
-            "voltage_l2": if $is_indexed_values { $v.index(1) } else { null },
-            "voltage_l3": if $is_indexed_values { $v.index(2) } else { null },
-            "current_l1": if $is_indexed_values { $v.index(3) } else { null },
-            "current_l2": if $is_indexed_values { $v.index(4) } else { null },
-            "current_l3": if $is_indexed_values { $v.index(5) } else { null },
-            "power_l1":   if $is_indexed_values { $v.index(6) } else { null },
-            "power_l2":   if $is_indexed_values { $v.index(7) } else { null },
-            "power_l3":   if $is_indexed_values { $v.index(8) } else { null },
+            "voltage_l1": if $is_indexed_values { $evt.index(0) } else { null },
+            "voltage_l2": if $is_indexed_values { $evt.index(1) } else { null },
+            "voltage_l3": if $is_indexed_values { $evt.index(2) } else { null },
+            "current_l1": if $is_indexed_values { $evt.index(3) } else { null },
+            "current_l2": if $is_indexed_values { $evt.index(4) } else { null },
+            "current_l3": if $is_indexed_values { $evt.index(5) } else { null },
+            "power_l1":   if $is_indexed_values { $evt.index(6) } else { null },
+            "power_l2":   if $is_indexed_values { $evt.index(7) } else { null },
+            "power_l3":   if $is_indexed_values { $evt.index(8) } else { null },
             "raw":        $evt,
           }
         }
