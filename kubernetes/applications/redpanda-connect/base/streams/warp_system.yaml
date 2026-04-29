@@ -17,8 +17,9 @@ pipeline:
         let evt = this
         # Subject: warp.<root>.<rest> — only forward rtc/esp32/ntp into warp_system.
         let parts = meta("nats_subject").split(".")
-        let root = $parts.index(1)
-        root = if $root != "rtc" && $root != "esp32" && $root != "ntp" {
+        let root_token = $parts.index(1)
+        let keep = $root_token == "rtc" || $root_token == "esp32" || $root_token == "ntp"
+        root = if !$keep {
           deleted()
         } else {
           {
