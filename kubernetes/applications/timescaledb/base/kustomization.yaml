@@ -6,6 +6,7 @@ resources:
   - ./namespace.yaml
   - ./sealed-secret.yaml
   - ./database.yaml
+  - ./pooler.yaml
   - ./apply-grants-job.yaml
 
 configMapGenerator:
