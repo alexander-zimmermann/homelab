@@ -45,7 +45,7 @@ pipeline:
 output:
   sql_raw:
     driver: postgres
-    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-rw.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
     init_statement: |
       SET timezone = 'UTC';
     query: |
