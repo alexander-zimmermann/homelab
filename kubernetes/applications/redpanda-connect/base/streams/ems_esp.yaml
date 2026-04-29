@@ -1,0 +1,84 @@
+input:
+  nats_jetstream:
+    urls: ["nats://nats.nats.svc:4222"]
+    auth:
+      user: redpanda-connect
+      password: ${NATS_PASSWORD}
+    stream: EMS_ESP
+    subject: ems-esp.>
+    durable: redpanda-connect-ems-esp
+    deliver: all
+    ack_wait: 30s
+    max_ack_pending: 256
+
+pipeline:
+  processors:
+    - mapping: |
+        let evt = this
+        # Subject is "ems-esp.<topic>"; pull the topic suffix.
+        let topic = meta("nats_subject").split(".").index(1)
+        # ems-esp payloads carry no timestamp field — use the JetStream-server
+        # receive time, falling back to now() if metadata is missing.
+        let ts = meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z"))
+        root = {
+          "time":          $ts,
+          "topic":         $topic,
+          "curflowtemp":   $evt.curflowtemp,
+          "rettemp":       $evt.rettemp,
+          "outdoortemp":   $evt.outdoortemp,
+          "switchtemp":    $evt.switchtemp,
+          "syspress":      $evt.syspress,
+          "curtemp":       $evt.curtemp,
+          "curflow":       $evt.curflow,
+          "setflowtemp":   $evt.setflowtemp,
+          "flowsettemp":   $evt.flowsettemp,
+          "flowtemphc":    $evt.flowtemphc,
+          "settemp":       $evt.settemp,
+          "curburnpow":    $evt.curburnpow,
+          "charging":      $evt.charging,
+          "heatingactive": $evt.heatingactive,
+          "heatingpump":   $evt.heatingpump,
+          "valvestatus":   $evt.valvestatus,
+          "pumpstatus":    $evt.pumpstatus,
+          "raw":           $evt,
+        }
+
+output:
+  sql_raw:
+    driver: pgx
+    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    init_statement: |
+      SET timezone = 'UTC';
+    query: |
+      INSERT INTO ems_esp (
+        time, topic,
+        curflowtemp, rettemp, outdoortemp, switchtemp, syspress,
+        curtemp, curflow, setflowtemp, flowsettemp, flowtemphc, settemp,
+        curburnpow,
+        charging, heatingactive, heatingpump, valvestatus, pumpstatus,
+        raw
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+    args_mapping: |
+      root = [
+        this.time,
+        this.topic,
+        this.curflowtemp,
+        this.rettemp,
+        this.outdoortemp,
+        this.switchtemp,
+        this.syspress,
+        this.curtemp,
+        this.curflow,
+        this.setflowtemp,
+        this.flowsettemp,
+        this.flowtemphc,
+        this.settemp,
+        this.curburnpow,
+        this.charging,
+        this.heatingactive,
+        this.heatingpump,
+        this.valvestatus,
+        this.pumpstatus,
+        this.raw.string(),
+      ]
