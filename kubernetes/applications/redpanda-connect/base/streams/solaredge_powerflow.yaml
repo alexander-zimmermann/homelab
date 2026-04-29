@@ -4,6 +4,7 @@ input:
     auth:
       user: redpanda-connect
       password: ${NATS_PASSWORD}
+    stream: SOLAREDGE
     subject: "*.powerflow"
     durable: redpanda-connect-solaredge-powerflow
     deliver: all
