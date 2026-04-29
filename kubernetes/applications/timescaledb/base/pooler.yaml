@@ -1,0 +1,35 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+
+metadata:
+  name: timescaledb-db-pooler
+  namespace: timescaledb
+
+spec:
+  cluster:
+    name: timescaledb-db
+
+  instances: 1
+  type: rw
+
+  pgbouncer:
+    poolMode: transaction
+    parameters:
+      max_client_conn: "200"
+      default_pool_size: "25"
+      min_pool_size: "0"
+      # pgx (Redpanda Connect sql_raw driver) caches prepared statements;
+      # PgBouncer 1.21+ supports them in transaction mode via this setting.
+      max_prepared_statements: "100"
+
+  template:
+    spec:
+      containers:
+        - name: pgbouncer
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
