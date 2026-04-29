@@ -4,6 +4,7 @@ input:
     auth:
       user: redpanda-connect
       password: ${NATS_PASSWORD}
+    stream: KNX
     subject: knx.>
     durable: redpanda-connect-knx
     deliver: all
