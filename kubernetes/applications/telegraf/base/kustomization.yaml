@@ -21,7 +21,6 @@ configMapGenerator:
     files:
       - inputs/input.mqtt.ems.conf
       - inputs/input.mqtt.warp.conf
-      - inputs/input.mqtt.solaredge.conf
       - processors/processor.mqtt.warp.conf
 
 labels:
