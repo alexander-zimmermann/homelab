@@ -1,0 +1,51 @@
+input:
+  nats_jetstream:
+    urls: ["nats://nats.nats.svc:4222"]
+    auth:
+      user: redpanda-connect
+      password: ${NATS_PASSWORD}
+    stream: WARP
+    subject: warp.charge_tracker.>
+    durable: redpanda-connect-warp-charge-tracker
+    deliver: all
+    ack_wait: 30s
+    max_ack_pending: 256
+
+pipeline:
+  processors:
+    - mapping: |
+        let evt = this
+        let parts = meta("nats_subject").split(".")
+        root = {
+          "time":            meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z")),
+          "sub_topic":       $parts.slice(1).join("."),
+          "user_id":         $evt.user_id.or(null),
+          "charge_duration": $evt.charge_duration.or(null),
+          "energy_charged":  $evt.energy_charged.or(null),
+          "tracked_charges": $evt.tracked_charges.or(null),
+          "raw":             $evt,
+        }
+
+output:
+  sql_raw:
+    driver: pgx
+    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    init_statement: |
+      SET timezone = 'UTC';
+    query: |
+      INSERT INTO warp_charge_tracker (
+        time, sub_topic,
+        user_id, charge_duration, energy_charged, tracked_charges,
+        raw
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+    args_mapping: |
+      root = [
+        this.time,
+        this.sub_topic,
+        this.user_id,
+        this.charge_duration,
+        this.energy_charged,
+        this.tracked_charges,
+        this.raw.string(),
+      ]

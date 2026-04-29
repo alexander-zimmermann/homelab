@@ -1,0 +1,51 @@
+input:
+  nats_jetstream:
+    urls: ["nats://nats.nats.svc:4222"]
+    auth:
+      user: redpanda-connect
+      password: ${NATS_PASSWORD}
+    stream: WARP
+    subject: warp.evse.>
+    durable: redpanda-connect-warp-evse
+    deliver: all
+    ack_wait: 30s
+    max_ack_pending: 256
+
+pipeline:
+  processors:
+    - mapping: |
+        let evt = this
+        let parts = meta("nats_subject").split(".")
+        root = {
+          "time":                   meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z")),
+          "sub_topic":              $parts.slice(1).join("."),
+          "charger_state":          $evt.charger_state.or(null),
+          "error_state":            $evt.error_state.or(null),
+          "contactor_error":        $evt.contactor_error.or(null),
+          "dc_fault_current_state": $evt.dc_fault_current_state.or(null),
+          "raw":                    $evt,
+        }
+
+output:
+  sql_raw:
+    driver: pgx
+    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    init_statement: |
+      SET timezone = 'UTC';
+    query: |
+      INSERT INTO warp_evse (
+        time, sub_topic,
+        charger_state, error_state, contactor_error, dc_fault_current_state,
+        raw
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+    args_mapping: |
+      root = [
+        this.time,
+        this.sub_topic,
+        this.charger_state,
+        this.error_state,
+        this.contactor_error,
+        this.dc_fault_current_state,
+        this.raw.string(),
+      ]

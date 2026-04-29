@@ -20,6 +20,11 @@ configMapGenerator:
       - streams/solaredge_inverter.yaml
       - streams/solaredge_powerflow.yaml
       - streams/ems_esp.yaml
+      - streams/warp_system.yaml
+      - streams/warp_evse.yaml
+      - streams/warp_charge_manager.yaml
+      - streams/warp_charge_tracker.yaml
+      - streams/warp_meter.yaml
 
 labels:
   - includeSelectors: false

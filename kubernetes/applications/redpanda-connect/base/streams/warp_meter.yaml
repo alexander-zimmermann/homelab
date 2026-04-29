@@ -1,0 +1,78 @@
+input:
+  nats_jetstream:
+    urls: ["nats://nats.nats.svc:4222"]
+    auth:
+      user: redpanda-connect
+      password: ${NATS_PASSWORD}
+    stream: WARP
+    subject: warp.>
+    durable: redpanda-connect-warp-meter
+    deliver: all
+    ack_wait: 30s
+    max_ack_pending: 256
+
+pipeline:
+  processors:
+    - mapping: |
+        let evt = this
+        let parts = meta("nats_subject").split(".")
+        let root = $parts.index(1)
+        # Forward only meter / meters subjects; everything else handled by
+        # other warp_* streams.
+        root = if $root != "meter" && $root != "meters" {
+          deleted()
+        } else {
+          # Phase columns only meaningful for "warp.meters.<N>.values"
+          # (4 tokens, second is "meters", fourth is "values"). Indices
+          # 0..8 of the array map to V/A/W per phase per Telegraf XPath.
+          let is_indexed_values = $root == "meters" && $parts.length() == 4 && $parts.index(3) == "values"
+          let meter_id = if $is_indexed_values { $parts.index(2).number() } else { null }
+          let v = $evt
+          {
+            "time":       meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z")),
+            "sub_topic":  $parts.slice(1).join("."),
+            "meter_id":   $meter_id,
+            "voltage_l1": if $is_indexed_values { $v.index(0) } else { null },
+            "voltage_l2": if $is_indexed_values { $v.index(1) } else { null },
+            "voltage_l3": if $is_indexed_values { $v.index(2) } else { null },
+            "current_l1": if $is_indexed_values { $v.index(3) } else { null },
+            "current_l2": if $is_indexed_values { $v.index(4) } else { null },
+            "current_l3": if $is_indexed_values { $v.index(5) } else { null },
+            "power_l1":   if $is_indexed_values { $v.index(6) } else { null },
+            "power_l2":   if $is_indexed_values { $v.index(7) } else { null },
+            "power_l3":   if $is_indexed_values { $v.index(8) } else { null },
+            "raw":        $evt,
+          }
+        }
+
+output:
+  sql_raw:
+    driver: pgx
+    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    init_statement: |
+      SET timezone = 'UTC';
+    query: |
+      INSERT INTO warp_meter (
+        time, sub_topic, meter_id,
+        voltage_l1, voltage_l2, voltage_l3,
+        current_l1, current_l2, current_l3,
+        power_l1, power_l2, power_l3,
+        raw
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+    args_mapping: |
+      root = [
+        this.time,
+        this.sub_topic,
+        this.meter_id,
+        this.voltage_l1,
+        this.voltage_l2,
+        this.voltage_l3,
+        this.current_l1,
+        this.current_l2,
+        this.current_l3,
+        this.power_l1,
+        this.power_l2,
+        this.power_l3,
+        this.raw.string(),
+      ]
