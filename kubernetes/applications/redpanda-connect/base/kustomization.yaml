@@ -15,8 +15,6 @@ helmCharts:
 
 configMapGenerator:
   - name: redpanda-connect-streams
-    options:
-      disableNameSuffixHash: true
     files:
       - streams/knx.yaml
 
