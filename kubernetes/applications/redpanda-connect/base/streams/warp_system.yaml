@@ -1,0 +1,45 @@
+input:
+  nats_jetstream:
+    urls: ["nats://nats.nats.svc:4222"]
+    auth:
+      user: redpanda-connect
+      password: ${NATS_PASSWORD}
+    stream: WARP
+    subject: warp.>
+    durable: redpanda-connect-warp-system
+    deliver: all
+    ack_wait: 30s
+    max_ack_pending: 256
+
+pipeline:
+  processors:
+    - mapping: |
+        let evt = this
+        # Subject: warp.<root>.<rest> — only forward rtc/esp32/ntp into warp_system.
+        let parts = meta("nats_subject").split(".")
+        let root = $parts.index(1)
+        root = if $root != "rtc" && $root != "esp32" && $root != "ntp" {
+          deleted()
+        } else {
+          {
+            "time":      meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z")),
+            "sub_topic": $parts.slice(1).join("."),
+            "raw":       $evt,
+          }
+        }
+
+output:
+  sql_raw:
+    driver: pgx
+    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    init_statement: |
+      SET timezone = 'UTC';
+    query: |
+      INSERT INTO warp_system (time, sub_topic, raw)
+      VALUES ($1, $2, $3)
+    args_mapping: |
+      root = [
+        this.time,
+        this.sub_topic,
+        this.raw.string(),
+      ]
