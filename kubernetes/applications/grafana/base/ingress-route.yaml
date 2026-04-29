@@ -25,6 +25,7 @@ metadata:
     # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
+      name: Grafana
       group: Observability
       url: https://PLACEHOLDER/_gatus
       interval: 60s

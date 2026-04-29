@@ -11,6 +11,7 @@ metadata:
     # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
+      name: Proxmox
       group: Infrastructure
       url: https://PLACEHOLDER/_gatus
       interval: 60s
@@ -65,6 +66,7 @@ metadata:
     # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
+      name: Backup
       group: Infrastructure
       url: https://PLACEHOLDER/_gatus
       interval: 60s
@@ -115,6 +117,7 @@ metadata:
     # Gatus — automated status page discovery (probes via /_gatus path with CF Access Service Token)
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
+      name: Omni
       group: Infrastructure
       url: https://PLACEHOLDER/_gatus
       interval: 60s
@@ -341,6 +344,7 @@ metadata:
     # higher failure tolerance for flaky ESP32 devices)
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
+      name: EMS-ESP
       group: Smart Home Integration
       url: https://PLACEHOLDER/_gatus
       interval: 60s
@@ -392,6 +396,7 @@ metadata:
     # higher failure tolerance for flaky ESP32 devices)
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
+      name: FRITZ!Box
       group: Networking
       url: https://PLACEHOLDER/_gatus
       interval: 60s
@@ -442,6 +447,7 @@ metadata:
     # higher failure tolerance for flaky ESP32 devices)
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |
+      name: KNX-IP
       group: Smart Home Integration
       url: https://PLACEHOLDER/_gatus
       interval: 60s
