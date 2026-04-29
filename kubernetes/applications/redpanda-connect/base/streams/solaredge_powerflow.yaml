@@ -1,0 +1,70 @@
+input:
+  nats_jetstream:
+    urls: ["nats://nats.nats.svc:4222"]
+    auth:
+      user: redpanda-connect
+      password: ${NATS_PASSWORD}
+    subject: "*.powerflow"
+    durable: redpanda-connect-solaredge-powerflow
+    deliver: all
+    ack_wait: 30s
+    max_ack_pending: 256
+
+pipeline:
+  processors:
+    - mapping: |
+        let evt = this
+        # Subject is "solaredge-N.powerflow"; pull N for inverter_id.
+        let subj = meta("nats_subject")
+        let inv_id = $subj.split(".").index(0).split("-").index(1).number()
+        root = {
+          "time":               $evt.timestamp,
+          "inverter_id":        $inv_id,
+          "pv_production":      $evt.pv_production,
+          "grid_power":         $evt.grid.power,
+          "grid_consumption":   $evt.grid.consumption,
+          "grid_delivery":      $evt.grid.delivery,
+          "battery_charge":     $evt.battery.charge,
+          "battery_discharge":  $evt.battery.discharge,
+          "consumer_total":     $evt.consumer.total,
+          "consumer_house":     $evt.consumer.house,
+          "consumer_evcharger": $evt.consumer.evcharger,
+          "inverter_power":     $evt.inverter.power,
+          "inverter_dc_power":  $evt.inverter.dc_power,
+          "raw":                $evt,
+        }
+
+output:
+  sql_raw:
+    driver: postgres
+    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-rw.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    init_statement: |
+      SET timezone = 'UTC';
+    query: |
+      INSERT INTO solaredge_powerflow (
+        time, inverter_id,
+        pv_production,
+        grid_power, grid_consumption, grid_delivery,
+        battery_charge, battery_discharge,
+        consumer_total, consumer_house, consumer_evcharger,
+        inverter_power, inverter_dc_power, raw
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+      ON CONFLICT (time, inverter_id) DO NOTHING
+    args_mapping: |
+      root = [
+        this.time,
+        this.inverter_id,
+        this.pv_production,
+        this.grid_power,
+        this.grid_consumption,
+        this.grid_delivery,
+        this.battery_charge,
+        this.battery_discharge,
+        this.consumer_total,
+        this.consumer_house,
+        this.consumer_evcharger,
+        this.inverter_power,
+        this.inverter_dc_power,
+        this.raw.string(),
+      ]
