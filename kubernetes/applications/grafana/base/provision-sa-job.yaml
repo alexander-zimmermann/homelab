@@ -21,7 +21,7 @@ spec:
       initContainers:
         # Wait until Grafana is ready before provisioning
         - name: wait-for-grafana
-          image: curlimages/curl:8.19.0
+          image: curlimages/curl:8.20.0
           command: ["/bin/sh", "-c"]
           args:
             - |
