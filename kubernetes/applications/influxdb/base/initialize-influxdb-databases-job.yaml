@@ -19,7 +19,7 @@ spec:
       # Wait until InfluxDB 3 HTTP API is reachable before running the init script.
       initContainers:
         - name: wait-for-influxdb
-          image: curlimages/curl:8.19.0
+          image: curlimages/curl:8.20.0
           command: ["/bin/sh", "-c"]
           args:
             - |
