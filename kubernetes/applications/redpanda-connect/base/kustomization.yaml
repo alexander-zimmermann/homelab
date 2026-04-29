@@ -17,6 +17,8 @@ configMapGenerator:
   - name: redpanda-connect-streams
     files:
       - streams/knx.yaml
+      - streams/solaredge_inverter.yaml
+      - streams/solaredge_powerflow.yaml
 
 labels:
   - includeSelectors: false
