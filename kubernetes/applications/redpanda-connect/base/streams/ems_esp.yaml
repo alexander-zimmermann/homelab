@@ -14,6 +14,14 @@ input:
 pipeline:
   processors:
     - mapping: |
+        # Some ems-esp.<topic> sub-topics publish bare strings (e.g. "off",
+        # "on", numeric scalars) instead of JSON objects. Accessing `this`
+        # as structured then errors with "parse as json: invalid character
+        # 'o' looking for beginning of value", which aborts the whole root
+        # mapping and produces a NULL-time INSERT downstream. Drop those
+        # messages here — they don't carry the typed columns we ingest.
+        root = this.catch(deleted())
+    - mapping: |
         let evt = this
         # Subject is "ems-esp.<topic>"; pull the topic suffix.
         let topic = meta("nats_subject").split(".").index(1)
