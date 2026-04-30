@@ -32,6 +32,7 @@ configMapGenerator:
       - streams/migrate_warp_charge_tracker.yaml
       - streams/migrate_warp_evse.yaml
       - streams/migrate_warp_meter.yaml
+      - streams/migrate_solaredge_inverter.yaml
 
 labels:
   - includeSelectors: false
