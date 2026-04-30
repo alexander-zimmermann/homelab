@@ -30,7 +30,9 @@ pipeline:
         root = {
           "time":            $evt.time,
           "sub_topic":       $parts.slice(1).join("."),
-          "user_id":         if $evt.user_id != null { $evt.user_id.string() } else { null },
+          # Influx stores user_id as Float64; live stream stores int-as-string ("-1", "0").
+          # Truncate decimal to match.
+          "user_id":         if $evt.user_id != null { $evt.user_id.string().split(".").index(0) } else { null },
           "charge_duration": null,
           "energy_charged":  null,
           "tracked_charges": $evt.tracked_charges,

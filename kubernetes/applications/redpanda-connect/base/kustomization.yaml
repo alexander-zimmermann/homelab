@@ -25,9 +25,10 @@ configMapGenerator:
       - streams/warp_charge_manager.yaml
       - streams/warp_charge_tracker.yaml
       - streams/warp_meter.yaml
-      # One-shot historical backfill (InfluxDB → migration.warp_charge_tracker).
-      # Removed from this list after merge into public.warp_charge_tracker.
+      # One-shot historical backfills (InfluxDB → migration.<table>).
+      # Removed from this list after merge into public.<table>.
       - streams/migrate_warp_charge_tracker.yaml
+      - streams/migrate_warp_evse.yaml
 
 labels:
   - includeSelectors: false
