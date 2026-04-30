@@ -1,0 +1,94 @@
+# One-shot historical backfill: InfluxDB iox."ems-esp" → migration.ems_esp
+# Cutover: MIN(time) public.ems_esp = 2026-04-29 16:32:24.121308+00
+# Influx data: ~578k rows across 6 topics (boiler_data, boiler_data_dhw, mixer_data_hc1,
+#   thermostat_data, thermostat_data_hc1, thermostat_data_dhw).
+# Topic prefix `ems-esp/` is stripped to match live convention.
+# All ~88 Influx-only fields (burner stats, energy counters, service codes) preserved in raw.
+input:
+  generate:
+    count: 1
+    interval: 0s
+    mapping: |
+      root = {}
+
+pipeline:
+  processors:
+    - mapping: |
+        root.db = "homelab"
+        root.q = "SELECT * FROM \"ems-esp\" WHERE time < '2026-04-29 16:32:24.121308' ORDER BY time"
+        root.format = "json"
+    - http:
+        url: http://influxdb3.influxdb.svc:8181/api/v3/query_sql
+        verb: POST
+        headers:
+          Authorization: Bearer ${INFLUXDB_TOKEN}
+          Content-Type: application/json
+    - unarchive:
+        format: json_array
+    - mapping: |
+        let evt = this
+        # Influx topic = "ems-esp/<topic>"; strip prefix to match live stream's `topic` value.
+        let topic_parts = $evt.topic.split("/")
+        root = {
+          "time":          $evt.time,
+          "topic":         $topic_parts.index(1),
+          "curflowtemp":   $evt.curflowtemp,
+          "rettemp":       $evt.rettemp,
+          "outdoortemp":   $evt.outdoortemp,
+          "switchtemp":    $evt.switchtemp,
+          "syspress":      $evt.syspress,
+          "curtemp":       $evt.curtemp,
+          "curflow":       $evt.curflow,
+          "setflowtemp":   $evt.setflowtemp,
+          "flowsettemp":   $evt.flowsettemp,
+          "flowtemphc":    $evt.flowtemphc,
+          "settemp":       $evt.settemp,
+          "curburnpow":    $evt.curburnpow,
+          "charging":      if $evt.charging != null { $evt.charging.int64() } else { null },
+          "heatingactive": if $evt.heatingactive != null { $evt.heatingactive.int64() } else { null },
+          "heatingpump":   if $evt.heatingpump != null { $evt.heatingpump.int64() } else { null },
+          "valvestatus":   if $evt.valvestatus != null { $evt.valvestatus.int64() } else { null },
+          "pumpstatus":    if $evt.pumpstatus != null { $evt.pumpstatus.int64() } else { null },
+          "raw":           $evt,
+        }
+
+output:
+  sql_raw:
+    driver: pgx
+    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    init_statement: |
+      SET timezone = 'UTC';
+    query: |
+      INSERT INTO migration.ems_esp (
+        time, topic,
+        curflowtemp, rettemp, outdoortemp, switchtemp, syspress,
+        curtemp, curflow, setflowtemp, flowsettemp, flowtemphc, settemp,
+        curburnpow,
+        charging, heatingactive, heatingpump, valvestatus, pumpstatus,
+        raw
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+      ON CONFLICT DO NOTHING
+    args_mapping: |
+      root = [
+        this.time,
+        this.topic,
+        this.curflowtemp,
+        this.rettemp,
+        this.outdoortemp,
+        this.switchtemp,
+        this.syspress,
+        this.curtemp,
+        this.curflow,
+        this.setflowtemp,
+        this.flowsettemp,
+        this.flowtemphc,
+        this.settemp,
+        this.curburnpow,
+        this.charging,
+        this.heatingactive,
+        this.heatingpump,
+        this.valvestatus,
+        this.pumpstatus,
+        this.raw.string(),
+      ]

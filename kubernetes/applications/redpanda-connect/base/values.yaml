@@ -25,6 +25,12 @@ env:
       secretKeyRef:
         name: timescaledb-db-connect-secret
         key: password
+  # InfluxDB admin token for one-shot historical backfill streams (cloned from influxdb by Kyverno)
+  - name: INFLUXDB_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: influxdb-credentials
+        key: admin-token
 
 serviceMonitor:
   enabled: true

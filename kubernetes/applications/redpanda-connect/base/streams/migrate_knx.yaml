@@ -1,0 +1,69 @@
+# One-shot historical backfill: InfluxDB iox.knx → migration.knx
+# Cutover: MIN(time) public.knx = 2026-04-26 15:26:14.273504+00
+# Influx data: ~2.19M rows.
+# Schema gaps:
+#   - Influx column `groupaddress` (Timescale: ga). 1:1 rename.
+#   - knx_main/middle/sub are Utf8 strings in Influx, SMALLINT in Timescale → cast via .number().
+#   - Influx has NO dpt field; backfill rows use 'unknown' as placeholder.
+#     Optional cleanup AFTER staging insert, BEFORE merge into public:
+#       UPDATE migration.knx m SET dpt = src.dpt
+#         FROM (SELECT DISTINCT ga, dpt FROM public.knx) src
+#         WHERE m.ga = src.ga AND m.dpt = 'unknown';
+#   - value column already Float64 in Influx (DPT-1 booleans were 0/1 at write time).
+input:
+  generate:
+    count: 1
+    interval: 0s
+    mapping: |
+      root = {}
+
+pipeline:
+  processors:
+    - mapping: |
+        root.db = "homelab"
+        root.q = "SELECT * FROM knx WHERE time < '2026-04-26 15:26:14.273504' ORDER BY time"
+        root.format = "json"
+    - http:
+        url: http://influxdb3.influxdb.svc:8181/api/v3/query_sql
+        verb: POST
+        headers:
+          Authorization: Bearer ${INFLUXDB_TOKEN}
+          Content-Type: application/json
+    - unarchive:
+        format: json_array
+    - mapping: |
+        let evt = this
+        root = {
+          "time":       $evt.time,
+          "ga":         $evt.groupaddress,
+          "knx_main":   $evt.knx_main.number(),
+          "knx_middle": $evt.knx_middle.number(),
+          "knx_sub":    $evt.knx_sub.number(),
+          "knx_name":   $evt.knx_name,
+          "dpt":        "unknown",
+          "value":      $evt.value,
+          "raw":        $evt,
+        }
+
+output:
+  sql_raw:
+    driver: pgx
+    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    init_statement: |
+      SET timezone = 'UTC';
+    query: |
+      INSERT INTO migration.knx (time, ga, knx_main, knx_middle, knx_sub, knx_name, dpt, value, raw)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      ON CONFLICT (time, ga) DO NOTHING
+    args_mapping: |
+      root = [
+        this.time,
+        this.ga,
+        this.knx_main,
+        this.knx_middle,
+        this.knx_sub,
+        this.knx_name,
+        this.dpt,
+        this.value,
+        this.raw.string(),
+      ]
