@@ -29,10 +29,10 @@ pipeline:
         root = {
           "time":                   $evt.time,
           "sub_topic":              $parts.slice(1).join("."),
-          "charger_state":          if $evt.charger_state != null { $evt.charger_state.int64() } else { null },
-          "error_state":            if $evt.error_state != null { $evt.error_state.int64() } else { null },
-          "contactor_error":        if $evt.contactor_error != null { $evt.contactor_error.int64() } else { null },
-          "dc_fault_current_state": if $evt.dc_fault_current_state != null { $evt.dc_fault_current_state.int64() } else { null },
+          "charger_state":          $evt.charger_state,
+          "error_state":            $evt.error_state,
+          "contactor_error":        $evt.contactor_error,
+          "dc_fault_current_state": $evt.dc_fault_current_state,
           "raw":                    $evt,
         }
 
@@ -43,10 +43,11 @@ output:
     init_statement: |
       SET timezone = 'UTC';
     query: |
+      -- Cast Float64 → SMALLINT via numeric to handle "X.0" stringification.
       INSERT INTO migration.warp_evse (
         time, sub_topic, charger_state, error_state, contactor_error, dc_fault_current_state, raw
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, ($3::numeric)::smallint, ($4::numeric)::smallint, ($5::numeric)::smallint, ($6::numeric)::smallint, $7)
       ON CONFLICT DO NOTHING
     args_mapping: |
       root = [
