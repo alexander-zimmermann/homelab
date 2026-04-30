@@ -1,7 +1,11 @@
 # One-shot historical backfill: InfluxDB iox.warp (meters topic) → migration.warp_meter
 # Cutover: MIN(time) public.warp_meter = 2026-04-29 19:46:39.376863+00
-# Influx data: ~189296 rows for warp/meters/0/values
-# Influx already has parsed phase columns (voltage_L1/L2/L3 etc.); no array indexing needed.
+# Influx data: ~189k rows for warp/meters/0/values
+#
+# Throughput pattern: per-row INSERT through pgx/PgBouncer caps at ~25 rows/s.
+# Output uses output-side batching (1000 rows per call) plus an archive
+# processor that turns the batch into one JSON array; sql_raw then uses
+# jsonb_array_elements to multi-row INSERT in a single round trip.
 input:
   generate:
     count: 1
@@ -57,21 +61,27 @@ output:
         power_l1, power_l2, power_l3,
         raw
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+      SELECT
+        (e->>'time')::timestamptz,
+        e->>'sub_topic',
+        (e->>'meter_id')::smallint,
+        (e->>'voltage_l1')::double precision,
+        (e->>'voltage_l2')::double precision,
+        (e->>'voltage_l3')::double precision,
+        (e->>'current_l1')::double precision,
+        (e->>'current_l2')::double precision,
+        (e->>'current_l3')::double precision,
+        (e->>'power_l1')::double precision,
+        (e->>'power_l2')::double precision,
+        (e->>'power_l3')::double precision,
+        e->'raw'
+      FROM jsonb_array_elements($1::jsonb) AS e
       ON CONFLICT DO NOTHING
     args_mapping: |
-      root = [
-        this.time,
-        this.sub_topic,
-        this.meter_id,
-        this.voltage_l1,
-        this.voltage_l2,
-        this.voltage_l3,
-        this.current_l1,
-        this.current_l2,
-        this.current_l3,
-        this.power_l1,
-        this.power_l2,
-        this.power_l3,
-        this.raw.string(),
-      ]
+      root = [content().string()]
+    batching:
+      count: 1000
+      period: 10s
+      processors:
+        - archive:
+            format: json_array
