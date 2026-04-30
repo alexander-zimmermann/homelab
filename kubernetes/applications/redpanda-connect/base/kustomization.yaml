@@ -29,6 +29,7 @@ configMapGenerator:
       # Removed from this list after merge into public.<table>.
       - streams/migrate_warp_charge_tracker.yaml
       - streams/migrate_warp_evse.yaml
+      - streams/migrate_warp_meter.yaml
 
 labels:
   - includeSelectors: false
