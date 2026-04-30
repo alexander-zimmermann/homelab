@@ -33,7 +33,7 @@ pipeline:
           "user_id":         if $evt.user_id != null { $evt.user_id.string() } else { null },
           "charge_duration": null,
           "energy_charged":  null,
-          "tracked_charges": if $evt.tracked_charges != null { $evt.tracked_charges.int64() } else { null },
+          "tracked_charges": $evt.tracked_charges,
           "raw":             $evt,
         }
 
@@ -44,10 +44,12 @@ output:
     init_statement: |
       SET timezone = 'UTC';
     query: |
+      -- Influx returns numeric fields as Float64; cast via numeric to satisfy
+      -- INTEGER target without driver-side stringification artefacts ("256.0").
       INSERT INTO migration.warp_charge_tracker (
         time, sub_topic, user_id, charge_duration, energy_charged, tracked_charges, raw
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, $3, $4, $5, ($6::numeric)::integer, $7)
       ON CONFLICT DO NOTHING
     args_mapping: |
       root = [

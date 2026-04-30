@@ -44,11 +44,11 @@ pipeline:
           "flowtemphc":    $evt.flowtemphc,
           "settemp":       $evt.settemp,
           "curburnpow":    $evt.curburnpow,
-          "charging":      if $evt.charging != null { $evt.charging.int64() } else { null },
-          "heatingactive": if $evt.heatingactive != null { $evt.heatingactive.int64() } else { null },
-          "heatingpump":   if $evt.heatingpump != null { $evt.heatingpump.int64() } else { null },
-          "valvestatus":   if $evt.valvestatus != null { $evt.valvestatus.int64() } else { null },
-          "pumpstatus":    if $evt.pumpstatus != null { $evt.pumpstatus.int64() } else { null },
+          "charging":      $evt.charging,
+          "heatingactive": $evt.heatingactive,
+          "heatingpump":   $evt.heatingpump,
+          "valvestatus":   $evt.valvestatus,
+          "pumpstatus":    $evt.pumpstatus,
           "raw":           $evt,
         }
 
@@ -59,6 +59,7 @@ output:
     init_statement: |
       SET timezone = 'UTC';
     query: |
+      -- Cast Float64 → SMALLINT via numeric for the boolean-flag columns.
       INSERT INTO migration.ems_esp (
         time, topic,
         curflowtemp, rettemp, outdoortemp, switchtemp, syspress,
@@ -67,7 +68,10 @@ output:
         charging, heatingactive, heatingpump, valvestatus, pumpstatus,
         raw
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,
+              ($15::numeric)::smallint, ($16::numeric)::smallint,
+              ($17::numeric)::smallint, ($18::numeric)::smallint,
+              ($19::numeric)::smallint, $20)
       ON CONFLICT DO NOTHING
     args_mapping: |
       root = [
