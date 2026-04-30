@@ -2,10 +2,11 @@
 # Cutover: MIN(time) public.warp_meter = 2026-04-29 19:46:39.376863+00
 # Influx data: ~189k rows for warp/meters/0/values
 #
-# Throughput pattern: per-row INSERT through pgx/PgBouncer caps at ~25 rows/s.
-# Output uses output-side batching (1000 rows per call) plus an archive
-# processor that turns the batch into one JSON array; sql_raw then uses
-# jsonb_array_elements to multi-row INSERT in a single round trip.
+# Per-row INSERT through pgx/PgBouncer caps at ~30 rows/s — slow but stable.
+# Multi-row INSERT via jsonb_array_elements was tried and OOM-killed the
+# TimescaleDB primary (1Gi limit could not handle the multi-MB batch query
+# planning + execution memory). Per-row is the deliberate choice here:
+# trickle for ~100 minutes rather than risk the live cluster.
 input:
   generate:
     count: 1
@@ -61,27 +62,21 @@ output:
         power_l1, power_l2, power_l3,
         raw
       )
-      SELECT
-        (e->>'time')::timestamptz,
-        e->>'sub_topic',
-        (e->>'meter_id')::smallint,
-        (e->>'voltage_l1')::double precision,
-        (e->>'voltage_l2')::double precision,
-        (e->>'voltage_l3')::double precision,
-        (e->>'current_l1')::double precision,
-        (e->>'current_l2')::double precision,
-        (e->>'current_l3')::double precision,
-        (e->>'power_l1')::double precision,
-        (e->>'power_l2')::double precision,
-        (e->>'power_l3')::double precision,
-        e->'raw'
-      FROM jsonb_array_elements($1::jsonb) AS e
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       ON CONFLICT DO NOTHING
     args_mapping: |
-      root = [content().string()]
-    batching:
-      count: 1000
-      period: 10s
-      processors:
-        - archive:
-            format: json_array
+      root = [
+        this.time,
+        this.sub_topic,
+        this.meter_id,
+        this.voltage_l1,
+        this.voltage_l2,
+        this.voltage_l3,
+        this.current_l1,
+        this.current_l2,
+        this.current_l3,
+        this.power_l1,
+        this.power_l2,
+        this.power_l3,
+        this.raw.string(),
+      ]
