@@ -67,6 +67,10 @@ output:
   sql_raw:
     driver: pgx
     dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+    # Cap parallel inserts so we don't saturate pgbouncer max_client_conn.
+    # Default 64 × 6 day-chunks × N migrate streams was enough to lock
+    # the pooler out for live streams.
+    max_in_flight: 4
     init_statement: |
       SET timezone = 'UTC';
     query: |
