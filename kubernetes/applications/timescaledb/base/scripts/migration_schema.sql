@@ -13,21 +13,26 @@ CREATE SCHEMA IF NOT EXISTS migration AUTHORIZATION homelab;
 GRANT USAGE ON SCHEMA migration TO connect;
 
 -- ---------- knx (raw nullable already, dpt NOT NULL → backfill uses 'unknown') ----------
+-- LIKE INCLUDING CONSTRAINTS only copies CHECK / NOT NULL, not the PK.
+-- Backfill streams use ON CONFLICT (time, ga) so PK must exist explicitly.
 CREATE TABLE migration.knx (LIKE public.knx INCLUDING DEFAULTS INCLUDING CONSTRAINTS);
 ALTER TABLE migration.knx OWNER TO homelab;
 SELECT create_hypertable('migration.knx', 'time', chunk_time_interval => INTERVAL '1 day');
+ALTER TABLE migration.knx ADD PRIMARY KEY (time, ga);
 GRANT INSERT, SELECT ON migration.knx TO connect;
 
 -- ---------- solaredge_inverter (PK time,inverter_id; raw NOT NULL) ----------
 CREATE TABLE migration.solaredge_inverter (LIKE public.solaredge_inverter INCLUDING DEFAULTS INCLUDING CONSTRAINTS);
 ALTER TABLE migration.solaredge_inverter OWNER TO homelab;
 SELECT create_hypertable('migration.solaredge_inverter', 'time', chunk_time_interval => INTERVAL '1 day');
+ALTER TABLE migration.solaredge_inverter ADD PRIMARY KEY (time, inverter_id);
 GRANT INSERT, SELECT ON migration.solaredge_inverter TO connect;
 
 -- ---------- solaredge_powerflow (PK time,inverter_id; raw NOT NULL) ----------
 CREATE TABLE migration.solaredge_powerflow (LIKE public.solaredge_powerflow INCLUDING DEFAULTS INCLUDING CONSTRAINTS);
 ALTER TABLE migration.solaredge_powerflow OWNER TO homelab;
 SELECT create_hypertable('migration.solaredge_powerflow', 'time', chunk_time_interval => INTERVAL '1 day');
+ALTER TABLE migration.solaredge_powerflow ADD PRIMARY KEY (time, inverter_id);
 GRANT INSERT, SELECT ON migration.solaredge_powerflow TO connect;
 
 -- ---------- ems_esp (no PK; raw NOT NULL) ----------

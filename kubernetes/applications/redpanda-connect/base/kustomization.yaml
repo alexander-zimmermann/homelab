@@ -26,14 +26,16 @@ configMapGenerator:
       - streams/warp_charge_tracker.yaml
       - streams/warp_meter.yaml
       # One-shot historical backfills (InfluxDB → migration.<table>).
-      # Per-row INSERT, max_in_flight: 4 to avoid pgbouncer saturation.
-      # Streams are removed from this list as soon as their staging table
-      # is fully populated, so they don't re-fire on pod restart.
+      # Counter-based emit (count: N, interval: 90s) to keep each chunk
+      # in its own batch and avoid the array-fan-out single-batch stall.
+      # Streams are removed from this list as soon as their staging
+      # table is fully populated, so they don't re-fire on pod restart.
       # Already-completed (data sits in migration.*; pending bulk merge):
       #   migrate_warp_charge_tracker (38 rows)
       #   migrate_warp_evse (3653 rows)
       #   migrate_warp_meter (188791 rows)
-      - streams/migrate_solaredge_inverter.yaml
+      #   migrate_solaredge_inverter (178322 rows)
+      - streams/migrate_solaredge_powerflow.yaml
 
 labels:
   - includeSelectors: false
