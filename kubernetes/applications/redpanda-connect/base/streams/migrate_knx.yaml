@@ -1,27 +1,59 @@
 # One-shot historical backfill: InfluxDB iox.knx → migration.knx
 # Cutover: MIN(time) public.knx = 2026-04-26 15:26:14.273504+00
 # Influx data: ~2.19M rows.
+#
+# Counter-based 9-emit pattern covering 2026-04-18 → 2026-04-26 15:26.
+# Per-chunk row count is ~255k → JSON ~38MB → fits 2Gi pod limit.
+# ~9 emissions × 90s = ~13 min emission window; total run including
+# per-row INSERTs probably ~25–30 min.
+#
 # Schema gaps:
 #   - Influx column `groupaddress` (Timescale: ga). 1:1 rename.
-#   - knx_main/middle/sub are Utf8 strings in Influx, SMALLINT in Timescale → cast via .number().
-#   - Influx has NO dpt field; backfill rows use 'unknown' as placeholder.
-#     Optional cleanup AFTER staging insert, BEFORE merge into public:
+#   - knx_main/middle/sub are Utf8 strings in Influx, SMALLINT in
+#     Timescale → SQL-side cast via numeric to avoid driver "X.0"
+#     stringification artefacts.
+#   - Influx has NO dpt field; backfill rows use 'unknown' as
+#     placeholder. Optional cleanup AFTER staging insert, BEFORE merge:
 #       UPDATE migration.knx m SET dpt = src.dpt
 #         FROM (SELECT DISTINCT ga, dpt FROM public.knx) src
 #         WHERE m.ga = src.ga AND m.dpt = 'unknown';
-#   - value column already Float64 in Influx (DPT-1 booleans were 0/1 at write time).
+#   - value column is already Float64 in Influx (DPT-1 booleans were
+#     0/1 at write time).
 input:
   generate:
-    count: 1
-    interval: 0s
+    count: 9
+    interval: 90s
     mapping: |
-      root = {}
+      let n = counter() - 1
+      let starts = [
+        "2026-04-18T00:00:00Z",
+        "2026-04-19T00:00:00Z",
+        "2026-04-20T00:00:00Z",
+        "2026-04-21T00:00:00Z",
+        "2026-04-22T00:00:00Z",
+        "2026-04-23T00:00:00Z",
+        "2026-04-24T00:00:00Z",
+        "2026-04-25T00:00:00Z",
+        "2026-04-26T00:00:00Z",
+      ]
+      let ends = [
+        "2026-04-19T00:00:00Z",
+        "2026-04-20T00:00:00Z",
+        "2026-04-21T00:00:00Z",
+        "2026-04-22T00:00:00Z",
+        "2026-04-23T00:00:00Z",
+        "2026-04-24T00:00:00Z",
+        "2026-04-25T00:00:00Z",
+        "2026-04-26T00:00:00Z",
+        "2026-04-26T15:26:14.273504Z",
+      ]
+      root = {"start": $starts.index($n), "end": $ends.index($n)}
 
 pipeline:
   processors:
     - mapping: |
         root.db = "homelab"
-        root.q = "SELECT * FROM knx WHERE time < '2026-04-26 15:26:14.273504' ORDER BY time"
+        root.q = "SELECT * FROM knx WHERE time >= '" + this.start + "' AND time < '" + this.end + "' ORDER BY time"
         root.format = "json"
     - http:
         url: http://influxdb3.influxdb.svc:8181/api/v3/query_sql
