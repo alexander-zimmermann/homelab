@@ -46,10 +46,9 @@ pipeline:
         let evt = this
         # Drop rows with no topic tag (rare edge case in Influx).
         root = if $evt.topic == null { deleted() } else {
-          let inv_id = $evt.topic.split("/").index(0).split("-").index(1).number()
           {
             "time":              $evt.time,
-            "inverter_id":       $inv_id,
+            "inverter_id":       $evt.topic.split("/").index(0).split("-").index(1).number(),
             "ac_power_actual":   $evt.ac_power_actual,
             "ac_current_actual": $evt.ac_current_actual,
             "ac_voltage_l1":     $evt.ac_voltage_l1,
