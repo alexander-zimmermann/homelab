@@ -35,7 +35,8 @@ configMapGenerator:
       #   migrate_warp_evse (3653 rows)
       #   migrate_warp_meter (188791 rows)
       #   migrate_solaredge_inverter (178322 rows)
-      - streams/migrate_solaredge_powerflow.yaml
+      #   migrate_solaredge_powerflow (178326 rows)
+      - streams/migrate_ems_esp.yaml
 
 labels:
   - includeSelectors: false
