@@ -20,20 +20,27 @@ pipeline:
         # (4 tokens, fourth is "values"). Indices 0..8 of the array map
         # to V/A/W per phase per Telegraf XPath. warp.meters.<N>.update
         # also lands here but with non-array payloads — typed cols stay NULL.
+        # Phase typed columns require both:
+        #  - subject `warp.meters.<N>.values` (4 tokens, 4th is "values"), AND
+        #  - payload is an array with at least 9 elements (V/A/W per phase).
+        # Some warp.meters.<N>.values messages carry partial / 1-element arrays;
+        # without the length guard, $evt.index(1) errors and aborts the whole
+        # root mapping → time + sub_topic + raw never get set → NULL-time INSERT.
         let is_indexed_values = $parts.length() == 4 && $parts.index(3) == "values"
+        let is_full_array = $is_indexed_values && $evt.type() == "array" && $evt.length() >= 9
         root = {
           "time":       meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z")),
           "sub_topic":  $parts.slice(1).join("."),
           "meter_id":   $parts.index(2).number(),
-          "voltage_l1": if $is_indexed_values { $evt.index(0) } else { null },
-          "voltage_l2": if $is_indexed_values { $evt.index(1) } else { null },
-          "voltage_l3": if $is_indexed_values { $evt.index(2) } else { null },
-          "current_l1": if $is_indexed_values { $evt.index(3) } else { null },
-          "current_l2": if $is_indexed_values { $evt.index(4) } else { null },
-          "current_l3": if $is_indexed_values { $evt.index(5) } else { null },
-          "power_l1":   if $is_indexed_values { $evt.index(6) } else { null },
-          "power_l2":   if $is_indexed_values { $evt.index(7) } else { null },
-          "power_l3":   if $is_indexed_values { $evt.index(8) } else { null },
+          "voltage_l1": if $is_full_array { $evt.index(0) } else { null },
+          "voltage_l2": if $is_full_array { $evt.index(1) } else { null },
+          "voltage_l3": if $is_full_array { $evt.index(2) } else { null },
+          "current_l1": if $is_full_array { $evt.index(3) } else { null },
+          "current_l2": if $is_full_array { $evt.index(4) } else { null },
+          "current_l3": if $is_full_array { $evt.index(5) } else { null },
+          "power_l1":   if $is_full_array { $evt.index(6) } else { null },
+          "power_l2":   if $is_full_array { $evt.index(7) } else { null },
+          "power_l3":   if $is_full_array { $evt.index(8) } else { null },
           "raw":        $evt,
         }
 
