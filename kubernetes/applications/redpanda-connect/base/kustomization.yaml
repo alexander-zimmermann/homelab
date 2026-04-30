@@ -26,10 +26,11 @@ configMapGenerator:
       - streams/warp_charge_tracker.yaml
       - streams/warp_meter.yaml
       # One-shot historical backfills (InfluxDB → migration.<table>).
-      # Removed from this list after merge into public.<table>.
-      - streams/migrate_warp_charge_tracker.yaml
-      - streams/migrate_warp_evse.yaml
-      - streams/migrate_warp_meter.yaml
+      # All currently disabled while we redesign the throughput/memory
+      # profile — see incident notes on the branch that introduced them.
+      # The 7 migrate_*.yaml files remain in the streams/ directory for
+      # re-enable once TimescaleDB resources have been bumped and the
+      # streams use a slower, gentler batching pattern.
 
 labels:
   - includeSelectors: false
