@@ -2,34 +2,39 @@
 # Cutover: MIN(time) public.solaredge_inverter = 2026-04-23 20:32:50.480246+00
 # Influx data: ~385k rows across both inverters (topic = solaredge-{1,2}/modbus/inverter)
 #
-# Chunked by day to keep the HTTP response + Bloblang queue under the
-# 2Gi pod limit. A single full-range fetch (~385k rows in one JSON
-# array) OOMs the Connect pod even at 2Gi. Per-row INSERT (no batching)
-# stays gentle on the TS primary.
+# Chunking strategy: generate emits 6 SEPARATE messages over time
+# (one per day-bucket), each becoming its own batch. This avoids the
+# "everything in one fan-out batch" stall the array+unarchive pattern
+# caused. Each chunk is ~77k rows → fits the 2Gi pod limit comfortably.
 #
 # Influx-only fields (ac_current_l2/l3, ac_voltage_l2/l3, ac_power_apparent/reactive, power_factor) preserved in raw.
 # Timescale-only field `status` not in Influx → stays NULL.
 input:
   generate:
-    count: 1
-    interval: 0s
+    count: 6
+    interval: 90s
     mapping: |
-      root = {}
+      let n = counter() - 1
+      let starts = [
+        "2026-04-18T00:00:00Z",
+        "2026-04-19T00:00:00Z",
+        "2026-04-20T00:00:00Z",
+        "2026-04-21T00:00:00Z",
+        "2026-04-22T00:00:00Z",
+        "2026-04-23T00:00:00Z",
+      ]
+      let ends = [
+        "2026-04-19T00:00:00Z",
+        "2026-04-20T00:00:00Z",
+        "2026-04-21T00:00:00Z",
+        "2026-04-22T00:00:00Z",
+        "2026-04-23T00:00:00Z",
+        "2026-04-23T20:32:50.480246Z",
+      ]
+      root = {"start": $starts.index($n), "end": $ends.index($n)}
 
 pipeline:
   processors:
-    # 5 day-buckets covering 2026-04-18 → 2026-04-23 20:32:50 cutover
-    - mapping: |
-        root = [
-          {"start":"2026-04-18T00:00:00Z","end":"2026-04-19T00:00:00Z"},
-          {"start":"2026-04-19T00:00:00Z","end":"2026-04-20T00:00:00Z"},
-          {"start":"2026-04-20T00:00:00Z","end":"2026-04-21T00:00:00Z"},
-          {"start":"2026-04-21T00:00:00Z","end":"2026-04-22T00:00:00Z"},
-          {"start":"2026-04-22T00:00:00Z","end":"2026-04-23T00:00:00Z"},
-          {"start":"2026-04-23T00:00:00Z","end":"2026-04-23T20:32:50.480246Z"},
-        ]
-    - unarchive:
-        format: json_array
     - mapping: |
         root.db = "homelab"
         root.q = "SELECT * FROM \"solaredge.inverter\" WHERE time >= '" + this.start + "' AND time < '" + this.end + "' ORDER BY time"
