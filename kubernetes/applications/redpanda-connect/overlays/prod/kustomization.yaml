@@ -20,8 +20,10 @@ patches:
             memory: 256Mi
           limits:
             cpu: 500m
-            # Temporarily bumped from 512Mi for one-shot historical
-            # backfill streams (migrate_*.yaml) that pull large InfluxDB
-            # responses into memory before unarchiving. Revert to 512Mi
-            # after the migrate_* streams are removed from kustomization.
-            memory: 2Gi
+            # 4Gi during the InfluxDB → Timescale historical backfill.
+            # 2Gi was enough for warp_meter (~189k rows) but solaredge,
+            # ems_esp and especially knx need more headroom because the
+            # full HTTP response sits in memory before unarchive expands
+            # it. Revert to 512Mi after all migrate_* streams have been
+            # removed from kustomization.
+            memory: 4Gi
