@@ -17,11 +17,7 @@ patches:
         value:
           requests:
             cpu: 50m
-            memory: 256Mi
+            memory: 128Mi
           limits:
-            cpu: 500m
-            # Temporarily bumped from 512Mi for one-shot historical
-            # backfill streams (migrate_*.yaml) that pull large InfluxDB
-            # responses into memory before unarchiving. Revert to 512Mi
-            # after the migrate_* streams are removed from kustomization.
-            memory: 2Gi
+            cpu: 200m
+            memory: 512Mi
