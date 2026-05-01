@@ -45,7 +45,7 @@ spec:
             - name: RUSTFS_URL
               value: "http://rustfs-svc.rustfs.svc.cluster.local:9000"
             - name: BUCKETS
-              value: "authentik-backups longhorn-backups timescaledb-backups"
+              value: "authentik-backups longhorn-backups timescaledb-backups nats-archive"
             - name: ACCESS_KEY
               valueFrom:
                 secretKeyRef:

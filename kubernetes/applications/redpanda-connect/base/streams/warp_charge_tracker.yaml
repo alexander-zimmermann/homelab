@@ -27,25 +27,57 @@ pipeline:
         }
 
 output:
-  sql_raw:
-    driver: pgx
-    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
-    init_statement: |
-      SET timezone = 'UTC';
-    query: |
-      INSERT INTO warp_charge_tracker (
-        time, sub_topic,
-        user_id, charge_duration, energy_charged, tracked_charges,
-        raw
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-    args_mapping: |
-      root = [
-        this.time,
-        this.sub_topic,
-        this.user_id,
-        this.charge_duration,
-        this.energy_charged,
-        this.tracked_charges,
-        this.raw.string(),
-      ]
+  broker:
+    # Both outputs must succeed before the NATS message is acked.
+    # If RustFS is down, NATS will retry → TS-Insert is also delayed.
+    # That is the desired behavior: cold archive must keep up with TS.
+    pattern: fan_out
+    outputs:
+      # Hot tier: typed columns into TimescaleDB
+      - sql_raw:
+          driver: pgx
+          dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+          init_statement: |
+            SET timezone = 'UTC';
+          query: |
+            INSERT INTO warp_charge_tracker (
+              time, sub_topic,
+              user_id, charge_duration, energy_charged, tracked_charges,
+              raw
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+          args_mapping: |
+            root = [
+              this.time,
+              this.sub_topic,
+              this.user_id,
+              this.charge_duration,
+              this.energy_charged,
+              this.tracked_charges,
+              this.raw.string(),
+            ]
+      # Cold archive: original NATS payload as Parquet on RustFS
+      - aws_s3:
+          bucket: nats-archive
+          region: us-east-1
+          endpoint: http://rustfs-svc.rustfs.svc.cluster.local:9000
+          force_path_style_urls: true
+          credentials:
+            id: ${RUSTFS_ACCESS_KEY}
+            secret: ${RUSTFS_SECRET_KEY}
+          path: warp_charge_tracker/${!timestamp("2006/01/02/15")}/${!uuid_v4()}.parquet
+          batching:
+            count: 10000
+            period: 1h
+            processors:
+              - mapping: |
+                  root = {
+                    "time":    this.time,
+                    "subject": meta("nats_subject"),
+                    "payload": this.raw.format_json(),
+                  }
+              - parquet_encode:
+                  schema:
+                    - { name: time,    type: UTF8 }
+                    - { name: subject, type: UTF8 }
+                    - { name: payload, type: UTF8 }
