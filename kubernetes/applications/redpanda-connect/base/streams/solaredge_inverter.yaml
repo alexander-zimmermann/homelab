@@ -79,8 +79,8 @@ output:
             secret: ${RUSTFS_SECRET_KEY}
           path: solaredge_inverter/${!now().ts_format("2006/01/02/15")}/${!uuid_v4()}.parquet
           batching:
-            count: 5000
-            period: 1h
+            count: 2000
+            period: 15m
             processors:
               - mapping: |
                   root = {
