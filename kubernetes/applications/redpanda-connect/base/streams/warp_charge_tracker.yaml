@@ -65,7 +65,8 @@ output:
           credentials:
             id: ${RUSTFS_ACCESS_KEY}
             secret: ${RUSTFS_SECRET_KEY}
-          path: warp_charge_tracker/${!timestamp("2006/01/02/15")}/${!uuid_v4()}.parquet
+          # `timestamp(...)` does not exist in Connect interpolations; `now().ts_format(...)` is the right form.
+          path: warp_charge_tracker/${!now().ts_format("2006/01/02/15")}/${!uuid_v4()}.parquet
           batching:
             count: 10000
             period: 1h
