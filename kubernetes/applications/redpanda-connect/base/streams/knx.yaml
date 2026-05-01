@@ -43,25 +43,52 @@ pipeline:
         }
 
 output:
-  sql_raw:
-    driver: pgx
-    max_in_flight: 16
-    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
-    init_statement: |
-      SET timezone = 'UTC';
-    query: |
-      INSERT INTO knx (time, ga, knx_main, knx_middle, knx_sub, knx_name, dpt, value, raw)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      ON CONFLICT (time, ga) DO NOTHING
-    args_mapping: |
-      root = [
-        this.time,
-        this.ga,
-        this.knx_main,
-        this.knx_middle,
-        this.knx_sub,
-        this.knx_name,
-        this.dpt,
-        this.value,
-        this.raw.string(),
-      ]
+  broker:
+    pattern: fan_out
+    outputs:
+      - sql_raw:
+          driver: pgx
+          max_in_flight: 16
+          dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+          init_statement: |
+            SET timezone = 'UTC';
+          query: |
+            INSERT INTO knx (time, ga, knx_main, knx_middle, knx_sub, knx_name, dpt, value, raw)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            ON CONFLICT (time, ga) DO NOTHING
+          args_mapping: |
+            root = [
+              this.time,
+              this.ga,
+              this.knx_main,
+              this.knx_middle,
+              this.knx_sub,
+              this.knx_name,
+              this.dpt,
+              this.value,
+              this.raw.string(),
+            ]
+      - aws_s3:
+          bucket: nats-archive
+          region: us-east-1
+          endpoint: http://rustfs-svc.rustfs.svc.cluster.local:9000
+          force_path_style_urls: true
+          credentials:
+            id: ${RUSTFS_ACCESS_KEY}
+            secret: ${RUSTFS_SECRET_KEY}
+          path: knx/${!now().ts_format("2006/01/02/15")}/${!uuid_v4()}.parquet
+          batching:
+            count: 5000
+            period: 1h
+            processors:
+              - mapping: |
+                  root = {
+                    "time":    this.time,
+                    "subject": meta("nats_subject"),
+                    "payload": this.raw.format_json(),
+                  }
+              - parquet_encode:
+                  schema:
+                    - { name: time,    type: UTF8 }
+                    - { name: subject, type: UTF8 }
+                    - { name: payload, type: UTF8 }
