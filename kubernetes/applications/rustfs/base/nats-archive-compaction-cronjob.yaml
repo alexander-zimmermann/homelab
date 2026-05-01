@@ -1,0 +1,62 @@
+# Daily compaction of nats-archive: merges 24 hour-files per stream into one
+# daily.parquet, then removes the source hour-folders. Runs at 03:00 UTC.
+apiVersion: batch/v1
+kind: CronJob
+
+metadata:
+  name: nats-archive-compaction
+  namespace: rustfs
+
+spec:
+  schedule: "0 1 * * *"
+  timeZone: "Etc/UTC"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  startingDeadlineSeconds: 600
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      ttlSecondsAfterFinished: 86400
+      template:
+        spec:
+          serviceAccountName: default
+          restartPolicy: OnFailure
+          containers:
+            - name: compactor
+              image: alpine:3.19
+              command: ["/bin/sh", "/scripts/compact-nats-archive.sh"]
+              env:
+                - name: RUSTFS_URL
+                  value: "http://rustfs-svc.rustfs.svc.cluster.local:9000"
+                - name: DUCKDB_VERSION
+                  value: "v1.1.3"
+                - name: ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: rustfs-admin-credentials
+                      key: RUSTFS_ACCESS_KEY
+                - name: SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: rustfs-admin-credentials
+                      key: RUSTFS_SECRET_KEY
+              resources:
+                requests:
+                  cpu: "100m"
+                  memory: "256Mi"
+                limits:
+                  cpu: "1000m"
+                  memory: "1Gi"
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: scripts
+              configMap:
+                name: rustfs-compact-script
+                defaultMode: 0555
+            - name: tmp
+              emptyDir: {}
