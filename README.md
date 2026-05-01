@@ -10,7 +10,7 @@
 &nbsp;
 <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/opentofu.png" height="40" alt="OpenTofu" />
 
-# Lares
+# Lares — A Declarative, Agentic Homelab
 
 _Roman household guardians — a homelab stack across three independent layers: infrastructure, cluster, apps._
 
