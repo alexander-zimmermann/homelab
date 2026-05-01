@@ -10,4 +10,18 @@ BEGIN
         ALTER DEFAULT PRIVILEGES IN SCHEMA public
             GRANT INSERT, SELECT ON TABLES TO connect;
     END IF;
+
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'iot_mcp_bridge_ro') THEN
+        GRANT CONNECT ON DATABASE homelab TO iot_mcp_bridge_ro;
+        GRANT USAGE ON SCHEMA public TO iot_mcp_bridge_ro;
+        GRANT SELECT ON ALL TABLES IN SCHEMA public TO iot_mcp_bridge_ro;
+        ALTER DEFAULT PRIVILEGES IN SCHEMA public
+            GRANT SELECT ON TABLES TO iot_mcp_bridge_ro;
+        -- Continuous aggregates store materialised data under _timescaledb_internal;
+        -- iot_mcp_bridge_ro needs SELECT there to read CAGGs.
+        GRANT USAGE ON SCHEMA _timescaledb_internal TO iot_mcp_bridge_ro;
+        GRANT SELECT ON ALL TABLES IN SCHEMA _timescaledb_internal TO iot_mcp_bridge_ro;
+        ALTER DEFAULT PRIVILEGES IN SCHEMA _timescaledb_internal
+            GRANT SELECT ON TABLES TO iot_mcp_bridge_ro;
+    END IF;
 END$$;
