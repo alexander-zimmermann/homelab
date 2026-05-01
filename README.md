@@ -10,9 +10,9 @@
 &nbsp;
 <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/opentofu.png" height="40" alt="OpenTofu" />
 
-# homelab
+# Lares
 
-_Three independent layers — infrastructure, cluster, apps — that compose into a full stack._
+_Roman household guardians — a homelab stack across three independent layers: infrastructure, cluster, apps._
 
 </div>
 
@@ -36,7 +36,7 @@ _Three independent layers — infrastructure, cluster, apps — that compose int
 
 ## About
 
-This is my personal homelab — a single [Proxmox VE](https://www.proxmox.com/) box tucked under the desk, running a [Talos Linux](https://www.talos.dev/) Kubernetes cluster that hosts everything from Grafana and Authentik down to the service that scrapes my solar inverter. It's my playground, my production, and the place where I try things before I recommend them to colleagues.
+This is **Lares** — my personal homelab. In Roman religion, the *Lares* were the guardian spirits of the home: of the threshold, the hearth, the household. The name fits, because what runs here isn't just infrastructure — it's a single [Proxmox VE](https://www.proxmox.com/) box tucked under the desk, running a [Talos Linux](https://www.talos.dev/) Kubernetes cluster that hosts everything from Grafana and Authentik down to the service that scrapes my solar inverter, the bridge that publishes KNX events to NATS, and (eventually) the AI agents that read and act on it all. It's my playground, my production, and the place where I try things before I recommend them to colleagues.
 
 What I care about most is that **everything is declarative end-to-end.** A git push is the only way state reaches the cluster. There is no `kubectl apply`, no `tofu apply` at 2 a.m. from my laptop, no snowflake tweaks. [Renovate](https://docs.renovatebot.com/) opens PRs when new versions drop, I merge them, [Argo CD](https://argo-cd.readthedocs.io/) rolls them out. It's boring. Boring is the point.
 
