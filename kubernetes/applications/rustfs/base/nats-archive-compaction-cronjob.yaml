@@ -24,7 +24,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: compactor
-              image: alpine:3.19
+              image: alpine:3.23
               command: ["/bin/sh", "/scripts/compact-nats-archive.sh"]
               env:
                 - name: RUSTFS_URL
