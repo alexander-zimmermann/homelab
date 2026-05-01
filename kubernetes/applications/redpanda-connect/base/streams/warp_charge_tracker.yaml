@@ -68,7 +68,7 @@ output:
           # `timestamp(...)` does not exist in Connect interpolations; `now().ts_format(...)` is the right form.
           path: warp_charge_tracker/${!now().ts_format("2006/01/02/15")}/${!uuid_v4()}.parquet
           batching:
-            count: 10000
+            count: 5000
             period: 1h
             processors:
               - mapping: |
