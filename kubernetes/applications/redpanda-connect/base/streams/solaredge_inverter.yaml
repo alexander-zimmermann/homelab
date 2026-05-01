@@ -37,6 +37,7 @@ pipeline:
 output:
   sql_raw:
     driver: pgx
+    max_in_flight: 16
     dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
     init_statement: |
       SET timezone = 'UTC';
