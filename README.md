@@ -26,8 +26,8 @@ _Roman household guardians — a homelab stack across three independent layers: 
 
 **Repo**
 &nbsp;
-[![License](https://img.shields.io/github/license/alexander-zimmermann/homelab?style=flat-square&color=blue)](./LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/alexander-zimmermann/homelab?style=flat-square&logo=github&logoColor=white)](https://github.com/alexander-zimmermann/homelab/commits/main)
+[![License](https://img.shields.io/github/license/alexander-zimmermann/lares?style=flat-square&color=blue)](./LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/alexander-zimmermann/lares?style=flat-square&logo=github&logoColor=white)](https://github.com/alexander-zimmermann/lares/commits/main)
 [![Renovate](https://img.shields.io/badge/Renovate-enabled-brightgreen?style=flat-square&logo=renovatebot&logoColor=white)](https://docs.renovatebot.com/)
 [![GitOps](https://img.shields.io/badge/GitOps-Argo%20CD-EF7B4D?style=flat-square&logo=argo&logoColor=white)](https://argo-cd.readthedocs.io/)
 [![Provisioned by Omni](https://img.shields.io/badge/Provisioned%20by-Omni-ff7300?style=flat-square&logo=sidero&logoColor=white)](https://omni.siderolabs.com/)
