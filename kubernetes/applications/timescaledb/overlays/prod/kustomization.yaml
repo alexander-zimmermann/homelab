@@ -23,8 +23,13 @@ replacements:
         fieldPaths:
           - spec.walStorage.size
 
-  # max_wal_size — 80% of WAL PVC
-  - sourceValue: "1600MB"
+  # max_wal_size — 60% of WAL PVC. Sized down from 1600MB (80%) after
+  # the InfluxDB → Timescale backfill pushed the WAL volume to 82%;
+  # PG holds WAL up to roughly max_wal_size as a recycle buffer, so a
+  # one-time burst permanently bumps the steady-state footprint. 60%
+  # leaves ~800MB burst headroom on the 2Gi PVC without forcing
+  # checkpoints as aggressively as 50% would.
+  - sourceValue: "1200MB"
     targets:
       - select:
           kind: Cluster
