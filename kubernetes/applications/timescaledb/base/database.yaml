@@ -42,6 +42,12 @@ spec:
         comment: "Redpanda Connect ingest user — INSERT/SELECT only"
         passwordSecret:
           name: timescaledb-db-connect-secret
+      - name: iot_mcp_bridge_ro
+        ensure: present
+        login: true
+        comment: "iot-mcp-bridge — SELECT only on hypertables and CAGGs"
+        passwordSecret:
+          name: timescaledb-db-iot-mcp-bridge-ro-secret
 
   postgresql:
     # Load TimescaleDB extension at server start
