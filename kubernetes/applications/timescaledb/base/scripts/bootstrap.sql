@@ -279,6 +279,51 @@ SELECT add_continuous_aggregate_policy('warp_meter_1h',
     schedule_interval => INTERVAL '1 hour');
 
 -- =========================================================
+-- Native compression — segment_by chosen for the column the queries
+-- usually filter on; order_by time DESC matches "most recent first".
+-- compress_after = 7 days keeps the live-write window uncompressed
+-- (compressed chunks support inserts + upserts in TS 2.16+, but the
+-- recent window stays cheaper for ad-hoc analytics).
+-- =========================================================
+ALTER TABLE knx SET (timescaledb.compress,
+    timescaledb.compress_segmentby = 'ga',
+    timescaledb.compress_orderby = 'time DESC');
+ALTER TABLE solaredge_inverter SET (timescaledb.compress,
+    timescaledb.compress_segmentby = 'inverter_id',
+    timescaledb.compress_orderby = 'time DESC');
+ALTER TABLE solaredge_powerflow SET (timescaledb.compress,
+    timescaledb.compress_segmentby = 'inverter_id',
+    timescaledb.compress_orderby = 'time DESC');
+ALTER TABLE ems_esp SET (timescaledb.compress,
+    timescaledb.compress_segmentby = 'topic',
+    timescaledb.compress_orderby = 'time DESC');
+ALTER TABLE warp_system SET (timescaledb.compress,
+    timescaledb.compress_segmentby = 'sub_topic',
+    timescaledb.compress_orderby = 'time DESC');
+ALTER TABLE warp_evse SET (timescaledb.compress,
+    timescaledb.compress_segmentby = 'sub_topic',
+    timescaledb.compress_orderby = 'time DESC');
+ALTER TABLE warp_charge_manager SET (timescaledb.compress,
+    timescaledb.compress_segmentby = 'sub_topic',
+    timescaledb.compress_orderby = 'time DESC');
+ALTER TABLE warp_charge_tracker SET (timescaledb.compress,
+    timescaledb.compress_segmentby = 'sub_topic',
+    timescaledb.compress_orderby = 'time DESC');
+ALTER TABLE warp_meter SET (timescaledb.compress,
+    timescaledb.compress_segmentby = 'meter_id',
+    timescaledb.compress_orderby = 'time DESC');
+
+SELECT add_compression_policy('knx',                 INTERVAL '7 days');
+SELECT add_compression_policy('solaredge_inverter',  INTERVAL '7 days');
+SELECT add_compression_policy('solaredge_powerflow', INTERVAL '7 days');
+SELECT add_compression_policy('ems_esp',             INTERVAL '7 days');
+SELECT add_compression_policy('warp_system',         INTERVAL '7 days');
+SELECT add_compression_policy('warp_evse',           INTERVAL '7 days');
+SELECT add_compression_policy('warp_charge_manager', INTERVAL '7 days');
+SELECT add_compression_policy('warp_charge_tracker', INTERVAL '7 days');
+SELECT add_compression_policy('warp_meter',          INTERVAL '7 days');
+
+-- =========================================================
 -- Transfer ownership from `postgres` (CNPG runs initdb as superuser)
 -- to the application user `homelab`, so it can issue table-level GRANTs.
 -- =========================================================
