@@ -35,34 +35,61 @@ pipeline:
         }
 
 output:
-  sql_raw:
-    driver: pgx
-    max_in_flight: 16
-    dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
-    init_statement: |
-      SET timezone = 'UTC';
-    query: |
-      INSERT INTO solaredge_inverter (
-        time, inverter_id,
-        ac_power_actual, ac_current_actual, ac_voltage_l1, ac_frequency,
-        dc_power, dc_current, dc_voltage,
-        energytotal, temperature, status, raw
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-      ON CONFLICT (time, inverter_id) DO NOTHING
-    args_mapping: |
-      root = [
-        this.time,
-        this.inverter_id,
-        this.ac_power_actual,
-        this.ac_current_actual,
-        this.ac_voltage_l1,
-        this.ac_frequency,
-        this.dc_power,
-        this.dc_current,
-        this.dc_voltage,
-        this.energytotal,
-        this.temperature,
-        this.status,
-        this.raw.string(),
-      ]
+  broker:
+    pattern: fan_out
+    outputs:
+      - sql_raw:
+          driver: pgx
+          max_in_flight: 16
+          dsn: postgres://${PGUSER}:${PGPASSWORD}@timescaledb-db-pooler.timescaledb.svc.cluster.local:5432/homelab?sslmode=disable
+          init_statement: |
+            SET timezone = 'UTC';
+          query: |
+            INSERT INTO solaredge_inverter (
+              time, inverter_id,
+              ac_power_actual, ac_current_actual, ac_voltage_l1, ac_frequency,
+              dc_power, dc_current, dc_voltage,
+              energytotal, temperature, status, raw
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+            ON CONFLICT (time, inverter_id) DO NOTHING
+          args_mapping: |
+            root = [
+              this.time,
+              this.inverter_id,
+              this.ac_power_actual,
+              this.ac_current_actual,
+              this.ac_voltage_l1,
+              this.ac_frequency,
+              this.dc_power,
+              this.dc_current,
+              this.dc_voltage,
+              this.energytotal,
+              this.temperature,
+              this.status,
+              this.raw.string(),
+            ]
+      - aws_s3:
+          bucket: nats-archive
+          region: us-east-1
+          endpoint: http://rustfs-svc.rustfs.svc.cluster.local:9000
+          force_path_style_urls: true
+          credentials:
+            id: ${RUSTFS_ACCESS_KEY}
+            secret: ${RUSTFS_SECRET_KEY}
+          path: solaredge_inverter/${!now().ts_format("2006/01/02/15")}/${!uuid_v4()}.parquet
+          batching:
+            count: 5000
+            period: 1h
+            processors:
+              - mapping: |
+                  root = {
+                    "time":    this.time,
+                    "subject": meta("nats_subject"),
+                    "payload": this.raw.format_json(),
+                  }
+              - parquet_encode:
+                  schema:
+                    - { name: time,    type: UTF8 }
+                    - { name: subject, type: UTF8 }
+                    - { name: payload, type: UTF8 }
