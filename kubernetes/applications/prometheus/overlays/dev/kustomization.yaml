@@ -115,8 +115,8 @@ patches:
       name: prometheus
     patch: |-
       - op: test
-        path: /spec/image
-        value: quay.io/prometheus/alertmanager:v0.32.0
+        path: /spec/replicas
+        value: 1
       - op: add
         path: /spec/resources
         value:
