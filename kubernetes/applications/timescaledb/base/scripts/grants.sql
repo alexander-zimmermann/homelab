@@ -17,11 +17,22 @@ BEGIN
         GRANT SELECT ON ALL TABLES IN SCHEMA public TO iot_mcp_bridge_ro;
         ALTER DEFAULT PRIVILEGES IN SCHEMA public
             GRANT SELECT ON TABLES TO iot_mcp_bridge_ro;
-        -- Continuous aggregates store materialised data under _timescaledb_internal;
-        -- iot_mcp_bridge_ro needs SELECT there to read CAGGs.
+
+        -- Grant SELECT only on CAGG materialisation tables; a blanket grant
+        -- on _timescaledb_internal would hit TS bookkeeping tables owned by
+        -- the postgres superuser.
         GRANT USAGE ON SCHEMA _timescaledb_internal TO iot_mcp_bridge_ro;
-        GRANT SELECT ON ALL TABLES IN SCHEMA _timescaledb_internal TO iot_mcp_bridge_ro;
-        ALTER DEFAULT PRIVILEGES IN SCHEMA _timescaledb_internal
-            GRANT SELECT ON TABLES TO iot_mcp_bridge_ro;
+        DECLARE
+            cagg RECORD;
+        BEGIN
+            FOR cagg IN
+                SELECT format('%I.%I',
+                              materialization_hypertable_schema,
+                              materialization_hypertable_name) AS qname
+                FROM timescaledb_information.continuous_aggregates
+            LOOP
+                EXECUTE format('GRANT SELECT ON %s TO iot_mcp_bridge_ro', cagg.qname);
+            END LOOP;
+        END;
     END IF;
 END$$;
