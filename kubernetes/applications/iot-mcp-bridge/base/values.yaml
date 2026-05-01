@@ -1,0 +1,86 @@
+# Override chart's default resource naming (`application`)
+applicationName: iot-mcp-bridge
+
+deployment:
+  enabled: true
+  image:
+    repository: ghcr.io/alexander-zimmermann/iot-mcp-bridge
+    tag: 0.1.0
+    pullPolicy: IfNotPresent
+
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+
+  env:
+    MCP_DB_HOST:
+      value: timescaledb-db-rw.timescaledb.svc.cluster.local
+    MCP_DB_PORT:
+      value: "5432"
+    MCP_DB_NAME:
+      value: homelab
+    MCP_DB_USER:
+      valueFrom:
+        secretKeyRef:
+          name: timescaledb-db-iot-mcp-bridge-ro-secret
+          key: username
+    MCP_DB_PASSWORD:
+      valueFrom:
+        secretKeyRef:
+          name: timescaledb-db-iot-mcp-bridge-ro-secret
+          key: password
+    MCP_AUTH_ENABLED:
+      value: "false"
+    MCP_LOG_FORMAT:
+      value: json
+    TZ:
+      value: Europe/Berlin
+
+  ports:
+    - containerPort: 8080
+      name: mcp
+      protocol: TCP
+
+  livenessProbe:
+    enabled: true
+    httpGet:
+      path: /healthz
+      port: mcp
+    initialDelaySeconds: 10
+    periodSeconds: 30
+
+  readinessProbe:
+    enabled: true
+    httpGet:
+      path: /healthz
+      port: mcp
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: [ALL]
+
+  securityContext:
+    fsGroup: 1000
+
+service:
+  enabled: true
+  type: ClusterIP
+  ports:
+    - port: 8080
+      name: mcp
+      protocol: TCP
+      targetPort: mcp

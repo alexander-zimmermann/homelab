@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: iot-mcp-bridge
+resources:
+  - ./namespace.yaml
+  - ./certificate.yaml
+  - ./ingress-route.yaml
+
+helmCharts:
+  - name: application
+    repo: https://stakater.github.io/stakater-charts
+    releaseName: iot-mcp-bridge
+    version: 6.16.1
+    valuesFile: values.yaml
+    namespace: iot-mcp-bridge
+    apiVersions:
+      - monitoring.coreos.com/v1
+
+labels:
+  - includeSelectors: false
+    pairs:
+      homelab.app: iot-mcp-bridge
+
+# Wave 30 = after timescaledb (wave 3) and Kyverno-cloned secret is in place.
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "30"

@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+replacements:
+  # Inject prod hostname into Certificate dnsNames and IngressRoute Host(...) match.
+  - sourceValue: mcp.zimmermann.sh
+    targets:
+      - select:
+          kind: Certificate
+          name: iot-mcp-bridge-tls-cert
+        fieldPaths:
+          - spec.dnsNames.0
+      - select:
+          kind: IngressRoute
+          name: iot-mcp-bridge
+        fieldPaths:
+          - spec.routes.0.match
+        options:
+          delimiter: "`"
+          index: 1
