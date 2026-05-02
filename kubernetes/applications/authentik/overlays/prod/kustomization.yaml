@@ -205,10 +205,10 @@ patches:
         value:
           requests:
             cpu: 50m
-            memory: 128Mi
+            memory: 256Mi
           limits:
             cpu: 200m
-            memory: 256Mi
+            memory: 512Mi
 
   # Authentik service with static IP and BGP advertisement
   - target:
