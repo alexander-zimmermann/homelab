@@ -172,13 +172,14 @@ A quick taste of what's running — full catalog in [`kubernetes/README.md`](kub
 - **GitOps everywhere** — [Argo CD](https://argo-cd.readthedocs.io/) reconciles the cluster, [Renovate](https://docs.renovatebot.com/) opens PRs for every dependency bump.
 - **Immutable OS** — [Talos Linux](https://www.talos.dev/) with disk encryption, managed by [Omni](https://omni.siderolabs.com/).
 - **Identity & edge** — [Authentik](https://goauthentik.io/) SSO/forward-auth, [Traefik](https://traefik.io/) with pre/post-auth middleware chains, [CrowdSec](https://www.crowdsec.net/) behavior-based IPS, [Cloudflare](https://www.cloudflare.com/) WAF.
-- **Data plane** — [CloudNativePG](https://cloudnative-pg.io/) with Barman S3 PITR backups, [Redis](https://redis.io/), [NATS](https://nats.io/), [InfluxDB](https://www.influxdata.com/), [RustFS](https://github.com/rustfs/rustfs) for S3-compatible object storage.
+- **Data plane** — [CloudNativePG](https://cloudnative-pg.io/) with Barman S3 PITR backups, [TimescaleDB](https://www.timescale.com/) for sensor time-series, [Redis](https://redis.io/), [RustFS](https://github.com/rustfs/rustfs) for S3-compatible object storage.
+- **Streaming & agents** — [NATS](https://nats.io/) JetStream as the message bus, [Redpanda Connect](https://docs.redpanda.com/redpanda-connect/about/) fanning streams into TimescaleDB and Parquet on S3, plus protocol bridges (KNX, solar) and an MCP bridge that exposes the data to AI agents.
 - **Observability** — [Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/), [Loki](https://grafana.com/oss/loki/), [Alloy](https://grafana.com/docs/alloy/), [Gatus](https://gatus.io/), plus [kromgo](https://github.com/kashalls/kromgo) powering the badges above.
 
 ## Repository structure
 
 ```
-homelab/
+lares/
 ├── infrastructure/   # Layer 1 — Proxmox IaC (OpenTofu + bpg/proxmox)
 ├── cluster/          # Layer 2 — Omni cluster templates + machine classes
 ├── kubernetes/       # Layer 3 — Argo CD-reconciled manifests

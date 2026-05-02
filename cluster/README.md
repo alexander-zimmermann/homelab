@@ -1,7 +1,7 @@
 # Cluster — Omni + Talos
 
-[![Talos](https://img.shields.io/badge/Talos-v1.12.6-blue?style=flat-square&logo=talos&logoColor=white)](https://www.talos.dev/)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.34.6-blue?style=flat-square&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![Talos](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.zimmermann.sh%2Ftalos_version&style=flat-square&logo=talos&logoColor=white&color=blue&label=Talos)](https://www.talos.dev/)
+[![Kubernetes](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.zimmermann.sh%2Fkubernetes_version&style=flat-square&logo=kubernetes&logoColor=white&color=blue&label=Kubernetes)](https://kubernetes.io/)
 [![Omni](https://img.shields.io/badge/Managed%20by-Omni-ff7300?style=flat-square&logo=sidero&logoColor=white)](https://omni.siderolabs.com/)
 
 > **Layer 2 of [the homelab stack](../README.md).** This is just cluster definition — machine shapes and Talos/Kubernetes versions. It has no opinion on what runs underneath (any infra provider works) or on top (standard Kubernetes manifests).
