@@ -5,7 +5,7 @@ deployment:
   enabled: true
   image:
     repository: ghcr.io/alexander-zimmermann/iot-mcp-bridge
-    tag: 0.2.0
+    tag: 0.3.0
     pullPolicy: IfNotPresent
 
   replicas: 1
@@ -67,6 +67,9 @@ deployment:
     - containerPort: 8080
       name: mcp
       protocol: TCP
+    - containerPort: 9090
+      name: metrics
+      protocol: TCP
 
   livenessProbe:
     enabled: true
@@ -111,3 +114,17 @@ service:
       name: mcp
       protocol: TCP
       targetPort: mcp
+    - port: 9090
+      name: metrics
+      protocol: TCP
+      targetPort: metrics
+
+serviceMonitor:
+  enabled: true
+  additionalLabels:
+    # Prometheus Operator label (Opt-In)
+    release: prometheus
+  endpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics
