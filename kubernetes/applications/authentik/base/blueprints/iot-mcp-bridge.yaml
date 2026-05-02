@@ -18,6 +18,9 @@ entries:
       client_id: iot-mcp-bridge
       client_secret: !Env IOT_MCP_BRIDGE_OIDC_CLIENT_SECRET
       signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      # Long access-token TTL: claude.ai-MCP-Proxy ignoriert refresh_token (anthropics/claude-code#46328)
+      access_token_validity: hours=24
+      refresh_token_validity: days=30
       redirect_uris:
         - matching_mode: strict
           url: !Env ANTHROPIC_OAUTH_REDIRECT_URI
