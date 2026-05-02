@@ -40,11 +40,6 @@ configMapGenerator:
       disableNameSuffixHash: true
     files:
       - scripts/initialize-rustfs-buckets.sh
-  - name: rustfs-compact-script
-    options:
-      disableNameSuffixHash: true
-    files:
-      - scripts/compact-nats-archive.sh
 
 labels:
   - includeSelectors: false
