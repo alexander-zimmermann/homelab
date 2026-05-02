@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -euo pipefail
 
 # Daily compaction of nats-archive 1h parquet files into one daily file per
@@ -15,18 +15,18 @@ set -euo pipefail
 
 STREAMS="knx ems_esp solaredge_inverter solaredge_powerflow warp_system warp_evse warp_charge_manager warp_charge_tracker warp_meter"
 
-# Install tooling first; coreutils gives us GNU date for relative-time parsing
-# (busybox date does not understand "yesterday").
-# gcompat is a glibc shim — DuckDB's linux-amd64 build is glibc-linked and
-# refuses to run on alpine's musl without it.
-apk add --no-cache curl unzip ca-certificates coreutils gcompat >/dev/null
+# Image is debian:12-slim — DuckDB's official linux-amd64 build is glibc-linked
+# and needs libstdc++/libgcc, both of which alpine does not ship in an
+# ABI-compatible form. debian gives us all of that out of the box.
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq
+apt-get install -y --no-install-recommends curl unzip ca-certificates >/dev/null
 curl -fsSL -o /tmp/duckdb.zip "https://github.com/duckdb/duckdb/releases/download/${DUCKDB_VERSION}/duckdb_cli-linux-amd64.zip"
 unzip -o /tmp/duckdb.zip -d /usr/local/bin
 chmod +x /usr/local/bin/duckdb
 curl -fsSL -o /usr/local/bin/mc https://dl.min.io/client/mc/release/linux-amd64/mc
 chmod +x /usr/local/bin/mc
-ls -la /usr/local/bin/duckdb /usr/local/bin/mc
-/usr/local/bin/duckdb --version
+duckdb --version
 
 DAY="${COMPACT_DAY:-$(date -u -d 'yesterday' '+%Y/%m/%d')}"
 echo "Compacting day=$DAY"
