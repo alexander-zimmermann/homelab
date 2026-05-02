@@ -165,9 +165,8 @@ collectors:
           relabel_rules = discovery.relabel.syslog.rules
       }
 
-      // OTLP/HTTP receiver: rustfs (and future apps) push metrics here, which
-      // are then converted to Prometheus exposition by the chart-rendered
-      // otelcol.receiver.prometheus.prometheus component and remote-written.
+      // OTLP/HTTP receiver for rustfs metrics; forwarded to the chart-rendered
+      // otelcol.exporter.prometheus.prometheus exporter for remote-write.
       otelcol.receiver.otlp "rustfs" {
           http {
               endpoint = "0.0.0.0:4318"
@@ -179,6 +178,6 @@ collectors:
 
       otelcol.processor.batch "rustfs" {
           output {
-              metrics = [otelcol.receiver.prometheus.prometheus.receiver]
+              metrics = [otelcol.exporter.prometheus.prometheus.input]
           }
       }
