@@ -1,5 +1,6 @@
 # Daily compaction of nats-archive: merges 24 hour-files per stream into one
-# daily.parquet, then removes the source hour-folders. Runs at 03:00 UTC.
+# daily.parquet, then removes the source hour-folders. Runs at 01:00 UTC.
+# Image is built from /Users/alexander/Development/nats-archive-compactor.
 apiVersion: batch/v1
 kind: CronJob
 
@@ -24,13 +25,10 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: compactor
-              image: debian:13-slim
-              command: ["/bin/bash", "/scripts/compact-nats-archive.sh"]
+              image: ghcr.io/alexander-zimmermann/nats-archive-compactor:0.1.0
               env:
                 - name: RUSTFS_URL
                   value: "http://rustfs-svc.rustfs.svc.cluster.local:9000"
-                - name: DUCKDB_VERSION
-                  value: "v1.1.3"
                 - name: ACCESS_KEY
                   valueFrom:
                     secretKeyRef:
@@ -48,15 +46,3 @@ spec:
                 limits:
                   cpu: "1000m"
                   memory: "1Gi"
-              volumeMounts:
-                - name: scripts
-                  mountPath: /scripts
-                - name: tmp
-                  mountPath: /tmp
-          volumes:
-            - name: scripts
-              configMap:
-                name: rustfs-compact-script
-                defaultMode: 0555
-            - name: tmp
-              emptyDir: {}
