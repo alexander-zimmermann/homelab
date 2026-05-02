@@ -19,22 +19,49 @@ deployment:
       value: "5432"
     MCP_DB_NAME:
       value: homelab
-    MCP_DB_USER:
-      valueFrom:
-        secretKeyRef:
-          name: timescaledb-db-iot-mcp-bridge-ro-secret
-          key: username
-    MCP_DB_PASSWORD:
-      valueFrom:
-        secretKeyRef:
-          name: timescaledb-db-iot-mcp-bridge-ro-secret
-          key: password
+    # DB credentials mounted as files from the synced Secret (Kyverno clones from `timescaledb` namespace)
+    MCP_DB_USERNAME_FILE:
+      value: /etc/iot-mcp-bridge/db_username
+    MCP_DB_PASSWORD_FILE:
+      value: /etc/iot-mcp-bridge/db_password
     MCP_AUTH_ENABLED:
-      value: "false"
+      value: "true"
+    MCP_AUTH_JWKS_URL:
+      value: PLACEHOLDER_AUTH_JWKS_URL
+    MCP_AUTH_ISSUER:
+      value: PLACEHOLDER_AUTH_ISSUER
+    MCP_AUTH_AUDIENCE:
+      value: iot-mcp-bridge
+    MCP_AUTH_RESOURCE_URL:
+      value: PLACEHOLDER_AUTH_RESOURCE_URL
     MCP_LOG_FORMAT:
       value: json
     TZ:
       value: Europe/Berlin
+
+  volumes:
+    db-username:
+      secret:
+        secretName: timescaledb-db-iot-mcp-bridge-ro-secret
+        items:
+          - key: username
+            path: username
+    db-password:
+      secret:
+        secretName: timescaledb-db-iot-mcp-bridge-ro-secret
+        items:
+          - key: password
+            path: password
+
+  volumeMounts:
+    db-username:
+      mountPath: /etc/iot-mcp-bridge/db_username
+      subPath: username
+      readOnly: true
+    db-password:
+      mountPath: /etc/iot-mcp-bridge/db_password
+      subPath: password
+      readOnly: true
 
   ports:
     - containerPort: 8080
