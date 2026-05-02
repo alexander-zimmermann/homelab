@@ -17,6 +17,14 @@ config:
     server_domains: rustfs-svc.rustfs.svc.cluster.local
     # Set log level to error to suppress verbose tracing warnings
     log_level: "error"
+    # OTLP push to Alloy. metrics.endpoint must be set explicitly — the chart
+    # does not derive it from base_endpoint.
+    obs_endpoint:
+      enabled: true
+      base_endpoint: "http://alloy-alloy-receiver.alloy.svc.cluster.local:4318"
+      metrics:
+        enabled: true
+        endpoint: "http://alloy-alloy-receiver.alloy.svc.cluster.local:4318/v1/metrics"
 
 # Skip recursive chown on PVC when root perms already match (avoids ~3 min
 # fsGroup walk over 100k+ files on NFS-backed PVC at every pod start)
@@ -33,10 +41,8 @@ storageclass:
   dataStorageSize: PLACEHOLDER
   logStorageSize: PLACEHOLDER
 
-# Per-op drive timeouts and health-state thresholds added in chart 0.0.95.
-# Chart defaults are 5s per metadata op (rustfs#2564) which trips FaultyDisk
-# on NFS-CSI under scanner load (rustfs#2601). Loosen them to give NFS-backed
-# metadata operations enough headroom.
+# Raise drive timeouts above the 5s defaults — too tight for NFS-CSI and
+# trips FaultyDisk under scanner load (rustfs#2601).
 extraEnv:
   - name: RUSTFS_DRIVE_METADATA_TIMEOUT_SECS
     value: "30"
@@ -50,3 +56,5 @@ extraEnv:
     value: "30"
   - name: RUSTFS_DRIVE_SUSPECT_FAILURE_THRESHOLD
     value: "10"
+  - name: RUSTFS_DRIVE_ACTIVE_CHECK_TIMEOUT_SECS
+    value: "30"

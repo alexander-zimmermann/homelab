@@ -49,3 +49,32 @@ spec:
           annotations:
             summary: "Gatus is not being scraped"
             description: "Gatus has not been scraped by Prometheus for more than 5 minutes — external reachability monitoring is offline."
+
+    - name: rustfs-alerts
+      rules:
+        - alert: RustfsDriveOffline
+          expr: max by (endpoint) (rustfs_drive_runtime_state{state="offline"}) > 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "RustFS drive {{ $labels.endpoint }} marked offline"
+            description: "Health-state machine flipped {{ $labels.endpoint }} to offline — every S3 op will fail (rustfs#2601 class regression)."
+
+        - alert: RustfsDriveStateFlapping
+          expr: sum(increase(rustfs_drive_state_transition_total[15m])) by (endpoint) > 4
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "RustFS drive {{ $labels.endpoint }} flapping"
+            description: "More than 4 health-state transitions in 15m — likely too-aggressive timeouts or NFS-side latency."
+
+        - alert: RustfsDriveOpTimeout
+          expr: sum(increase(rustfs_drive_op_timeout_total[10m])) by (op) > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "RustFS drive op {{ $labels.op }} timing out"
+            description: "Drive operation {{ $labels.op }} hit the per-op timeout — consider raising the matching RUSTFS_DRIVE_*_TIMEOUT_SECS env var."

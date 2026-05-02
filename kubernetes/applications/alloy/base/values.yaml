@@ -74,11 +74,12 @@ collectors:
       - filesystem-log-reader
       - daemonset
 
-  # Alloy Receiver: Opens receivers for external data sources (syslog)
+  # Alloy Receiver: Opens receivers for external data sources (syslog, OTLP)
   alloy-receiver:
-    # Include the loki destination so the syslog extraConfig can reference loki.write.loki.receiver
+    # Include loki for syslog forwarding and prometheus for OTLP metric forwarding
     includeDestinations:
       - loki
+      - prometheus
     # Expose Alloy Receiver via Cilium/BGP-announced LoadBalancer
     alloy:
       service:
@@ -86,7 +87,7 @@ collectors:
         labels:
           bgp.cilium.io/ip-pool: default
           bgp.cilium.io/advertise-service: default
-      # Syslog receiver: TCP 601 (RFC5424) and UDP 514 (RFC5424) for external infrastructure devices
+      # Syslog: TCP 601 / UDP 514 (RFC5424). OTLP HTTP: 4318 (rustfs metrics push).
       extraPorts:
         - name: syslog-tcp
           port: 601
@@ -96,6 +97,10 @@ collectors:
           port: 514
           targetPort: 514
           protocol: UDP
+        - name: otlp-http
+          port: 4318
+          targetPort: 4318
+          protocol: TCP
     extraConfig: |
       discovery.relabel "syslog" {
           targets = []
@@ -158,4 +163,22 @@ collectors:
 
           forward_to    = [loki.write.loki.receiver]
           relabel_rules = discovery.relabel.syslog.rules
+      }
+
+      // OTLP/HTTP receiver: rustfs (and future apps) push metrics here, which
+      // are then converted to Prometheus exposition by the chart-rendered
+      // otelcol.receiver.prometheus.prometheus component and remote-written.
+      otelcol.receiver.otlp "rustfs" {
+          http {
+              endpoint = "0.0.0.0:4318"
+          }
+          output {
+              metrics = [otelcol.processor.batch.rustfs.input]
+          }
+      }
+
+      otelcol.processor.batch "rustfs" {
+          output {
+              metrics = [otelcol.receiver.prometheus.prometheus.receiver]
+          }
       }
