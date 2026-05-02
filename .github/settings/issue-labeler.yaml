@@ -59,7 +59,6 @@ topic/data-ai:
   - "postgres"
   - "rustfs"
   - "longhorn"
-  - "influxdb"
   - "timescaledb"
 topic/observability:
   - "grafana"
