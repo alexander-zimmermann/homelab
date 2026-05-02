@@ -17,7 +17,9 @@ STREAMS="knx ems_esp solaredge_inverter solaredge_powerflow warp_system warp_evs
 
 # Install tooling first; coreutils gives us GNU date for relative-time parsing
 # (busybox date does not understand "yesterday").
-apk add --no-cache curl unzip ca-certificates coreutils >/dev/null
+# gcompat is a glibc shim — DuckDB's linux-amd64 build is glibc-linked and
+# refuses to run on alpine's musl without it.
+apk add --no-cache curl unzip ca-certificates coreutils gcompat >/dev/null
 curl -fsSL -o /tmp/duckdb.zip "https://github.com/duckdb/duckdb/releases/download/${DUCKDB_VERSION}/duckdb_cli-linux-amd64.zip"
 unzip -o /tmp/duckdb.zip -d /usr/local/bin
 chmod +x /usr/local/bin/duckdb
