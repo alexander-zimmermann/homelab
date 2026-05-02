@@ -15,15 +15,16 @@ set -euo pipefail
 
 STREAMS="knx ems_esp solaredge_inverter solaredge_powerflow warp_system warp_evse warp_charge_manager warp_charge_tracker warp_meter"
 
-DAY="${COMPACT_DAY:-$(date -u -d 'yesterday' '+%Y/%m/%d')}"
-echo "Compacting day=$DAY"
-
-# Install duckdb + mc into ephemeral /tmp (image is alpine, no local cache).
-apk add --no-cache curl unzip ca-certificates >/dev/null
+# Install tooling first; coreutils gives us GNU date for relative-time parsing
+# (busybox date does not understand "yesterday").
+apk add --no-cache curl unzip ca-certificates coreutils >/dev/null
 curl -fsSL -o /tmp/duckdb.zip "https://github.com/duckdb/duckdb/releases/download/${DUCKDB_VERSION}/duckdb_cli-linux-amd64.zip"
 unzip -q /tmp/duckdb.zip -d /usr/local/bin
 curl -fsSL -o /usr/local/bin/mc https://dl.min.io/client/mc/release/linux-amd64/mc
 chmod +x /usr/local/bin/mc
+
+DAY="${COMPACT_DAY:-$(date -u -d 'yesterday' '+%Y/%m/%d')}"
+echo "Compacting day=$DAY"
 
 export MC_CONFIG_DIR=$(mktemp -d)
 mc alias set rustfs "$RUSTFS_URL" "$ACCESS_KEY" "$SECRET_KEY"
