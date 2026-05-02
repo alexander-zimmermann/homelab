@@ -19,9 +19,12 @@ STREAMS="knx ems_esp solaredge_inverter solaredge_powerflow warp_system warp_evs
 # (busybox date does not understand "yesterday").
 apk add --no-cache curl unzip ca-certificates coreutils >/dev/null
 curl -fsSL -o /tmp/duckdb.zip "https://github.com/duckdb/duckdb/releases/download/${DUCKDB_VERSION}/duckdb_cli-linux-amd64.zip"
-unzip -q /tmp/duckdb.zip -d /usr/local/bin
+unzip -o /tmp/duckdb.zip -d /usr/local/bin
+chmod +x /usr/local/bin/duckdb
 curl -fsSL -o /usr/local/bin/mc https://dl.min.io/client/mc/release/linux-amd64/mc
 chmod +x /usr/local/bin/mc
+ls -la /usr/local/bin/duckdb /usr/local/bin/mc
+/usr/local/bin/duckdb --version
 
 DAY="${COMPACT_DAY:-$(date -u -d 'yesterday' '+%Y/%m/%d')}"
 echo "Compacting day=$DAY"
