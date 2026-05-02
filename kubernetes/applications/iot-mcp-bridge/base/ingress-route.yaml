@@ -18,7 +18,7 @@ spec:
       match: Host(`PLACEHOLDER`)
       priority: 10
       # No forward-auth — claude.ai cannot do interactive login; Bearer-token
-      # validation lives in the pod (Phase 0b, homelab#750).
+      # validation lives in the pod
       middlewares:
         - name: chain-standard
           namespace: ingress-controller

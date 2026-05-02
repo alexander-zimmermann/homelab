@@ -21,3 +21,28 @@ replacements:
         options:
           delimiter: "`"
           index: 1
+
+  # OIDC env vars — Authentik issuer/JWKS at auth.zimmermann.phd, MCP at mcp.zimmermann.phd
+  - sourceValue: https://auth.zimmermann.phd/application/o/iot-mcp-bridge/jwks/
+    targets:
+      - select:
+          kind: Deployment
+          name: iot-mcp-bridge
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=MCP_AUTH_JWKS_URL].value
+
+  - sourceValue: https://auth.zimmermann.phd/application/o/iot-mcp-bridge/
+    targets:
+      - select:
+          kind: Deployment
+          name: iot-mcp-bridge
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=MCP_AUTH_ISSUER].value
+
+  - sourceValue: https://mcp.zimmermann.phd/mcp
+    targets:
+      - select:
+          kind: Deployment
+          name: iot-mcp-bridge
+        fieldPaths:
+          - spec.template.spec.containers.0.env.[name=MCP_AUTH_RESOURCE_URL].value

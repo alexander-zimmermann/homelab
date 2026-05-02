@@ -59,6 +59,12 @@ global:
         secretKeyRef:
           name: wikijs-oidc-secret
           key: WIKIJS_OIDC_CLIENT_SECRET
+    # iot-mcp-bridge OIDC client secret for the iot-mcp-bridge-oidc blueprint
+    - name: IOT_MCP_BRIDGE_OIDC_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: iot-mcp-bridge-oidc-secret
+          key: IOT_MCP_BRIDGE_OIDC_CLIENT_SECRET
 
     # Blueprint variables — injected per environment via overlay replacements
     - name: AUTHENTIK_ARGOCD_REDIRECT_URI
@@ -73,6 +79,8 @@ global:
       value: https://PLACEHOLDER_NODE_RED_HOST/auth/strategy/callback/
     - name: AUTHENTIK_WIKIJS_REDIRECT_URI
       value: https://PLACEHOLDER_WIKIJS_HOST/login/b7746d63-71b4-47c1-bd32-903833a0a8ca/callback
+    - name: ANTHROPIC_OAUTH_REDIRECT_URI
+      value: https://claude.ai/api/mcp/auth_callback
 
     # Optimization: Fewer workers and no preloading saves RAM in small setups
     - name: AUTHENTIK_WEB__WORKERS
@@ -110,6 +118,7 @@ blueprints:
     - authentik-blueprint-grafana
     - authentik-blueprint-node-red
     - authentik-blueprint-wikijs
+    - authentik-blueprint-iot-mcp-bridge
 
 server:
   # Expose Authentik service via Cilium/BGP-announced LoadBalancer
