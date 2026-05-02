@@ -32,8 +32,6 @@ upConfig: |
     disable = false
     http_listen = "0.0.0.0:9130"
     report_errors = false
-  [influxdb]
-    disable = true
   [loki]
     disable = false
     url = "http://loki-gateway.loki.svc:80"
