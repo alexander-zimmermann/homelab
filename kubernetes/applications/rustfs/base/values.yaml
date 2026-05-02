@@ -32,3 +32,21 @@ storageclass:
   name: nfs-csi
   dataStorageSize: PLACEHOLDER
   logStorageSize: PLACEHOLDER
+
+# Per-op drive timeouts and health-state thresholds added in chart 0.0.95.
+# Chart defaults are 5s per metadata op (rustfs#2564) which trips FaultyDisk
+# on NFS-CSI under scanner load (rustfs#2601). Loosen them to give NFS-backed
+# metadata operations enough headroom.
+extraEnv:
+  - name: RUSTFS_DRIVE_METADATA_TIMEOUT_SECS
+    value: "30"
+  - name: RUSTFS_DRIVE_DISK_INFO_TIMEOUT_SECS
+    value: "30"
+  - name: RUSTFS_DRIVE_LIST_DIR_TIMEOUT_SECS
+    value: "60"
+  - name: RUSTFS_DRIVE_WALKDIR_TIMEOUT_SECS
+    value: "120"
+  - name: RUSTFS_DRIVE_WALKDIR_STALL_TIMEOUT_SECS
+    value: "30"
+  - name: RUSTFS_DRIVE_SUSPECT_FAILURE_THRESHOLD
+    value: "10"
