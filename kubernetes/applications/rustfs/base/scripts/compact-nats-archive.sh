@@ -36,6 +36,8 @@ mc alias set rustfs "$RUSTFS_URL" "$ACCESS_KEY" "$SECRET_KEY"
 
 S3_ENDPOINT_HOST=$(echo "$RUSTFS_URL" | sed 's|^http://||; s|^https://||')
 
+FAILED=""
+
 for STREAM in $STREAMS; do
   SRC_PREFIX="rustfs/nats-archive/$STREAM/$DAY"
   if ! mc ls "$SRC_PREFIX" >/dev/null 2>&1; then
@@ -44,9 +46,17 @@ for STREAM in $STREAMS; do
   fi
 
   echo "[$STREAM] merging hour-files into daily.parquet"
-  duckdb -batch <<SQL
+
+  # threads=1 → one HTTP read at a time so rustfs only buffers a single object.
+  # memory_limit=256MB → DuckDB streams instead of loading everything into memory.
+  # http_retries / http_timeout → tolerate transient rustfs hiccups.
+  if ! duckdb -batch <<SQL
 INSTALL httpfs;
 LOAD httpfs;
+SET threads = 1;
+SET memory_limit = '256MB';
+SET http_retries = 5;
+SET http_timeout = 30000;
 SET s3_endpoint = '$S3_ENDPOINT_HOST';
 SET s3_access_key_id = '$ACCESS_KEY';
 SET s3_secret_access_key = '$SECRET_KEY';
@@ -55,10 +65,18 @@ SET s3_use_ssl = false;
 COPY (SELECT * FROM read_parquet('s3://nats-archive/$STREAM/$DAY/*/*.parquet', union_by_name=true))
   TO 's3://nats-archive/$STREAM/$DAY/daily.parquet' (FORMAT PARQUET, COMPRESSION ZSTD);
 SQL
+  then
+    echo "[$STREAM] ERROR duckdb merge failed — leaving hour-files in place"
+    FAILED="$FAILED $STREAM"
+    sleep 5
+    continue
+  fi
 
   if ! mc stat "$SRC_PREFIX/daily.parquet" >/dev/null 2>&1; then
-    echo "[$STREAM] ERROR daily.parquet missing after merge — aborting cleanup"
-    exit 1
+    echo "[$STREAM] ERROR daily.parquet missing after merge — leaving hour-files"
+    FAILED="$FAILED $STREAM"
+    sleep 5
+    continue
   fi
 
   # Delete the 24 hour-folders (00..23). daily.parquet sits next to them at the day level.
@@ -66,6 +84,14 @@ SQL
     mc rm --recursive --force "$SRC_PREFIX/$H/" >/dev/null 2>&1 || true
   done
   echo "[$STREAM] done"
+
+  # Give rustfs a few seconds to release buffers between streams.
+  sleep 5
 done
 
+if [ -n "$FAILED" ]; then
+  echo "Compaction finished for day=$DAY with failures:$FAILED"
+  echo "Job will exit non-zero so the next CronJob run retries the failed streams."
+  exit 1
+fi
 echo "Compaction finished for day=$DAY"
