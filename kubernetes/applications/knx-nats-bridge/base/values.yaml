@@ -106,6 +106,7 @@ service:
 serviceMonitor:
   enabled: true
   additionalLabels:
+    # Prometheus Operator label (Opt-In)
     release: prometheus
   endpoints:
     - port: metrics

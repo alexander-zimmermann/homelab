@@ -2,6 +2,7 @@
 serviceMonitor:
   enabled: true
   labels:
+    # Prometheus Operator label (Opt-In)
     release: prometheus
 
 # Keep PodMonitor explicitly off (we rely on ServiceMonitor)

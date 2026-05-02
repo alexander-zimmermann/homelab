@@ -41,4 +41,5 @@ serviceMonitor:
   enabled: true
   interval: 30s
   labels:
+    # Prometheus Operator label (Opt-In)
     release: prometheus
