@@ -1,7 +1,7 @@
 -- Runs once via spec.bootstrap.initdb.postInitApplicationSQLRefs at cluster init.
 -- Schema evolution after this point requires a migration Job (or manual psql) AND
 -- mirroring the change back into this file so a fresh cluster lands at the
--- same schema. See plan handoff doc, "Schema-Evolution-Regel".
+-- same schema.
 
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
@@ -26,7 +26,7 @@ CREATE INDEX ON knx (knx_name, time DESC);
 CREATE INDEX ON knx (knx_main, knx_middle, knx_sub, time DESC);
 
 CREATE MATERIALIZED VIEW knx_1h
-WITH (timescaledb.continuous) AS
+WITH (timescaledb.continuous, timescaledb.materialized_only = true) AS
 SELECT time_bucket('1 hour', time) AS bucket, ga, knx_name,
        first(value, time) AS first_value, last(value, time) AS last_value,
        avg(value) AS avg_value, min(value) AS min_value, max(value) AS max_value,
@@ -50,7 +50,15 @@ CREATE TABLE solaredge_inverter (
     energytotal        DOUBLE PRECISION,
     temperature        DOUBLE PRECISION,
     status             SMALLINT,
-    raw                JSONB            NOT NULL,
+    ac_current_l1      DOUBLE PRECISION,
+    ac_current_l2      DOUBLE PRECISION,
+    ac_current_l3      DOUBLE PRECISION,
+    ac_voltage_l2      DOUBLE PRECISION,
+    ac_voltage_l3      DOUBLE PRECISION,
+    ac_power_apparent  DOUBLE PRECISION,
+    ac_power_factor    DOUBLE PRECISION,
+    ac_power_reactive  DOUBLE PRECISION,
+    raw                JSONB,
     PRIMARY KEY (time, inverter_id)
 );
 SELECT create_hypertable('solaredge_inverter', 'time', chunk_time_interval => INTERVAL '1 day');
@@ -58,7 +66,7 @@ CREATE INDEX ON solaredge_inverter (inverter_id, time DESC);
 CREATE INDEX ON solaredge_inverter USING GIN (raw jsonb_path_ops);
 
 CREATE MATERIALIZED VIEW solaredge_inverter_1h
-WITH (timescaledb.continuous) AS
+WITH (timescaledb.continuous, timescaledb.materialized_only = true) AS
 SELECT time_bucket('1 hour', time) AS bucket, inverter_id,
        avg(ac_power_actual) AS ac_power_avg,
        max(ac_power_actual) AS ac_power_max,
@@ -72,20 +80,29 @@ FROM solaredge_inverter GROUP BY bucket, inverter_id WITH NO DATA;
 -- SolarEdge Powerflow (solaredge-{1,2}.powerflow)
 -- =========================================================
 CREATE TABLE solaredge_powerflow (
-    time                TIMESTAMPTZ      NOT NULL,
-    inverter_id         SMALLINT         NOT NULL,
-    pv_production       DOUBLE PRECISION,
-    grid_power          DOUBLE PRECISION,
-    grid_consumption    DOUBLE PRECISION,
-    grid_delivery       DOUBLE PRECISION,
-    battery_charge      DOUBLE PRECISION,
-    battery_discharge   DOUBLE PRECISION,
-    consumer_total      DOUBLE PRECISION,
-    consumer_house      DOUBLE PRECISION,
-    consumer_evcharger  DOUBLE PRECISION,
-    inverter_power      DOUBLE PRECISION,
-    inverter_dc_power   DOUBLE PRECISION,
-    raw                 JSONB            NOT NULL,
+    time                             TIMESTAMPTZ      NOT NULL,
+    inverter_id                      SMALLINT         NOT NULL,
+    pv_production                    DOUBLE PRECISION,
+    grid_power                       DOUBLE PRECISION,
+    grid_consumption                 DOUBLE PRECISION,
+    grid_delivery                    DOUBLE PRECISION,
+    battery_charge                   DOUBLE PRECISION,
+    battery_discharge                DOUBLE PRECISION,
+    consumer_total                   DOUBLE PRECISION,
+    consumer_house                   DOUBLE PRECISION,
+    consumer_evcharger               DOUBLE PRECISION,
+    inverter_power                   DOUBLE PRECISION,
+    inverter_dc_power                DOUBLE PRECISION,
+    battery_power                    DOUBLE PRECISION,
+    consumer_inverter                DOUBLE PRECISION,
+    consumer_used_battery_production DOUBLE PRECISION,
+    consumer_used_pv_production      DOUBLE PRECISION,
+    consumer_used_production         DOUBLE PRECISION,
+    inverter_battery_production      DOUBLE PRECISION,
+    inverter_pv_production           DOUBLE PRECISION,
+    inverter_consumption             DOUBLE PRECISION,
+    inverter_production              DOUBLE PRECISION,
+    raw                              JSONB,
     PRIMARY KEY (time, inverter_id)
 );
 SELECT create_hypertable('solaredge_powerflow', 'time', chunk_time_interval => INTERVAL '1 day');
@@ -93,7 +110,7 @@ CREATE INDEX ON solaredge_powerflow (inverter_id, time DESC);
 CREATE INDEX ON solaredge_powerflow USING GIN (raw jsonb_path_ops);
 
 CREATE MATERIALIZED VIEW solaredge_powerflow_1h
-WITH (timescaledb.continuous) AS
+WITH (timescaledb.continuous, timescaledb.materialized_only = true) AS
 SELECT time_bucket('1 hour', time) AS bucket, inverter_id,
        avg(pv_production) AS pv_production_avg,
        max(pv_production) AS pv_production_max,
@@ -112,36 +129,69 @@ FROM solaredge_powerflow GROUP BY bucket, inverter_id WITH NO DATA;
 -- Per row only one topic is populated → most columns are NULL (cheap in column store).
 -- =========================================================
 CREATE TABLE ems_esp (
-    time           TIMESTAMPTZ      NOT NULL,
-    topic          TEXT             NOT NULL,
+    time              TIMESTAMPTZ      NOT NULL,
+    topic             TEXT             NOT NULL,
     -- Temperatures / pressures / flows
-    curflowtemp    DOUBLE PRECISION,
-    rettemp        DOUBLE PRECISION,
-    outdoortemp    DOUBLE PRECISION,
-    switchtemp     DOUBLE PRECISION,
-    syspress       DOUBLE PRECISION,
-    curtemp        DOUBLE PRECISION,
-    curflow        DOUBLE PRECISION,
-    setflowtemp    DOUBLE PRECISION,
-    flowsettemp    DOUBLE PRECISION,
-    flowtemphc     DOUBLE PRECISION,
-    settemp        DOUBLE PRECISION,
+    curflowtemp       DOUBLE PRECISION,
+    rettemp           DOUBLE PRECISION,
+    outdoortemp       DOUBLE PRECISION,
+    switchtemp        DOUBLE PRECISION,
+    syspress          DOUBLE PRECISION,
+    curtemp           DOUBLE PRECISION,
+    curflow           DOUBLE PRECISION,
+    setflowtemp       DOUBLE PRECISION,
+    flowsettemp       DOUBLE PRECISION,
+    flowtemphc        DOUBLE PRECISION,
+    settemp           DOUBLE PRECISION,
     -- Burner power
-    curburnpow     DOUBLE PRECISION,
+    curburnpow        DOUBLE PRECISION,
     -- 0/1 flags as SMALLINT (cheap, simpler than BOOL for CAGG arithmetic)
-    charging       SMALLINT,
-    heatingactive  SMALLINT,
-    heatingpump    SMALLINT,
-    valvestatus    SMALLINT,
-    pumpstatus     SMALLINT,
-    raw            JSONB            NOT NULL
+    charging          SMALLINT,
+    heatingactive     SMALLINT,
+    heatingpump       SMALLINT,
+    valvestatus       SMALLINT,
+    pumpstatus        SMALLINT,
+    -- Setpoints / modes
+    seltemp           DOUBLE PRECISION,
+    comforttemp       DOUBLE PRECISION,
+    ecotemp           DOUBLE PRECISION,
+    manualtemp        DOUBLE PRECISION,
+    reducetemp        DOUBLE PRECISION,
+    noreducetemp      DOUBLE PRECISION,
+    tempautotemp      DOUBLE PRECISION,
+    targetflowtemp    DOUBLE PRECISION,
+    selflowtemp       DOUBLE PRECISION,
+    selburnpow        DOUBLE PRECISION,
+    flowtempoffset    DOUBLE PRECISION,
+    -- Energy / counters
+    nompower          DOUBLE PRECISION,
+    nrg               DOUBLE PRECISION,
+    nrgheat           DOUBLE PRECISION,
+    nrgtotal          DOUBLE PRECISION,
+    ubauptime         DOUBLE PRECISION,
+    -- Burner / heating
+    burngas           SMALLINT,
+    burngas2          SMALLINT,
+    ignwork           DOUBLE PRECISION,
+    fanwork           DOUBLE PRECISION,
+    oilpreheat        SMALLINT,
+    threewayvalve     SMALLINT,
+    circ              SMALLINT,
+    -- DHW / sanitary
+    disinfecting      SMALLINT,
+    activated         SMALLINT,
+    tapwateractive    SMALLINT,
+    storagetemp1      DOUBLE PRECISION,
+    -- Service
+    servicecodenumber DOUBLE PRECISION,
+    raw               JSONB
 );
 SELECT create_hypertable('ems_esp', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON ems_esp (topic, time DESC);
 CREATE INDEX ON ems_esp USING GIN (raw jsonb_path_ops);
 
 CREATE MATERIALIZED VIEW ems_esp_boiler_1h
-WITH (timescaledb.continuous) AS
+WITH (timescaledb.continuous, timescaledb.materialized_only = true) AS
 SELECT time_bucket('1 hour', time) AS bucket,
        avg(curflowtemp) AS curflowtemp_avg, max(curflowtemp) AS curflowtemp_max,
        avg(rettemp)     AS rettemp_avg,
@@ -154,7 +204,7 @@ FROM ems_esp WHERE topic = 'boiler_data'
 GROUP BY bucket WITH NO DATA;
 
 CREATE MATERIALIZED VIEW ems_esp_dhw_1h
-WITH (timescaledb.continuous) AS
+WITH (timescaledb.continuous, timescaledb.materialized_only = true) AS
 SELECT time_bucket('1 hour', time) AS bucket,
        avg(curtemp)  AS curtemp_avg,
        avg(curflow)  AS curflow_avg,
@@ -173,7 +223,7 @@ GROUP BY bucket WITH NO DATA;
 CREATE TABLE warp_system (
     time       TIMESTAMPTZ NOT NULL,
     sub_topic  TEXT        NOT NULL,
-    raw        JSONB       NOT NULL
+    raw        JSONB
 );
 SELECT create_hypertable('warp_system', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON warp_system (sub_topic, time DESC);
@@ -182,13 +232,17 @@ CREATE INDEX ON warp_system USING GIN (raw jsonb_path_ops);
 -- warp.evse.state, warp.evse.low_level_state
 -- Typed: 4 state/error fields used in energy-wallbox dashboard.
 CREATE TABLE warp_evse (
-    time                    TIMESTAMPTZ NOT NULL,
-    sub_topic               TEXT        NOT NULL,
-    charger_state           SMALLINT,
-    error_state             SMALLINT,
-    contactor_error         SMALLINT,
-    dc_fault_current_state  SMALLINT,
-    raw                     JSONB       NOT NULL
+    time                     TIMESTAMPTZ NOT NULL,
+    sub_topic                TEXT        NOT NULL,
+    charger_state            SMALLINT,
+    error_state              SMALLINT,
+    contactor_error          SMALLINT,
+    dc_fault_current_state   SMALLINT,
+    allowed_charging_current DOUBLE PRECISION,
+    iec61851_state           SMALLINT,
+    lock_state               SMALLINT,
+    contactor_state          SMALLINT,
+    raw                      JSONB
 );
 SELECT create_hypertable('warp_evse', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON warp_evse (sub_topic, time DESC);
@@ -198,7 +252,7 @@ CREATE INDEX ON warp_evse USING GIN (raw jsonb_path_ops);
 CREATE TABLE warp_charge_manager (
     time       TIMESTAMPTZ NOT NULL,
     sub_topic  TEXT        NOT NULL,
-    raw        JSONB       NOT NULL
+    raw        JSONB
 );
 SELECT create_hypertable('warp_charge_manager', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON warp_charge_manager (sub_topic, time DESC);
@@ -207,13 +261,19 @@ CREATE INDEX ON warp_charge_manager USING GIN (raw jsonb_path_ops);
 -- warp.charge_tracker.{state, current_charge, last_charges}
 -- Typed: 4 fields from energy-wallbox dashboard.
 CREATE TABLE warp_charge_tracker (
-    time             TIMESTAMPTZ      NOT NULL,
-    sub_topic        TEXT             NOT NULL,
-    user_id          TEXT,
-    charge_duration  DOUBLE PRECISION,   -- minutes
-    energy_charged   DOUBLE PRECISION,   -- kWh
-    tracked_charges  INTEGER,
-    raw              JSONB            NOT NULL
+    time                   TIMESTAMPTZ      NOT NULL,
+    sub_topic              TEXT             NOT NULL,
+    user_id                TEXT,
+    charge_duration        DOUBLE PRECISION,   -- minutes
+    energy_charged         DOUBLE PRECISION,   -- kWh
+    tracked_charges        INTEGER,
+    authorization_type     DOUBLE PRECISION,
+    meter_start            DOUBLE PRECISION,
+    timestamp_minutes      DOUBLE PRECISION,
+    evse_uptime_start      DOUBLE PRECISION,
+    first_charge_timestamp DOUBLE PRECISION,
+    generator_state        SMALLINT,
+    raw                    JSONB
 );
 SELECT create_hypertable('warp_charge_tracker', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON warp_charge_tracker (sub_topic, time DESC);
@@ -235,14 +295,14 @@ CREATE TABLE warp_meter (
     power_l1    DOUBLE PRECISION,
     power_l2    DOUBLE PRECISION,
     power_l3    DOUBLE PRECISION,
-    raw         JSONB            NOT NULL
+    raw         JSONB
 );
 SELECT create_hypertable('warp_meter', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON warp_meter (sub_topic, time DESC);
 CREATE INDEX ON warp_meter (meter_id, time DESC) WHERE meter_id IS NOT NULL;
 
 CREATE MATERIALIZED VIEW warp_meter_1h
-WITH (timescaledb.continuous) AS
+WITH (timescaledb.continuous, timescaledb.materialized_only = true) AS
 SELECT time_bucket('1 hour', time) AS bucket, meter_id,
        avg(power_l1 + power_l2 + power_l3) AS power_total_avg,
        max(power_l1 + power_l2 + power_l3) AS power_total_max,
@@ -322,6 +382,21 @@ SELECT add_compression_policy('warp_evse',           INTERVAL '7 days');
 SELECT add_compression_policy('warp_charge_manager', INTERVAL '7 days');
 SELECT add_compression_policy('warp_charge_tracker', INTERVAL '7 days');
 SELECT add_compression_policy('warp_meter',          INTERVAL '7 days');
+
+-- =========================================================
+-- Retention policies — 365d on every hot hypertable. Raw chunks past
+-- this age are dropped; CAGGs continue to serve aggregated history
+-- because of materialized_only = true (set inline above).
+-- =========================================================
+SELECT add_retention_policy('knx',                 INTERVAL '365 days');
+SELECT add_retention_policy('solaredge_inverter',  INTERVAL '365 days');
+SELECT add_retention_policy('solaredge_powerflow', INTERVAL '365 days');
+SELECT add_retention_policy('ems_esp',             INTERVAL '365 days');
+SELECT add_retention_policy('warp_system',         INTERVAL '365 days');
+SELECT add_retention_policy('warp_evse',           INTERVAL '365 days');
+SELECT add_retention_policy('warp_charge_manager', INTERVAL '365 days');
+SELECT add_retention_policy('warp_charge_tracker', INTERVAL '365 days');
+SELECT add_retention_policy('warp_meter',          INTERVAL '365 days');
 
 -- =========================================================
 -- Transfer ownership from `postgres` (CNPG runs initdb as superuser)
