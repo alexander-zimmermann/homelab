@@ -9,7 +9,7 @@ input:
     durable: redpanda-connect-knx
     deliver: all
     ack_wait: 30s
-    max_ack_pending: 256
+    max_ack_pending: 2000
 
 pipeline:
   processors:
