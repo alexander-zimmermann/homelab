@@ -1,0 +1,64 @@
+# Daily prune of stale log processors. LAPI pods do not unregister on shutdown,
+# so old replicas accumulate after rollouts and surface in the console as
+# inactive log processors. The chart's agents_autodelete flush does not clear
+# them reliably; cscli machines prune does.
+apiVersion: batch/v1
+kind: CronJob
+
+metadata:
+  name: crowdsec-machines-prune
+  namespace: crowdsec
+
+spec:
+  schedule: "30 3 * * *"
+  timeZone: "Etc/UTC"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  startingDeadlineSeconds: 600
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      ttlSecondsAfterFinished: 86400
+      template:
+        spec:
+          serviceAccountName: crowdsec-machines-prune
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: dhi-registry-secret
+          containers:
+            - name: prune
+              image: dhi.io/kubectl:1
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 1000
+                runAsGroup: 1000
+                readOnlyRootFilesystem: true
+              command: ["/bin/sh", "/scripts/prune-machines.sh"]
+              env:
+                - name: NAMESPACE
+                  value: "crowdsec"
+                - name: SELECTOR
+                  value: "type=lapi,k8s-app=crowdsec" # gitleaks:allow
+                - name: DURATION
+                  value: "48h"
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: scripts
+              configMap:
+                name: crowdsec-machines-prune-script
+                defaultMode: 0555
+            - name: tmp
+              emptyDir: {}

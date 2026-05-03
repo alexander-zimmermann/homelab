@@ -117,6 +117,25 @@ appsec:
         release: prometheus
 
 config:
+  # Override default profiles.yaml: extend ban duration from 4h to 24h to keep
+  # scanners blocked longer and reduce repeat alerts hitting the console quota.
+  profiles.yaml: |
+    name: default_ip_remediation
+    filters:
+      - Alert.Remediation == true && Alert.GetScope() == "Ip"
+    decisions:
+      - type: ban
+        duration: 24h
+    on_success: break
+    ---
+    name: default_range_remediation
+    filters:
+      - Alert.Remediation == true && Alert.GetScope() == "Range"
+    decisions:
+      - type: ban
+        duration: 24h
+    on_success: break
+
   # Custom configuration to be loaded in crowdsec agent or lapi
   config.yaml.local: |
     api:

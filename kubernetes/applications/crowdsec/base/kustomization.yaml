@@ -6,6 +6,15 @@ resources:
   - ./namespace.yaml
   - ./sealed-secret.yaml
   - ./database.yaml
+  - ./rbac.yaml
+  - ./machines-prune-cronjob.yaml
+
+configMapGenerator:
+  - name: crowdsec-machines-prune-script
+    options:
+      disableNameSuffixHash: true
+    files:
+      - scripts/prune-machines.sh
 
 helmCharts:
   - name: crowdsec
