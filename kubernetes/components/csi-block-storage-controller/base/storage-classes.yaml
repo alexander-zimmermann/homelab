@@ -15,7 +15,7 @@ parameters:
   staleReplicaTimeout: "1440" # 1 day
   fsType: "ext4"
   dataLocality: "strict-local"
-  recurringJobSelector: '[{"name":"trim-weekly", "isGroup":false}]'
+  recurringJobSelector: '[{"name":"trim-weekly", "isGroup":false},{"name":"snapshot-cleanup", "isGroup":false}]'
 
 ---
 # Backup-Enabled Storage Class
@@ -34,4 +34,4 @@ parameters:
   numberOfReplicas: "2"
   staleReplicaTimeout: "1440" # 1 day
   fsType: "ext4"
-  recurringJobSelector: '[{"name":"backup-daily", "isGroup":false},{"name":"trim-weekly", "isGroup":false}]'
+  recurringJobSelector: '[{"name":"backup-daily", "isGroup":false},{"name":"trim-weekly", "isGroup":false},{"name":"snapshot-cleanup", "isGroup":false}]'

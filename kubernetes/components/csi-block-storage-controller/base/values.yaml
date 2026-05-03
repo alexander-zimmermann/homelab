@@ -72,7 +72,7 @@ persistence:
   # Recurring job selector for a default Longhorn StorageClass
   recurringJobSelector:
     enable: true
-    jobList: '[{"name":"trim-weekly", "isGroup":false}]'
+    jobList: '[{"name":"trim-weekly", "isGroup":false},{"name":"snapshot-cleanup", "isGroup":false}]'
 
 defaultBackupStore:
   # Setup RusstFS as local backupstore
