@@ -34,7 +34,7 @@ spec:
               value: "http://argocd-server.gitops-controller.svc.cluster.local"
       containers:
         - name: provision
-          image: alpine/k8s:1.35.4
+          image: alpine/k8s:1.36.0
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
