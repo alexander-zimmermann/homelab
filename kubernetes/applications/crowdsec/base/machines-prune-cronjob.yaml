@@ -29,7 +29,6 @@ spec:
           containers:
             - name: prune
               # `:1-dev` includes busybox/coreutils so the script can use /bin/sh and awk.
-              # The plain `:1` tag is distroless and lacks a shell.
               image: dhi.io/kubectl:1-dev
               securityContext:
                 allowPrivilegeEscalation: false
