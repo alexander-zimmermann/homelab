@@ -17,13 +17,19 @@ pipeline:
         let evt = this
         let parts = meta("nats_subject").split(".")
         root = {
-          "time":            meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z")),
-          "sub_topic":       $parts.slice(1).join("."),
-          "user_id":         $evt.user_id.or(null),
-          "charge_duration": $evt.charge_duration.or(null),
-          "energy_charged":  $evt.energy_charged.or(null),
-          "tracked_charges": $evt.tracked_charges.or(null),
-          "raw":             $evt,
+          "time":                   meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z")),
+          "sub_topic":              $parts.slice(1).join("."),
+          "user_id":                $evt.user_id.or(null),
+          "charge_duration":        $evt.charge_duration.or(null),
+          "energy_charged":         $evt.energy_charged.or(null),
+          "tracked_charges":        $evt.tracked_charges.or(null),
+          "authorization_type":     $evt.authorization_type.or(null),
+          "meter_start":            $evt.meter_start.or(null),
+          "timestamp_minutes":      $evt.timestamp_minutes.or(null),
+          "evse_uptime_start":      $evt.evse_uptime_start.or(null),
+          "first_charge_timestamp": $evt.first_charge_timestamp.or(null),
+          "generator_state":        $evt.generator_state.or(null),
+          "raw":                    $evt,
         }
 
 output:
@@ -44,9 +50,19 @@ output:
             INSERT INTO warp_charge_tracker (
               time, sub_topic,
               user_id, charge_duration, energy_charged, tracked_charges,
+              authorization_type, meter_start, timestamp_minutes,
+              evse_uptime_start, first_charge_timestamp,
+              generator_state,
               raw
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            VALUES (
+              $1, $2,
+              $3, $4, $5, $6,
+              $7, $8, $9,
+              $10, $11,
+              ($12::numeric)::smallint,
+              $13
+            )
           args_mapping: |
             root = [
               this.time,
@@ -55,6 +71,12 @@ output:
               this.charge_duration,
               this.energy_charged,
               this.tracked_charges,
+              this.authorization_type,
+              this.meter_start,
+              this.timestamp_minutes,
+              this.evse_uptime_start,
+              this.first_charge_timestamp,
+              this.generator_state,
               this.raw.string(),
             ]
       # Cold archive: original NATS payload as Parquet on RustFS

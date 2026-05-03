@@ -17,13 +17,17 @@ pipeline:
         let evt = this
         let parts = meta("nats_subject").split(".")
         root = {
-          "time":                   meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z")),
-          "sub_topic":              $parts.slice(1).join("."),
-          "charger_state":          $evt.charger_state.or(null),
-          "error_state":            $evt.error_state.or(null),
-          "contactor_error":        $evt.contactor_error.or(null),
-          "dc_fault_current_state": $evt.dc_fault_current_state.or(null),
-          "raw":                    $evt,
+          "time":                     meta("nats_timestamp").or(now().ts_format("2006-01-02T15:04:05.999999Z")),
+          "sub_topic":                $parts.slice(1).join("."),
+          "charger_state":            $evt.charger_state.or(null),
+          "error_state":              $evt.error_state.or(null),
+          "contactor_error":          $evt.contactor_error.or(null),
+          "dc_fault_current_state":   $evt.dc_fault_current_state.or(null),
+          "allowed_charging_current": $evt.allowed_charging_current.or(null),
+          "iec61851_state":           $evt.iec61851_state.or(null),
+          "lock_state":               $evt.lock_state.or(null),
+          "contactor_state":          $evt.contactor_state.or(null),
+          "raw":                      $evt,
         }
 
 output:
@@ -40,9 +44,17 @@ output:
             INSERT INTO warp_evse (
               time, sub_topic,
               charger_state, error_state, contactor_error, dc_fault_current_state,
+              allowed_charging_current,
+              iec61851_state, lock_state, contactor_state,
               raw
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            VALUES (
+              $1, $2,
+              $3, $4, $5, $6,
+              $7,
+              ($8::numeric)::smallint, ($9::numeric)::smallint, ($10::numeric)::smallint,
+              $11
+            )
           args_mapping: |
             root = [
               this.time,
@@ -51,6 +63,10 @@ output:
               this.error_state,
               this.contactor_error,
               this.dc_fault_current_state,
+              this.allowed_charging_current,
+              this.iec61851_state,
+              this.lock_state,
+              this.contactor_state,
               this.raw.string(),
             ]
       - aws_s3:

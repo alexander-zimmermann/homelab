@@ -31,6 +31,14 @@ pipeline:
           "energytotal":        $evt.energytotal,
           "temperature":        $evt.temperature,
           "status":             $evt.status,
+          "ac_current_l1":      $evt.ac.current.l1.or(null),
+          "ac_current_l2":      $evt.ac.current.l2.or(null),
+          "ac_current_l3":      $evt.ac.current.l3.or(null),
+          "ac_voltage_l2":      $evt.ac.voltage.l2.or(null),
+          "ac_voltage_l3":      $evt.ac.voltage.l3.or(null),
+          "ac_power_apparent":  $evt.ac.power.apparent.or(null),
+          "ac_power_factor":    $evt.ac.power.factor.or(null),
+          "ac_power_reactive":  $evt.ac.power.reactive.or(null),
           "raw":                $evt,
         }
 
@@ -49,9 +57,22 @@ output:
               time, inverter_id,
               ac_power_actual, ac_current_actual, ac_voltage_l1, ac_frequency,
               dc_power, dc_current, dc_voltage,
-              energytotal, temperature, status, raw
+              energytotal, temperature, status,
+              ac_current_l1, ac_current_l2, ac_current_l3,
+              ac_voltage_l2, ac_voltage_l3,
+              ac_power_apparent, ac_power_factor, ac_power_reactive,
+              raw
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+            VALUES (
+              $1, $2,
+              $3, $4, $5, $6,
+              $7, $8, $9,
+              $10, $11, $12,
+              $13, $14, $15,
+              $16, $17,
+              $18, $19, $20,
+              $21
+            )
             ON CONFLICT (time, inverter_id) DO NOTHING
           args_mapping: |
             root = [
@@ -67,6 +88,14 @@ output:
               this.energytotal,
               this.temperature,
               this.status,
+              this.ac_current_l1,
+              this.ac_current_l2,
+              this.ac_current_l3,
+              this.ac_voltage_l2,
+              this.ac_voltage_l3,
+              this.ac_power_apparent,
+              this.ac_power_factor,
+              this.ac_power_reactive,
               this.raw.string(),
             ]
       - aws_s3:
