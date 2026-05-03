@@ -18,7 +18,6 @@ CREATE TABLE knx (
     knx_name    TEXT             NOT NULL,
     dpt         TEXT             NOT NULL,
     value       DOUBLE PRECISION NOT NULL,
-    raw         JSONB,
     PRIMARY KEY (time, ga)
 );
 SELECT create_hypertable('knx', 'time', chunk_time_interval => INTERVAL '1 day');
@@ -35,7 +34,7 @@ FROM knx GROUP BY bucket, ga, knx_name WITH NO DATA;
 
 -- =========================================================
 -- SolarEdge Inverter (solaredge-{1,2}.modbus.inverter)
--- Hot-path columns from energy-inverter dashboard, full payload in raw.
+-- Hot-path columns from energy-inverter dashboard.
 -- =========================================================
 CREATE TABLE solaredge_inverter (
     time               TIMESTAMPTZ      NOT NULL,
@@ -58,12 +57,10 @@ CREATE TABLE solaredge_inverter (
     ac_power_apparent  DOUBLE PRECISION,
     ac_power_factor    DOUBLE PRECISION,
     ac_power_reactive  DOUBLE PRECISION,
-    raw                JSONB,
     PRIMARY KEY (time, inverter_id)
 );
 SELECT create_hypertable('solaredge_inverter', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON solaredge_inverter (inverter_id, time DESC);
-CREATE INDEX ON solaredge_inverter USING GIN (raw jsonb_path_ops);
 
 CREATE MATERIALIZED VIEW solaredge_inverter_1h
 WITH (timescaledb.continuous, timescaledb.materialized_only = true) AS
@@ -102,12 +99,10 @@ CREATE TABLE solaredge_powerflow (
     inverter_pv_production           DOUBLE PRECISION,
     inverter_consumption             DOUBLE PRECISION,
     inverter_production              DOUBLE PRECISION,
-    raw                              JSONB,
     PRIMARY KEY (time, inverter_id)
 );
 SELECT create_hypertable('solaredge_powerflow', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON solaredge_powerflow (inverter_id, time DESC);
-CREATE INDEX ON solaredge_powerflow USING GIN (raw jsonb_path_ops);
 
 CREATE MATERIALIZED VIEW solaredge_powerflow_1h
 WITH (timescaledb.continuous, timescaledb.materialized_only = true) AS
@@ -183,12 +178,10 @@ CREATE TABLE ems_esp (
     tapwateractive    SMALLINT,
     storagetemp1      DOUBLE PRECISION,
     -- Service
-    servicecodenumber DOUBLE PRECISION,
-    raw               JSONB
+    servicecodenumber DOUBLE PRECISION
 );
 SELECT create_hypertable('ems_esp', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON ems_esp (topic, time DESC);
-CREATE INDEX ON ems_esp USING GIN (raw jsonb_path_ops);
 
 CREATE MATERIALIZED VIEW ems_esp_boiler_1h
 WITH (timescaledb.continuous, timescaledb.materialized_only = true) AS
@@ -216,18 +209,15 @@ GROUP BY bucket WITH NO DATA;
 
 -- =========================================================
 -- WARP — split along the WARP-API topic hierarchy.
--- All tables: (time, sub_topic, raw JSONB) + GIN.
 -- =========================================================
 
 -- warp.rtc.time, warp.esp32.temperature, warp.ntp.state
 CREATE TABLE warp_system (
     time       TIMESTAMPTZ NOT NULL,
-    sub_topic  TEXT        NOT NULL,
-    raw        JSONB
+    sub_topic  TEXT        NOT NULL
 );
 SELECT create_hypertable('warp_system', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON warp_system (sub_topic, time DESC);
-CREATE INDEX ON warp_system USING GIN (raw jsonb_path_ops);
 
 -- warp.evse.state, warp.evse.low_level_state
 -- Typed: 4 state/error fields used in energy-wallbox dashboard.
@@ -241,22 +231,18 @@ CREATE TABLE warp_evse (
     allowed_charging_current DOUBLE PRECISION,
     iec61851_state           SMALLINT,
     lock_state               SMALLINT,
-    contactor_state          SMALLINT,
-    raw                      JSONB
+    contactor_state          SMALLINT
 );
 SELECT create_hypertable('warp_evse', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON warp_evse (sub_topic, time DESC);
-CREATE INDEX ON warp_evse USING GIN (raw jsonb_path_ops);
 
 -- warp.charge_manager.{state, low_level_state, config, available_current, ...}
 CREATE TABLE warp_charge_manager (
     time       TIMESTAMPTZ NOT NULL,
-    sub_topic  TEXT        NOT NULL,
-    raw        JSONB
+    sub_topic  TEXT        NOT NULL
 );
 SELECT create_hypertable('warp_charge_manager', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON warp_charge_manager (sub_topic, time DESC);
-CREATE INDEX ON warp_charge_manager USING GIN (raw jsonb_path_ops);
 
 -- warp.charge_tracker.{state, current_charge, last_charges}
 -- Typed: 4 fields from energy-wallbox dashboard.
@@ -272,16 +258,14 @@ CREATE TABLE warp_charge_tracker (
     timestamp_minutes      DOUBLE PRECISION,
     evse_uptime_start      DOUBLE PRECISION,
     first_charge_timestamp DOUBLE PRECISION,
-    generator_state        SMALLINT,
-    raw                    JSONB
+    generator_state        SMALLINT
 );
 SELECT create_hypertable('warp_charge_tracker', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON warp_charge_tracker (sub_topic, time DESC);
 CREATE INDEX ON warp_charge_tracker (user_id, time DESC) WHERE user_id IS NOT NULL;
-CREATE INDEX ON warp_charge_tracker USING GIN (raw jsonb_path_ops);
 
 -- warp.meter.all_values (86 floats), warp.meters.<N>.values (39 floats), warp.meters.<N>.update
--- Typed: phase V/A/W (positions 0-8 confirmed via Telegraf XPath). Rest in raw.
+-- Typed: phase V/A/W (positions 0-8 confirmed via Telegraf XPath).
 CREATE TABLE warp_meter (
     time        TIMESTAMPTZ      NOT NULL,
     sub_topic   TEXT             NOT NULL,
@@ -294,8 +278,7 @@ CREATE TABLE warp_meter (
     current_l3  DOUBLE PRECISION,
     power_l1    DOUBLE PRECISION,
     power_l2    DOUBLE PRECISION,
-    power_l3    DOUBLE PRECISION,
-    raw         JSONB
+    power_l3    DOUBLE PRECISION
 );
 SELECT create_hypertable('warp_meter', 'time', chunk_time_interval => INTERVAL '1 day');
 CREATE INDEX ON warp_meter (sub_topic, time DESC);
