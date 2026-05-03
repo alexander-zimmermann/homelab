@@ -18,10 +18,12 @@ spec:
     spec:
       serviceAccountName: grafana-sa-provisioner
       restartPolicy: OnFailure
+      imagePullSecrets:
+        - name: dhi-registry-secret
       initContainers:
         # Wait until Grafana is ready before provisioning
         - name: wait-for-grafana
-          image: curlimages/curl:8.20.0
+          image: dhi.io/curl:8-alpine3.23
           command: ["/bin/sh", "-c"]
           args:
             - |

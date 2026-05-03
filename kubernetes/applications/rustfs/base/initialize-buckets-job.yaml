@@ -16,10 +16,12 @@ spec:
     spec:
       serviceAccountName: default
       restartPolicy: OnFailure
+      imagePullSecrets:
+        - name: dhi-registry-secret
       # Wait until RustFS is reachable
       initContainers:
         - name: wait-for-rustfs
-          image: curlimages/curl:8.20.0
+          image: dhi.io/curl:8-alpine3.23
           command: ["/bin/sh", "-c"]
           args:
             - |
