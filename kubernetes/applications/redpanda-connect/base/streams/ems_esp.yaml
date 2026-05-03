@@ -102,8 +102,7 @@ output:
               burngas, burngas2, ignwork, fanwork,
               oilpreheat, threewayvalve, circ,
               disinfecting, activated, tapwateractive, storagetemp1,
-              servicecodenumber,
-              raw
+              servicecodenumber
             )
             VALUES (
               $1, $2,
@@ -117,8 +116,7 @@ output:
               ($36::numeric)::smallint, ($37::numeric)::smallint, $38, $39,
               ($40::numeric)::smallint, ($41::numeric)::smallint, ($42::numeric)::smallint,
               ($43::numeric)::smallint, ($44::numeric)::smallint, ($45::numeric)::smallint, $46,
-              $47,
-              $48
+              $47
             )
           args_mapping: |
             root = [
@@ -169,7 +167,6 @@ output:
               this.tapwateractive,
               this.storagetemp1,
               this.servicecodenumber,
-              this.raw.string(),
             ]
       - aws_s3:
           bucket: nats-archive

@@ -33,13 +33,12 @@ output:
           init_statement: |
             SET timezone = 'UTC';
           query: |
-            INSERT INTO warp_charge_manager (time, sub_topic, raw)
-            VALUES ($1, $2, $3)
+            INSERT INTO warp_charge_manager (time, sub_topic)
+            VALUES ($1, $2)
           args_mapping: |
             root = [
               this.time,
               this.sub_topic,
-              this.raw.string(),
             ]
       - aws_s3:
           bucket: nats-archive
