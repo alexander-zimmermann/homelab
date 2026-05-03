@@ -27,3 +27,18 @@ spec:
     - default
   retain: 0
   concurrency: 2
+
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: snapshot-cleanup
+  namespace: csi-block-storage-controller
+
+spec:
+  cron: "0 5 * * *" # Every day at 5am, after backup-daily (02:00)
+  task: snapshot-cleanup
+  groups:
+    - default
+  retain: 0
+  concurrency: 2
