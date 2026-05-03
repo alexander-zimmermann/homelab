@@ -129,7 +129,7 @@ replacements:
           - spec.storage.size
 
   # Inject database WAL storage size
-  - sourceValue: 1Gi
+  - sourceValue: 2Gi
     targets:
       - select:
           kind: Cluster
