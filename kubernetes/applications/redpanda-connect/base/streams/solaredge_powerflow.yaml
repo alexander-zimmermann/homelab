@@ -83,8 +83,8 @@ output:
             secret: ${RUSTFS_SECRET_KEY}
           path: solaredge_powerflow/${!now().ts_format("2006/01/02/15")}/${!uuid_v4()}.parquet
           batching:
-            count: 2000
-            period: 15m
+            count: 200
+            period: 30s
             processors:
               - mapping: |
                   root = {
