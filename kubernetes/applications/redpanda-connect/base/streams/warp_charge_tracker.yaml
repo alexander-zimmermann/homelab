@@ -52,16 +52,14 @@ output:
               user_id, charge_duration, energy_charged, tracked_charges,
               authorization_type, meter_start, timestamp_minutes,
               evse_uptime_start, first_charge_timestamp,
-              generator_state,
-              raw
+              generator_state
             )
             VALUES (
               $1, $2,
               $3, $4, $5, $6,
               $7, $8, $9,
               $10, $11,
-              ($12::numeric)::smallint,
-              $13
+              ($12::numeric)::smallint
             )
           args_mapping: |
             root = [
@@ -77,7 +75,6 @@ output:
               this.evse_uptime_start,
               this.first_charge_timestamp,
               this.generator_state,
-              this.raw.string(),
             ]
       # Cold archive: original NATS payload as Parquet on RustFS
       - aws_s3:

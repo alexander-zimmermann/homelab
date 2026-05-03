@@ -53,8 +53,8 @@ output:
           init_statement: |
             SET timezone = 'UTC';
           query: |
-            INSERT INTO knx (time, ga, knx_main, knx_middle, knx_sub, knx_name, dpt, value, raw)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            INSERT INTO knx (time, ga, knx_main, knx_middle, knx_sub, knx_name, dpt, value)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             ON CONFLICT (time, ga) DO NOTHING
           args_mapping: |
             root = [
@@ -66,7 +66,6 @@ output:
               this.knx_name,
               this.dpt,
               this.value,
-              this.raw.string(),
             ]
       - aws_s3:
           bucket: nats-archive

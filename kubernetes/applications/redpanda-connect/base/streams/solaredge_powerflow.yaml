@@ -66,8 +66,7 @@ output:
               consumer_inverter,
               consumer_used_battery_production, consumer_used_pv_production, consumer_used_production,
               inverter_battery_production, inverter_pv_production,
-              inverter_consumption, inverter_production,
-              raw
+              inverter_consumption, inverter_production
             )
             VALUES (
               $1, $2,
@@ -80,8 +79,7 @@ output:
               $15,
               $16, $17, $18,
               $19, $20,
-              $21, $22,
-              $23
+              $21, $22
             )
             ON CONFLICT (time, inverter_id) DO NOTHING
           args_mapping: |
@@ -108,7 +106,6 @@ output:
               this.inverter_pv_production,
               this.inverter_consumption,
               this.inverter_production,
-              this.raw.string(),
             ]
       - aws_s3:
           bucket: nats-archive

@@ -45,15 +45,13 @@ output:
               time, sub_topic,
               charger_state, error_state, contactor_error, dc_fault_current_state,
               allowed_charging_current,
-              iec61851_state, lock_state, contactor_state,
-              raw
+              iec61851_state, lock_state, contactor_state
             )
             VALUES (
               $1, $2,
               $3, $4, $5, $6,
               $7,
-              ($8::numeric)::smallint, ($9::numeric)::smallint, ($10::numeric)::smallint,
-              $11
+              ($8::numeric)::smallint, ($9::numeric)::smallint, ($10::numeric)::smallint
             )
           args_mapping: |
             root = [
@@ -67,7 +65,6 @@ output:
               this.iec61851_state,
               this.lock_state,
               this.contactor_state,
-              this.raw.string(),
             ]
       - aws_s3:
           bucket: nats-archive
