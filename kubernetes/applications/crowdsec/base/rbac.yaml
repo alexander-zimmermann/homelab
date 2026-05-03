@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ServiceAccount
+
+metadata:
+  name: crowdsec-machines-prune
+  namespace: crowdsec
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+
+metadata:
+  name: crowdsec-machines-prune
+  namespace: crowdsec
+
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+
+metadata:
+  name: crowdsec-machines-prune
+  namespace: crowdsec
+
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: crowdsec-machines-prune
+
+subjects:
+  - kind: ServiceAccount
+    name: crowdsec-machines-prune
+    namespace: crowdsec
