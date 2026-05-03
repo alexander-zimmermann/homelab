@@ -19,20 +19,29 @@ pipeline:
         let subj = meta("nats_subject")
         let inv_id = $subj.split(".").index(0).split("-").index(1).number()
         root = {
-          "time":               $evt.timestamp,
-          "inverter_id":        $inv_id,
-          "pv_production":      $evt.pv_production,
-          "grid_power":         $evt.grid.power,
-          "grid_consumption":   $evt.grid.consumption,
-          "grid_delivery":      $evt.grid.delivery,
-          "battery_charge":     $evt.battery.charge,
-          "battery_discharge":  $evt.battery.discharge,
-          "consumer_total":     $evt.consumer.total,
-          "consumer_house":     $evt.consumer.house,
-          "consumer_evcharger": $evt.consumer.evcharger,
-          "inverter_power":     $evt.inverter.power,
-          "inverter_dc_power":  $evt.inverter.dc_power,
-          "raw":                $evt,
+          "time":                             $evt.timestamp,
+          "inverter_id":                      $inv_id,
+          "pv_production":                    $evt.pv_production,
+          "grid_power":                       $evt.grid.power,
+          "grid_consumption":                 $evt.grid.consumption,
+          "grid_delivery":                    $evt.grid.delivery,
+          "battery_charge":                   $evt.battery.charge,
+          "battery_discharge":                $evt.battery.discharge,
+          "consumer_total":                   $evt.consumer.total,
+          "consumer_house":                   $evt.consumer.house,
+          "consumer_evcharger":               $evt.consumer.evcharger,
+          "inverter_power":                   $evt.inverter.power,
+          "inverter_dc_power":                $evt.inverter.dc_power,
+          "battery_power":                    $evt.battery.power.or(null),
+          "consumer_inverter":                $evt.consumer.inverter.or(null),
+          "consumer_used_battery_production": $evt.consumer.used.battery_production.or(null),
+          "consumer_used_pv_production":      $evt.consumer.used.pv_production.or(null),
+          "consumer_used_production":         $evt.consumer.used.production.or(null),
+          "inverter_battery_production":      $evt.inverter.battery_production.or(null),
+          "inverter_pv_production":           $evt.inverter.pv_production.or(null),
+          "inverter_consumption":             $evt.inverter.consumption.or(null),
+          "inverter_production":              $evt.inverter.production.or(null),
+          "raw":                              $evt,
         }
 
 output:
@@ -52,9 +61,28 @@ output:
               grid_power, grid_consumption, grid_delivery,
               battery_charge, battery_discharge,
               consumer_total, consumer_house, consumer_evcharger,
-              inverter_power, inverter_dc_power, raw
+              inverter_power, inverter_dc_power,
+              battery_power,
+              consumer_inverter,
+              consumer_used_battery_production, consumer_used_pv_production, consumer_used_production,
+              inverter_battery_production, inverter_pv_production,
+              inverter_consumption, inverter_production,
+              raw
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+            VALUES (
+              $1, $2,
+              $3,
+              $4, $5, $6,
+              $7, $8,
+              $9, $10, $11,
+              $12, $13,
+              $14,
+              $15,
+              $16, $17, $18,
+              $19, $20,
+              $21, $22,
+              $23
+            )
             ON CONFLICT (time, inverter_id) DO NOTHING
           args_mapping: |
             root = [
@@ -71,6 +99,15 @@ output:
               this.consumer_evcharger,
               this.inverter_power,
               this.inverter_dc_power,
+              this.battery_power,
+              this.consumer_inverter,
+              this.consumer_used_battery_production,
+              this.consumer_used_pv_production,
+              this.consumer_used_production,
+              this.inverter_battery_production,
+              this.inverter_pv_production,
+              this.inverter_consumption,
+              this.inverter_production,
               this.raw.string(),
             ]
       - aws_s3:
