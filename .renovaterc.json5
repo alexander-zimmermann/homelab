@@ -38,14 +38,6 @@
       "ignoreUnstable": false
     },
     {
-      // Argo CD v3 renders applications with Helm 3, so the validation path
-      // stays on that line; the bootstrap render is free to follow Helm 4
-      "matchDatasources": ["github-releases"],
-      "matchPackageNames": ["helm/helm"],
-      "matchFileNames": [".github/workflows/ci-validate.yaml"],
-      "allowedVersions": "<4"
-    },
-    {
       // Own build; bumping it rolls the TimescaleDB cluster, so gate it behind the dashboard
       "matchDatasources": ["docker"],
       "matchPackageNames": [

@@ -158,7 +158,7 @@ jobs:
           # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize extractVersion=^kustomize/(?<version>.+)$
           kustomize: v5.8.1
           # renovate: datasource=github-releases depName=helm/helm
-          helm: v3.21.4
+          helm: v4.2.4
           # renovate: datasource=github-releases depName=yannh/kubeconform
           kubeconform: v0.8.0
           # renovate: datasource=github-releases depName=google/go-containerregistry
