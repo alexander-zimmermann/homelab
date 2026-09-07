@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  // Python sidecars on top of sidecarBase. The dockerfile rule is a no-op in
+  // repos that ship no image, so nats-bridge-core can extend this unchanged.
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"],
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["dockerfile"],
+      "matchPackageNames": ["python"],
+      "groupName": "python base image",
+    },
+    {
+      "matchManagers": ["pep621"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "python deps (non-major)",
+    },
+    {
+      "matchManagers": ["pre-commit"],
+      "groupName": "pre-commit",
+    },
+  ],
+  "pre-commit": {
+    "enabled": true,
+  },
+}

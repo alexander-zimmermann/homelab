@@ -1,0 +1,16 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  // pep621 skips PEP 508 direct references, so the nats-bridge-core dependency
+  // is tracked by its git tag instead. Only the bridges that depend on it.
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)pyproject\\.toml$/"],
+      "matchStrings": [
+        "git\\+https://github\\.com/(?<depName>[^@\\s\"]+?)@(?<currentValue>v[^\\s\"]+)",
+      ],
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "semver",
+    },
+  ],
+}
