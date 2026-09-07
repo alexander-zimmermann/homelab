@@ -3179,7 +3179,7 @@
   function: Diagnose
   name: Informationstechnik.Zentral.Diagnose.Infrastruktur.Status
   room: Anwesen Steinroth 20
-  writable: false
+  writable: true
 16/0/221:
   dpt: '1.011'
   function: Diagnose
@@ -3209,7 +3209,7 @@
   function: Diagnose
   name: Informationstechnik.Zentral.Diagnose.Kubernetes.Status
   room: Anwesen Steinroth 20
-  writable: true
+  writable: false
 16/0/250:
   dpt: '5.010'
   function: Diagnose
