@@ -170,18 +170,18 @@ collectors:
           relabel_rules = discovery.relabel.syslog.rules
       }
 
-      // OTLP/HTTP receiver for external push sources (rustfs, PVE/PBS metric
-      // servers, redpanda-connect traces). The chart renders
+      // OTLP/HTTP receiver for external push sources (rustfs and PVE/PBS
+      // metrics, redpanda-connect traces). The chart renders
       // otelcol.exporter.prometheus.prometheus which translates OTel attributes
       // (service.name -> job, host.name -> instance) before forwarding to
-      // remote-write. Traces enter the tempo destination's own chain
-      // (attributes -> transform -> batch -> otlp), so they skip the batch below.
+      // remote-write.
       otelcol.receiver.otlp "ingress" {
           http {
               endpoint = "0.0.0.0:4318"
           }
           output {
               metrics = [otelcol.processor.batch.ingress.input]
+              // Traces skip the batch below: the tempo destination brings its own chain
               traces  = [otelcol.processor.attributes.tempo.input]
           }
       }
