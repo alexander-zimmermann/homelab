@@ -28,6 +28,7 @@ jobs:
       - name: Install CLI Tools
         uses: alexellis/arkade-get@master
         with:
+          # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize extractVersion=^kustomize/(?<version>.+)$
           kustomize: v5.8.1
 
       - name: Render ApplicationSets (Base)

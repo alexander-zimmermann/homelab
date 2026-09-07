@@ -6,7 +6,8 @@
       "description": "Process annotated dependencies",
       "managerFilePatterns": ["/\\.yaml$/"],
       "matchStrings": [
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+ (?<currentValue>[v|\\d]\\S+)"
+        // versioning= and extractVersion= are optional, in that order
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?( extractVersion=(?<extractVersion>\\S+))?\\n.+ (?<currentValue>[v|\\d]\\S+)"
       ],
       "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}"
     },

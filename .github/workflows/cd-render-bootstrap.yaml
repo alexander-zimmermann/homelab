@@ -22,8 +22,10 @@ jobs:
       - name: Install CLI Tools
         uses: alexellis/arkade-get@master
         with:
+          # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize extractVersion=^kustomize/(?<version>.+)$
           kustomize: v5.8.1
-          helm: v4.1.1
+          # renovate: datasource=github-releases depName=helm/helm
+          helm: v4.2.4
 
       - name: Render Manifests
         run: |
