@@ -63,9 +63,6 @@ faults:
       # overwrite each other's clears, and a channel that hangs is a
       # different sentence from one that went quiet.
       per_main_group: true
-    dormant:
-      reason: "Die Konstanz-Adressen existieren in ETS noch nicht."
-      active_when: "Die Adressen stehen im Katalog und Basalte zeigt sie an."
 
   - name: appliance_runtime
     sentence: "Ein Gerät zieht ununterbrochen länger Strom, als seine je Gerät

@@ -107,6 +107,12 @@
   name: Allgemein.Zentral.Diagnose.Meldungsvolumen-Anomalie
   room: Anwesen Steinroth 20
   writable: false
+0/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Allgemein.Zentral.Diagnose.Konstanz-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
 0/1/0:
   dpt: '17.001'
   function: Allgemein
@@ -489,6 +495,12 @@
   dpt: '5.010'
   function: Diagnose
   name: Sicherheit.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+10/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Sicherheit.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 10/1/1:
@@ -893,6 +905,12 @@
   name: Zutritt.Zentral.Diagnose.Telegrammstille-Anomalie
   room: Anwesen Steinroth 20
   writable: false
+11/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Zutritt.Zentral.Diagnose.Konstanz-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
 11/1/10:
   dpt: '1.003'
   function: Zutritt
@@ -939,6 +957,12 @@
   dpt: '5.010'
   function: Diagnose
   name: Entertainment.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+12/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Entertainment.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 12/2/101:
@@ -1449,6 +1473,12 @@
   dpt: '5.010'
   function: Diagnose
   name: Sicherheitstechnik.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+14/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Sicherheitstechnik.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 14/1/1:
@@ -2043,6 +2073,12 @@
   dpt: '5.010'
   function: Diagnose
   name: Versorgungstechnik.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+15/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Versorgungstechnik.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 15/1/0:
@@ -3035,7 +3071,7 @@
   function: Versorgungstechnik
   name: Versorgungstechnik.Wallbox.Ein-Freigabe
   room: Garage
-  writable: false
+  writable: true
 15/6/21:
   dpt: '1.001'
   function: Versorgungstechnik
@@ -3047,7 +3083,7 @@
   function: Versorgungstechnik
   name: Versorgungstechnik.Wallbox.Lademodi
   room: Garage
-  writable: false
+  writable: true
 15/6/23:
   dpt: '5.010'
   function: Versorgungstechnik
@@ -3065,7 +3101,7 @@
   function: Versorgungstechnik
   name: Versorgungstechnik.Wallbox.Lademodus-PV
   room: Garage
-  writable: false
+  writable: true
 15/6/26:
   dpt: '1.011'
   function: Versorgungstechnik
@@ -3077,7 +3113,7 @@
   function: Versorgungstechnik
   name: Versorgungstechnik.Wallbox.Lademodus-PV+Min
   room: Garage
-  writable: false
+  writable: true
 15/6/28:
   dpt: '1.011'
   function: Versorgungstechnik
@@ -3089,7 +3125,7 @@
   function: Versorgungstechnik
   name: Versorgungstechnik.Wallbox.Lademodus-Schnell
   room: Garage
-  writable: false
+  writable: true
 15/6/3:
   dpt: '16.001'
   function: Versorgungstechnik
@@ -3173,17 +3209,29 @@
   function: Diagnose
   name: Informationstechnik.Zentral.Diagnose.Kubernetes.Status
   room: Anwesen Steinroth 20
-  writable: false
+  writable: true
 16/0/250:
   dpt: '5.010'
   function: Diagnose
   name: Informationstechnik.Zentral.Diagnose.Telegrammstille-Anomalie
   room: Anwesen Steinroth 20
   writable: false
+16/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Informationstechnik.Zentral.Diagnose.Konstanz-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
 17/0/250:
   dpt: '5.010'
   function: Diagnose
   name: Haushaltstechnik.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+17/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Haushaltstechnik.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 17/1/0:
@@ -3883,6 +3931,12 @@
   name: Person.Zentral.Diagnose.Telegrammstille-Anomalie
   room: Anwesen Steinroth 20
   writable: false
+18/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Person.Zentral.Diagnose.Konstanz-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
 18/1/0:
   description: Anwesen Steinroth 20 Person
   dpt: '1.011'
@@ -4163,6 +4217,12 @@
   dpt: '5.010'
   function: Schalten
   name: Schalten.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+2/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Schalten.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 2/1/0:
@@ -6648,6 +6708,12 @@
   dpt: '5.010'
   function: Beleuchtung
   name: Beleuchtung.Gebäude.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+3/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Beleuchtung.Gebäude.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 3/0/26:
@@ -9262,6 +9328,12 @@
   name: Beleuchtung.Einrichtung.Zentral.Diagnose.Telegrammstille-Anomalie
   room: Anwesen Steinroth 20
   writable: false
+4/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Beleuchtung.Einrichtung.Zentral.Diagnose.Konstanz-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
 4/2/60:
   dpt: '1.003'
   function: Beleuchtung
@@ -9273,7 +9345,7 @@
   function: Beleuchtung
   name: Beleuchtung.Einrichtung.EG.Wohnzimmer.Bordbar.Ein/Aus
   room: Wohnzimmer
-  writable: false
+  writable: true
 4/2/62:
   dpt: '1.011'
   function: Beleuchtung
@@ -9285,31 +9357,31 @@
   function: Beleuchtung
   name: Beleuchtung.Einrichtung.EG.Wohnzimmer.Bordbar.Helligkeit-Schritt
   room: Wohnzimmer
-  writable: false
+  writable: true
 4/2/64:
   dpt: '1.007'
   function: Beleuchtung
   name: Beleuchtung.Einrichtung.EG.Wohnzimmer.Bordbar.Farbe-Schritt
   room: Wohnzimmer
-  writable: false
+  writable: true
 4/2/65:
   dpt: '1.007'
   function: Beleuchtung
   name: Beleuchtung.Einrichtung.EG.Wohnzimmer.Bordbar.Modus-Schritt
   room: Wohnzimmer
-  writable: false
+  writable: true
 4/2/66:
   dpt: '1.007'
   function: Beleuchtung
   name: Beleuchtung.Einrichtung.EG.Wohnzimmer.Bordbar.Geschwindigkeit-Schritt
   room: Wohnzimmer
-  writable: false
+  writable: true
 4/2/67:
   dpt: '1.015'
   function: Beleuchtung
   name: Beleuchtung.Einrichtung.EG.Wohnzimmer.Bordbar.Reset
   room: Wohnzimmer
-  writable: false
+  writable: true
 4/2/68:
   dpt: '1.011'
   function: Beleuchtung
@@ -9632,6 +9704,12 @@
   dpt: '5.010'
   function: Diagnose
   name: Beschattung.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+5/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Beschattung.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 5/2/0:
@@ -10770,12 +10848,18 @@
   name: Raumklima.Zentral.Diagnose.Telegrammstille-Anomalie
   room: Anwesen Steinroth 20
   writable: false
+6/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Raumklima.Zentral.Diagnose.Konstanz-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
 6/1/100:
   dpt: '1.003'
   function: Raumklima
   name: Raumklima.KG.Hauswirtschaftsraum.Entfeuchter.Sperren
   room: Hauswirtschaftsraum
-  writable: false
+  writable: true
 6/1/101:
   dpt: '1.011'
   function: Raumklima
@@ -10787,7 +10871,7 @@
   function: Raumklima
   name: Raumklima.KG.Hauswirtschaftsraum.Entfeuchter.Ein/Aus
   room: Hauswirtschaftsraum
-  writable: false
+  writable: true
 6/1/103:
   dpt: '1.011'
   function: Raumklima
@@ -10799,7 +10883,7 @@
   function: Raumklima
   name: Raumklima.KG.Hauswirtschaftsraum.Entfeuchter.Modus
   room: Hauswirtschaftsraum
-  writable: false
+  writable: true
 6/1/105:
   dpt: '5.010'
   function: Raumklima
@@ -10811,7 +10895,7 @@
   function: Raumklima
   name: Raumklima.KG.Hauswirtschaftsraum.Entfeuchter.Lüfterstufe
   room: Hauswirtschaftsraum
-  writable: false
+  writable: true
 6/1/107:
   dpt: '5.010'
   function: Raumklima
@@ -10823,7 +10907,7 @@
   function: Raumklima
   name: Raumklima.KG.Hauswirtschaftsraum.Entfeuchter.Soll-Luftfeuchtigkeit
   room: Hauswirtschaftsraum
-  writable: false
+  writable: true
 6/1/109:
   dpt: '5.001'
   function: Raumklima
@@ -10865,7 +10949,7 @@
   function: Raumklima
   name: Raumklima.KG.Vorratsraum.Entfeuchter.Sperren
   room: Vorratsraum
-  writable: false
+  writable: true
 6/1/61:
   dpt: '1.011'
   function: Raumklima
@@ -10877,7 +10961,7 @@
   function: Raumklima
   name: Raumklima.KG.Vorratsraum.Entfeuchter.Ein/Aus
   room: Vorratsraum
-  writable: false
+  writable: true
 6/1/63:
   dpt: '1.011'
   function: Raumklima
@@ -10889,7 +10973,7 @@
   function: Raumklima
   name: Raumklima.KG.Vorratsraum.Entfeuchter.Modus
   room: Vorratsraum
-  writable: false
+  writable: true
 6/1/65:
   dpt: '5.010'
   function: Raumklima
@@ -10901,7 +10985,7 @@
   function: Raumklima
   name: Raumklima.KG.Vorratsraum.Entfeuchter.Lüfterstufe
   room: Vorratsraum
-  writable: false
+  writable: true
 6/1/67:
   dpt: '5.010'
   function: Raumklima
@@ -10913,7 +10997,7 @@
   function: Raumklima
   name: Raumklima.KG.Vorratsraum.Entfeuchter.Soll-Luftfeuchtigkeit
   room: Vorratsraum
-  writable: false
+  writable: true
 6/1/69:
   dpt: '5.001'
   function: Raumklima
@@ -11447,7 +11531,7 @@
   function: Raumklima
   name: Raumklima.OG.Schlafzimmer-Eltern.Luftreiniger.Sperren
   room: Schlafzimmer Eltern
-  writable: false
+  writable: true
 6/3/161:
   dpt: '1.011'
   function: Raumklima
@@ -11459,7 +11543,7 @@
   function: Raumklima
   name: Raumklima.OG.Schlafzimmer-Eltern.Luftreiniger.Ein/Aus
   room: Schlafzimmer Eltern
-  writable: false
+  writable: true
 6/3/163:
   dpt: '1.011'
   function: Raumklima
@@ -11471,7 +11555,7 @@
   function: Raumklima
   name: Raumklima.OG.Schlafzimmer-Eltern.Luftreiniger.Lüfterstufe
   room: Schlafzimmer Eltern
-  writable: false
+  writable: true
 6/3/165:
   dpt: '5.010'
   function: Raumklima
@@ -11483,7 +11567,7 @@
   function: Raumklima
   name: Raumklima.OG.Schlafzimmer-Eltern.Luftreiniger.Drehmodus
   room: Schlafzimmer Eltern
-  writable: false
+  writable: true
 6/3/167:
   dpt: '5.010'
   function: Raumklima
@@ -11495,7 +11579,7 @@
   function: Raumklima
   name: Raumklima.OG.Schlafzimmer-Eltern.Luftreiniger.Nachtmodus
   room: Schlafzimmer Eltern
-  writable: false
+  writable: true
 6/3/169:
   dpt: '1.011'
   function: Raumklima
@@ -11878,20 +11962,26 @@
   description: 1 - Innen Bedienelemente
   dpt: '1.001'
   function: Bedienelemente
-  name: Bedienelemente.Zentral.Gebäude.Schalter.Sperren
+  name: Bedienelement.Zentral.Gebäude.Schalter.Sperren
   room: Gebäude
   writable: true
 7/0/181:
   description: 1 - Innen Bedienelemente
   dpt: '5.010'
   function: Bedienelemente
-  name: Bedienelemente.Zentral.Gebäude.Schalter.Farbe
+  name: Bedienelement.Zentral.Gebäude.Schalter.Farbe
   room: Gebäude
   writable: true
 7/0/250:
   dpt: '5.010'
   function: Diagnose
-  name: Bedienelemente.Zentral.Diagnose.Telegrammstille-Anomalie
+  name: Bedienelement.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+7/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Bedienelement.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 7/2/0:
@@ -12564,6 +12654,12 @@
   dpt: '5.010'
   function: Diagnose
   name: Sensorik.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+8/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Sensorik.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 8/1/100:
@@ -14358,6 +14454,12 @@
   dpt: '5.010'
   function: Diagnose
   name: Bewegungsmelder.Zentral.Diagnose.Telegrammstille-Anomalie
+  room: Anwesen Steinroth 20
+  writable: false
+9/0/252:
+  dpt: '5.010'
+  function: Diagnose
+  name: Bewegungsmelder.Zentral.Diagnose.Konstanz-Anomalie
   room: Anwesen Steinroth 20
   writable: false
 9/1/0:
