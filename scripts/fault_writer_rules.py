@@ -32,7 +32,9 @@ shows what moved.
 
 Per-device and per-room targets are not generated: their addresses follow
 the device and room names rather than one suffix per group, and their rules
-are written out in the file itself.
+are written out in the file itself. Nor is a fault listed in HAND_WRITTEN,
+whose one address is reached on a subject carrying an entity this file
+cannot know.
 """
 
 from __future__ import annotations
@@ -53,6 +55,14 @@ TARGET_NAME = {
     # one Diagnose address for both.
     "channel_constancy": ".Zentral.Diagnose.Telegrammstille-Anomalie",
 }
+
+# Faults that deliver to one declared address, but whose subject carries an
+# entity the fault file does not name — heat recovery publishes on its
+# exchanger's own slug, not on the bare fault name. Their rule is written
+# out in the file itself, like the per-device and per-room ones; generating
+# a bare subject for them would put a second, never-firing rule on a live
+# address.
+HAND_WRITTEN = {"heat_recovery_decay"}
 
 # The engine's delivery contract, identical for every fault: the current
 # tier as a number, written on every change including the clearing 0, and
@@ -167,7 +177,9 @@ def main() -> int:
 
     block: list[str] = []
     for fault, target in targeted_faults(faults_path):
-        if "ga" in target:
+        if fault in HAND_WRITTEN:
+            print(f"{fault}: skipped, its subject carries an entity — rule written by hand")
+        elif "ga" in target:
             block += house_wide_rule(fault, target["ga"], catalog)
             print(f"{fault}: 1 rule on {target['ga']}")
         elif target.get("per_main_group"):
