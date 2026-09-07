@@ -58,10 +58,14 @@ faults:
         # A threshold, not a measurement.
         - "%-Alarm-%"
     target:
-      # The main group's Telegrammstille-Anomalie address, the one channel
-      # silence writes: both faults say "a channel of this group stopped
-      # reporting", and the payload names which.
+      # The main group's own Konstanz-Anomalie address, beside the
+      # Telegrammstille one silence writes: two writers on one address
+      # overwrite each other's clears, and a channel that hangs is a
+      # different sentence from one that went quiet.
       per_main_group: true
+    dormant:
+      reason: "Die Konstanz-Adressen existieren in ETS noch nicht."
+      active_when: "Die Adressen stehen im Katalog und Basalte zeigt sie an."
 
   - name: appliance_runtime
     sentence: "Ein Gerät zieht ununterbrochen länger Strom, als seine je Gerät

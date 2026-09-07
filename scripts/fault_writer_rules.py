@@ -6,9 +6,9 @@
 Two target forms are generated, both of them faults the engine delivers to
 addresses nobody should type twice:
 
-* "one address per main group" (channel silence and constancy, which share
-  the address) becomes one rule per main group and fault — the engine
-  publishes the group's severity on
+* "one address per main group" (channel silence, and constancy on its own
+  address once ETS has it) becomes one rule per main group and fault — the
+  engine publishes the group's severity on
   `anomaly.<fault>.<main group>`, the bridge carries it to that group's
   address in its Zentral block. A block of near-identical rules that must
   follow every ETS renumbering is exactly the list that went wrong once
@@ -50,10 +50,7 @@ import yaml
 # suffix enough for all of them.
 TARGET_NAME = {
     "channel_silence": ".Zentral.Diagnose.Telegrammstille-Anomalie",
-    # Constancy shares the address: silence and a dead register are the two
-    # ways a group's channel stops reporting, and the plan gives the group
-    # one Diagnose address for both.
-    "channel_constancy": ".Zentral.Diagnose.Telegrammstille-Anomalie",
+    "channel_constancy": ".Zentral.Diagnose.Konstanz-Anomalie",
 }
 
 # Faults that deliver to one declared address, but whose subject carries an
@@ -83,11 +80,20 @@ def main_group(ga: str) -> int:
 
 
 def targeted_faults(path: Path) -> list[tuple[str, dict]]:
-    """Every fault that declares a delivery target — its name and that
-    target, in file order. Which target shapes are generated is decided in
-    one place, in main()."""
+    """Every schedulable fault that declares a delivery target — its name and
+    that target, in file order. Which target shapes are generated is decided
+    in one place, in main().
+
+    A dormant fault is skipped: it publishes nothing, and its addresses are
+    typically the very thing it is waiting for, so generating rules for it
+    would fail on a catalog that cannot know them yet.
+    """
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
-    return [(fault["name"], fault["target"]) for fault in raw["faults"] if "target" in fault]
+    return [
+        (fault["name"], fault["target"])
+        for fault in raw["faults"]
+        if "target" in fault and "dormant" not in fault
+    ]
 
 
 def targets(catalog: dict, suffix: str) -> dict[int, tuple[str, dict]]:
