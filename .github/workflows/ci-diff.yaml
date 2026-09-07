@@ -56,6 +56,9 @@ jobs:
           EOF
 
       - name: Generate Diff
+        env:
+          # renovate: datasource=docker depName=dagandersen/argocd-diff-preview
+          DIFF_PREVIEW_VERSION: v0.2.14
         run: |
           docker run \
             --network=host \
@@ -71,7 +74,7 @@ jobs:
             -e GIT_CONFIG_COUNT=1 \
             -e GIT_CONFIG_KEY_0=safe.directory \
             -e GIT_CONFIG_VALUE_0=* \
-            dagandersen/argocd-diff-preview:v0.1.25
+            dagandersen/argocd-diff-preview:"${DIFF_PREVIEW_VERSION}"
 
       - name: Post diff as comment
         run: |
