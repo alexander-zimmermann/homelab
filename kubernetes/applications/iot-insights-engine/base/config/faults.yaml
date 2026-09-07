@@ -402,8 +402,9 @@ faults:
     scope:
       name_like: "%.Gastherme.System-Druck-Anomalie"
     dormant:
-      reason: "Die Adresse existiert in ETS noch nicht."
-      active_when: "Die Adresse steht im Katalog und die Studio-Logik schreibt sie."
+      reason: "Die Studio-Logik ist noch nicht gebaut; die Adresse steht im
+        Katalog, und niemand schreibt sie."
+      active_when: "Die Studio-Logik schreibt die Adresse."
 
   - name: burner_idle_despite_demand
     sentence: "Der Brenner liefert länger als 2 h 0 % Modulation, obwohl das
@@ -464,8 +465,9 @@ faults:
     scope:
       name_like: "%.KWL.Luftstrom-Anomalie"
     dormant:
-      reason: "Die Adresse existiert in ETS noch nicht."
-      active_when: "Die Adresse steht im Katalog und die Studio-Logik schreibt sie."
+      reason: "Die Studio-Logik ist noch nicht gebaut; die Adresse steht im
+        Katalog, und niemand schreibt sie."
+      active_when: "Die Studio-Logik schreibt die Adresse."
 
   - name: inverter_temperature_high
     sentence: "Die Temperatur eines Wechselrichters liegt über 70 °C."
@@ -487,8 +489,9 @@ faults:
     scope:
       name_like: "%.Energiezähler.Strom.Spannung-Anomalie"
     dormant:
-      reason: "Die Adresse existiert in ETS noch nicht."
-      active_when: "Die Adresse steht im Katalog und die Studio-Logik schreibt sie."
+      reason: "Die Studio-Logik ist noch nicht gebaut; die Adresse steht im
+        Katalog, und niemand schreibt sie."
+      active_when: "Die Studio-Logik schreibt die Adresse."
 
   - name: dehumidifier_ineffective
     sentence: "Ein Entfeuchter läuft über 4 h, während die Luftfeuchte um
@@ -498,8 +501,9 @@ faults:
     scope:
       name_like: "Raumklima.%.Entfeuchter.Anomalie"
     dormant:
-      reason: "Die Adressen existieren in ETS noch nicht."
-      active_when: "Die Adressen stehen im Katalog und die Studio-Logik schreibt sie."
+      reason: "Die Studio-Logik ist noch nicht gebaut; beide Adressen stehen im
+        Katalog, und niemand schreibt sie."
+      active_when: "Die Studio-Logik schreibt die Adressen."
 
   # The volume watchdog: the notification count is itself a declared fault.
   # It measures the episode stream every other fault writes, so it is
