@@ -1301,6 +1301,132 @@ mappings:
     description: "Person.Zentral.Diagnose.Telegrammstille-Anomalie"
     min_delta: 0
     seed_on_start: true
+  - subject: "anomaly.channel_constancy.0"
+    ga: "0/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Allgemein.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.2"
+    ga: "2/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Schalten.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.3"
+    ga: "3/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Beleuchtung.Gebäude.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.4"
+    ga: "4/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Beleuchtung.Einrichtung.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.5"
+    ga: "5/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Beschattung.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.6"
+    ga: "6/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Raumklima.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.7"
+    ga: "7/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Bedienelemente.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.8"
+    ga: "8/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Sensorik.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.9"
+    ga: "9/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Bewegungsmelder.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.10"
+    ga: "10/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Sicherheit.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.11"
+    ga: "11/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Zutritt.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.12"
+    ga: "12/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Entertainment.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.14"
+    ga: "14/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Sicherheitstechnik.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.15"
+    ga: "15/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Versorgungstechnik.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.16"
+    ga: "16/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Informationstechnik.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.17"
+    ga: "17/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Haushaltstechnik.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.channel_constancy.18"
+    ga: "18/0/250"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Person.Zentral.Diagnose.Telegrammstille-Anomalie"
+    min_delta: 0
+    seed_on_start: true
+  - subject: "anomaly.heat_recovery_decay"
+    ga: "15/3/34"
+    dpt: "5.010"
+    payload_path: "$.severity_level"
+    description: "Versorgungstechnik.KWL.Wärmerückgewinnung-Anomalie"
+    min_delta: 0
+    seed_on_start: true
   - subject: "anomaly.notification_volume"
     ga: "0/0/251"
     dpt: "5.010"

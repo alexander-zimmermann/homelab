@@ -6,8 +6,9 @@
 Two target forms are generated, both of them faults the engine delivers to
 addresses nobody should type twice:
 
-* "one address per main group" (channel silence) becomes one rule per main
-  group — the engine publishes the group's severity on
+* "one address per main group" (channel silence and constancy, which share
+  the address) becomes one rule per main group and fault — the engine
+  publishes the group's severity on
   `anomaly.<fault>.<main group>`, the bridge carries it to that group's
   address in its Zentral block. A block of near-identical rules that must
   follow every ETS renumbering is exactly the list that went wrong once
@@ -21,9 +22,9 @@ addresses nobody should type twice:
 Two files decide everything: the fault list says which faults deliver which
 way, the catalog says which address that is and with which DPT. What is
 neither is the naming rule that ties the two together for the per-main-group
-form — that a channel-silence target is the group's
-`Telegrammstille-Anomalie` — and it is declared once, in TARGET_NAME below,
-rather than resolved from a list of addresses that could drift.
+form — which address in the group a fault of that form writes — and it is
+declared once, in TARGET_NAME below, rather than resolved from a list of
+addresses that could drift.
 
 The rules are spliced into the writer-rules file between its markers, so
 regenerating after a catalog change is the whole procedure and the diff
@@ -47,6 +48,10 @@ import yaml
 # suffix enough for all of them.
 TARGET_NAME = {
     "channel_silence": ".Zentral.Diagnose.Telegrammstille-Anomalie",
+    # Constancy shares the address: silence and a dead register are the two
+    # ways a group's channel stops reporting, and the plan gives the group
+    # one Diagnose address for both.
+    "channel_constancy": ".Zentral.Diagnose.Telegrammstille-Anomalie",
 }
 
 # The engine's delivery contract, identical for every fault: the current
@@ -62,8 +67,8 @@ END = "  # <<< generated"
 
 
 def main_group(ga: str) -> int:
-    """The KNX main group of a group address — the granularity silence
-    reports at."""
+    """The KNX main group of a group address — the granularity the
+    channel-scoped faults report at."""
     return int(ga.split("/")[0])
 
 
