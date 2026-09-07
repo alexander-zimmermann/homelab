@@ -6,8 +6,9 @@
 Two target forms are generated, both of them faults the engine delivers to
 addresses nobody should type twice:
 
-* "one address per main group" (channel silence) becomes one rule per main
-  group — the engine publishes the group's severity on
+* "one address per main group" (channel silence, and constancy on its own
+  address once ETS has it) becomes one rule per main group and fault — the
+  engine publishes the group's severity on
   `anomaly.<fault>.<main group>`, the bridge carries it to that group's
   address in its Zentral block. A block of near-identical rules that must
   follow every ETS renumbering is exactly the list that went wrong once
@@ -21,9 +22,9 @@ addresses nobody should type twice:
 Two files decide everything: the fault list says which faults deliver which
 way, the catalog says which address that is and with which DPT. What is
 neither is the naming rule that ties the two together for the per-main-group
-form — that a channel-silence target is the group's
-`Telegrammstille-Anomalie` — and it is declared once, in TARGET_NAME below,
-rather than resolved from a list of addresses that could drift.
+form — which address in the group a fault of that form writes — and it is
+declared once, in TARGET_NAME below, rather than resolved from a list of
+addresses that could drift.
 
 The rules are spliced into the writer-rules file between its markers, so
 regenerating after a catalog change is the whole procedure and the diff
@@ -31,7 +32,9 @@ shows what moved.
 
 Per-device and per-room targets are not generated: their addresses follow
 the device and room names rather than one suffix per group, and their rules
-are written out in the file itself.
+are written out in the file itself. Nor is a fault listed in HAND_WRITTEN,
+whose one address is reached on a subject carrying an entity this file
+cannot know.
 """
 
 from __future__ import annotations
@@ -47,7 +50,16 @@ import yaml
 # suffix enough for all of them.
 TARGET_NAME = {
     "channel_silence": ".Zentral.Diagnose.Telegrammstille-Anomalie",
+    "channel_constancy": ".Zentral.Diagnose.Konstanz-Anomalie",
 }
+
+# Faults that deliver to one declared address, but whose subject carries an
+# entity the fault file does not name — heat recovery publishes on its
+# exchanger's own slug, not on the bare fault name. Their rule is written
+# out in the file itself, like the per-device and per-room ones; generating
+# a bare subject for them would put a second, never-firing rule on a live
+# address.
+HAND_WRITTEN = {"heat_recovery_decay"}
 
 # The engine's delivery contract, identical for every fault: the current
 # tier as a number, written on every change including the clearing 0, and
@@ -62,17 +74,26 @@ END = "  # <<< generated"
 
 
 def main_group(ga: str) -> int:
-    """The KNX main group of a group address — the granularity silence
-    reports at."""
+    """The KNX main group of a group address — the granularity the
+    channel-scoped faults report at."""
     return int(ga.split("/")[0])
 
 
 def targeted_faults(path: Path) -> list[tuple[str, dict]]:
-    """Every fault that declares a delivery target — its name and that
-    target, in file order. Which target shapes are generated is decided in
-    one place, in main()."""
+    """Every schedulable fault that declares a delivery target — its name and
+    that target, in file order. Which target shapes are generated is decided
+    in one place, in main().
+
+    A dormant fault is skipped: it publishes nothing, and its addresses are
+    typically the very thing it is waiting for, so generating rules for it
+    would fail on a catalog that cannot know them yet.
+    """
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
-    return [(fault["name"], fault["target"]) for fault in raw["faults"] if "target" in fault]
+    return [
+        (fault["name"], fault["target"])
+        for fault in raw["faults"]
+        if "target" in fault and "dormant" not in fault
+    ]
 
 
 def targets(catalog: dict, suffix: str) -> dict[int, tuple[str, dict]]:
@@ -162,7 +183,9 @@ def main() -> int:
 
     block: list[str] = []
     for fault, target in targeted_faults(faults_path):
-        if "ga" in target:
+        if fault in HAND_WRITTEN:
+            print(f"{fault}: skipped, its subject carries an entity — rule written by hand")
+        elif "ga" in target:
             block += house_wide_rule(fault, target["ga"], catalog)
             print(f"{fault}: 1 rule on {target['ga']}")
         elif target.get("per_main_group"):

@@ -20,6 +20,53 @@ faults:
       # One severity address per matched main group, in its Zentral block.
       per_main_group: true
 
+  - name: channel_constancy
+    sentence: "Ein Kanal sendet weiter, liefert dabei aber seit mehr als 48 h
+      exakt denselben Wert — der Sender lebt, das Register dahinter ist tot."
+    unit: "× der erlaubten Konstanz-Dauer"
+    kind: constancy
+    parameters:
+      # How long one value may stand. Two days is a starting point, to be
+      # revisited against the 30-day verification.
+      constant_hours: 48
+      # What counts as the same value, in the channel's own unit. Zero means
+      # bit-identical — the only band that means the same across °C, %, V,
+      # A, W and Pa, which the scope carries all of.
+      same_within: 0
+    scope:
+      # Continuously driven measurements: a working sensor of any of these
+      # never repeats a value for two days. Left out by DPT because they do
+      # stand still legitimately — brightness (a windowless room reads
+      # 0 lx), wind speed (calm), the kWh and operating-hour counters (they
+      # move only when something is used), the appliance Stromwert channels
+      # (a device that is off draws its standby value, which the standby
+      # drift fault owns) and every Wirkleistung: a power reading rests at
+      # exactly zero whenever the thing it measures does not run, and an
+      # overcast winter weekend exports 0 W for far longer than two days.
+      dpt:
+        - "9.001"   # Temperatur, °C
+        - "9.007"   # Luftfeuchte, %
+        - "9.008"   # CO2 und VOC, ppm
+        - "14.019"  # Stromstärke, A
+        - "14.027"  # Spannung, V
+        - "14.058"  # Luftdruck, Pa
+      exclude_name_like:
+        # A value a human sets and leaves.
+        - "%Soll%"
+        # An appliance that is off holds its last temperature for days.
+        - "Haushaltstechnik.%"
+        # A threshold, not a measurement.
+        - "%-Alarm-%"
+    target:
+      # The main group's own Konstanz-Anomalie address, beside the
+      # Telegrammstille one silence writes: two writers on one address
+      # overwrite each other's clears, and a channel that hangs is a
+      # different sentence from one that went quiet.
+      per_main_group: true
+    dormant:
+      reason: "Die Konstanz-Adressen existieren in ETS noch nicht."
+      active_when: "Die Adressen stehen im Katalog und Basalte zeigt sie an."
+
   - name: appliance_runtime
     sentence: "Ein Gerät zieht ununterbrochen länger Strom, als seine je Gerät
       erlaubte Laufzeit zulässt — vergessen eingeschaltet oder hängen geblieben."
