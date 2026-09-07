@@ -146,6 +146,8 @@ jobs:
     needs: resolve-workload
     strategy:
       fail-fast: false
+      # 92 overlays pulling five binaries each overwhelmed the download endpoint
+      max-parallel: 10
       matrix: ${{ fromJson(needs.resolve-workload.outputs.matrix) }}
     runs-on: ubuntu-latest
     steps:
