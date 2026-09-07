@@ -127,12 +127,16 @@ tasks:
       addresses without an ETS link, ETS links no configuration claims,
       and consumed addresses on objects without the Write flag; any
       finding fails the run, a device not yet imported is reported as
-      such. Runs automatically after knx:catalog — during the migration
-      that makes it the progress tracker.
+      such. Per device with findings a rest worksheet
+      (<gerät>-wiring-todo.md) lands in TODO_DIR: only the links still
+      to make, grouped under the generated object numbers. Runs
+      automatically after knx:catalog — during the migration that makes
+      it the progress tracker.
       Pass KNXPROJ_PASSWORD=… for encrypted projects.
     vars:
       BCFG: '{{.BCFG | default "exports/basalte/Steinroth.bcfg"}}'
       FLOWS: '{{.FLOWS | default "exports/node-red/flows.json"}}'
+      TODO_DIR: '{{.TODO_DIR | default "$HOME/Downloads"}}'
     env:
       # passed through the environment so the plaintext password never appears
       # in the command line that task echoes
@@ -161,9 +165,10 @@ tasks:
         uv run --directory "{{.KNX_BRIDGE_DIR}}" --extra tools knxproj-check-wiring
         --input "{{.KNX_PROJECT_PATH}}"
         --write-gas "$consumed"
-        --device "KNX-NATS-Bridge=@$bridge"
-        --device "Basalte Core S4=@$basalte"
-        --device "Node-Red=@$nodered"
+        --device "@$bridge=KNX-NATS-Bridge:split"
+        --device "@$basalte=Basalte Core S4:both"
+        --device "@$nodered=Node-Red:both"
+        --todo-dir "{{.TODO_DIR}}"
         {{if .KNXPROJ_PASSWORD}}--password "$KNXPROJ_PASSWORD"{{end}}
 
   fault-writer-rules:
