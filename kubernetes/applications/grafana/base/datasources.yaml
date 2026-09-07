@@ -46,6 +46,27 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 
 metadata:
+  name: tempo
+  namespace: grafana
+
+spec:
+  valuesFrom: []
+  datasource:
+    name: Tempo
+    type: tempo
+    access: proxy
+    url: http://tempo.tempo.svc:3200
+    isDefault: false
+    editable: false
+  instanceSelector:
+    matchLabels:
+      homelab.app: grafana
+
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+
+metadata:
   name: timescaledb
   namespace: grafana
 
