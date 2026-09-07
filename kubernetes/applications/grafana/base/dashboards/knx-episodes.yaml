@@ -1,0 +1,1717 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+
+metadata:
+  name: knx-episodes
+  namespace: grafana
+
+spec:
+  folder: "Smart Home"
+  instanceSelector:
+    matchLabels:
+      homelab.app: grafana
+  json: |
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": {
+              "type": "datasource",
+              "uid": "grafana"
+            },
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "description": "Vorfälle der Erkennungskette: wiederholte Beobachtungen eines Fehlers, zu einer Episode gefaltet. Ersetzt den Wochenbericht. Der Fehlersatz mit seiner Einheit steht in faults.yaml, der Schweregrad 0-3 ist der Zustellvertrag auf der Gruppenadresse.",
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "links": [],
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Offene Situationen",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 5,
+            "x": 0,
+            "y": 0
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT count(*) AS \"Offen\" FROM ep WHERE ended_at IS NULL;",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "blue",
+                    "value": 1
+                  },
+                  {
+                    "color": "orange",
+                    "value": 15
+                  },
+                  {
+                    "color": "red",
+                    "value": 40
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "description": "Vorfälle ohne ended_at — was gerade läuft. Unabhängig vom Zeitbereich: offen ist offen."
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Davon kritisch",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 5,
+            "y": 0
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT count(*) FILTER (WHERE severity = 3) AS \"Kritisch\" FROM ep WHERE ended_at IS NULL;",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "description": "Offene Vorfälle auf Schweregrad 3 — die, die als Push auf dem Telefon landen."
+        },
+        {
+          "id": 3,
+          "type": "gauge",
+          "title": "Neue Vorfälle (7 Tage)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 5,
+            "x": 9,
+            "y": 0
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT count(*) AS \"Neu\" FROM ep WHERE started_at > now() - INTERVAL '7 days';",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "max": 20,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 6
+                  },
+                  {
+                    "color": "red",
+                    "value": 12
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "description": "Gegen das erklärte Wochenbudget von 5 Vorfällen. Darüber schlägt der Meldungsvolumen-Wächter selbst an."
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "Beendet (7 Tage)",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 14,
+            "y": 0
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT count(*) AS \"Beendet\" FROM ep WHERE ended_at > now() - INTERVAL '7 days';",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "fixed",
+                "fixedColor": "green"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "description": "Situationen, deren Ende in den letzten sieben Tagen entschieden wurde."
+        },
+        {
+          "id": 5,
+          "type": "stat",
+          "title": "Älteste offene Situation",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 6,
+            "x": 18,
+            "y": 0
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT COALESCE(EXTRACT(EPOCH FROM now() - min(started_at)), 0) AS \"Alter\"\nFROM ep WHERE ended_at IS NULL;",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "unit": "s",
+              "decimals": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 604800
+                  },
+                  {
+                    "color": "red",
+                    "value": 2592000
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "description": "Wie lange die längste offene Situation schon steht. Orange ab einer Woche, rot ab einem Monat."
+        },
+        {
+          "id": 6,
+          "type": "table",
+          "title": "Offene Situationen",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 4
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT severity                                  AS \"Schweregrad\",\n       fault                                     AS \"Fehler\",\n       betroffen                                 AS \"Betroffen\",\n       raum                                      AS \"Raum\",\n       started_at                                AS \"Seit\",\n       EXTRACT(EPOCH FROM now() - started_at)    AS \"Dauer\",\n       round(peak_score::numeric, 2)             AS \"Spitzenwert\",\n       last_seen_at                              AS \"Zuletzt gesehen\",\n       CASE WHEN externally_delivered THEN 'Basalte' ELSE 'Engine' END AS \"Quelle\"\nFROM ep WHERE ended_at IS NULL\nORDER BY severity DESC, started_at;",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "filterable": true,
+                "inspect": false
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Schweregrad"
+                },
+                "properties": [
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "options": {
+                          "1": {
+                            "text": "Hinweis",
+                            "color": "blue",
+                            "index": 0
+                          },
+                          "2": {
+                            "text": "Warnung",
+                            "color": "orange",
+                            "index": 1
+                          },
+                          "3": {
+                            "text": "Kritisch",
+                            "color": "red",
+                            "index": 2
+                          }
+                        },
+                        "type": "value"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-background",
+                      "mode": "basic"
+                    }
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 110
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Fehler"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 190
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Betroffen"
+                },
+                "properties": [
+                  {
+                    "id": "custom.minWidth",
+                    "value": 340
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Raum"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 170
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Dauer"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "s"
+                  },
+                  {
+                    "id": "decimals",
+                    "value": 0
+                  },
+                  {
+                    "id": "custom.width",
+                    "value": 110
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "text",
+                          "value": null
+                        },
+                        {
+                          "color": "orange",
+                          "value": 604800
+                        },
+                        {
+                          "color": "red",
+                          "value": 2592000
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Spitzenwert"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 120
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Quelle"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 100
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Schweregrad"
+              }
+            ]
+          },
+          "description": "Was gerade offen ist, das Schwerste zuerst. Der Spitzenwert steht in der Einheit des Fehlers — die Sätze dazu stehen in faults.yaml."
+        },
+        {
+          "id": 7,
+          "type": "state-timeline",
+          "title": "Schweregrad-Verlauf der offenen Situationen",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 13,
+            "w": 24,
+            "x": 0,
+            "y": 15
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "time_series",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT o.time                              AS time,\n       ep.fault || ' · ' || ep.betroffen   AS metric,\n       o.severity                          AS value\nFROM episode_observations o\nJOIN ep ON ep.id = o.episode_id\nWHERE ep.ended_at IS NULL AND $__timeFilter(o.time)\nORDER BY 1;",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "1": {
+                      "text": "Hinweis",
+                      "color": "blue",
+                      "index": 0
+                    },
+                    "2": {
+                      "text": "Warnung",
+                      "color": "orange",
+                      "index": 1
+                    },
+                    "3": {
+                      "text": "Kritisch",
+                      "color": "red",
+                      "index": 2
+                    }
+                  },
+                  "type": "value"
+                }
+              ],
+              "custom": {
+                "fillOpacity": 85,
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineWidth": 0,
+                "spanNulls": false
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "alignValue": "left",
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "mergeValues": true,
+            "rowHeight": 0.9,
+            "showValue": "never",
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "description": "Je Zeile eine offene Situation, je Farbe ihr Schweregrad pro Stunde — die Evidenzzeilen unter der Episode. Nur offene Vorfälle, damit die Abfrage klein bleibt."
+        },
+        {
+          "id": 8,
+          "type": "timeseries",
+          "title": "Vorfälle pro Woche je Fehler",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 16,
+            "x": 0,
+            "y": 28
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "time_series",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT date_trunc('week', started_at) AS time,\n       fault                          AS metric,\n       count(*)                       AS value\nFROM ep WHERE $__timeFilter(started_at)\nGROUP BY 1, 2 ORDER BY 1;",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "unit": "none",
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.7,
+                "drawStyle": "bars",
+                "fillOpacity": 75,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "smooth",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "legend": {
+              "calcs": [
+                "sum"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "description": "Neu begonnene Vorfälle je Kalenderwoche, gestapelt nach Fehler. Die Woche zählt am Beginn, nicht am Ende."
+        },
+        {
+          "id": 9,
+          "type": "piechart",
+          "title": "Schweregradverteilung",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 16,
+            "y": 28
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT count(*) FILTER (WHERE severity = 1) AS \"Hinweis\",\n       count(*) FILTER (WHERE severity = 2) AS \"Warnung\",\n       count(*) FILTER (WHERE severity = 3) AS \"Kritisch\"\nFROM ep WHERE $__timeFilter(started_at);",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "mappings": [],
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Hinweis"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "blue"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Warnung"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "orange"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Kritisch"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "red"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "displayLabels": [
+              "percent"
+            ],
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "values": [
+                "value"
+              ]
+            },
+            "pieType": "donut",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "description": "Wie sich die Vorfälle im Zeitbereich auf die drei Tiere verteilen. Der Schweregrad kommt aus der eigenen Score-Verteilung des Fehlers, nicht aus einer globalen Leiter."
+        },
+        {
+          "id": 10,
+          "type": "barchart",
+          "title": "Vorfälle je Fehler",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 37
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT fault                                    AS \"Fehler\",\n       count(*) FILTER (WHERE severity = 1)     AS \"Hinweis\",\n       count(*) FILTER (WHERE severity = 2)     AS \"Warnung\",\n       count(*) FILTER (WHERE severity = 3)     AS \"Kritisch\"\nFROM ep WHERE $__timeFilter(started_at)\nGROUP BY 1 ORDER BY count(*) DESC;",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "mappings": [],
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 85,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Hinweis"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "blue"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Warnung"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "orange"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Kritisch"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "red"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "barRadius": 0,
+            "barWidth": 0.7,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "orientation": "horizontal",
+            "showValue": "auto",
+            "stacking": "normal",
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            },
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "description": "Welcher Fehler wie oft ausgelöst hat, gestapelt nach Schweregrad — der erste Blick auf einen Detektor, der zu viel redet."
+        },
+        {
+          "id": 11,
+          "type": "barchart",
+          "title": "Vorfälle je Raum",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 37
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT raum                                     AS \"Raum\",\n       count(*) FILTER (WHERE severity = 1)     AS \"Hinweis\",\n       count(*) FILTER (WHERE severity = 2)     AS \"Warnung\",\n       count(*) FILTER (WHERE severity = 3)     AS \"Kritisch\"\nFROM ep WHERE $__timeFilter(started_at)\nGROUP BY 1 ORDER BY count(*) DESC LIMIT 15;",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "mappings": [],
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 85,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Hinweis"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "blue"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Warnung"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "orange"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Kritisch"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "red"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "barRadius": 0,
+            "barWidth": 0.7,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "orientation": "horizontal",
+            "showValue": "auto",
+            "stacking": "normal",
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            },
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "description": "Die 15 lautesten Räume aus dem GA-Katalog. Vorfälle ohne Gruppenadresse (Haus, Anlage, Raum-Slug) laufen unter „ohne Raum“."
+        },
+        {
+          "id": 12,
+          "type": "timeseries",
+          "title": "Meldungsereignisse je Tag",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 46
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "time_series",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT date_trunc('day', v.time) AS time,\n       CASE v.kind WHEN 'appeared'  THEN 'Erschienen'\n                   WHEN 'escalated' THEN 'Eskaliert'\n                   ELSE                  'Beendet' END AS metric,\n       count(*) AS value\nFROM episode_events v\nJOIN ep ON ep.id = v.episode_id\nWHERE $__timeFilter(v.time)\nGROUP BY 1, 2 ORDER BY 1;",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "unit": "none",
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.7,
+                "drawStyle": "bars",
+                "fillOpacity": 75,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "smooth",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Erschienen"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "orange"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Eskaliert"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "red"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Beendet"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "green"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "description": "Was tatsächlich einen Menschen erreicht hat — von Basalte selbst zugestellte Vorfälle zählen mit, wie beim Meldungsvolumen-Wächter. Je Vorfall höchstens drei Ereignisse: erschienen, eskaliert, beendet."
+        },
+        {
+          "id": 13,
+          "type": "barchart",
+          "title": "Mediandauer je Fehler",
+          "datasource": {
+            "type": "postgres",
+            "uid": "timescaledb"
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 46
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "editorMode": "code",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT fault AS \"Fehler\",\n       EXTRACT(EPOCH FROM percentile_cont(0.5) WITHIN GROUP (\n           ORDER BY COALESCE(ended_at, now()) - started_at)) AS \"Mediandauer\"\nFROM ep WHERE $__timeFilter(started_at)\nGROUP BY 1 ORDER BY 2 DESC;",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "continuous-BlYlRd"
+              },
+              "mappings": [],
+              "unit": "s",
+              "decimals": 0,
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "fillOpacity": 85,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineWidth": 1,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "barRadius": 0,
+            "barWidth": 0.7,
+            "fullHighlight": false,
+            "groupWidth": 0.7,
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": false
+            },
+            "orientation": "horizontal",
+            "showValue": "auto",
+            "stacking": "none",
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            },
+            "xTickLabelRotation": 0,
+            "xTickLabelSpacing": 0
+          },
+          "description": "Wie lange ein Vorfall dieses Fehlers typischerweise steht; offene Vorfälle zählen bis jetzt. Lange Median­dauern heißen: der Zustand wird nicht behoben, nicht dass der Detektor flattert."
+        },
+        {
+          "id": 14,
+          "type": "row",
+          "title": "Beendete Vorfälle",
+          "collapsed": true,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 54
+          },
+          "panels": [
+            {
+              "id": 15,
+              "type": "table",
+              "title": "Beendete Vorfälle",
+              "datasource": {
+                "type": "postgres",
+                "uid": "timescaledb"
+              },
+              "gridPos": {
+                "h": 10,
+                "w": 24,
+                "x": 0,
+                "y": 55
+              },
+              "targets": [
+                {
+                  "datasource": {
+                    "type": "postgres",
+                    "uid": "timescaledb"
+                  },
+                  "editorMode": "code",
+                  "format": "table",
+                  "rawQuery": true,
+                  "rawSql": "WITH ep AS (\n  SELECT e.id, e.fault, e.subject, e.started_at, e.last_seen_at, e.ended_at,\n         e.severity, e.peak_score, e.externally_delivered,\n         COALESCE(c.name, substring(e.subject from '\\[([^]]+)\\]'), e.subject) AS betroffen,\n         COALESCE(c.room, 'ohne Raum') AS raum\n  FROM episodes e\n  LEFT JOIN ga_catalog c ON c.ga = substring(e.subject from '[0-9]+/[0-9]+/[0-9]+')\n  WHERE (e.folded = ('$herkunft' = 'folded') OR '$herkunft' = 'both')\n    AND e.fault = ANY (ARRAY[${fault:sqlstring}]::text[])\n    AND e.severity = ANY (ARRAY[${severity:csv}]::smallint[])\n)\nSELECT ended_at                                   AS \"Beendet\",\n       severity                                   AS \"Schweregrad\",\n       fault                                      AS \"Fehler\",\n       betroffen                                  AS \"Betroffen\",\n       raum                                       AS \"Raum\",\n       started_at                                 AS \"Begonnen\",\n       EXTRACT(EPOCH FROM ended_at - started_at)  AS \"Dauer\",\n       round(peak_score::numeric, 2)              AS \"Spitzenwert\"\nFROM ep WHERE ended_at IS NOT NULL AND $__timeFilter(ended_at)\nORDER BY ended_at DESC LIMIT 200;",
+                  "refId": "A"
+                }
+              ],
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "mappings": [],
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "filterable": true,
+                    "inspect": false
+                  },
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "text",
+                        "value": null
+                      }
+                    ]
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Schweregrad"
+                    },
+                    "properties": [
+                      {
+                        "id": "mappings",
+                        "value": [
+                          {
+                            "options": {
+                              "1": {
+                                "text": "Hinweis",
+                                "color": "blue",
+                                "index": 0
+                              },
+                              "2": {
+                                "text": "Warnung",
+                                "color": "orange",
+                                "index": 1
+                              },
+                              "3": {
+                                "text": "Kritisch",
+                                "color": "red",
+                                "index": 2
+                              }
+                            },
+                            "type": "value"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "type": "color-background",
+                          "mode": "basic"
+                        }
+                      },
+                      {
+                        "id": "custom.width",
+                        "value": 110
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Fehler"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 190
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Betroffen"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.minWidth",
+                        "value": 340
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Dauer"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "s"
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.width",
+                        "value": 110
+                      }
+                    ]
+                  }
+                ]
+              },
+              "options": {
+                "cellHeight": "sm",
+                "footer": {
+                  "countRows": false,
+                  "fields": "",
+                  "reducer": [
+                    "sum"
+                  ],
+                  "show": false
+                },
+                "showHeader": true,
+                "sortBy": [
+                  {
+                    "desc": true,
+                    "displayName": "Beendet"
+                  }
+                ]
+              },
+              "description": "Die letzten 200 abgeschlossenen Vorfälle im Zeitbereich — die Vergleichsbasis, gegen die eine Schwelle getunt wird."
+            }
+          ]
+        }
+      ],
+      "preload": false,
+      "refresh": "5m",
+      "schemaVersion": 41,
+      "tags": [
+        "timescaledb",
+        "knx",
+        "anomalie"
+      ],
+      "templating": {
+        "list": [
+          {
+            "name": "herkunft",
+            "label": "Herkunft",
+            "type": "custom",
+            "description": "Live erkannt, einmalig aus der Detektor-Historie gefaltet (dafür den Zeitbereich weiten), oder beides.",
+            "query": "Live : live, Historie : folded, Beide : both",
+            "current": {
+              "text": "Live",
+              "value": "live"
+            },
+            "options": [
+              {
+                "selected": true,
+                "text": "Live",
+                "value": "live"
+              },
+              {
+                "selected": false,
+                "text": "Historie",
+                "value": "folded"
+              },
+              {
+                "selected": false,
+                "text": "Beide",
+                "value": "both"
+              }
+            ],
+            "includeAll": false,
+            "multi": false,
+            "hide": 0
+          },
+          {
+            "name": "fault",
+            "label": "Fehler",
+            "type": "query",
+            "datasource": {
+              "type": "postgres",
+              "uid": "timescaledb"
+            },
+            "definition": "SELECT DISTINCT fault FROM episodes ORDER BY 1;",
+            "query": "SELECT DISTINCT fault FROM episodes ORDER BY 1;",
+            "current": {
+              "text": [
+                "All"
+              ],
+              "value": [
+                "$__all"
+              ]
+            },
+            "options": [],
+            "refresh": 1,
+            "regex": "",
+            "sort": 1,
+            "includeAll": true,
+            "multi": true,
+            "hide": 0
+          },
+          {
+            "name": "severity",
+            "label": "Schweregrad",
+            "type": "custom",
+            "query": "Hinweis : 1, Warnung : 2, Kritisch : 3",
+            "current": {
+              "text": [
+                "All"
+              ],
+              "value": [
+                "$__all"
+              ]
+            },
+            "options": [
+              {
+                "selected": false,
+                "text": "Hinweis",
+                "value": "1"
+              },
+              {
+                "selected": false,
+                "text": "Warnung",
+                "value": "2"
+              },
+              {
+                "selected": false,
+                "text": "Kritisch",
+                "value": "3"
+              }
+            ],
+            "includeAll": true,
+            "multi": true,
+            "hide": 0
+          }
+        ]
+      },
+      "time": {
+        "from": "now-30d",
+        "to": "now"
+      },
+      "timepicker": {},
+      "timezone": "",
+      "title": "Vorfälle",
+      "uid": "knx-episodes",
+      "weekStart": "monday"
+    }

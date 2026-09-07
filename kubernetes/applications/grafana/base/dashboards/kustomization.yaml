@@ -12,6 +12,7 @@ resources:
   - k8s-crowdsec.yaml
   - network-unifi-ap.yaml
   - network-unifi-client.yaml
+  - knx-episodes.yaml
   - knx-alarm-basement.yaml
   - knx-alarm-ground-floor.yaml
   - knx-alarm-upper-floor.yaml
