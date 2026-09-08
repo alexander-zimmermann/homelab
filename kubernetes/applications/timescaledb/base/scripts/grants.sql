@@ -60,4 +60,11 @@ BEGIN
         EXECUTE format('GRANT USAGE, SELECT ON SEQUENCE %s TO iot_mcp_bridge_rw',
                        pg_get_serial_sequence('public.episodes', 'id'));
     END IF;
+
+    -- Verdict writer — the MCP bridge's only write. UPDATE is what the
+    -- upsert needs so a second verdict on one episode overwrites the first.
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'iot_mcp_bridge_rw')
+       AND EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'episode_verdicts') THEN
+        GRANT INSERT, UPDATE ON episode_verdicts TO iot_mcp_bridge_rw;
+    END IF;
 END$$;

@@ -26,6 +26,11 @@ deployment:
       value: /etc/iot-mcp-bridge/db_username
     MCP_DB_PASSWORD_FILE:
       value: /etc/iot-mcp-bridge/db_password
+    # Write credentials for the server's only write, the episode verdict.
+    MCP_DB_WRITE_USERNAME_FILE:
+      value: /etc/iot-mcp-bridge/db_write_username
+    MCP_DB_WRITE_PASSWORD_FILE:
+      value: /etc/iot-mcp-bridge/db_write_password
     MCP_AUTH_ENABLED:
       value: "true"
     MCP_AUTH_JWKS_URL:
@@ -59,6 +64,18 @@ deployment:
         items:
           - key: password
             path: password
+    db-write-username:
+      secret:
+        secretName: timescaledb-db-iot-mcp-bridge-rw-secret
+        items:
+          - key: username
+            path: username
+    db-write-password:
+      secret:
+        secretName: timescaledb-db-iot-mcp-bridge-rw-secret
+        items:
+          - key: password
+            path: password
     nats-nkey-seed:
       secret:
         secretName: iot-mcp-bridge-nats-credentials
@@ -73,6 +90,14 @@ deployment:
       readOnly: true
     db-password:
       mountPath: /etc/iot-mcp-bridge/db_password
+      subPath: password
+      readOnly: true
+    db-write-username:
+      mountPath: /etc/iot-mcp-bridge/db_write_username
+      subPath: username
+      readOnly: true
+    db-write-password:
+      mountPath: /etc/iot-mcp-bridge/db_write_password
       subPath: password
       readOnly: true
     nats-nkey-seed:
