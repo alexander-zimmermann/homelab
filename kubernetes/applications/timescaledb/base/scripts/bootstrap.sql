@@ -789,8 +789,9 @@ CREATE TABLE IF NOT EXISTS episode_events (
 -- a fault is wrong — only at night, only in summer, only while the laundry
 -- runs. Nothing in the detection pipeline reads this table; the counts are
 -- shown per fault on the dashboard and thresholds stay a human decision.
--- Written by iot_mcp_bridge_rw (the MCP bridge, in conversation),
--- read by iot_mcp_bridge_ro / grafana_ro.
+-- Written by iot_mcp_bridge_verdict — a role that may touch this table and
+-- nothing else, because the MCP bridge is where verdicts are given.
+-- Read by iot_mcp_bridge_ro / grafana_ro.
 -- =========================================================
 CREATE TABLE IF NOT EXISTS episode_verdicts (
     episode_id BIGINT      PRIMARY KEY REFERENCES episodes (id),

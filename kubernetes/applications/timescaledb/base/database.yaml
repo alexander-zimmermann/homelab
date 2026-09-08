@@ -51,9 +51,15 @@ spec:
       - name: iot_mcp_bridge_rw
         ensure: present
         login: true
-        comment: "iot-mcp-bridge-jobs + bridge verdicts — INSERT/UPDATE on mcp_forecasts, the episode tables and episode_verdicts"
+        comment: "iot-mcp-bridge-jobs — INSERT/UPDATE on mcp_forecasts + the episode tables"
         passwordSecret:
           name: timescaledb-db-iot-mcp-bridge-rw-secret
+      - name: iot_mcp_bridge_verdict
+        ensure: present
+        login: true
+        comment: "iot-mcp-bridge — the one write an LLM-facing server holds: episode_verdicts only"
+        passwordSecret:
+          name: timescaledb-db-iot-mcp-bridge-verdict-secret
       - name: grafana_ro
         ensure: present
         login: true

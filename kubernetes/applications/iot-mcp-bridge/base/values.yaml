@@ -26,7 +26,8 @@ deployment:
       value: /etc/iot-mcp-bridge/db_username
     MCP_DB_PASSWORD_FILE:
       value: /etc/iot-mcp-bridge/db_password
-    # Write credentials for the server's only write, the episode verdict.
+    # Verdict-writer credentials — the server's only write, and a role that
+    # may touch no other table.
     MCP_DB_WRITE_USERNAME_FILE:
       value: /etc/iot-mcp-bridge/db_write_username
     MCP_DB_WRITE_PASSWORD_FILE:
@@ -66,13 +67,13 @@ deployment:
             path: password
     db-write-username:
       secret:
-        secretName: timescaledb-db-iot-mcp-bridge-rw-secret
+        secretName: timescaledb-db-iot-mcp-bridge-verdict-secret
         items:
           - key: username
             path: username
     db-write-password:
       secret:
-        secretName: timescaledb-db-iot-mcp-bridge-rw-secret
+        secretName: timescaledb-db-iot-mcp-bridge-verdict-secret
         items:
           - key: password
             path: password

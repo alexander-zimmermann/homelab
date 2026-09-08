@@ -21,6 +21,7 @@ BEGIN
     -- postgres superuser, so we enumerate CAGGs explicitly.
     -- iot_mcp_bridge_rw also gets the same SELECT surface; write privileges
     -- are added below for mcp_forecasts and the episode tables only.
+    -- iot_mcp_bridge_verdict is deliberately absent — see the verdict block.
     FOREACH ro_role IN ARRAY ARRAY['iot_mcp_bridge_ro', 'grafana_ro', 'iot_mcp_bridge_rw']
     LOOP
         IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = ro_role) THEN
@@ -61,10 +62,17 @@ BEGIN
                        pg_get_serial_sequence('public.episodes', 'id'));
     END IF;
 
-    -- Verdict writer — the MCP bridge's only write. UPDATE is what the
-    -- upsert needs so a second verdict on one episode overwrites the first.
-    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'iot_mcp_bridge_rw')
+    -- Verdict writer — its own role, because it is the one credential an
+    -- LLM-facing server holds: it may write exactly one table, and reads
+    -- `episodes` only to name the episode it is judging. Deliberately outside
+    -- the read-only loop above, so it never gains the blanket SELECT surface.
+    -- UPDATE is what the upsert needs so a second verdict overwrites the first;
+    -- SELECT on the table covers the RETURNING clause.
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'iot_mcp_bridge_verdict')
        AND EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'episode_verdicts') THEN
-        GRANT INSERT, UPDATE ON episode_verdicts TO iot_mcp_bridge_rw;
+        GRANT CONNECT ON DATABASE homelab TO iot_mcp_bridge_verdict;
+        GRANT USAGE ON SCHEMA public TO iot_mcp_bridge_verdict;
+        GRANT SELECT ON episodes TO iot_mcp_bridge_verdict;
+        GRANT SELECT, INSERT, UPDATE ON episode_verdicts TO iot_mcp_bridge_verdict;
     END IF;
 END$$;
