@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: iot-mcp-bridge
 resources:
   - ./namespace.yaml
+  - ./sealed-secret.yaml
   - ./certificate.yaml
   - ./ingress-route.yaml
 
