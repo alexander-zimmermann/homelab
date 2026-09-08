@@ -790,7 +790,7 @@ CREATE TABLE IF NOT EXISTS episode_events (
 -- runs. Nothing in the detection pipeline reads this table; the counts are
 -- shown per fault on the dashboard and thresholds stay a human decision.
 -- Written by iot_mcp_bridge_rw (the MCP bridge, in conversation),
--- read by grafana_ro.
+-- read by iot_mcp_bridge_ro / grafana_ro.
 -- =========================================================
 CREATE TABLE IF NOT EXISTS episode_verdicts (
     episode_id BIGINT      PRIMARY KEY REFERENCES episodes (id),
