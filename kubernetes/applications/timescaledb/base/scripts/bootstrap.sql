@@ -782,6 +782,24 @@ CREATE TABLE IF NOT EXISTS episode_events (
 );
 
 -- =========================================================
+-- Episode verdicts — was that situation real, or was it nonsense? One row
+-- per episode: the primary key is what makes a second thought overwrite the
+-- first instead of stacking beside it. Binary on purpose, and attached to
+-- the individual episode rather than the fault, so it stays visible *when*
+-- a fault is wrong — only at night, only in summer, only while the laundry
+-- runs. Nothing in the detection pipeline reads this table; the counts are
+-- shown per fault on the dashboard and thresholds stay a human decision.
+-- Written by iot_mcp_bridge_verdict — a role that may touch this table and
+-- nothing else, because the MCP bridge is where verdicts are given.
+-- Read by iot_mcp_bridge_ro / grafana_ro.
+-- =========================================================
+CREATE TABLE IF NOT EXISTS episode_verdicts (
+    episode_id BIGINT      PRIMARY KEY REFERENCES episodes (id),
+    verdict    TEXT        NOT NULL CHECK (verdict IN ('real', 'nonsense')),
+    decided_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- =========================================================
 -- Transfer ownership from `postgres` (CNPG runs initdb as superuser)
 -- to the application user `homelab`, so it can issue table-level GRANTs.
 -- =========================================================
