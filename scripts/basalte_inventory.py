@@ -9,8 +9,15 @@ read generically. Decoded so far:
   generated Lua, field 5 the node graph as JSON
 * nodes are named ``be::basalte::nodemodel::<type>`` — ``setnumber`` carries
   ``triggerValue``, ``compare`` a ``compareMode``, ``chrono`` a ``period``,
-  ``notification`` the ``body``; device nodes reference an ``itemUuid``
+  ``notification`` the ``body`` and a ``sink`` (``app`` or ``email``); device
+  nodes reference an ``itemUuid``
+* ``knx*`` nodes carry the bound ``knxAddress`` and ``knxType`` in ETS
+  notation; whether a block reads or writes the address follows from the
+  graph's connections — a KNX node is connected on ``out`` (from the bus)
+  or on ``in`` (to the bus), never both
 * device UUIDs resolve against the named objects elsewhere in the export
+
+The e-mail recipients are in the export too and deliberately not rendered.
 
 """
 
@@ -112,6 +119,65 @@ def field_of(block, number):
     return None
 
 
+def dpt(knx_type: str | None) -> str:
+    """``DPST-5-10`` -> ``5.010``, the catalog's notation; anything else verbatim."""
+    if not knx_type:
+        return "?"
+    parts = knx_type.split("-")
+    if len(parts) == 3 and parts[0] == "DPST":
+        return f"{parts[1]}.{int(parts[2]):03d}"
+    return knx_type
+
+
+def node_type(model: dict) -> str:
+    return model["name"].split("::")[-1]
+
+
+def ga_key(ga: str) -> tuple[int, ...]:
+    return tuple(int(x) for x in ga.split("/"))
+
+
+def bindings(graph: dict) -> list[dict]:
+    """Every group address a block binds, with the direction its connections give it."""
+    fed_from = {c["in_id"] for c in graph["connections"] if c["in_key"] == "in"}
+    read_by = {c["out_id"] for c in graph["connections"] if c["out_key"] == "out"}
+    out = []
+    for node in graph["nodes"]:
+        m = node["model"]
+        if not node_type(m).startswith("knx"):
+            continue
+        if m["uuid"] in read_by:
+            direction = "read"
+        elif m["uuid"] in fed_from:
+            direction = "write"
+        else:
+            direction = "unconnected"
+        out.append(
+            {
+                "ga": m["knxAddress"],
+                "dpt": dpt(m.get("knxType")),
+                "label": m.get("varName", ""),
+                "direction": direction,
+            }
+        )
+    return sorted(out, key=lambda b: ga_key(b["ga"]))
+
+
+VIA = {"app": "push", "email": "e-mail"}
+
+
+def notifications(graph: dict) -> list[dict]:
+    """Each message a block can send and how it goes out."""
+    out = []
+    for node in graph["nodes"]:
+        m = node["model"]
+        if node_type(m) != "notification" or not m.get("body", "").strip():
+            continue
+        sink = m.get("sink")
+        out.append({"body": m["body"].strip(), "via": VIA.get(sink, sink or "?")})
+    return out
+
+
 def extract(export: Path) -> list[dict]:
     tree = parse(export.read_bytes())
     names: dict[str, str] = {}
@@ -124,7 +190,8 @@ def extract(export: Path) -> list[dict]:
         graph = field_of(value, 5)
         if not isinstance(graph, str) or '"nodes"' not in graph:
             continue
-        models = [node["model"] for node in json.loads(graph)["nodes"]]
+        graph = json.loads(graph)
+        models = [node["model"] for node in graph["nodes"]]
         refs = [
             names.get(m["itemUuid"].strip("{}"), "?" + m["itemUuid"].strip("{}")[:8])
             for m in models
@@ -135,25 +202,24 @@ def extract(export: Path) -> list[dict]:
             {
                 "name": name if isinstance(name, str) else "(unnamed)",
                 "n": len(models),
-                "kinds": dict(collections.Counter(m["name"].split("::")[-1] for m in models)),
+                "kinds": dict(collections.Counter(node_type(m) for m in models)),
                 "refs": sorted(set(refs)),
                 "thresholds": sorted({m["triggerValue"] for m in models if "triggerValue" in m}, key=str),
-                "notif": [
-                    m["body"].strip()
-                    for m in models
-                    if m["name"].endswith("notification") and m.get("body", "").strip()
-                ],
+                "notif": notifications(graph),
+                "bindings": bindings(graph),
             }
         )
     return blocks, len(names)
 
 
 def render(blocks: list[dict], named: int) -> str:
-    pushing = sum(1 for b in blocks if b["notif"])
-    messages = sum(len(b["notif"]) for b in blocks)
+    notifying = sum(1 for b in blocks if b["notif"])
+    messages = [n for b in blocks for n in b["notif"]]
+    via = collections.Counter(n["via"] for n in messages)
     summary = (
-        f"**{len(blocks)} logic blocks**, **{pushing} of them notifying**, carrying "
-        f"**{messages} distinct notifications** between them. {named} named objects in the export."
+        f"**{len(blocks)} logic blocks**, **{notifying} of them notifying**, carrying "
+        f"**{len(messages)} notifications** ({via['push']} push, {via['e-mail']} e-mail) "
+        f"between them. {named} named objects in the export."
     )
     out = ["# Basalte logic: inventory", ""]
     out += [
@@ -170,15 +236,33 @@ def render(blocks: list[dict], named: int) -> str:
         "The existing set, against which every newly planned fault has to be checked.",
         "One row per notification — a block often carries several, one per room or device.",
         "",
-        "| Block | Message | Thresholds | Devices |",
-        "|---|---|---|---|",
+        "| Block | Message | Via | Thresholds | Devices |",
+        "|---|---|---|---|---|",
     ]
     for b in sorted([x for x in blocks if x["notif"]], key=lambda x: str(x["name"])):
         refs = ", ".join(r for r in map(str, b["refs"]) if not r.startswith("?")) or "—"
         th = ", ".join(map(str, b["thresholds"])) or "—"
         for message in b["notif"]:
-            txt = str(message).replace("\n", " ").replace("|", "/")
-            out.append(f"| {b['name']} | {txt} | {th} | {refs} |")
+            txt = message["body"].replace("\n", " ").replace("|", "/")
+            out.append(f"| {b['name']} | {txt} | {message['via']} | {th} | {refs} |")
+    out += [
+        "",
+        "## KNX bindings",
+        "",
+        "The group addresses each block binds, as Studio labels them — the label",
+        "is a copy taken when the node was placed, so `task basalte:sync` is what",
+        "says whether it still matches ETS. A node placed but connected to nothing",
+        "is a half-built block; it lands in the last column.",
+        "",
+        "| Block | Reads | Writes | Unconnected |",
+        "|---|---|---|---|",
+    ]
+    for b in sorted([x for x in blocks if x["bindings"]], key=lambda x: str(x["name"])):
+        cells = []
+        for direction in ("read", "write", "unconnected"):
+            bound = [x for x in b["bindings"] if x["direction"] == direction]
+            cells.append(", ".join(f"{x['ga']} {x['label']} ({x['dpt']})" for x in bound) or "—")
+        out.append(f"| {b['name']} | " + " | ".join(cells) + " |")
     out += ["", "## All blocks", "", "| Block | Nodes | Node types |", "|---|---:|---|"]
     for b in sorted(blocks, key=lambda x: str(x["name"])):
         kinds = ", ".join(f"{k}×{v}" for k, v in sorted(b["kinds"].items()) if k != "comment")

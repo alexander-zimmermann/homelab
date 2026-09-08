@@ -17,7 +17,9 @@ task basalte:inventory -- /path/to/export.bcfg
 ```
 
 Writes `logic-inventory.md`. Regenerate after every change in Basalte Studio and
-read the diff — that shows what changed without opening Studio.
+read the diff — that shows what changed without opening Studio: every
+notification with its channel (push or e-mail) and every group address a block
+reads or writes. E-mail recipients are left out on purpose.
 
 ## Does Basalte still agree with ETS?
 
