@@ -47,6 +47,12 @@ deployment:
     # NATS nkey seed mounted as a file from the synced Secret (Kyverno clones from `nats` namespace)
     MCP_NATS_NKEY_SEED_FILE:
       value: /etc/iot-mcp-bridge/nats-nkey-seed
+    # Wiki.js over the cluster-internal Service (port 80); the read-only API key
+    # is mounted as a file from the SealedSecret in this directory.
+    MCP_WIKIJS_URL:
+      value: http://wiki-js.wiki-js.svc
+    MCP_WIKIJS_TOKEN_FILE:
+      value: /etc/iot-mcp-bridge/wikijs-token
     MCP_LOG_FORMAT:
       value: json
     TZ:
@@ -83,6 +89,12 @@ deployment:
         items:
           - key: nkey-seed
             path: nkey-seed
+    wikijs-token:
+      secret:
+        secretName: iot-mcp-bridge-wikijs-token
+        items:
+          - key: token
+            path: token
 
   volumeMounts:
     db-username:
@@ -104,6 +116,10 @@ deployment:
     nats-nkey-seed:
       mountPath: /etc/iot-mcp-bridge/nats-nkey-seed
       subPath: nkey-seed
+      readOnly: true
+    wikijs-token:
+      mountPath: /etc/iot-mcp-bridge/wikijs-token
+      subPath: token
       readOnly: true
 
   ports:
