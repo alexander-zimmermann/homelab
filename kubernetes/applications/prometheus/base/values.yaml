@@ -252,6 +252,11 @@ prometheus:
           namespace: prometheus
           port: web
 
+# No kubelet Service or KubeletDown alert without the kubelet ServiceMonitor
+prometheusOperator:
+  kubeletService:
+    enabled: false
+
 # Component scraping the kube api server
 kubeApiServer:
   serviceMonitor:
@@ -260,19 +265,9 @@ kubeApiServer:
         sourceLabels: [__name__]
         regex: (apiserver_request_total|apiserver_request_duration_seconds_sum|apiserver_request_duration_seconds_count|apiserver_current_inflight_requests|apiserver_cache_.*|apiserver_flowcontrol_.*|apiserver_storage_.*|process_start_time_seconds)
 
-# Component scraping the kubelet and kubelet-hosted cAdvisor
+# Kubelet and cAdvisor are scraped by Alloy; the chart's ServiceMonitor duplicated every series
 kubelet:
-  serviceMonitor:
-    # cadvisor "Minimal" Profile (Azure-inspired)
-    cAdvisorMetricRelabelings:
-      - action: keep
-        sourceLabels: [__name__]
-        regex: (container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_network_receive_bytes_total|container_network_transmit_bytes_total|container_fs_usage_bytes|kubernetes_build_info)
-    # kubelet "Minimal" Profile
-    metricRelabelings:
-      - action: keep
-        sourceLabels: [__name__]
-        regex: (kubelet_running_pods|kubelet_running_containers|kubelet_volume_stats_used_bytes|kubelet_node_name|kubernetes_build_info)
+  enabled: false
 
 # Component scraping coreDNS
 coreDns:
