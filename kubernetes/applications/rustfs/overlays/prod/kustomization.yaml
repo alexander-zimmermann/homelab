@@ -102,10 +102,10 @@ patches:
         path: /spec/template/spec/containers/0/resources
         value:
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 150m
+            memory: 512Mi
           limits:
-            cpu: 200m
+            cpu: 500m
             memory: 1Gi
 
   # RustFS API service with static IP and BGP advertisement
