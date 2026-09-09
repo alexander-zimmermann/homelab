@@ -12,8 +12,11 @@ cluster:
   ## limit below the node ceiling, so a future spike is bounded by GC and, in
   ## the worst case, OOM-killed cgroup-locally (apiserver restarts in seconds)
   ## instead of taking the node — global OOM becomes a self-healing blip.
+  ## The request tracks the measured working set so the scheduler sees the CP as full.
   apiServer:
     resources:
+      requests:
+        memory: "2.25Gi"
       limits:
         memory: "2.75Gi"
   ## Expose metrics endpoints on all interfaces (default: 127.0.0.1)
