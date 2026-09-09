@@ -49,7 +49,7 @@ defaultSettings:
   defaultReplicaCount: 2
 
   # Reserve CPU for each instance manager pod (percent of allocatable CPU)
-  guaranteedInstanceManagerCPU: 10
+  guaranteedInstanceManagerCPU: 5
 
   # Use fast-check with nightly cron to balance integrity and performance
   snapshotDataIntegrity: fast-check

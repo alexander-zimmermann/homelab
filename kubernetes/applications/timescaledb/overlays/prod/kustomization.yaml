@@ -59,7 +59,7 @@ patches:
         value:
           requests:
             cpu: 100m
-            memory: 256Mi
+            memory: 512Mi
           limits:
             cpu: 500m
             # 1Gi could not carry routine maintenance: a month-wide CAGG

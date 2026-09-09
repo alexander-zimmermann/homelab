@@ -162,10 +162,10 @@ patches:
         path: /spec/resources
         value:
           requests:
-            cpu: 100m
-            memory: 256Mi
+            cpu: 150m
+            memory: 1Gi
           limits:
-            cpu: 500m
+            cpu: 1000m
             memory: 1Gi
       - op: add
         path: /spec/containers
