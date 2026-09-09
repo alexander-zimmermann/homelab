@@ -105,7 +105,7 @@ chunksCache:
 
 # Results cache resources are configured in overlays
 resultsCache:
-  allocatedMemory: 256
+  allocatedMemory: 64
 
 monitoring:
   # Prometheus Monitoring

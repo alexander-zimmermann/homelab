@@ -51,10 +51,10 @@ patches:
         path: /spec/template/spec/containers/0/resources
         value:
           requests:
-            cpu: 10m
+            cpu: 25m
             memory: 64Mi
           limits:
-            cpu: 200m
+            cpu: 500m
             memory: 256Mi
 
   # Kube-State-Metrics: Exposes cluster-level metrics
@@ -103,7 +103,7 @@ patches:
         value:
           requests:
             cpu: 25m
-            memory: 128Mi
+            memory: 256Mi
           limits:
             cpu: 300m
             memory: 384Mi
@@ -123,7 +123,7 @@ patches:
         value:
           requests:
             cpu: 50m
-            memory: 256Mi
+            memory: 320Mi
           limits:
             cpu: 500m
             memory: 512Mi
@@ -153,11 +153,25 @@ patches:
           - name: GOMEMLIMIT
             value: "241591910"
 
-  # Alloy receiver service with static IP and BGP advertisement
+  # Alloy Receiver: syslog and OTLP ingress, service with static IP and BGP advertisement
   - target:
       kind: Alloy
       name: alloy-alloy-receiver
     patch: |-
+      - op: add
+        path: /spec/alloy/resources
+        value:
+          requests:
+            cpu: 25m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+      - op: add
+        path: /spec/alloy/env
+        value:
+          - name: GOMEMLIMIT
+            value: "241591910"
       - op: test
         path: /spec/service/type
         value: LoadBalancer
