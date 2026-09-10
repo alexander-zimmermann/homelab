@@ -47,6 +47,7 @@ kubernetes/
     ├── kromgo/         #   Cluster-stats badges (see top-level README)
     ├── prometheus/     #   Metrics & alerting
     ├── loki/           #   Logs
+    ├── tempo/          #   Traces
     ├── cloudnative-pg/ #   Postgres operator
     ├── crowdsec/       #   IPS
     ├── wiki-js/        #   Personal wiki
@@ -166,6 +167,7 @@ All components grouped by what they do. Icons via [homarr-labs/dashboard-icons](
 | <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/prometheus.png" height="18" /> | [Prometheus](https://prometheus.io/)                       | Metrics & alerting                            |
 |  <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/grafana.png" height="18" />   | [Grafana](https://grafana.com/) + Operator                 | Dashboards, dashboards-as-code                |
 |    <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/loki.png" height="18" />    | [Loki](https://grafana.com/oss/loki/)                      | Log aggregation                               |
+|   <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/tempo.png" height="18" />    | [Tempo](https://grafana.com/oss/tempo/)                    | Trace storage                                 |
 |   <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/alloy.png" height="18" />    | [Alloy](https://grafana.com/docs/alloy/)                   | Unified telemetry collector                   |
 |   <img src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/gatus.png" height="18" />    | [Gatus](https://gatus.io/)                                 | Status page / synthetic probes                |
 |                                                                                                      | [kromgo](https://github.com/kashalls/kromgo)               | PromQL → shields.io bridge (cluster badges)   |

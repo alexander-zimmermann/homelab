@@ -1,0 +1,19 @@
+# Tempo monolithic: traces are a debugging aid, not an archive
+tempo:
+  # GOMEMLIMIT (set per overlay) paces GC; a 1 GiB ballast above that limit would keep GC busy forever
+  memBallastSizeMbs: 0
+  reportingEnabled: false
+  # Two days covers replaying any incident surfaced by alerts or logs
+  retention: 48h
+
+# Traces on the Longhorn PVC (local backend), same pattern as Loki's filesystem store
+persistence:
+  enabled: true
+  storageClassName: longhorn
+  size: PLACEHOLDER
+
+serviceMonitor:
+  enabled: true
+  # Prometheus Operator label (Opt-In)
+  additionalLabels:
+    release: prometheus

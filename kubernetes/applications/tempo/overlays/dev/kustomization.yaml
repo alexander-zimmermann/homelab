@@ -1,0 +1,39 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+replacements:
+  # Inject storage size configuration
+  - sourceValue: 500Mi
+    targets:
+      - select:
+          kind: StatefulSet
+          name: tempo
+        fieldPaths:
+          - spec.volumeClaimTemplates.0.spec.resources.requests.storage
+
+patches:
+  # Tempo monolithic (StatefulSet)
+  - target:
+      kind: StatefulSet
+      name: tempo
+    patch: |-
+      - op: test
+        path: /spec/template/spec/containers/0/name
+        value: tempo
+      - op: add
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            cpu: 25m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+      - op: add
+        path: /spec/template/spec/containers/0/env
+        value:
+          - name: GOMEMLIMIT
+            value: "241591910"

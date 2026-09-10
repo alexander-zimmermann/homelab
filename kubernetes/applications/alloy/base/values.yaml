@@ -15,6 +15,16 @@ destinations:
     header:
       batchSize: 256KiB
       batchWait: 1s
+  tempo:
+    type: otlp
+    url: http://tempo.tempo.svc.cluster.local:4317
+    tls:
+      insecure: true
+    # Traces only; metrics and logs keep their own destinations
+    metrics:
+      enabled: false
+    logs:
+      enabled: false
 
 # Cluster metrics & events
 clusterMetrics:
@@ -73,15 +83,16 @@ collectors:
     controller:
       type: deployment
       replicas: 1
-    # Include loki for syslog forwarding and prometheus for OTLP metric forwarding
+    # loki for syslog, prometheus for OTLP metrics, tempo for OTLP traces
     includeDestinations:
       - loki
       - prometheus
+      - tempo
     service:
       type: LoadBalancer
       annotations: {}
     alloy:
-      # Syslog: TCP 601 / UDP 514 (RFC5424). OTLP HTTP: 4318 (rustfs metrics push).
+      # Syslog: TCP 601 / UDP 514 (RFC5424). OTLP HTTP: 4318 (rustfs metrics, redpanda-connect traces).
       extraPorts:
         - name: syslog-tcp
           port: 601
@@ -159,16 +170,19 @@ collectors:
           relabel_rules = discovery.relabel.syslog.rules
       }
 
-      // OTLP/HTTP receiver for external push sources (rustfs, PVE/PBS metric
-      // servers). The chart renders otelcol.exporter.prometheus.prometheus
-      // which translates OTel attributes (service.name -> job, host.name ->
-      // instance) before forwarding to remote-write.
+      // OTLP/HTTP receiver for external push sources (rustfs and PVE/PBS
+      // metrics, redpanda-connect traces). The chart renders
+      // otelcol.exporter.prometheus.prometheus which translates OTel attributes
+      // (service.name -> job, host.name -> instance) before forwarding to
+      // remote-write.
       otelcol.receiver.otlp "ingress" {
           http {
               endpoint = "0.0.0.0:4318"
           }
           output {
               metrics = [otelcol.processor.batch.ingress.input]
+              // Traces skip the batch below: the tempo destination brings its own chain
+              traces  = [otelcol.processor.attributes.tempo.input]
           }
       }
 

@@ -70,3 +70,15 @@ serviceMonitor:
   # NOTE: the chart's ServiceMonitor template ignores serviceMonitor.labels, so
   # the `release: prometheus` selector label is injected via a kustomize patch
   # in kustomization.yaml instead.
+
+# One tracer covers every pipeline; 10 % sampling because knx is high volume
+tracing:
+  open_telemetry_collector:
+    service: redpanda-connect
+    http:
+      - address: alloy-alloy-receiver.alloy.svc.cluster.local:4318
+    # Required field even when unused
+    grpc: []
+    sampling:
+      enabled: true
+      ratio: 0.1
